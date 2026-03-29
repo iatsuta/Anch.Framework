@@ -1,6 +1,6 @@
-﻿using ExampleApp.Application;
+﻿using CommonFramework.Auth;
 
-using SecuritySystem;
+using ExampleApp.Application;
 
 namespace ExampleApp.IntegrationTests;
 

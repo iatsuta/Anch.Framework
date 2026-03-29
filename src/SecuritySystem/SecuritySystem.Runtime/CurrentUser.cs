@@ -1,9 +1,13 @@
-﻿using SecuritySystem.Services;
+﻿using CommonFramework.Auth;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using SecuritySystem.Services;
 
 namespace SecuritySystem;
 
-public class CurrentUser(IRawUserAuthenticationService rawUserAuthenticationService, IRunAsManager? runAsManager = null)
-    : RawCurrentUser(rawUserAuthenticationService)
+public class CurrentUser([FromKeyedServices(ICurrentUser.ImpersonatedKey)] ICurrentUser impersonatedCurrentUser, IRunAsManager? runAsManager = null)
+    : ICurrentUser
 {
-    public override string Name => runAsManager?.RunAsUser?.Name ?? base.Name;
+    public string Name => runAsManager?.RunAsUser?.Name ?? impersonatedCurrentUser.Name;
 }

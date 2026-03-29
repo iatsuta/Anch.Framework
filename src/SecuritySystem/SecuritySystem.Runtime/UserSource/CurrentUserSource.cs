@@ -1,4 +1,5 @@
 ﻿using CommonFramework;
+using CommonFramework.Auth;
 
 namespace SecuritySystem.UserSource;
 

@@ -5,7 +5,7 @@ using SecuritySystem.UserSource;
 
 namespace SecuritySystem.Services;
 
-public class UserCredentialNameResolver(IEnumerable<IUserSource> userSourceList) : IUserCredentialNameResolver
+public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNameResolver
 {
     public async ValueTask<string> GetUserNameAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {

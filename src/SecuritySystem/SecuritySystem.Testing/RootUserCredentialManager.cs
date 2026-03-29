@@ -13,7 +13,7 @@ public class RootUserCredentialManager(
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null)
 {
     private ITestingEvaluator<UserCredentialManager> ManagerEvaluator { get; } =
-        baseEvaluator.Select(service => service.WithCredential(userCredential.Item1));
+        baseEvaluator.Select(service => userCredential.Item1 == null ? service : service.ReplaceCurrentUser(userCredential.Item1));
 
     public void LoginAs()
     {

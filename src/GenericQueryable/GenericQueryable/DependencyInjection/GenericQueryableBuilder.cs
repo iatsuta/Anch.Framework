@@ -51,7 +51,7 @@ public class GenericQueryableBuilder : IGenericQueryableBuilder, IServiceInitial
 
         foreach (var fetchRuleExpanderType in this.fetchRuleExpanderTypeList)
         {
-            services.AddKeyedSingleton(typeof(IFetchRuleExpander), fetchRuleExpanderType, IFetchRuleExpander.ElementKey);
+            services.AddKeyedSingleton(typeof(IFetchRuleExpander), IFetchRuleExpander.ElementKey, fetchRuleExpanderType);
         }
 
         foreach (var fetchRuleHeaderInfo in this.fetchRuleHeaderInfoList)
