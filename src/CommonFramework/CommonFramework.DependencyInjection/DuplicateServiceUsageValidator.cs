@@ -26,14 +26,14 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
         {
             var keyedParts = pair.ActualServiceKey == null ? null : $" (ServiceKey: {pair.ActualServiceKey.Item1})";
 
-            return $"The service {pair.ServiceType}{keyedParts} has been registered many times. There are services that use it in the constructor in a single instance: "
+            return $"The service {pair.ServiceType} ({nameof(pair.Lifetime)} = {pair.Lifetime}) {keyedParts} has been registered many times. There are services that use it in the constructor in a single instance: "
                    + string.Join(", ", pair.UsedFor.Select(usedService => usedService.ImplementationType));
         });
 
         return new ValidationResult(errors);
     }
 
-    private static List<(Type ServiceType, Tuple<object?>? ActualServiceKey, List<ServiceDescriptor> UsedFor)> GetWrongMultiUsage(IServiceCollection serviceCollection)
+    private static List<(Type ServiceType, ServiceLifetime Lifetime, Tuple<object?>? ActualServiceKey, List<ServiceDescriptor> UsedFor)> GetWrongMultiUsage(IServiceCollection serviceCollection)
     {
         var usedParametersRequest =
 
@@ -64,7 +64,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
             let actualParameterKey = parameterKey == null ? null : Tuple.Create(parameterKey.Key)
 
-            group service by (parameterType, actualParameterKey);
+            group service by (parameterType, actualParameterKey, service.Lifetime);
 
         var usedParametersDict = usedParametersRequest.ToDictionary(g => g.Key, g => g.ToList());
 
@@ -76,7 +76,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
             let actualServiceKey = service.IsKeyedService ? Tuple.Create(service.ServiceKey) : null
 
-            group service by (service.ServiceType, actualServiceKey) into serviceTypeGroup
+            group service by (service.ServiceType, actualServiceKey, service.Lifetime) into serviceTypeGroup
 
             where serviceTypeGroup.Count() > 1
 
@@ -84,7 +84,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
             where servicesWithSimpleUsage != null
 
-            select (serviceTypeGroup.Key.ServiceType, serviceTypeGroup.Key.actualServiceKey, servicesWithSimpleUsage);
+            select (serviceTypeGroup.Key.ServiceType, serviceTypeGroup.Key.Lifetime, serviceTypeGroup.Key.actualServiceKey, servicesWithSimpleUsage);
 
         return wrongMultiUsageRequest.ToList();
     }

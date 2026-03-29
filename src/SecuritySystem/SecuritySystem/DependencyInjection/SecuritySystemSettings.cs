@@ -1,4 +1,5 @@
 ﻿using CommonFramework;
+using CommonFramework.Auth;
 using CommonFramework.DependencyInjection;
 using CommonFramework.ExpressionEvaluate;
 using CommonFramework.GenericRepository;
@@ -32,7 +33,6 @@ using SecuritySystem.Builders.MaterializedBuilder;
 
 using System.Globalization;
 using System.Reflection;
-using CommonFramework.Auth;
 
 namespace SecuritySystem.DependencyInjection;
 
@@ -50,7 +50,9 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 
     private Action<IServiceCollection>? registerQueryableSourceAction;
 
-    private Action<IServiceCollection>? registerRawCurrentUserAction;
+    private Action<IServiceCollection> registerRawCurrentUserAction = sc => sc.AddKeyedScoped<ICurrentUser, RawCurrentUser>(ICurrentUser.RawKey);
+
+    private Action<IServiceCollection> registerDefaultCurrentUserAction = sc => sc.AddKeyedSingleton<ICurrentUser>(ICurrentUser.DefaultKey, FixedCurrentUser.CurrentMachine);
 
     private Action<IServiceCollection>? registerGenericRepositoryAction;
 
@@ -315,6 +317,14 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
         return this;
     }
 
+    public ISecuritySystemBuilder SetDefaultCurrentUser<TDefaultCurrentUser>()
+        where TDefaultCurrentUser : class, ICurrentUser
+    {
+        this.registerDefaultCurrentUserAction = sc => sc.AddKeyedSingleton<ICurrentUser, TDefaultCurrentUser>(ICurrentUser.DefaultKey);
+
+        return this;
+    }
+
     public ISecuritySystemBuilder SetDefaultCancellationTokenSource<TDefaultCancellationTokenSource>()
         where TDefaultCancellationTokenSource : class, IDefaultCancellationTokenSource
     {
@@ -355,8 +365,8 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 
         (this.registerGenericRepositoryAction ?? throw new InvalidOperationException("GenericRepository must be initialized")).Invoke(services);
 
-        (this.registerRawCurrentUserAction ?? throw new InvalidOperationException("RawCurrentUser must be initialized"))
-            .Invoke(services);
+        this.registerRawCurrentUserAction.Invoke(services);
+        this.registerDefaultCurrentUserAction.Invoke(services);
 
         services.AddSingleton(new SecurityAdministratorRuleInfo(this.securityAdministratorRule));
 

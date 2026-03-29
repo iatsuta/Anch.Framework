@@ -43,7 +43,6 @@ public abstract class TestBase
                        settings
                            .SetQueryableSource<TestQueryableSource>()
                            .SetGenericRepository<TestGenericRepository>()
-                           .SetRawCurrentUser<FakeRawCurrentUser>()
                            .SetDefaultCancellationTokenSource<XUnitDefaultCancellationTokenSource>()
 
                            .AddPermissionSystem<ExamplePermissionSystemFactory>()

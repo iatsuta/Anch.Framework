@@ -109,9 +109,11 @@ public interface ISecuritySystemBuilder
 
     ISecuritySystemBuilder SetGenericRepository<TGenericRepository>()
         where TGenericRepository : class, IGenericRepository;
-
     ISecuritySystemBuilder SetRawCurrentUser<TRawCurrentUser>()
         where TRawCurrentUser : class, ICurrentUser;
+
+    ISecuritySystemBuilder SetDefaultCurrentUser<TDefaultCurrentUser>()
+        where TDefaultCurrentUser : class, ICurrentUser;
 
     ISecuritySystemBuilder SetDefaultCancellationTokenSource<TDefaultCancellationTokenSource>()
         where TDefaultCancellationTokenSource : class, IDefaultCancellationTokenSource;

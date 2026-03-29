@@ -7,8 +7,7 @@ namespace SecuritySystem.Testing;
 public class TestingRawCurrentUser(
     TestRootUserInfo testRootUserInfo,
     RootImpersonateServiceState rootImpersonateServiceState,
-    ISyncUserNameResolver userNameResolver)
-    : ICurrentUser
+    ISyncUserNameResolver userNameResolver) : ICurrentUser
 {
     public string Name =>
         rootImpersonateServiceState.CustomUserCredential == null
