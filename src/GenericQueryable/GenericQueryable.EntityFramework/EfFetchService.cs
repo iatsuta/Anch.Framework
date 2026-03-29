@@ -7,11 +7,10 @@ using GenericQueryable.Fetching;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace GenericQueryable.EntityFramework;
 
-public class EfFetchService([FromKeyedServices(RootFetchRuleExpander.Key)] IFetchRuleExpander fetchRuleExpander) : FetchService(fetchRuleExpander)
+public class EfFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchService(fetchRuleExpander)
 {
     public override IQueryable<TSource> ApplyFetch<TSource>(IQueryable<TSource> source, FetchRule<TSource> fetchRule)
         where TSource : class

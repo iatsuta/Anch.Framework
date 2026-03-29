@@ -4,7 +4,7 @@ namespace SecuritySystem.SecurityAccessor;
 
 public class RootSecurityAccessorResolver(
     ISecurityAccessorDataOptimizer optimizer,
-    [FromKeyedServices(RawSecurityAccessorResolver.Key)]
+    [FromKeyedServices(ISecurityAccessorResolver.RawKey)]
     ISecurityAccessorResolver rawSecurityAccessorResolver) : ISecurityAccessorResolver
 {
     public IEnumerable<string> Resolve(SecurityAccessorData data)

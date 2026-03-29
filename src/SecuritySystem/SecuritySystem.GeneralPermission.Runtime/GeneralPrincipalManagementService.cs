@@ -2,8 +2,6 @@
 using CommonFramework.GenericRepository;
 using CommonFramework.VisualIdentitySource;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using SecuritySystem.Credential;
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.GeneralPermission.Validation.Principal;
@@ -52,7 +50,7 @@ public class GeneralPrincipalManagementService(
 }
 
 public class GeneralPrincipalManagementService<TPrincipal, TPermission, TPermissionRestriction>(
-    [FromKeyedServices("Root")] IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction> principalValidator,
+    IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction> principalValidator,
     IGenericRepository genericRepository,
     IPrincipalDomainService<TPrincipal> principalDomainService,
     IUserSource<TPrincipal> principalUserSource,

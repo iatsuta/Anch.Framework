@@ -1,18 +1,16 @@
-﻿using System.Linq.Expressions;
-
-using CommonFramework;
+﻿using CommonFramework;
 using CommonFramework.DependencyInjection;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using SecuritySystem.DependencyInjection;
 using SecuritySystem.ExternalSystem.Management;
-using SecuritySystem.GeneralPermission.Validation;
 using SecuritySystem.GeneralPermission.Initialize;
+using SecuritySystem.GeneralPermission.Validation;
 using SecuritySystem.GeneralPermission.Validation.Permission;
 using SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 using SecuritySystem.GeneralPermission.Validation.Principal;
 using SecuritySystem.Services;
+using SecuritySystem.Validation;
+using System.Linq.Expressions;
 
 namespace SecuritySystem.GeneralPermission.DependencyInjection;
 
@@ -206,9 +204,9 @@ public class GeneralPermissionBuilder<TPrincipal, TPermission, TSecurityRole, TP
                         IPermissionTypedRestrictionBindingInfo<TPermission>, GeneralPermissionTypedRestrictionBindingInfo<TPermission,
                             TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>()
 
-                    .AddScoped<
+                    .AddKeyedScoped<
                         IPermissionValidator<TPermission, TPermissionRestriction>,
-                        PermissionDelegationValidator<TPrincipal, TPermission, TPermissionRestriction>>()
+                        PermissionDelegationValidator<TPrincipal, TPermission, TPermissionRestriction>>(ISecurityValidator.ElementKey)
 
                     .AddSingleton<
                         IPermissionRestrictionTypeFilterFactory<TPermissionRestriction>,
@@ -235,17 +233,17 @@ public class GeneralPermissionBuilder<TPrincipal, TPermission, TSecurityRole, TP
                         DisplayPermissionService<TPermission, TSecurityRole, TPermissionRestriction>>()
 
 
-                    .AddSingleton<
+                    .AddKeyedSingleton<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
-                        AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>()
+                        AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>(ISecurityValidator.ElementKey)
 
-                    .AddScoped<
+                    .AddKeyedScoped<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
-                        ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>()
+                        ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>(ISecurityValidator.ElementKey)
 
-                    .AddScoped<
+                    .AddKeyedScoped<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
-                        AllowedFilterPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>()
+                        AllowedFilterPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>(ISecurityValidator.ElementKey)
 
                     .AddScoped<
                         IPermissionRestrictionLoader<TPermission, TPermissionRestriction>,
@@ -298,13 +296,13 @@ public class GeneralPermissionBuilder<TPrincipal, TPermission, TSecurityRole, TP
 
                     .AddScoped<ISecurityContextInitializer, SecurityContextInitializer>()
 
-                    .AddKeyedScoped(typeof(IPrincipalValidator<,,>), "Root", typeof(PrincipalRootValidator<,,>))
-                    .AddScoped(typeof(IPrincipalValidator<,,>), typeof(PrincipalUniquePermissionValidator<,,>))
+                    .AddScoped(typeof(IPrincipalValidator<,,>), typeof(PrincipalRootValidator<,,>))
+                    .AddKeyedScoped(typeof(IPrincipalValidator<,,>), ISecurityValidator.ElementKey, typeof(PrincipalUniquePermissionValidator<,,>))
 
-                    .AddKeyedScoped(typeof(IPermissionValidator<,>), "Root", typeof(PermissionRootValidator<,>))
-                    .AddSingleton(typeof(IPermissionValidator<,>), typeof(PermissionRequiredContextValidator<,>))
+                    .AddScoped(typeof(IPermissionValidator<,>), typeof(PermissionRootValidator<,>))
+                    .AddKeyedSingleton(typeof(IPermissionValidator<,>), ISecurityValidator.ElementKey, typeof(PermissionRequiredContextValidator<,>))
 
-                    .AddKeyedScoped(typeof(IPermissionRestrictionValidator<>), "Root", typeof(PermissionRestrictionRootValidator<>))
+                    .AddScoped(typeof(IPermissionRestrictionValidator<>), typeof(PermissionRestrictionRootValidator<>))
 
                     .AddSingleton<InitializerSettings>()
 

@@ -25,10 +25,10 @@ public class GenericQueryableBuilder : IGenericQueryableBuilder, IServiceInitial
             services.TryAddSingleton<IGenericQueryableExecutor, GenericQueryableExecutor>();
             services.TryAddSingleton<IMethodRedirector, MethodRedirector>();
 
-            services.AddSingleton<IFetchRuleExpander, FetchRuleHeaderExpander>();
-            services.AddSingleton<IFetchRuleExpander, UntypedFetchExpander>();
+            services.AddKeyedSingleton<IFetchRuleExpander, FetchRuleHeaderExpander>(IFetchRuleExpander.ElementKey);
+            services.AddKeyedSingleton<IFetchRuleExpander, UntypedFetchExpander>(IFetchRuleExpander.ElementKey);
 
-            services.AddKeyedSingleton<IFetchRuleExpander, RootFetchRuleExpander>(RootFetchRuleExpander.Key);
+            services.AddSingleton<IFetchRuleExpander, RootFetchRuleExpander>();
         }
 
         if (services.AlreadyInitialized<IFetchService, IgnoreFetchService>())
@@ -51,7 +51,7 @@ public class GenericQueryableBuilder : IGenericQueryableBuilder, IServiceInitial
 
         foreach (var fetchRuleExpanderType in this.fetchRuleExpanderTypeList)
         {
-            services.AddSingleton(typeof(IFetchRuleExpander), fetchRuleExpanderType);
+            services.AddKeyedSingleton(typeof(IFetchRuleExpander), fetchRuleExpanderType, IFetchRuleExpander.ElementKey);
         }
 
         foreach (var fetchRuleHeaderInfo in this.fetchRuleHeaderInfoList)

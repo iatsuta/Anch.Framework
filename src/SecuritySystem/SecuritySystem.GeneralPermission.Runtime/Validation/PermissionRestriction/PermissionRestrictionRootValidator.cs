@@ -1,6 +1,11 @@
-﻿namespace SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using SecuritySystem.Validation;
+
+namespace SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
 public class PermissionRestrictionRootValidator<TPermissionRestriction>(
+    [FromKeyedServices(ISecurityValidator.ElementKey)]
     IEnumerable<IPermissionRestrictionValidator<TPermissionRestriction>> validators) : IPermissionRestrictionValidator<TPermissionRestriction>
 {
     public async Task ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)

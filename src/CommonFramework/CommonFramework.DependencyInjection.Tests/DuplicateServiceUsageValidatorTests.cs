@@ -72,8 +72,8 @@ public class DuplicateServiceUsageValidatorTests
         // arrange
         var services = new ServiceCollection();
 
-        services.AddKeyedSingleton<IInnerService, InnerService>("Root");
-        services.AddKeyedSingleton<IInnerService, InnerService>("Root");
+        services.AddKeyedSingleton<IInnerService, InnerService>(IInnerService.RootKey);
+        services.AddKeyedSingleton<IInnerService, InnerService>(IInnerService.RootKey);
 
         services.AddSingleton<KeyedConsumer>();
 
@@ -93,8 +93,8 @@ public class DuplicateServiceUsageValidatorTests
         // arrange
         var services = new ServiceCollection();
 
-        services.AddKeyedSingleton<IInnerService, InnerService>("Root");
-        services.AddKeyedSingleton<IInnerService, InnerService>("Root");
+        services.AddKeyedSingleton<IInnerService, InnerService>(IInnerService.RootKey);
+        services.AddKeyedSingleton<IInnerService, InnerService>(IInnerService.RootKey);
 
         services.AddSingleton<KeyedConsumerCollection>();
 
@@ -107,7 +107,10 @@ public class DuplicateServiceUsageValidatorTests
         act.Should().NotThrow();
     }
 
-    private interface IInnerService;
+    private interface IInnerService
+    {
+        public const string RootKey = "Root";
+    }
 
     private class InnerService : IInnerService;
 
@@ -115,7 +118,7 @@ public class DuplicateServiceUsageValidatorTests
 
     private class ConsumerWithCollection(IEnumerable<IInnerService> services);
 
-    private class KeyedConsumer([FromKeyedServices("Root")] IInnerService service);
+    private class KeyedConsumer([FromKeyedServices(IInnerService.RootKey)] IInnerService service);
 
-    private class KeyedConsumerCollection([FromKeyedServices("Root")]IEnumerable<IInnerService> services);
+    private class KeyedConsumerCollection([FromKeyedServices(IInnerService.RootKey)]IEnumerable<IInnerService> services);
 }

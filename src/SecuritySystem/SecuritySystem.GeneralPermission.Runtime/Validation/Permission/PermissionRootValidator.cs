@@ -2,12 +2,13 @@
 
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
+using SecuritySystem.Validation;
 
 namespace SecuritySystem.GeneralPermission.Validation.Permission;
 
 public class PermissionRootValidator<TPermission, TPermissionRestriction>(
-    IEnumerable<IPermissionValidator<TPermission, TPermissionRestriction>> validators,
-    [FromKeyedServices("Root")] IPermissionRestrictionValidator<TPermissionRestriction> permissionRestrictionRootValidator)
+    [FromKeyedServices(ISecurityValidator.ElementKey)]IEnumerable<IPermissionValidator<TPermission, TPermissionRestriction>> validators,
+    IPermissionRestrictionValidator<TPermissionRestriction> permissionRestrictionRootValidator)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
     public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)

@@ -5,11 +5,9 @@ using System.Reflection;
 using CommonFramework;
 using CommonFramework.ExpressionEvaluate;
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace GenericQueryable.Fetching;
 
-public abstract class FetchService([FromKeyedServices(RootFetchRuleExpander.Key)] IFetchRuleExpander fetchRuleExpander) : IFetchService
+public abstract class RootFetchService(IFetchRuleExpander fetchRuleExpander) : IFetchService
 {
     private readonly ConcurrentDictionary<Type, object> rootCache = [];
 

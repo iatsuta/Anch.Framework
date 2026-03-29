@@ -5,13 +5,11 @@ using CommonFramework;
 
 using GenericQueryable.Fetching;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using NHibernate.Linq;
 
 namespace GenericQueryable.NHibernate;
 
-public class NHibFetchService([FromKeyedServices(RootFetchRuleExpander.Key)]IFetchRuleExpander fetchRuleExpander) : FetchService(fetchRuleExpander)
+public class NHibFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchService(fetchRuleExpander)
 {
     protected override IEnumerable<MethodInfo> GetFetchMethods<TSource>(LambdaExpressionPath fetchPath) =>
         fetchPath.Properties.Select((prop, index) => GetFetchMethod<TSource>(prop, index == 0));

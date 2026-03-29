@@ -1,5 +1,6 @@
 ﻿using CommonFramework;
 using ExampleApp.Infrastructure.Services;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 

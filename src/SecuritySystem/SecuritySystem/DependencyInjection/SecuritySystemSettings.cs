@@ -286,14 +286,14 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
         where TClientSecurityRuleInfoSource : class, IClientSecurityRuleInfoSource
     {
         this.registerActions.Add(sc =>
-            sc.AddKeyedSingleton<IClientSecurityRuleInfoSource, TClientSecurityRuleInfoSource>(RootClientSecurityRuleInfoSource.ElementKey));
+            sc.AddKeyedSingleton<IClientSecurityRuleInfoSource, TClientSecurityRuleInfoSource>(IClientSecurityRuleInfoSource.ElementKey));
 
         return this;
     }
 
     public ISecuritySystemBuilder AddClientSecurityRuleInfoSource(Type sourceType)
     {
-        this.registerActions.Add(sc => sc.AddKeyedSingleton<IClientSecurityRuleInfoSource>(RootClientSecurityRuleInfoSource.ElementKey,
+        this.registerActions.Add(sc => sc.AddKeyedSingleton<IClientSecurityRuleInfoSource>(IClientSecurityRuleInfoSource.ElementKey,
             (sp, _) => sp.GetRequiredService<IServiceProxyFactory>()
                 .Create<IClientSecurityRuleInfoSource, SourceTypeClientSecurityRuleInfoSource>(sourceType)));
 
@@ -454,7 +454,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 
             .AddSingleton<IClientSecurityRuleNameExtractor, ClientSecurityRuleNameExtractor>()
             .AddSingleton<IClientSecurityRuleInfoSource, RootClientSecurityRuleInfoSource>()
-            .AddKeyedSingleton<IClientSecurityRuleInfoSource, DomainModeClientSecurityRuleInfoSource>(RootClientSecurityRuleInfoSource.ElementKey)
+            .AddKeyedSingleton<IClientSecurityRuleInfoSource, DomainModeClientSecurityRuleInfoSource>(IClientSecurityRuleInfoSource.ElementKey)
             .AddSingleton<IClientSecurityRuleResolver, ClientSecurityRuleResolver>()
             .AddSingleton<IDomainModeSecurityRuleResolver, DomainModeSecurityRuleResolver>()
             .AddSingleton<IDomainSecurityRoleExtractor, DomainSecurityRoleExtractor>()
@@ -521,7 +521,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
             .AddSingleton<IRuntimePermissionOptimizationService, RuntimePermissionOptimizationService>()
 
             .AddSingleton<ISecurityAccessorDataOptimizer, SecurityAccessorDataOptimizer>()
-            .AddKeyedScoped<ISecurityAccessorResolver, RawSecurityAccessorResolver>(RawSecurityAccessorResolver.Key)
+            .AddKeyedScoped<ISecurityAccessorResolver, RawSecurityAccessorResolver>(ISecurityAccessorResolver.RawKey)
             .AddScoped<ISecurityAccessorResolver, RootSecurityAccessorResolver>()
 
             .AddScoped<IAvailableSecurityRoleSource, AvailableSecurityRoleSource>()

@@ -2,12 +2,12 @@
 
 using CommonFramework;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace GenericQueryable.Fetching;
 
-public class RootFetchRuleExpander(IEnumerable<IFetchRuleExpander> expanders) : IFetchRuleExpander
+public class RootFetchRuleExpander([FromKeyedServices(IFetchRuleExpander.ElementKey)] IEnumerable<IFetchRuleExpander> expanders) : IFetchRuleExpander
 {
-    public const string Key = "Root";
-
     private readonly ConcurrentDictionary<Type, object> cache = [];
 
     public PropertyFetchRule<TSource>? TryExpand<TSource>(FetchRule<TSource> fetchRule)
