@@ -1,8 +1,7 @@
-﻿using ExampleApp.Domain.Auth.General;
+﻿using CommonFramework.Auth;
+using ExampleApp.Domain.Auth.General;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem;
 using SecuritySystem.Services;
 using SecuritySystem.UserSource;
 

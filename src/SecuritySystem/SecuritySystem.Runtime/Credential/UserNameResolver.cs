@@ -1,4 +1,7 @@
-﻿using SecuritySystem.Services;
+﻿using CommonFramework.Auth;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using SecuritySystem.UserSource;
 
 // ReSharper disable once CheckNamespace
@@ -6,7 +9,7 @@ namespace SecuritySystem.Credential;
 
 public class UserNameResolver<TUser>(
     ICurrentUser currentUser,
-    IRawUserAuthenticationService rawUserAuthenticationService,
+    [FromKeyedServices(ICurrentUser.ImpersonatedKey)] ICurrentUser impersonatedCurrentUser,
     IUserSource<TUser> userSource) : IUserNameResolver<TUser>
 {
     private readonly IUserSource<User> simpleUserSource = userSource.ToSimple();
@@ -21,7 +24,7 @@ public class UserNameResolver<TUser>(
 
             SecurityRuleCredential.CurrentUserWithRunAsCredential => currentUser.Name,
 
-            SecurityRuleCredential.CurrentUserWithoutRunAsCredential => rawUserAuthenticationService.GetUserName(),
+            SecurityRuleCredential.CurrentUserWithoutRunAsCredential => impersonatedCurrentUser.Name,
 
             SecurityRuleCredential.AnyUserCredential => null,
 

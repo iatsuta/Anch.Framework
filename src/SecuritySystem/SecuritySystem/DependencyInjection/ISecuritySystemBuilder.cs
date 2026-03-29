@@ -1,4 +1,5 @@
 ﻿using CommonFramework;
+using CommonFramework.Auth;
 using CommonFramework.GenericRepository;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,7 @@ using SecuritySystem.ExternalSystem;
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.SecurityAccessor;
 using SecuritySystem.SecurityRuleInfo;
-using SecuritySystem.Services;
+
 using SecuritySystem.UserSource;
 
 namespace SecuritySystem.DependencyInjection;
@@ -25,7 +26,8 @@ public interface ISecuritySystemBuilder
 
     ISecuritySystemBuilder SetSecurityAdministratorRule(DomainSecurityRule.RoleBaseSecurityRule rule);
 
-    ISecuritySystemBuilder AddSecurityContext<TSecurityContext>(TypedSecurityIdentity identity, Action<ISecurityContextInfoBuilder<TSecurityContext>>? setup = null)
+    ISecuritySystemBuilder AddSecurityContext<TSecurityContext>(TypedSecurityIdentity identity,
+        Action<ISecurityContextInfoBuilder<TSecurityContext>>? setup = null)
         where TSecurityContext : class, ISecurityContext;
 
     ISecuritySystemBuilder AddDomainSecurity<TDomainObject>(Action<IDomainSecurityServiceBuilder<TDomainObject>> setup);
@@ -40,21 +42,20 @@ public interface ISecuritySystemBuilder
         DomainSecurityRule? editSecurityRule = null,
         SecurityPath<TDomainObject>? securityPath = null)
     {
-        return this.AddDomainSecurity<TDomainObject>(
-            b =>
+        return this.AddDomainSecurity<TDomainObject>(b =>
+        {
+            b.SetView(viewSecurityRule);
+
+            if (editSecurityRule != null)
             {
-                b.SetView(viewSecurityRule);
+                b.SetEdit(editSecurityRule);
+            }
 
-                if (editSecurityRule != null)
-                {
-                    b.SetEdit(editSecurityRule);
-                }
-
-                if (securityPath != null)
-                {
-                    b.SetPath(securityPath);
-                }
-            });
+            if (securityPath != null)
+            {
+                b.SetPath(securityPath);
+            }
+        });
     }
 
     ISecuritySystemBuilder AddDomainSecurityMetadata<TMetadata>()
@@ -85,7 +86,7 @@ public interface ISecuritySystemBuilder
         where TAccessDeniedExceptionService : class, IAccessDeniedExceptionService;
 
     ISecuritySystemBuilder AddUserSource<TUser>(Action<IUserSourceBuilder<TUser>>? setupUserSource = null)
-	    where TUser : class;
+        where TUser : class;
 
     ISecuritySystemBuilder SetSecurityAccessorInfinityStorage<TStorage>()
         where TStorage : class, ISecurityAccessorInfinityStorage;
@@ -105,11 +106,12 @@ public interface ISecuritySystemBuilder
 
     ISecuritySystemBuilder SetQueryableSource<TQueryableSource>()
         where TQueryableSource : class, IQueryableSource;
-    ISecuritySystemBuilder SetGenericRepository<TGenericRepository>()
-	    where TGenericRepository : class, IGenericRepository;
 
-	ISecuritySystemBuilder SetRawUserAuthenticationService<TRawUserAuthenticationService>(bool withImpersonate = true)
-        where TRawUserAuthenticationService : class, IRawUserAuthenticationService;
+    ISecuritySystemBuilder SetGenericRepository<TGenericRepository>()
+        where TGenericRepository : class, IGenericRepository;
+
+    ISecuritySystemBuilder SetRawCurrentUser<TRawCurrentUser>()
+        where TRawCurrentUser : class, ICurrentUser;
 
     ISecuritySystemBuilder SetDefaultCancellationTokenSource<TDefaultCancellationTokenSource>()
         where TDefaultCancellationTokenSource : class, IDefaultCancellationTokenSource;

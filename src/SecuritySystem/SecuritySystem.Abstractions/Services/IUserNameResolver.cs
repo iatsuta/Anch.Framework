@@ -2,7 +2,7 @@
 
 namespace SecuritySystem.Services;
 
-public interface IUserCredentialNameResolver
+public interface IUserNameResolver
 {
     ValueTask<string> GetUserNameAsync(UserCredential userCredential, CancellationToken cancellationToken = default);
 }

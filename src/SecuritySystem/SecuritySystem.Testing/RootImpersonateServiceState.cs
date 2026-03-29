@@ -1,13 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using SecuritySystem.Credential;
+using SecuritySystem.Services;
 
-using SecuritySystem.Credential;
+using System.Collections.Concurrent;
 
 namespace SecuritySystem.Testing;
 
-public class RootImpersonateServiceState
+public record RootImpersonateServiceState : ImpersonateState
 {
-    public UserCredential? CustomUserCredential { get; set; }
-
     public ConcurrentDictionary<UserCredential, string> Cache { get; set; } = [];
 
     public void Reset()

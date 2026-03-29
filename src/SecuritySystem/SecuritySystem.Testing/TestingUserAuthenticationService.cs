@@ -1,21 +1,23 @@
 ﻿using CommonFramework;
-
-using SecuritySystem.Credential;
+using CommonFramework.Auth;
 using SecuritySystem.Services;
 
 namespace SecuritySystem.Testing;
 
-public class TestingUserAuthenticationService(
+public class TestingRawCurrentUser(
     TestRootUserInfo testRootUserInfo,
     RootImpersonateServiceState rootImpersonateServiceState,
-    IUserCredentialNameResolver userCredentialNameResolver,
+    IUserNameResolver userNameResolver,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null)
-    : ImpersonateUserAuthenticationService(userCredentialNameResolver, defaultCancellationTokenSource)
+    : ICurrentUser
 {
-    protected override UserCredential? CustomUserCredential => rootImpersonateServiceState.CustomUserCredential ?? base.CustomUserCredential;
-
-    protected override string GetPureUserName() => testRootUserInfo.Name;
-
-    public override string GetUserName() =>
-        this.CustomUserCredential == null ? base.GetUserName() : rootImpersonateServiceState.Cache.GetOrAdd(this.CustomUserCredential, _ => base.GetUserName());
+    public string Name =>
+        rootImpersonateServiceState.CustomUserCredential == null
+            ? testRootUserInfo.Name
+            : rootImpersonateServiceState.Cache.GetOrAdd(rootImpersonateServiceState.CustomUserCredential, _ =>
+                new ImpersonatedCurrentUser(
+                    new FixedCurrentUser(testRootUserInfo.Name),
+                    rootImpersonateServiceState,
+                    userNameResolver,
+                    defaultCancellationTokenSource).Name);
 }

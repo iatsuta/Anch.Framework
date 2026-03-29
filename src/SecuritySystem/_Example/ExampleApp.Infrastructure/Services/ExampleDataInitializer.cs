@@ -1,21 +1,22 @@
 ﻿using CommonFramework;
+using CommonFramework.Auth;
 using CommonFramework.GenericRepository;
 
 using ExampleApp.Domain;
 using ExampleApp.Domain.Auth.Virtual;
 
-using SecuritySystem.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.Infrastructure.Services;
 
-public class ExampleDataInitializer(IRawUserAuthenticationService rawUserAuthenticationService, IGenericRepository genericRepository) : IInitializer
+public class ExampleDataInitializer([FromKeyedServices(ICurrentUser.RawKey)]ICurrentUser rawCurrentUser, IGenericRepository genericRepository) : IInitializer
 {
     public const string Key = "ExampleData";
 
     public async Task Initialize(CancellationToken cancellationToken)
     {
         {
-            var currentEmployee = new Employee { Login = rawUserAuthenticationService.GetUserName() };
+            var currentEmployee = new Employee { Login = rawCurrentUser.Name };
             await genericRepository.SaveAsync(currentEmployee, cancellationToken);
 
             var currentEmployeeAdminVirtualPermission = new Administrator { Employee = currentEmployee };

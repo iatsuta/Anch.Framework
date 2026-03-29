@@ -2,15 +2,13 @@
 
 namespace SecuritySystem.Services;
 
-public abstract class ImpersonateService : IImpersonateService
+public class ImpersonateService(ImpersonateState impersonateState) : IImpersonateService
 {
-    protected virtual UserCredential? CustomUserCredential { get; set; }
-
     public async Task<T> WithImpersonateAsync<T>(UserCredential customUserCredential, Func<Task<T>> func)
     {
-        var prev = this.CustomUserCredential;
+        var prev = impersonateState.CustomUserCredential;
 
-        this.CustomUserCredential = customUserCredential;
+        impersonateState.CustomUserCredential = customUserCredential;
 
         try
         {
@@ -18,7 +16,7 @@ public abstract class ImpersonateService : IImpersonateService
         }
         finally
         {
-            this.CustomUserCredential = prev;
+            impersonateState.CustomUserCredential = prev;
         }
     }
 }

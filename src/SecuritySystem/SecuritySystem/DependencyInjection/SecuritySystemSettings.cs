@@ -32,6 +32,7 @@ using SecuritySystem.Builders.MaterializedBuilder;
 
 using System.Globalization;
 using System.Reflection;
+using CommonFramework.Auth;
 
 namespace SecuritySystem.DependencyInjection;
 
@@ -39,7 +40,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 {
     private readonly List<DomainSecurityServiceBuilder> domainBuilders = [];
 
-    private readonly HashSet<Type> userSourceTypes = new();
+    private readonly HashSet<Type> userSourceTypes = [];
 
     private DomainSecurityRule.RoleBaseSecurityRule securityAdministratorRule = SecurityRole.Administrator;
 
@@ -49,7 +50,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 
     private Action<IServiceCollection>? registerQueryableSourceAction;
 
-    private Action<IServiceCollection>? registerRawUserAuthenticationServiceAction;
+    private Action<IServiceCollection>? registerRawCurrentUserAction;
 
     private Action<IServiceCollection>? registerGenericRepositoryAction;
 
@@ -134,8 +135,6 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
     {
         return this.AddDomainSecurity<TDomainObject>(b => b.Override<TMetadata>().Pipe(TMetadata.Setup));
     }
-
-
 
     public ISecuritySystemBuilder AddSecurityRole(SecurityRole securityRole, SecurityRoleInfo info)
     {
@@ -308,19 +307,10 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
         return this;
     }
 
-    public ISecuritySystemBuilder SetRawUserAuthenticationService<TRawUserAuthenticationService>(bool withImpersonate = true)
-        where TRawUserAuthenticationService : class, IRawUserAuthenticationService
+    public ISecuritySystemBuilder SetRawCurrentUser<TCurrentUser>()
+        where TCurrentUser : class, ICurrentUser
     {
-        this.registerRawUserAuthenticationServiceAction = sc =>
-        {
-            sc.AddScoped<TRawUserAuthenticationService>();
-            sc.ReplaceScopedFrom<IRawUserAuthenticationService, TRawUserAuthenticationService>();
-
-            if (withImpersonate && typeof(IImpersonateService).IsAssignableFrom(typeof(TRawUserAuthenticationService)))
-            {
-                sc.ReplaceScopedFrom<IImpersonateService>(sp => (IImpersonateService)sp.GetRequiredService(typeof(TRawUserAuthenticationService)));
-            }
-        };
+        this.registerRawCurrentUserAction = sc => sc.AddKeyedScoped<ICurrentUser, TCurrentUser>(ICurrentUser.RawKey);
 
         return this;
     }
@@ -365,7 +355,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 
         (this.registerGenericRepositoryAction ?? throw new InvalidOperationException("GenericRepository must be initialized")).Invoke(services);
 
-        (this.registerRawUserAuthenticationServiceAction ?? throw new InvalidOperationException("RawUserAuthenticationService must be initialized"))
+        (this.registerRawCurrentUserAction ?? throw new InvalidOperationException("RawCurrentUser must be initialized"))
             .Invoke(services);
 
         services.AddSingleton(new SecurityAdministratorRuleInfo(this.securityAdministratorRule));
@@ -410,9 +400,13 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
     {
         return services
 
+            .AddScoped<ImpersonateState>()
+            .AddScopedFrom<IImpersonateState, ImpersonateState>()
+            .AddScoped<IImpersonateService, ImpersonateService>()
+
             .AddScoped(typeof(IPermissionLoader<,>), typeof(PermissionLoader<,>))
 
-            .AddScoped<IUserCredentialNameResolver, UserCredentialNameResolver>()
+            .AddScoped<IUserNameResolver, UserNameResolver>()
 
             .AddSingleton(typeof(IManagedPrincipalHeaderConverterFactory<>), typeof(ManagedPrincipalHeaderConverterFactory<>))
             .AddSingleton(typeof(IManagedPrincipalHeaderConverter<>), typeof(ManagedPrincipalHeaderConverter<>))
@@ -442,7 +436,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
             .AddScoped(typeof(IUserQueryableSource<>), typeof(UserQueryableSource<>))
             .AddScoped(typeof(IUserNameResolver<>), typeof(UserNameResolver<>))
             .AddScoped(typeof(IUserFilterFactory<>), typeof(UserFilterFactory<>))
-            .AddKeyedScoped(typeof(ICurrentUserSource<>), nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential), typeof(RawCurrentUserSource<>))
+            .AddKeyedScoped(typeof(ICurrentUserSource<>), nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential), typeof(WithoutRunAsCurrentUserSource<>))
             .AddSingleton<SecurityAdministratorRuleFactory>()
 
             .AddSingleton(typeof(IUserCredentialMatcher<>), typeof(UserCredentialMatcher<>))
@@ -481,7 +475,7 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
             .AddScoped(typeof(ISecurityFilterFactory<>), typeof(SecurityFilterBuilderFactory<>))
             .AddScoped(typeof(IAccessorsFilterFactory<>), typeof(AccessorsFilterBuilderFactory<>))
             .AddScoped<ICurrentUser, CurrentUser>()
-            .AddKeyedScoped<ICurrentUser, RawCurrentUser>(nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential))
+            .AddKeyedScoped<ICurrentUser, ImpersonatedCurrentUser>(ICurrentUser.ImpersonatedKey)
             .AddKeyedScoped(
                 typeof(ISecurityProvider<>),
                 nameof(DomainSecurityRule.CurrentUser),

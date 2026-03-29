@@ -1,4 +1,5 @@
 ﻿using CommonFramework;
+using CommonFramework.Auth;
 
 using SecuritySystem.Credential;
 using SecuritySystem.ExternalSystem.Management;
@@ -7,40 +8,39 @@ using SecuritySystem.Services;
 namespace SecuritySystem.Testing;
 
 public class UserCredentialManager(
-    IRawUserAuthenticationService userAuthenticationService,
+    ICurrentUser currentUser,
     IPrincipalManagementService principalManagementService,
     IRootPrincipalSourceService rootPrincipalSourceService,
-    IUserCredentialNameResolver credentialNameResolver,
+    IUserNameResolver credentialNameResolver,
     IPrincipalDataSecurityIdentityManager securityIdentityManager,
-    IDefaultCancellationTokenSource? defaultCancellationTokenSource = null,
-    UserCredential? baseUserCredential = null)
+    IDefaultCancellationTokenSource? defaultCancellationTokenSource = null)
 {
     private readonly IPrincipalSourceService principalSourceService = rootPrincipalSourceService.ForPrincipal(principalManagementService.PrincipalType);
 
-    private readonly UserCredential userCredential = baseUserCredential ?? userAuthenticationService.GetUserName();
-
-    public UserCredentialManager WithCredential(UserCredential? newUserCredential)
+    public UserCredentialManager ReplaceCurrentUser(UserCredential userCredential)
     {
-        return new UserCredentialManager(userAuthenticationService, principalManagementService, rootPrincipalSourceService, credentialNameResolver,
-            securityIdentityManager, defaultCancellationTokenSource, newUserCredential);
+        return new UserCredentialManager(
+            new FixedCurrentUser(defaultCancellationTokenSource.RunSync(ct => credentialNameResolver.GetUserNameAsync(userCredential, ct))),
+            principalManagementService,
+            rootPrincipalSourceService,
+            credentialNameResolver,
+            securityIdentityManager, defaultCancellationTokenSource);
     }
-
-    private string PrincipalName => defaultCancellationTokenSource.RunSync(ct => credentialNameResolver.GetUserNameAsync(userCredential, ct));
 
     public async Task<SecurityIdentity> CreatePrincipalAsync(CancellationToken cancellationToken = default)
     {
-        var principalData = await principalManagementService.CreatePrincipalAsync(this.PrincipalName, [], cancellationToken);
+        var principalData = await principalManagementService.CreatePrincipalAsync(currentUser.Name, [], cancellationToken);
 
         return securityIdentityManager.Extract(principalData);
     }
 
     public async Task<SecurityIdentity> AddUserRoleAsync(ManagedPermission[] newPermissions, CancellationToken cancellationToken = default)
     {
-        var existsPrincipal = await principalSourceService.TryGetPrincipalAsync(this.userCredential, cancellationToken);
+        var existsPrincipal = await principalSourceService.TryGetPrincipalAsync(currentUser.Name, cancellationToken);
 
         if (existsPrincipal == null)
         {
-            var newPrincipalData = await principalManagementService.CreatePrincipalAsync(this.PrincipalName, newPermissions, cancellationToken);
+            var newPrincipalData = await principalManagementService.CreatePrincipalAsync(currentUser.Name, newPermissions, cancellationToken);
 
             return securityIdentityManager.Extract(newPrincipalData);
         }
@@ -59,7 +59,7 @@ public class UserCredentialManager(
 
     public async Task RemovePermissionsAsync(CancellationToken cancellationToken = default)
     {
-        var principal = await principalSourceService.TryGetPrincipalAsync(this.userCredential, cancellationToken);
+        var principal = await principalSourceService.TryGetPrincipalAsync(currentUser.Name, cancellationToken);
 
         if (principal is { Header.IsVirtual: false })
         {
@@ -69,6 +69,6 @@ public class UserCredentialManager(
 
     public async Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken cancellationToken = default)
     {
-        return await principalSourceService.GetPrincipalAsync(this.userCredential, cancellationToken);
+        return await principalSourceService.GetPrincipalAsync(currentUser.Name, cancellationToken);
     }
 }

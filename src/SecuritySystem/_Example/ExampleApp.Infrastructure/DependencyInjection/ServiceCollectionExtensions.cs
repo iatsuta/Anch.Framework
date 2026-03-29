@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
                     sss
                         .SetQueryableSource<DalQueryableSource>()
                         .SetGenericRepository<DalGenericRepository>()
-                        .SetRawUserAuthenticationService<ExampleRawUserAuthenticationService>()
+                        .SetRawCurrentUser<ExampleRawCurrentUser>()
                         .SetDefaultCancellationTokenSource<ExampleDefaultCancellationTokenSource>()
 
                         .AddUserSource<Employee>()

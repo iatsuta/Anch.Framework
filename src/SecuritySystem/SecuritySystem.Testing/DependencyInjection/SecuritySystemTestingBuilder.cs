@@ -1,8 +1,6 @@
-﻿using CommonFramework.DependencyInjection;
-
+﻿using CommonFramework.Auth;
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SecuritySystem.Testing.DependencyInjection;
 
@@ -33,9 +31,7 @@ public class SecuritySystemTestingBuilder : ISecuritySystemTestingBuilder
             .AddSingleton<RootImpersonateServiceState>()
             .AddSingleton<IRootImpersonateService, RootImpersonateService>()
 
-            .AddScoped<TestingUserAuthenticationService>()
-            .ReplaceScopedFrom<IRawUserAuthenticationService, TestingUserAuthenticationService>()
-            .ReplaceScopedFrom<IImpersonateService, TestingUserAuthenticationService>()
+            .Replace(ServiceDescriptor.KeyedScoped<ICurrentUser, TestingRawCurrentUser>(ICurrentUser.RawKey))
 
             .AddScoped(typeof(UserCredentialManager))
 

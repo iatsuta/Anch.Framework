@@ -1,6 +1,7 @@
 ﻿using CommonFramework;
+using CommonFramework.Auth;
 using CommonFramework.GenericRepository;
-
+using Microsoft.Extensions.DependencyInjection;
 using SecuritySystem.Credential;
 
 using SecuritySystem.UserSource;
@@ -8,7 +9,7 @@ using SecuritySystem.UserSource;
 namespace SecuritySystem.Services;
 
 public class RunAsManager<TUser>(
-    IRawUserAuthenticationService rawUserAuthenticationService,
+    [FromKeyedServices(ICurrentUser.ImpersonatedKey)]ICurrentUser impersonatedCurrentUser,
     ISecuritySystemFactory securitySystemFactory,
     IEnumerable<IRunAsValidator> validators,
     IUserSource<TUser> userSource,
@@ -21,12 +22,12 @@ public class RunAsManager<TUser>(
     where TUser : class
 {
     private readonly Lazy<TUser?> lazyNativeTryCurrentUser = new(() =>
-        defaultCancellationTokenSource.RunSync(ct => userSource.TryGetUserAsync(rawUserAuthenticationService.GetUserName(), ct)));
+        defaultCancellationTokenSource.RunSync(ct => userSource.TryGetUserAsync(impersonatedCurrentUser.Name, ct)));
 
     private TUser? NativeTryCurrentUser => this.lazyNativeTryCurrentUser.Value;
 
     private TUser NativeCurrentUser => this.NativeTryCurrentUser ??
-                                       throw missedUserErrorSource.GetNotFoundException(typeof(TUser), rawUserAuthenticationService.GetUserName());
+                                       throw missedUserErrorSource.GetNotFoundException(typeof(TUser), impersonatedCurrentUser.Name);
 
     private TUser? NativeRunAsUser => this.NativeTryCurrentUser == null ? null : userSourceRunAsInfo.RunAs.Getter(this.NativeTryCurrentUser);
 
@@ -39,7 +40,7 @@ public class RunAsManager<TUser>(
         if (this.NativeRunAsUser is not null && userCredentialMatcher.IsMatch(userCredential, this.NativeRunAsUser))
         {
         }
-        else if (userCredential == rawUserAuthenticationService.GetUserName())
+        else if (userCredential == impersonatedCurrentUser.Name)
         {
             await this.FinishRunAsUserAsync(cancellationToken);
         }
