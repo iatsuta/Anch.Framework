@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 using CommonFramework.IdentitySource;
+using SecuritySystem.Notification.Domain;
 
 namespace SecuritySystem.Notification;
 

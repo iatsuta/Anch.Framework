@@ -47,8 +47,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
 
             case DomainSecurityRule.ProviderSecurityRule securityRule:
             {
-                var securityProviderType =
-                    securityRule.GenericSecurityProviderType.MakeGenericType(typeof(TDomainObject));
+                var securityProviderType = (securityRule.GenericSecurityProviderType ?? typeof(ISecurityProvider<>)).MakeGenericType(typeof(TDomainObject));
 
                 var securityProvider = securityRule.Key == null
                     ? serviceProvider.GetRequiredService(securityProviderType)

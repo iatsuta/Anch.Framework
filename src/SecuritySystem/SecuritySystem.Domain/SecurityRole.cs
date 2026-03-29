@@ -1,5 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-namespace SecuritySystem;
+﻿namespace SecuritySystem;
 
 public class SecurityRole(string name)
 {

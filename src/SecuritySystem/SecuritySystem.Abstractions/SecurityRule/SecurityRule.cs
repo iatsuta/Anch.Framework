@@ -1,6 +1,4 @@
-﻿using SecuritySystem.Providers;
-
-// ReSharper disable once CheckNamespace
+﻿// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public abstract record SecurityRule
@@ -21,7 +19,7 @@ public abstract record SecurityRule
     /// <summary>
     /// Правило доступа для отключения безопасности
     /// </summary>
-    public static DomainSecurityRule.ProviderSecurityRule Disabled { get; } = new(typeof(ISecurityProvider<>), nameof(Disabled));
+    public static DomainSecurityRule.ProviderSecurityRule Disabled { get; } = new() { Key = nameof(Disabled) };
 
 
     public static implicit operator SecurityRule(SecurityOperation securityOperation) => securityOperation.ToSecurityRule();

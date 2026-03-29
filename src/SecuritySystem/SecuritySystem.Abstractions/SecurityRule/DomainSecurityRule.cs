@@ -2,8 +2,6 @@
 
 using HierarchicalExpand;
 
-using SecuritySystem.Providers;
-
 // ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
@@ -17,7 +15,7 @@ public abstract record DomainSecurityRule : SecurityRule
     /// <summary>
     /// Правило доступа для блокирования доступа
     /// </summary>
-    public static ProviderSecurityRule AccessDenied { get; } = new(typeof(ISecurityProvider<>), nameof(AccessDenied));
+    public static ProviderSecurityRule AccessDenied { get; } = new() { Key = nameof(AccessDenied) };
 
     /// <summary>
     /// Любая роль
@@ -48,18 +46,26 @@ public abstract record DomainSecurityRule : SecurityRule
         public override string ToString() => $"{this.Mode} ({this.DomainType.Name})";
     }
 
-    public record CurrentUserSecurityRule(string? RelativePathKey = null) : DomainSecurityRule
+    public record CurrentUserSecurityRule : DomainSecurityRule
     {
+        public string? RelativePathKey { get; init; }
+
         public override string ToString() => this.RelativePathKey ?? nameof(CurrentUser);
     }
 
-    public record ProviderSecurityRule(Type GenericSecurityProviderType, string? Key = null) : DomainSecurityRule
+    public record ProviderSecurityRule : DomainSecurityRule
     {
+        public Type? GenericSecurityProviderType { get; init; }
+
+        public string? Key { get; init; }
+
         public override string ToString() => this.Key ?? base.ToString();
     }
 
-    public record ProviderFactorySecurityRule(Type GenericSecurityProviderFactoryType, string? Key = null) : DomainSecurityRule
+    public record ProviderFactorySecurityRule(Type GenericSecurityProviderFactoryType) : DomainSecurityRule
     {
+        public string? Key { get; init; }
+
         public override string ToString() => this.Key ?? base.ToString();
     }
 

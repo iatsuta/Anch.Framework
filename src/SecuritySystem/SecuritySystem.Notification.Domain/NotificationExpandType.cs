@@ -1,4 +1,4 @@
-﻿namespace SecuritySystem.Notification;
+﻿namespace SecuritySystem.Notification.Domain;
 
 /// <summary>
 /// Константы, описывающие правила для вычисления принципалов по роле
@@ -15,16 +15,3 @@ public enum NotificationExpandType
 
     All = 4
 }
-
-
-//[Flags]
-//public enum NotificationExpandType
-//{
-//    Direct = 0,
-
-//    Empty = 1,
-
-//    FirstParent = 2,
-
-//    All = Direct | Empty | FirstParent
-//}

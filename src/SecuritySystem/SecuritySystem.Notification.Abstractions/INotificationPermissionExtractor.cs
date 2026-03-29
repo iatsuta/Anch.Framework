@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using SecuritySystem.Notification.Domain;
 
 namespace SecuritySystem.Notification;
 

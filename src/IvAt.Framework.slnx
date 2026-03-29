@@ -42,6 +42,7 @@
 
   <Folder Name="/HierarchicalExpand/">
     <Project Path="HierarchicalExpand/HierarchicalExpand/HierarchicalExpand.csproj" />
+    <Project Path="HierarchicalExpand/HierarchicalExpand.Domain/HierarchicalExpand.Domain.csproj" />
     <Project Path="HierarchicalExpand/HierarchicalExpand.Runtime/HierarchicalExpand.Runtime.csproj" />  
     <Project Path="HierarchicalExpand/HierarchicalExpand.Abstractions/HierarchicalExpand.Abstractions.csproj" />
   </Folder>
@@ -62,6 +63,7 @@
     <Project Path="SecuritySystem/SecuritySystem.GeneralPermission.Runtime/SecuritySystem.GeneralPermission.Runtime.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.GeneralPermission/SecuritySystem.GeneralPermission.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Notification.Abstractions/SecuritySystem.Notification.Abstractions.csproj" />
+    <Project Path="SecuritySystem/SecuritySystem.Notification.Domain/SecuritySystem.Notification.Domain.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Notification.Runtime/SecuritySystem.Notification.Runtime.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Notification/SecuritySystem.Notification.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Runtime/SecuritySystem.Runtime.csproj" />

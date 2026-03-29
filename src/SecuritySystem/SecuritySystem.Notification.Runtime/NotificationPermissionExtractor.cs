@@ -4,6 +4,7 @@ using CommonFramework;
 using CommonFramework.GenericRepository;
 
 using GenericQueryable;
+using SecuritySystem.Notification.Domain;
 
 namespace SecuritySystem.Notification;
 

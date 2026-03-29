@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using SecuritySystem;
 using SecuritySystem.Notification;
+using SecuritySystem.Notification.Domain;
 using SecuritySystem.Services;
 
 namespace ExampleApp.IntegrationTests;

@@ -1,4 +1,4 @@
-﻿namespace SecuritySystem.Notification;
+﻿namespace SecuritySystem.Notification.Domain;
 
 public static class NotificationExpandTypeExtensions
 {

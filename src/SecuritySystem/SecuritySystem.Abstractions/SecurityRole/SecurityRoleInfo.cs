@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+
 using HierarchicalExpand;
 
 // ReSharper disable once CheckNamespace

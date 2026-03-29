@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>IvAt.HierarchicalExpand.Abstractions</PackageId>
+    <PackageId>IvAt.HierarchicalExpand.Domain</PackageId>
     <RootNamespace>HierarchicalExpand</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HierarchicalExpand.Domain\HierarchicalExpand.Domain.csproj" />
-
     <ProjectReference Include="..\..\CommonFramework\CommonFramework\CommonFramework.csproj" />
   </ItemGroup>
 

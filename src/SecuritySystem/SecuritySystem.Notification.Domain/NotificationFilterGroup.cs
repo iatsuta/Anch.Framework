@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace SecuritySystem.Notification;
+namespace SecuritySystem.Notification.Domain;
 
 public abstract record NotificationFilterGroup
 {

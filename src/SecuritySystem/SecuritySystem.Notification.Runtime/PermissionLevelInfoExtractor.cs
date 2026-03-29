@@ -2,7 +2,7 @@
 
 using CommonFramework;
 using CommonFramework.ExpressionEvaluate;
-
+using SecuritySystem.Notification.Domain;
 using SecuritySystem.Services;
 
 namespace SecuritySystem.Notification;
