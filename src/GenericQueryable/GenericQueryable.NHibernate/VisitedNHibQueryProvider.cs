@@ -22,7 +22,7 @@ public class VisitedNHibQueryProvider : DefaultQueryProvider, IGenericQueryProvi
 
     public ExpressionVisitor? Visitor { get; set; }
 
-    public IGenericQueryableExecutor Executor { get; set; }
+    public IGenericQueryableExecutor Executor { get; set; } = null!;
 
     protected override IQueryProvider CreateWithOptions(NhQueryableOptions options)
     {

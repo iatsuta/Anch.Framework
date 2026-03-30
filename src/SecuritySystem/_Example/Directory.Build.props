@@ -4,6 +4,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <NoWarn>CS9107</NoWarn>
+  </PropertyGroup>
 
   <PropertyGroup>
     <LangVersion>latest</LangVersion>

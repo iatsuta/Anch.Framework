@@ -15,7 +15,6 @@ namespace ExampleApp.Api.Controllers;
 [Route("api/[controller]/[action]")]
 [ApiController]
 public class TestController(
-    IQueryableSource queryableSource,
     ICurrentUserSource<Employee> currentEmployeeSource,
     IRepositoryFactory<TestObject> testObjectRepositoryFactory,
     IRepositoryFactory<BusinessUnit> buRepositoryFactory,

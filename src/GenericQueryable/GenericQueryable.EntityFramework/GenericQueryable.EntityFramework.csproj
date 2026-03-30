@@ -4,6 +4,10 @@
     <PackageId>IvAt.GenericQueryable.EntityFramework</PackageId>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>EF1001</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>

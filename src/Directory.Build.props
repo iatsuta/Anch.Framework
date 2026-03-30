@@ -10,6 +10,10 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <NoWarn>CS9107</NoWarn>
+  </PropertyGroup>
 
   <PropertyGroup>
     <LangVersion>latest</LangVersion>

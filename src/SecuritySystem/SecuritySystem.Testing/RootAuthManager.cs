@@ -19,7 +19,6 @@ public class RootAuthManager(
     IServiceProvider rootServiceProvider,
     IServiceProxyFactory serviceProxyFactory,
     ITestingEvaluator<IQueryableSource> queryableSourceEvaluator,
-    ITestingEvaluator<IGenericRepository> genericRepositoryEvaluator,
     ITestingEvaluator<IServiceProvider> serviceProviderEvaluator,
     IIdentityInfoSource identityInfoSource,
     IVisualIdentityInfoSource visualIdentityInfoSource,
