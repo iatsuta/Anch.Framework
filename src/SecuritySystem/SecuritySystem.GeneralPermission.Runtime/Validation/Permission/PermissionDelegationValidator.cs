@@ -89,8 +89,8 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
                 throw new SecuritySystemValidationException(
                     string.Format(
                         "Invalid security context delegation: the security contexts of \"{1}\" exceed those granted by \"{0}\": {2}",
-                        domainObjectDisplayService.ToString(permissionBindingInfo.Principal.Getter(delegatedFrom)),
-                        domainObjectDisplayService.ToString(permissionBindingInfo.Principal.Getter(subPermission)),
+                        domainObjectDisplayService.Format(permissionBindingInfo.Principal.Getter(delegatedFrom)),
+                        domainObjectDisplayService.Format(permissionBindingInfo.Principal.Getter(subPermission)),
                         invalidSecurityContextDict.Join(
                             " | ",
                             g =>

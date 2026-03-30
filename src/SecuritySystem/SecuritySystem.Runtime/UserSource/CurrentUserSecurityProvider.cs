@@ -80,7 +80,7 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     IRelativeDomainPathInfo<TDomainObject, TUser> relativeDomainPathInfo,
     IIdentityInfo<TUser, TIdent> identityInfo,
-    IVisualIdentityInfoSource visualIdentityInfoSource,
+    IVisualIdentityInfo<TUser> visualIdentityInfo,
     ISecurityIdentityConverter<TIdent> securityIdentityConverter,
     IUserNameResolver<TUser> userNameResolver,
     IUserSource<TUser> userSource,
@@ -89,8 +89,6 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
     where TUser : class
     where TIdent : notnull
 {
-    private readonly Func<TUser, string> nameSelector = visualIdentityInfoSource.GetVisualIdentityInfo<TUser>().Name.Getter;
-
     public override Expression<Func<TDomainObject, bool>> SecurityFilter { get; } =
 
         defaultCancellationTokenSource.RunSync<Expression<Func<TUser, bool>>>(async ct =>
@@ -120,7 +118,7 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
         var users = await relativeDomainPathInfo
             .GetRelativeObjects(domainObject)
             .ToAsyncEnumerable()
-            .Select(nameSelector)
+            .Select(visualIdentityInfo.Name.Getter)
             .ToImmutableArrayAsync(cancellationToken);
 
         return SecurityAccessorData.Return(users);

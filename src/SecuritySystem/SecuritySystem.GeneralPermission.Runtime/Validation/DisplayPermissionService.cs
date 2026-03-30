@@ -1,5 +1,4 @@
 ﻿using CommonFramework;
-using CommonFramework.VisualIdentitySource;
 
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.ExternalSystem.SecurityContextStorage;
@@ -7,35 +6,12 @@ using SecuritySystem.ExternalSystem.SecurityContextStorage;
 namespace SecuritySystem.GeneralPermission.Validation;
 
 public class DisplayPermissionService<TPermission, TPermissionRestriction>(
-    IServiceProxyFactory serviceProxyFactory,
     PermissionBindingInfo<TPermission> bindingInfo,
-    GeneralPermissionBindingInfo<TPermission> generalBindingInfo,
-    IGeneralPermissionRestrictionBindingInfoSource restrictionBindingInfoSource) : IDisplayPermissionService<TPermission, TPermissionRestriction>
-{
-    private readonly Lazy<IDisplayPermissionService<TPermission, TPermissionRestriction>> lazyInnerService = new(() =>
-    {
-        var restrictionBindingInfo = restrictionBindingInfoSource.GetForPermission(bindingInfo.PermissionType);
-
-        var innerServiceType = typeof(DisplayPermissionService<,,>).MakeGenericType(
-            generalBindingInfo.PermissionType,
-            generalBindingInfo.SecurityRoleType,
-            restrictionBindingInfo.PermissionRestrictionType);
-
-        return serviceProxyFactory.Create<IDisplayPermissionService<TPermission, TPermissionRestriction>>(innerServiceType);
-    });
-
-    public string Format(PermissionData<TPermission, TPermissionRestriction> permissionData) => this.lazyInnerService.Value.Format(permissionData);
-}
-
-public class DisplayPermissionService<TPermission, TSecurityRole, TPermissionRestriction>(
-    PermissionBindingInfo<TPermission> bindingInfo,
-    GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,
-    IDomainObjectDisplayService domainObjectDisplayService,
+    IPermissionSecurityRoleResolver<TPermission> securityRoleResolver,
     ISecurityContextInfoSource securityContextInfoSource,
     ISecurityContextStorage securityContextStorage,
     IPermissionRestrictionRawConverter<TPermissionRestriction> rawPermissionConverter)
     : IDisplayPermissionService<TPermission, TPermissionRestriction>
-    where TSecurityRole : class
 {
     public string Format(PermissionData<TPermission, TPermissionRestriction> permissionData)
     {
@@ -46,7 +22,7 @@ public class DisplayPermissionService<TPermission, TSecurityRole, TPermissionRes
     {
         var permission = permissionData.Permission;
 
-        yield return $"Role: {domainObjectDisplayService.ToString(generalBindingInfo.SecurityRole.Getter(permissionData.Permission))}";
+        yield return $"Role: {securityRoleResolver.Resolve(permissionData.Permission).Name}";
 
         if (bindingInfo.PermissionStartDate != null)
         {

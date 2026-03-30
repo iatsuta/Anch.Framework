@@ -18,7 +18,7 @@ public class PlainTypedSecurityContextStorage<TSecurityContext, TSecurityContext
 {
     protected override SecurityContextData<TSecurityContextIdent> CreateSecurityContextData(TSecurityContext securityContext) =>
 
-        new(identityInfo.Id.Getter(securityContext), displayService.ToString(securityContext), default);
+        new(identityInfo.Id.Getter(securityContext), displayService.Format(securityContext), default);
 
     protected override IEnumerable<TSecurityContext> GetSecurityContextsWithMasterExpand(TSecurityContext startSecurityObject)
     {

@@ -7,18 +7,16 @@ namespace SecuritySystem.UserSource;
 
 public class CreateVirtualMissedUserService<TUser>(
     IMissedUserErrorSource missedUserErrorSource,
-    IVisualIdentityInfoSource visualIdentityInfoSource,
+    IVisualIdentityInfo<TUser> visualIdentityInfo,
     IDefaultUserConverter<TUser> defaultUserConverter) : IMissedUserService<TUser>
     where TUser : class, new()
 {
-    private readonly Action<TUser, string> nameSetter = visualIdentityInfoSource.GetVisualIdentityInfo<TUser>().Name.Setter;
-
     public TUser GetUser(UserCredential userCredential)
     {
         if (userCredential is UserCredential.NamedUserCredential namedUserCredential)
         {
             var user = new TUser();
-            nameSetter(user, namedUserCredential.Name);
+            visualIdentityInfo.Name.Setter(user, namedUserCredential.Name);
             return user;
         }
         else

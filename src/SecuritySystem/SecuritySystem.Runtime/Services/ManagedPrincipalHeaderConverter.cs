@@ -12,7 +12,6 @@ namespace SecuritySystem.Services;
 public class ManagedPrincipalHeaderConverter<TPrincipal>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfoSource identityInfoSource,
-    IVisualIdentityInfoSource visualIdentityInfoSource,
     IPermissionBindingInfoSource bindingInfoSource,
     Tuple<PermissionBindingInfo>? customBindingInfo = null) : IManagedPrincipalHeaderConverter<TPrincipal>
 {
@@ -20,15 +19,12 @@ public class ManagedPrincipalHeaderConverter<TPrincipal>(
     {
         var identityInfo = identityInfoSource.GetIdentityInfo<TPrincipal>();
 
-        var visualIdentityInfo = visualIdentityInfoSource.GetVisualIdentityInfo<TPrincipal>();
-
         var innerServiceType = typeof(ManagedPrincipalHeaderConverter<,>).MakeGenericType(identityInfo.DomainObjectType, identityInfo.IdentityType);
 
         return serviceProxyFactory.Create<IManagedPrincipalHeaderConverter<TPrincipal>>(
             innerServiceType,
             customBindingInfo?.Item1 ?? bindingInfoSource.GetForPrincipal(typeof(TPrincipal)).Single(),
-            identityInfo,
-            visualIdentityInfo);
+            identityInfo);
     });
 
     public Expression<Func<TPrincipal, ManagedPrincipalHeader>> ConvertExpression => this.lazyInnerService.Value.ConvertExpression;

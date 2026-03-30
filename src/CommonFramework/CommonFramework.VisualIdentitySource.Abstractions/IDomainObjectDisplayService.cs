@@ -2,6 +2,6 @@
 
 public interface IDomainObjectDisplayService
 {
-	string ToString<TDomainObject>(TDomainObject domainObject)
+	string Format<TDomainObject>(TDomainObject domainObject)
 		where TDomainObject : class;
 }

@@ -4,5 +4,5 @@ namespace CommonFramework.IdentitySource;
 
 public interface IIdentityPropertyExtractor
 {
-    PropertyInfo Extract(Type domainType);
+    PropertyInfo? TryExtract(Type domainType);
 }

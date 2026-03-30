@@ -30,19 +30,19 @@ public class VisualIdentityInfoSource(IVisualIdentityPropertyExtractor propertyE
             }
             else
             {
-                var nameProperty = propertyExtractor.TryExtract(domainObjectType);
+                var property = propertyExtractor.TryExtract(domainObjectType);
 
-                if (nameProperty == null)
+                if (property == null)
                 {
                     return null;
                 }
                 else
                 {
-                    var idPath = nameProperty.ToGetLambdaExpression();
+                    var path = property.ToGetLambdaExpression();
 
                     return new Func<Expression<Func<object, string>>, VisualIdentityInfo<object>>(CreateVisualIdentityInfo)
                         .CreateGenericMethod(domainObjectType)
-                        .Invoke<VisualIdentityInfo>(null, idPath);
+                        .Invoke<VisualIdentityInfo>(null, path);
                 }
             }
         });
@@ -58,8 +58,8 @@ public class VisualIdentityInfoSource(IVisualIdentityPropertyExtractor propertyE
         return new Exception($"{nameof(VisualIdentityInfo)} for {domainObjectType.Name} not found");
     }
 
-    private static VisualIdentityInfo<TDomainObject> CreateVisualIdentityInfo<TDomainObject>(Expression<Func<TDomainObject, string>> namePath)
+    private static VisualIdentityInfo<TDomainObject> CreateVisualIdentityInfo<TDomainObject>(Expression<Func<TDomainObject, string>> path)
 	{
-		return new VisualIdentityInfo<TDomainObject>(namePath);
+		return new VisualIdentityInfo<TDomainObject>(path);
 	}
 }

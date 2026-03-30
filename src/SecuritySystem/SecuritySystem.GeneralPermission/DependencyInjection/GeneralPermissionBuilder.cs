@@ -230,8 +230,7 @@ public class GeneralPermissionBuilder<TPrincipal, TPermission, TSecurityRole, TP
 
                     .AddScoped<
                         IDisplayPermissionService<TPermission, TPermissionRestriction>,
-                        DisplayPermissionService<TPermission, TSecurityRole, TPermissionRestriction>>()
-
+                        DisplayPermissionService<TPermission, TPermissionRestriction>>()
 
                     .AddKeyedSingleton<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
