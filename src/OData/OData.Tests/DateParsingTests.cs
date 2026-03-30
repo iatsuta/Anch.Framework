@@ -7,26 +7,26 @@ public class DateParsingTests : TestBase
         new TestClass
         {
             Id = 1,
-            EndDateNull = new DateTime(2018, 8, 1),
             StartDateNotNull = new DateTime(2018, 8, 1),
+            EndDateNull = new DateTime(2018, 8, 1)
         },
         new TestClass
         {
             Id = 2,
+            StartDateNotNull = new DateTime(2018, 8, 2),
             EndDateNull = new DateTime(2018, 8, 2),
-            StartDateNotNull = new DateTime(2018, 8, 2)
         },
         new TestClass
         {
             Id = 3,
+            StartDateNotNull = new DateTime(2018, 8, 3),
             EndDateNull = null,
-            StartDateNotNull = new DateTime(2018, 8, 3)
         },
         new TestClass
         {
             Id = 4,
+            StartDateNotNull = new DateTime(2018, 9, 10),
             EndDateNull = new DateTime(2018, 9, 10),
-            StartDateNotNull = new DateTime(2018, 9, 10)
         }
     }.AsQueryable();
 

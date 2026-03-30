@@ -16,6 +16,7 @@ public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpres
 
 
     public Parser<SharedMemoryString, SelectOperation> MainParser =>
+
         from result in this.OfTable(
 
             this.GetElementParser("filter", this.GetLazy(() => this.FilterParser))
