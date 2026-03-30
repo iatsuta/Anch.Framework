@@ -1,8 +1,6 @@
-﻿using Framework.Core;
-
-namespace Framework.OData.Tests.LiftTestData;
+﻿namespace OData.Tests.LiftTestData;
 
 public class TestPeriodObj
 {
-    public Period Period { get; set; }
+    public TestPeriod Period { get; set; }
 }

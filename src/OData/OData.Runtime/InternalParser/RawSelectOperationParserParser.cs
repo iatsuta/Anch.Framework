@@ -1,13 +1,14 @@
 ﻿using System.Collections.Immutable;
 using System.Globalization;
+
 using CommonFramework.Parsing;
 
 using OData.Domain;
 using OData.Domain.QueryLanguage;
 
-namespace OData.Parser.Parsing;
+namespace OData.InternalParser;
 
-public class SelectOperationInternalParser(CultureInfo culture, ParameterExpression rootParameter) : CharParsers(culture)
+public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpression rootParameter) : CharParsers(culture)
 {
     private readonly LambdaExpressionInternalParser rootLambdaExpressionParser = new(culture, rootParameter, [rootParameter]);
 

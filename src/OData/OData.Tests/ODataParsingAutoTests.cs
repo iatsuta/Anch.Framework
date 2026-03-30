@@ -1,20 +1,15 @@
 ﻿using System.Diagnostics;
 
-using FluentAssertions;
+using OData.Domain;
+using OData.Domain.QueryLanguage;
+using OData.Domain.QueryLanguage.Constant;
+using OData.Domain.QueryLanguage.Operations;
 
-using Framework.OData.QueryLanguage;
-using Framework.OData.QueryLanguage.Constant;
-using Framework.OData.QueryLanguage.Operations;
+namespace OData.Tests;
 
-using NUnit.Framework;
-
-namespace Framework.OData.Tests;
-
-//TODO: Move this class to autotests
-[TestFixture]
-public class ODataParsingAutoTests
+public class ODataParsingAutoTests : TestBase
 {
-    [Test]
+    [Fact]
     public void Test001()
     {
         var skipCount = 123;
@@ -43,7 +38,7 @@ public class ODataParsingAutoTests
     }
 
 
-    [Test]
+    [Fact]
     public void Test002()
     {
         var skipCount = 10;
@@ -102,7 +97,7 @@ public class ODataParsingAutoTests
         this.Test(testStr, expectedOperation);
     }
 
-    [Test]
+    [Fact]
     public void Test003()
     {
         var takeCount = 70;
@@ -182,7 +177,7 @@ public class ODataParsingAutoTests
         this.Test(testStr, expectedOperation);
     }
 
-    [Test]
+    [Fact]
     public void Test004()
     {
         var const1Str = "true";
@@ -225,9 +220,9 @@ public class ODataParsingAutoTests
         this.Test(testStr, expectedOperation);
     }
 
-    [Test]
-    [TestCase("m")]
-    [TestCase("M")]
+    [Theory]
+    [InlineData("m")]
+    [InlineData("M")]
     public void DecimalParse_DifferentMLetterCase_ParseSuccess(string m)
     {
         // Arrange
@@ -258,44 +253,42 @@ public class ODataParsingAutoTests
         this.Test(testStr, expectedOperation);
     }
 
-    [Test]
+    [Fact]
     public void SelectOperation_ParseNegativeIntNumberInFilter_NoException()
     {
         // Arrange
         var query = "$filter=Pin eq -1";
 
         // Act
-        Action call = () => SelectOperation.Parse(query);
+        Action call = () => this.RawSelectOperationParser.Parse(query);
 
         // Assert
         call.Should().NotThrow();
     }
 
-    /// <summary>
-    /// IADFRAME-1011 OData-парсер не работает с отрицательными значениями фильтров
-    /// </summary>
-    [TestCase("m")]
-    [TestCase("M")]
+    [Theory]
+    [InlineData("m")]
+    [InlineData("M")]
     public void SelectOperation_ParseNegativeDecimalNumberInFilter_NoException(string m)
     {
         // Arrange
         var query = "$filter=Pin eq -1" + m;
 
         // Act
-        Action call = () => SelectOperation.Parse(query);
+        Action call = () => this.RawSelectOperationParser.Parse(query);
 
         // Assert
         call.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void SelectOperation_ParsePositiveNumberInFilter_NoException()
     {
         // Arrange
         var query = "$filter=Pin eq 1";
 
         // Act
-        Action call = () => SelectOperation.Parse(query);
+        Action call = () => this.RawSelectOperationParser.Parse(query);
 
         // Assert
         call.Should().NotThrow();
@@ -306,7 +299,7 @@ public class ODataParsingAutoTests
         if (parsingString == null) throw new ArgumentNullException(nameof(parsingString));
         if (expectedOperation == null) throw new ArgumentNullException(nameof(expectedOperation));
 
-        var parsedSelectOperation = SelectOperation.Parse(parsingString);
+        var parsedSelectOperation = this.RawSelectOperationParser.Parse(parsingString);
 
         var equalsResult = parsedSelectOperation.Equals(expectedOperation);
 

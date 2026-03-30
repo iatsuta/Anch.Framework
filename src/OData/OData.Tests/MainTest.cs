@@ -1,18 +1,20 @@
-﻿using NUnit.Framework;
+﻿namespace OData.Tests;
 
-namespace Framework.OData.Tests;
-
-[TestFixture]
-public class MainTest
+public class MainTest : TestBase
 {
-    [Test]
-    [Ignore("Used for local hand running")]
+    [Fact]
     public void TestODataParse()
     {
+        // Arrange
         var request = File.ReadAllText("request.odata");
 
-        var zzz = SelectOperation.Parse(request);
+        // Act
+        var result = this.RawSelectOperationParser.Parse(request);
 
-        var r = zzz.Filter.ToString();
+        // Assert
+
+        throw new NotImplementedException();
+
+        //var r = result zzz.Filter.ToString();
     }
 }

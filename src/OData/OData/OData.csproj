@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
   <PropertyGroup>
-    <PackageId>Luxoft.Framework.OData</PackageId>
+    <PackageId>IvAt.OData</PackageId>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\__SolutionItems\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <ProjectReference Include="..\..\CommonFramework\CommonFramework.DependencyInjection\CommonFramework.DependencyInjection.csproj" />
+
+    <ProjectReference Include="..\OData.Runtime\OData.Runtime.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Framework.Parsing\Framework.Parsing.csproj" />
-    <ProjectReference Include="..\Framework.OData.QueryLanguage\Framework.OData.QueryLanguage.csproj" />
-  </ItemGroup>
+
 </Project>

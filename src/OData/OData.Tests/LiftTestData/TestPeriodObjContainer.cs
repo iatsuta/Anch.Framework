@@ -1,12 +1,8 @@
-﻿using Framework.BLL.Domain.Persistent.Attributes;
-using Framework.Core;
-
-namespace Framework.OData.Tests.LiftTestData;
+﻿namespace OData.Tests.LiftTestData;
 
 public class TestPeriodObjContainer
 {
-    [ExpandPath("InnerObj.Period")]
-    public Period? Period => this.InnerObj?.Period;
+    public TestPeriod? Period => this.InnerObj?.Period;
 
-    public TestPeriodObj InnerObj { get; set; }
+    public TestPeriodObj? InnerObj { get; set; }
 }

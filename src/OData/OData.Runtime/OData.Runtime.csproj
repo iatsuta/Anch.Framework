@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CommonFramework\CommonFramework.Parsing\CommonFramework.Parsing.csproj" />
+
     <ProjectReference Include="..\OData.Abstractions\OData.Abstractions.csproj" />
   </ItemGroup>
 

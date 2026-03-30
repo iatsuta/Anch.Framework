@@ -1,4 +1,4 @@
-﻿namespace Framework.OData.Tests.LiftTestData;
+﻿namespace OData.Tests.LiftTestData;
 
 public class TestIntObj
 {

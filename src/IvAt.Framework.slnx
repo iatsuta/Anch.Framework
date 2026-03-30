@@ -59,6 +59,8 @@
     <Project Path="OData/OData.Domain/OData.Domain.csproj" />
     <Project Path="OData/OData.RawDomain/OData.RawDomain.csproj" />
     <Project Path="OData/OData.Runtime/OData.Runtime.csproj" />
+    <Project Path="OData/OData.Tests/OData.Tests.csproj" />
+    <Project Path="OData/OData/OData.csproj" />
   </Folder>
 
   <Folder Name="/SecuritySystem/">

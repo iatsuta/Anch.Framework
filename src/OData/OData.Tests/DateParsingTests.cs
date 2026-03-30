@@ -1,50 +1,36 @@
-﻿using FluentAssertions;
+﻿namespace OData.Tests;
 
-using Framework.OData.QueryLanguage.StandardExpressionBuilder;
-using Framework.OData.Typed;
-
-using NUnit.Framework;
-
-namespace Framework.OData.Tests;
-
-[TestFixture]
-public class DateParsingTests
+public class DateParsingTests : TestBase
 {
-    private IQueryable<TestClass> stream;
-
-    [SetUp]
-    public void Setup()
+    private readonly IQueryable<TestClass> stream = new[]
     {
-        this.stream = new[]
-                      {
-                              new TestClass
-                              {
-                                      Id = 1,
-                                      EndDateNull = new DateTime(2018, 8, 1),
-                                      StartDateNotNull = new DateTime(2018, 8, 1),
-                              },
-                              new TestClass
-                              {
-                                      Id = 2,
-                                      EndDateNull = new DateTime(2018, 8, 2),
-                                      StartDateNotNull = new DateTime(2018, 8, 2)
-                              },
-                              new TestClass
-                              {
-                                      Id = 3,
-                                      EndDateNull = null,
-                                      StartDateNotNull = new DateTime(2018, 8, 3)
-                              },
-                              new TestClass
-                              {
-                                      Id = 4,
-                                      EndDateNull = new DateTime(2018, 9, 10),
-                                      StartDateNotNull = new DateTime(2018, 9, 10)
-                              }
-                      }.AsQueryable();
-    }
+        new TestClass
+        {
+            Id = 1,
+            EndDateNull = new DateTime(2018, 8, 1),
+            StartDateNotNull = new DateTime(2018, 8, 1),
+        },
+        new TestClass
+        {
+            Id = 2,
+            EndDateNull = new DateTime(2018, 8, 2),
+            StartDateNotNull = new DateTime(2018, 8, 2)
+        },
+        new TestClass
+        {
+            Id = 3,
+            EndDateNull = null,
+            StartDateNotNull = new DateTime(2018, 8, 3)
+        },
+        new TestClass
+        {
+            Id = 4,
+            EndDateNull = new DateTime(2018, 9, 10),
+            StartDateNotNull = new DateTime(2018, 9, 10)
+        }
+    }.AsQueryable();
 
-    [Test]
+    [Fact]
     public void NotNullableDate__Month_Equal_Value_ElementFounded()
     {
         // Arrange
@@ -57,7 +43,7 @@ public class DateParsingTests
         res.Id.Should().Be(4);
     }
 
-    [Test]
+    [Fact]
     public void NotNullableDate__Day_Equal_Value_ElementFounded()
     {
         // Arrange
@@ -70,7 +56,7 @@ public class DateParsingTests
         res.Id.Should().Be(4);
     }
 
-    [Test]
+    [Fact]
     public void NotNullableDate_Equal_Value_ElementFounded()
     {
         // Arrange
@@ -83,7 +69,7 @@ public class DateParsingTests
         res.Id.Should().Be(1);
     }
 
-    [Test]
+    [Fact]
     public void NotNullableDate_Equal_Null_Exception()
     {
         // Arrange
@@ -96,7 +82,7 @@ public class DateParsingTests
         res.Message.Should().Be("Sequence contains no elements");
     }
 
-    [Test]
+    [Fact]
     public void NullableDate_Equal_Null_ElementFounded()
     {
         // Arrange
@@ -109,7 +95,7 @@ public class DateParsingTests
         res.Id.Should().Be(3);
     }
 
-    [Test]
+    [Fact]
     public void NullableDate_Equal_Value_Null_ElementFounded()
     {
         // Arrange
@@ -124,11 +110,9 @@ public class DateParsingTests
 
     private TestClass ParseAndProcess(string query)
     {
-        var selectOperation = SelectOperation.Parse(query);
+        var selectOperationGeneric = this.SelectOperationParser.Parse<TestClass>(query);
 
-        var selectOperationGeneric = new StandardExpressionBuilder().ToTyped<TestClass>(selectOperation);
-
-        var res = selectOperationGeneric.Process(this.stream).Single();
+        var res = selectOperationGeneric.Inject(this.stream).Single();
 
         return res;
     }

@@ -16,7 +16,7 @@ using ExpressionMapParser = CommonFramework.Parsing.Parser<CommonFramework.Parsi
 
 using SExpressions = System.Linq.Expressions;
 
-namespace OData.Parser.Parsing;
+namespace OData.InternalParser;
 
 public class LambdaExpressionInternalParser(
     CultureInfo culture,
@@ -164,7 +164,7 @@ public class LambdaExpressionInternalParser(
 
         select (Expression)new GuidConstantExpression(value);
 
-    private Parser<SharedMemoryString, Expression> DateTimeConstantExpressionParser =>
+    private ExpressionParser DateTimeConstantExpressionParser =>
 
         from _ in this.StringIgnoreCase("datetime'")
 
