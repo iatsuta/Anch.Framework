@@ -20,27 +20,27 @@ public static class MaybeExtensions
                 fromNothingAction?.Invoke();
             }
         }
+
+        public TSource GetValue()
+        {
+            return maybeValue.GetValue(() => new Exception("Nothing Value"));
+        }
+
+        public TSource GetValue(Func<Exception> nothingException)
+        {
+            return maybeValue.Match(result => result, () => throw nothingException());
+        }
+
+        public TSource? GetValueOrDefault()
+        {
+            return maybeValue.GetValueOrDefault(default(TSource));
+        }
     }
 
     public static Maybe<TResult> Or<TSource, TResult>(this Maybe<TSource> v1, Func<Maybe<TResult>> getV2)
         where TSource : TResult
     {
         return v1.HasValue ? v1.Select(v => (TResult)v) : getV2();
-    }
-
-    public static T GetValue<T>(this Maybe<T> maybeValue)
-    {
-        return maybeValue.GetValue(() => new Exception("Nothing Value"));
-    }
-
-    public static T GetValue<T>(this Maybe<T> maybeValue, Func<Exception> nothingException)
-    {
-        return maybeValue.Match(result => result, () => throw nothingException());
-    }
-
-    public static T? GetValueOrDefault<T>(this Maybe<T> maybeValue)
-    {
-        return maybeValue.GetValueOrDefault(default(T));
     }
 
     public static TResult GetValueOrDefault<TSource, TResult>(this Maybe<TSource> maybeValue, TResult defaultValue)
@@ -55,20 +55,23 @@ public static class MaybeExtensions
         return maybeValue.Match(result => result, getDefaultValue);
     }
 
-    public static Maybe<bool> LogicOr(this Maybe<bool> v1, Func<Maybe<bool>> getV2)
+    extension(Maybe<bool> v1)
     {
+        public Maybe<bool> LogicOr(Func<Maybe<bool>> getV2)
+        {
 
-        return v1.Where(p => p).Or(() => LogicOrDict[v1][getV2()]);
-    }
+            return v1.Where(p => p).Or(() => LogicOrDict[v1][getV2()]);
+        }
 
-    public static Maybe<bool> LogicOr(this Maybe<bool> v1, Maybe<bool> v2)
-    {
-        return v1.LogicOr(() => v2);
-    }
+        public Maybe<bool> LogicOr(Maybe<bool> v2)
+        {
+            return v1.LogicOr(() => v2);
+        }
 
-    public static Maybe<bool> LogicAnd(this Maybe<bool> v1, Func<Maybe<bool>> getV2)
-    {
-        return v1.Where(p => !p).Or(() => LogicAndDict[v1][getV2()]);
+        public Maybe<bool> LogicAnd(Func<Maybe<bool>> getV2)
+        {
+            return v1.Where(p => !p).Or(() => LogicAndDict[v1][getV2()]);
+        }
     }
 
     private static readonly Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>> LogicOrDict = new()

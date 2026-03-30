@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>IvAt.OData.QueryLanguage</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CommonFramework\CommonFramework\CommonFramework.csproj" />
+  </ItemGroup>
+
+</Project>

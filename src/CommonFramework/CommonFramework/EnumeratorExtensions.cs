@@ -2,28 +2,31 @@
 
 public static class EnumeratorExtensions
 {
-    public static IEnumerable<T> ReadToEnd<T>(this IEnumerator<T> source)
+    extension<T>(IEnumerator<T> source)
     {
-        while (source.MoveNext())
+        public IEnumerable<T> ReadToEnd()
         {
-            yield return source.Current;
+            while (source.MoveNext())
+            {
+                yield return source.Current;
+            }
         }
-    }
 
-    public static IEnumerable<T> ReadMany<T>(this IEnumerator<T> source, int count)
-    {
-        return Enumerable.Range(0, count).Select(_ => source.ReadSingle());
-    }
-
-    public static T ReadSingle<T>(this IEnumerator<T> source)
-    {
-        if (source.MoveNext())
+        public IEnumerable<T> ReadMany(int count)
         {
-            return source.Current;
+            return Enumerable.Range(0, count).Select(_ => source.ReadSingle());
         }
-        else
+
+        public T ReadSingle()
         {
-            throw new Exception("enumerator finished");
+            if (source.MoveNext())
+            {
+                return source.Current;
+            }
+            else
+            {
+                throw new Exception("enumerator finished");
+            }
         }
     }
 }

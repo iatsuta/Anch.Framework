@@ -8,7 +8,8 @@ namespace CommonFramework;
 
 public static class ExpressionExtensions
 {
-    public static Expression<Func<TArg1, TArg2, TResult>> UnCurrying<TArg1, TArg2, TResult>(this Expression<Func<TArg1, Expression<Func<TArg2, TResult>>>> baseExpr)
+    public static Expression<Func<TArg1, TArg2, TResult>> UnCurrying<TArg1, TArg2, TResult>(
+        this Expression<Func<TArg1, Expression<Func<TArg2, TResult>>>> baseExpr)
     {
         var quoteLambda = (UnaryExpression)baseExpr.Body;
         var innerLambda = (LambdaExpression)quoteLambda.Operand;
@@ -20,12 +21,12 @@ public static class ExpressionExtensions
     }
 
     extension<TSource, TProperty>(Expression<Func<TSource, TProperty>> path)
-	{
-		public PropertyAccessors<TSource, TProperty> ToPropertyAccessors() => new (path);
+    {
+        public PropertyAccessors<TSource, TProperty> ToPropertyAccessors() => new(path);
 
-		public Expression<Action<TSource, TProperty>> ToSetLambdaExpression()
-		{
-			return path.GetProperty().ToSetLambdaExpression<TSource, TProperty>();
+        public Expression<Action<TSource, TProperty>> ToSetLambdaExpression()
+        {
+            return path.GetProperty().ToSetLambdaExpression<TSource, TProperty>();
         }
 
         public Func<TSource, TProperty> ToGetFunc()
@@ -51,7 +52,7 @@ public static class ExpressionExtensions
         }
     }
 
-	public static IEnumerable<Expression> GetChildren(this MethodCallExpression expression)
+    public static IEnumerable<Expression> GetChildren(this MethodCallExpression expression)
     {
         if (expression.Object != null)
         {
@@ -201,15 +202,25 @@ public static class ExpressionExtensions
 
         public Expression GetBodyWithOverrideParameters(params Expression[] newExpressions)
         {
-            var pairs = expression.Parameters.ZipStrong(newExpressions, (parameter, newExpression) => new { Parameter = parameter, NewExpression = newExpression });
+            var pairs = expression.Parameters.ZipStrong(newExpressions,
+                (parameter, newExpression) => new { Parameter = parameter, NewExpression = newExpression });
 
             return pairs.Aggregate(expression.Body, (expr, pair) => expr.Override(pair.Parameter, pair.NewExpression));
         }
     }
 
-    /// <param name="baseExpression">expression to get value from</param>
     extension(Expression baseExpression)
     {
+        public Expression ExtractBoxingValue() => baseExpression.GetConvertOperand().GetValueOrDefault(baseExpression);
+
+        public Maybe<Expression> GetConvertOperand() =>
+
+            from unaryExpression in (baseExpression as UnaryExpression).ToMaybe()
+
+            where unaryExpression.NodeType == ExpressionType.Convert
+
+            select unaryExpression.Operand;
+
         public Expression Override(Expression oldExpr, Expression newExpr)
         {
             return new OverrideExpressionVisitor(oldExpr, newExpr).Visit(baseExpression)!;
@@ -227,7 +238,7 @@ public static class ExpressionExtensions
 
         public Maybe<TValue?> GetDeepMemberConstValue<TValue>()
         {
-            return GetDeepMemberConstValue(baseExpression).Where(v => v is TValue).Select(v => (TValue?)v);
+            return baseExpression.GetDeepMemberConstValue().Where(v => v is TValue).Select(v => (TValue?)v);
         }
 
         public Maybe<object?> GetDeepMemberConstValue()

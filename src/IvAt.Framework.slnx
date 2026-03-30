@@ -12,6 +12,7 @@
     <Project Path="CommonFramework/CommonFramework.IdentitySource.Abstractions/CommonFramework.IdentitySource.Abstractions.csproj" />
     <Project Path="CommonFramework/CommonFramework.IdentitySource.Runtime/CommonFramework.IdentitySource.Runtime.csproj" />
     <Project Path="CommonFramework/CommonFramework.IdentitySource/CommonFramework.IdentitySource.csproj" />
+    <Project Path="CommonFramework/CommonFramework.Parsing/CommonFramework.Parsing.csproj" />
     <Project Path="CommonFramework/CommonFramework.RelativePath/CommonFramework.RelativePath.csproj" />
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Abstractions/CommonFramework.VisualIdentitySource.Abstractions.csproj" />
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Runtime/CommonFramework.VisualIdentitySource.Runtime.csproj" />
@@ -52,6 +53,9 @@
     <Project Path="HierarchicalExpand/HierarchicalExpand.IntegrationTests.NHibernate/HierarchicalExpand.IntegrationTests.NHibernate.csproj" />
     <Project Path="HierarchicalExpand/HierarchicalExpand.IntegrationTests/HierarchicalExpand.IntegrationTests.csproj" />
     <Project Path="HierarchicalExpand/HierarchicalExpand.Tests/HierarchicalExpand.Tests.csproj" />
+  </Folder>
+  <Folder Name="/OData/">
+    <Project Path="OData/OData.QueryLanguage/OData.QueryLanguage.csproj" />
   </Folder>
 
   <Folder Name="/SecuritySystem/">
