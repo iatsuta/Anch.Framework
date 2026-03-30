@@ -109,5 +109,5 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 
 
 
-    public static readonly OptimizeBooleanLogicVisitor Value = new OptimizeBooleanLogicVisitor();
+    public static readonly OptimizeBooleanLogicVisitor Value = new();
 }

@@ -27,5 +27,5 @@ public class ExpandConstVisitor : ExpressionVisitor
     }
 
 
-    public static readonly ExpandConstVisitor Value = new ExpandConstVisitor();
+    public static readonly ExpandConstVisitor Value = new();
 }

@@ -47,9 +47,9 @@ public class InjectMaybeVisitor : ExpressionVisitor
     {
         var baseVisitedExpression = this.Visit(node.Expression);
 
-        var isWrapped = baseVisitedExpression.Type.IsMaybe();
+        var isWrapped = baseVisitedExpression!.Type.IsMaybe();
 
-        var isValueSource = node.Expression.Type.IsValueType;
+        var isValueSource = node.Expression!.Type.IsValueType;
 
         var param = Expression.Parameter(node.Expression.Type);
 
@@ -114,7 +114,7 @@ public class InjectMaybeVisitor : ExpressionVisitor
 
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
-        return node.GetChildren().Select(this.Visit).OverrideSelect(elements => node.Method.ToCallExpression(elements));
+        return node.GetChildren().Select(this.Visit)!.OverrideSelect(elements => node.Method.ToCallExpression(elements));
     }
 
     protected override Expression VisitBinary(BinaryExpression node)
@@ -212,14 +212,14 @@ public class InjectMaybeVisitor : ExpressionVisitor
 
     protected override Expression VisitNewArray(NewArrayExpression node)
     {
-        return node.Expressions.Select(this.Visit).OverrideSelect(items =>
+        return node.Expressions.Select(this.Visit)!.OverrideSelect(items =>
 
-            Expression.NewArrayInit(node.Type.GetElementType(), items));
+            Expression.NewArrayInit(node.Type.GetElementType()!, items));
     }
 
     protected override Expression VisitNew(NewExpression node)
     {
-        return node.Arguments.Select(this.Visit).OverrideSelect(args => Expression.New(node.Constructor, args));
+        return node.Arguments.Select(this.Visit)!.OverrideSelect(args => Expression.New(node.Constructor!, args));
     }
 
     protected override Expression VisitListInit(ListInitExpression node)
@@ -259,5 +259,5 @@ public class InjectMaybeVisitor : ExpressionVisitor
     }
 
 
-    public static readonly InjectMaybeVisitor Value = new InjectMaybeVisitor();
+    public static readonly InjectMaybeVisitor Value = new();
 }

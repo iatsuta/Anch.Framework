@@ -71,7 +71,7 @@ public static class MaybeExtensions
         return v1.Where(p => !p).Or(() => LogicAndDict[v1][getV2()]);
     }
 
-    private static readonly Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>> LogicOrDict = new Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>>()
+    private static readonly Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>> LogicOrDict = new()
     {
         //{ Maybe.Return(true), new Dictionary<Maybe<bool>, Maybe<bool>>
         //                      {
@@ -96,7 +96,7 @@ public static class MaybeExtensions
     };
 
 
-    private static readonly Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>> LogicAndDict = new Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>>()
+    private static readonly Dictionary<Maybe<bool>, Dictionary<Maybe<bool>, Maybe<bool>>> LogicAndDict = new()
     {
         { Maybe.Return(true), new Dictionary<Maybe<bool>, Maybe<bool>>
         {

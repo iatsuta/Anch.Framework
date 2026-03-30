@@ -12,7 +12,7 @@ public class OverrideStringEqualityExpressionVisitor(StringComparison stringComp
     private static readonly MethodInfo StringEqualsMethod = new Func<string, string, StringComparison, bool>(string.Equals).Method;
 
 
-    private static readonly Dictionary<MethodInfo, MethodInfo> CallMap = new Dictionary<MethodInfo, MethodInfo>
+    private static readonly Dictionary<MethodInfo, MethodInfo> CallMap = new()
     {
         { new Func<string, bool>("".Contains).Method, new Func<string, StringComparison, bool>("".Contains).Method },
         { new Func<string, bool>("".StartsWith).Method, new Func<string, StringComparison, bool>("".StartsWith).Method },

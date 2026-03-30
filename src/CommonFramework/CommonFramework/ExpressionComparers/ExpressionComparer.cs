@@ -86,7 +86,7 @@ public class ExpressionComparer : ExpressionComparer<Expression>
 	}
 
 
-	public static ExpressionComparer Default { get; } = new ExpressionComparer();
+	public static ExpressionComparer Default { get; } = new();
 
 	public static ExpressionComparer WithoutConst { get; } = new WithoutConstExpressionComparer();
 

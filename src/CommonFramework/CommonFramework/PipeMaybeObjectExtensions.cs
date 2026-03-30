@@ -30,7 +30,7 @@ public static class PipeMaybeObjectExtensions
     }
 
     public static TResult MaybeNullable<TSource, TResult>(this TSource? source, Func<TSource, TResult> selector,
-        TResult nullableResult = default(TResult))
+        TResult nullableResult = default!)
         where TSource : struct
     {
         return null == source ? nullableResult : selector(source.Value);
@@ -48,7 +48,7 @@ public static class PipeMaybeObjectExtensions
         Func<TSource, TResult> getResult)
         where TSource : class
     {
-        return source.Maybe(v => condition(v) ? getResult(v) : default(TResult));
+        return source.Maybe(v => condition(v) ? getResult(v) : default);
     }
 
     [DebuggerStepThrough]

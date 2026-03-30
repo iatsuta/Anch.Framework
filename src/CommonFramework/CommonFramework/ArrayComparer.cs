@@ -16,5 +16,5 @@ public class ArrayComparer<T>(IEqualityComparer<T> itemComparer) : IEqualityComp
     }
 
 
-    public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
+    public static readonly ArrayComparer<T> Default = new(EqualityComparer<T>.Default);
 }

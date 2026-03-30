@@ -277,9 +277,9 @@ public static class ExpressionExtensions
 
         public ConstantExpression? GetPureDeepMemberConstExpression()
         {
-            if (baseExpression is ConstantExpression constExpr)
+            if (baseExpression is ConstantExpression baseConstExpr)
             {
-                return constExpr;
+                return baseConstExpr;
             }
 
             if (baseExpression is not MemberExpression memberExpr)
@@ -287,31 +287,32 @@ public static class ExpressionExtensions
                 return null;
             }
 
-            var memberChains = memberExpr.GetAllElements(z => z.Expression as MemberExpression).TakeWhile(x => x != null).ToList();
+            var memberChains = memberExpr.GetAllElements(z => z.Expression as MemberExpression).ToList();
 
             var startExpr = memberChains.Last();
 
-            constExpr = startExpr.Expression as ConstantExpression;
-            if (constExpr == null)
+            if (startExpr.Expression is ConstantExpression constExpr)
             {
-                return constExpr;
+                var constValue = ValueTuple.Create(startExpr.Member.GetValue(constExpr.Value), startExpr.Member.GetMemberType());
+                memberChains.Reverse();
+                var finalValue = memberChains
+                    .Skip(1) // выше обработали самый первый (var startExpr = memberChains.Last();)
+                    .Select(z => z.Member)
+                    .Aggregate(
+                        constValue,
+                        (prevValue, memberInfo) => ValueTuple.Create(memberInfo.GetValue(prevValue.Item1), memberInfo.GetMemberType()));
+
+                if (finalValue.Item1 == null && finalValue.Item2.IsValueType)
+                {
+                    return null;
+                }
+
+                return Expression.Constant(finalValue.Item1, finalValue.Item2);
             }
-
-            var constValue = ValueTuple.Create(startExpr.Member.GetValue(constExpr.Value), startExpr.Member.GetMemberType());
-            memberChains.Reverse();
-            var finalValue = memberChains
-                .Skip(1) // выше обработали самый первый (var startExpr = memberChains.Last();)
-                .Select(z => z.Member)
-                .Aggregate(
-                    constValue,
-                    (prevValue, memberInfo) => ValueTuple.Create(memberInfo.GetValue(prevValue.Item1), memberInfo.GetMemberType()));
-
-            if (finalValue.Item1 == null && finalValue.Item2.IsValueType)
+            else
             {
                 return null;
             }
-
-            return Expression.Constant(finalValue.Item1, finalValue.Item2);
         }
 
         public Maybe<MemberInfo> GetMember()
