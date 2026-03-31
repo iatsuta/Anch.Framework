@@ -20,7 +20,7 @@ public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject,
 {
     private HashSet<TIdent>? availableIdentsCache;
 
-    public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable)
+    public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable)
     {
         var availableIdentsQ = this.GetAvailableIdentsQ();
 
@@ -65,6 +65,6 @@ public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject,
 
     protected virtual IQueryable<TIdent> GetAvailableIdentsQ()
     {
-        return queryableSource.GetQueryable<TBaseDomainObject>().Pipe(baseSecurityProvider.InjectFilter).Select(baseDomainIdentityInfo.Id.Path);
+        return queryableSource.GetQueryable<TBaseDomainObject>().Pipe(baseSecurityProvider.Inject).Select(baseDomainIdentityInfo.Id.Path);
     }
 }

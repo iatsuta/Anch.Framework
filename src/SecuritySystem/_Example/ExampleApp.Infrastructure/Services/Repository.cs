@@ -28,5 +28,5 @@ public class Repository<TDomainObject>(
     private Task CheckAccess(TDomainObject domainObject, CancellationToken cancellationToken) =>
         securityProvider.CheckAccessAsync(domainObject, accessDeniedExceptionService, cancellationToken);
 
-    public IQueryable<TDomainObject> GetQueryable() => securityProvider.InjectFilter(dal.GetQueryable());
+    public IQueryable<TDomainObject> GetQueryable() => securityProvider.Inject(dal.GetQueryable());
 }

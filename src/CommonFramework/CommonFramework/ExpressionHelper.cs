@@ -4,22 +4,33 @@ namespace CommonFramework;
 
 public static class ExpressionHelper
 {
-	public static Expression<Func<T, TResult>> Create<T, TResult>(Expression<Func<T, TResult>> func)
-	{
-		return func;
-	}
+    public static MemberExpression PropertyOrFieldAuto(Expression expr, string memberName)
+    {
+        if (expr == null) throw new ArgumentNullException(nameof(expr));
+        if (memberName == null) throw new ArgumentNullException(nameof(memberName));
 
-	public static Expression<Func<T, T>> GetIdentity<T>()
-	{
-		return Cache<T>.IdentityExpr;
-	}
+        if (expr.Type.IsInterface)
+        {
+            var property = expr.Type.GetAllInterfaceProperties().FirstOrDefault(prop => prop.Name == memberName);
 
-	public static Expression<Func<T, T, bool>> GetEquality<T>()
-	{
-		return Cache<T>.EqualityExpr;
-	}
+            if (property != null)
+            {
+                return Expression.Property(expr, property);
+            }
+        }
 
-	public static Expression<Func<T, bool>> GetEqualityWithExpr<T>(T value)
+        return Expression.PropertyOrField(expr, memberName);
+    }
+
+    public static Expression<Func<T, TResult>> Create<T, TResult>(Expression<Func<T, TResult>> func) => func;
+
+    public static Expression<Func<T1, T2, TResult>> Create<T1, T2, TResult>(Expression<Func<T1, T2, TResult>> func) => func;
+
+    public static Expression<Func<T, T>> GetIdentity<T>() => Cache<T>.IdentityExpr;
+
+    public static Expression<Func<T, T, bool>> GetEquality<T>() => Cache<T>.EqualityExpr;
+
+    public static Expression<Func<T, bool>> GetEqualityWithExpr<T>(T value)
 	{
 		var p1 = Expression.Parameter(typeof(T));
 

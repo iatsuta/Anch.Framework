@@ -1,7 +1,9 @@
-﻿namespace SecuritySystem.Services;
+﻿using CommonFramework;
 
-public class IdentsParser<TIdent>(IFormatProviderSource formatProviderSource) : IIdentsParser<TIdent>
+namespace SecuritySystem.Services;
+
+public class IdentsParser<TIdent>(ICultureSource? cultureSource = null) : IIdentsParser<TIdent>
 	where TIdent : IParsable<TIdent>
 {
-	public TIdent[] Parse(IEnumerable<string> idents) => idents.Select(v => TIdent.Parse(v, formatProviderSource.FormatProvider)).ToArray();
+	public TIdent[] Parse(IEnumerable<string> idents) => idents.Select(v => TIdent.Parse(v, cultureSource?.Culture)).ToArray();
 }

@@ -52,8 +52,7 @@ public static class Maybe
 
     public static Maybe<T> OfCondition<T>(bool condition, Func<Maybe<T>> getTrueValue, Func<Maybe<T>> getFalseValue)
     {
-        return condition ? getTrueValue()
-            : getFalseValue();
+        return condition ? getTrueValue() : getFalseValue();
     }
 
     public static Func<TArg, Maybe<TResult>> OfTryMethod<TArg, TResult>(TryMethod<TArg, TResult> tryAction)

@@ -6,6 +6,14 @@ namespace CommonFramework;
 
 public static class EnumerableExtensions
 {
+    public static IEnumerable<T> CollectMaybe<T>(this IEnumerable<Maybe<T>> source)
+    {
+        return
+            from item in source
+            where item.HasValue
+            select item.Value;
+    }
+
     public static IEnumerable<TState> Scan<TSource, TState>(this IEnumerable<TSource> source, TState state, Func<TState, TSource, TState> selector)
     {
         yield return state;

@@ -85,3 +85,7 @@ jobs:
       - name: SecuritySystem EntityFramework Integration Tests
         run: |
           dotnet test --blame src/SecuritySystem/_Example/ExampleApp.IntegrationTests.EntityFramework --no-build --verbosity normal
+          
+      - name: OData Unit tests
+        run: |
+          dotnet test src/OData/OData.Tests --no-build --verbosity normal

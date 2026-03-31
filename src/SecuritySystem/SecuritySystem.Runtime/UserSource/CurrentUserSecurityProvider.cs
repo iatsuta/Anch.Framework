@@ -67,7 +67,7 @@ public class CurrentUserSecurityProvider<TDomainObject>(
 
 	private ISecurityProvider<TDomainObject> InnerService => this.lazyInnerService.Value;
 
-    public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable) => this.InnerService.InjectFilter(queryable);
+    public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => this.InnerService.Inject(queryable);
 
     public ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.GetAccessResultAsync(domainObject, cancellationToken);
 

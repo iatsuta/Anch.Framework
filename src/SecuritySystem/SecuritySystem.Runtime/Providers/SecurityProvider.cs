@@ -26,7 +26,7 @@ namespace SecuritySystem.Providers
 
         public abstract Expression<Func<TDomainObject, bool>> SecurityFilter { get; }
 
-        public virtual IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable) => queryable.Where(this.SecurityFilter);
+        public virtual IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => queryable.Where(this.SecurityFilter);
 
         public virtual async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.lazyHasAccessFunc.Value(domainObject);
 

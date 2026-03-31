@@ -2,54 +2,92 @@
 
 public static class StringExtensions
 {
-    public static string Skip(this string input, string pattern, bool raiseIfNotEquals)
+    extension(string input)
     {
-        return input.Skip(pattern, StringComparison.CurrentCulture, raiseIfNotEquals);
+        public string FromPluralize()
+        {
+            if (input.Length < 2)
+            {
+                return input;
+            }
+            else if (input.EndsWith("ies", StringComparison.Ordinal) && input.Length > 3)
+            {
+                return input[..^3] + "y";
+            }
+            else if (input.EndsWith("es", StringComparison.Ordinal))
+            {
+                if (input.Length > 4 && input[^4] != 's')
+                {
+                    return input[..^2];
+                }
+                else
+                {
+                    return input[..^1];
+                }
+            }
+            else if (input.EndsWith('s') && !input.EndsWith("ss", StringComparison.Ordinal))
+            {
+                return input[..^1];
+            }
+            else
+            {
+                return input;
+            }
+        }
+
+
+        public string ToStartLowerCase() => input.Length != 0 ? char.ToLower(input.First()) + input[1..] : input;
+
+        public string Skip(string pattern, bool raiseIfNotEquals) => input.Skip(pattern, StringComparison.CurrentCulture, raiseIfNotEquals);
+
+        public string Skip(string pattern, StringComparison stringComparison, bool raiseIfNotEquals)
+        {
+            if (input.StartsWith(pattern, stringComparison))
+            {
+                return input[pattern.Length..];
+            }
+            else if (raiseIfNotEquals)
+            {
+                throw new ArgumentException($"Invalid input: {input}. Expected start element: {pattern}", nameof(input));
+            }
+            else
+            {
+                return input;
+            }
+        }
+
+        public string SkipLast(string pattern, bool raiseIfNotEquals)
+        {
+            return input.SkipLast(pattern, StringComparison.CurrentCulture, raiseIfNotEquals);
+        }
+
+        public string SkipLast(string pattern, StringComparison stringComparison, bool raiseIfNotEquals)
+        {
+            if (input.EndsWith(pattern, stringComparison))
+            {
+                return input[..^pattern.Length];
+            }
+            else if (raiseIfNotEquals)
+            {
+                throw new ArgumentException($"Invalid input: {input}. Expected last element: {pattern}", nameof(input));
+            }
+            else
+            {
+                return input;
+            }
+        }
     }
 
-    public static string Skip(this string input, string pattern, StringComparison stringComparison, bool raiseIfNotEquals)
+    extension<TSource>(IEnumerable<TSource> source)
     {
-        if (input.StartsWith(pattern, stringComparison))
+        public string Join<TResult>(string separator, Func<TSource, TResult> selector)
         {
-            return input.Substring(pattern.Length, input.Length - pattern.Length);
+            return source.Select(selector).Join(separator);
         }
-        else if (raiseIfNotEquals)
-        {
-            throw new ArgumentException($"Invalid input: {input}. Expected start element: {pattern}", nameof(input));
-        }
-        else
-        {
-            return input;
-        }
-    }
 
-    public static string SkipLast(this string input, string pattern, bool raiseIfNotEquals)
-    {
-        return input.SkipLast(pattern, StringComparison.CurrentCulture, raiseIfNotEquals);
-    }
-
-    public static string SkipLast(this string input, string pattern, StringComparison stringComparison, bool raiseIfNotEquals)
-    {
-        if (input.EndsWith(pattern, stringComparison))
+        public string Join(string separator)
         {
-            return input.Substring(0, input.Length - pattern.Length);
+            return string.Join(separator, source);
         }
-        else if (raiseIfNotEquals)
-        {
-            throw new ArgumentException($"Invalid input: {input}. Expected last element: {pattern}", nameof(input));
-        }
-        else
-        {
-            return input;
-        }
-    }
-
-    public static string Join<TSource, TResult>(this IEnumerable<TSource> source, string separator, Func<TSource, TResult> selector)
-    {
-        return source.Select(selector).Join(separator);
-    }
-    public static string Join<T>(this IEnumerable<T> source, string separator)
-    {
-        return string.Join(separator, source);
     }
 }

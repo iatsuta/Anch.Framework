@@ -76,10 +76,10 @@ public static class SecurityProviderBaseExtensions
         bool isAnd)
         : ISecurityProvider<TDomainObject>
     {
-        public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable) =>
+        public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) =>
             isAnd
-                ? securityProvider.InjectFilter(queryable).Pipe(otherSecurityProvider.InjectFilter)
-                : securityProvider.InjectFilter(queryable).Union(otherSecurityProvider.InjectFilter(queryable));
+                ? securityProvider.Inject(queryable).Pipe(otherSecurityProvider.Inject)
+                : securityProvider.Inject(queryable).Union(otherSecurityProvider.Inject(queryable));
 
         public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
             isAnd
@@ -110,8 +110,8 @@ public static class SecurityProviderBaseExtensions
     private class NegateSecurityProvider<TDomainObject>(ISecurityProvider<TDomainObject> securityProvider)
         : ISecurityProvider<TDomainObject>
     {
-        public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable) =>
-            queryable.Except(securityProvider.InjectFilter(queryable));
+        public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) =>
+            queryable.Except(securityProvider.Inject(queryable));
 
         public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken)
         {

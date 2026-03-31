@@ -1,8 +1,10 @@
 ﻿using System.Linq.Expressions;
 
+using CommonFramework;
+
 namespace SecuritySystem.Services;
 
-public class SecurityIdentityConverter<TIdent>(IFormatProviderSource formatProviderSource) : ISecurityIdentityConverter<TIdent>
+public class SecurityIdentityConverter<TIdent>(ICultureSource? cultureSource = null) : ISecurityIdentityConverter<TIdent>
     where TIdent : IParsable<TIdent>, new()
 {
     private readonly Expression<Func<TIdent, TIdent>> identityExpr = v => v;
@@ -15,10 +17,10 @@ public class SecurityIdentityConverter<TIdent>(IFormatProviderSource formatProvi
 
             UntypedSecurityIdentity i when i == SecurityIdentity.Default => TypedSecurityIdentity.Create(new TIdent()),
 
-            UntypedSecurityIdentity { Id: var rawId } when TIdent.TryParse(rawId, formatProviderSource.FormatProvider, out var id) =>
+            UntypedSecurityIdentity { Id: var rawId } when TIdent.TryParse(rawId, cultureSource?.Culture, out var id) =>
                 TypedSecurityIdentity.Create(id),
 
-            TypedSecurityIdentity<string> { Id: var stringId } when TIdent.TryParse(stringId, formatProviderSource.FormatProvider, out var id) =>
+            TypedSecurityIdentity<string> { Id: var stringId } when TIdent.TryParse(stringId, cultureSource?.Culture, out var id) =>
                 TypedSecurityIdentity.Create(id),
 
             _ => null

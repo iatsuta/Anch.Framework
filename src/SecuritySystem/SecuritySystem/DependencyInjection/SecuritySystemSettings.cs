@@ -31,7 +31,6 @@ using SecuritySystem.Services;
 using SecuritySystem.UserSource;
 using SecuritySystem.Builders.MaterializedBuilder;
 
-using System.Globalization;
 using System.Reflection;
 
 namespace SecuritySystem.DependencyInjection;
@@ -432,7 +431,6 @@ public class SecuritySystemBuilder : ISecuritySystemBuilder, IServiceInitializer
 
             .AddSingleton<IMissedUserErrorSource, MissedUserErrorSource>()
 
-            .AddSingleton<IFormatProviderSource>(new FormatProviderSource(CultureInfo.CurrentCulture))
             .AddSingleton(typeof(IIdentsParser<>), typeof(IdentsParser<>))
             .AddSingleton<IDomainObjectIdentsParser, DomainObjectIdentsParser>()
 

@@ -13,9 +13,9 @@ public class DependencySecurityProvider<TDomainObject, TBaseDomainObject>(
     : ISecurityProvider<TDomainObject>
     where TBaseDomainObject : class
 {
-    public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable)
+    public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable)
     {
-        var baseDomainObjSecurityQ = queryableSource.GetQueryable<TBaseDomainObject>().Pipe(baseSecurityProvider.InjectFilter);
+        var baseDomainObjSecurityQ = queryableSource.GetQueryable<TBaseDomainObject>().Pipe(baseSecurityProvider.Inject);
 
         return queryable.Where(relativePath.CreateCondition(domainObj => baseDomainObjSecurityQ.Contains(domainObj)));
     }

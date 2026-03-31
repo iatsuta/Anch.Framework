@@ -44,7 +44,7 @@ public class RootAuthManager(
 
             var queryableSource = serviceProvider.GetRequiredService<IQueryableSource>();
 
-            var idents = await queryableSource.GetQueryable<TDomainObject>().Pipe(securityProvider.InjectFilter).Select(identityInfo.Id.Path)
+            var idents = await queryableSource.GetQueryable<TDomainObject>().Pipe(securityProvider.Inject).Select(identityInfo.Id.Path)
                 .GenericToListAsync(cancellationToken);
 
             return idents.Select(TypedSecurityIdentity.Create).ToList();

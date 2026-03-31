@@ -9,7 +9,7 @@ public class ConditionSecurityProvider<TDomainObject>(Expression<Func<TDomainObj
 {
     private readonly IExpressionEvaluator expressionEvaluator = expressionEvaluatorStorage.GetForType(typeof(ConditionSecurityProvider<TDomainObject>));
 
-    public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable)
+    public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable)
     {
         return queryable.Where(securityFilter);
     }

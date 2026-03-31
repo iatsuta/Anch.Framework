@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>IvAt.OData.Abstractions</PackageId>
+    <RootNamespace>OData</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OData.Domain\OData.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

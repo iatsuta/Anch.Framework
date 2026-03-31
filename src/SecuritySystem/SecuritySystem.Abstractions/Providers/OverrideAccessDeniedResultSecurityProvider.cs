@@ -7,7 +7,7 @@ public class OverrideAccessDeniedResultSecurityProvider<TDomainObject>(
     Func<AccessResult.AccessDeniedResult, AccessResult.AccessDeniedResult> selector)
     : ISecurityProvider<TDomainObject>
 {
-    public IQueryable<TDomainObject> InjectFilter(IQueryable<TDomainObject> queryable) => baseProvider.InjectFilter(queryable);
+    public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => baseProvider.Inject(queryable);
 
     public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken = default) =>
         baseProvider.HasAccessAsync(domainObject, cancellationToken);
