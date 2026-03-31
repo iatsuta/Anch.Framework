@@ -1,6 +1,7 @@
 ﻿using CommonFramework.DependencyInjection;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CommonFramework.Caching.DependencyInjection;
 
@@ -20,7 +21,8 @@ public class CachingBuilder : ICachingBuilder, IServiceInitializer
     {
         if (!services.AlreadyInitialized<ICacheProvider>() || this.cacheProviderType != null)
         {
-            services.AddSingleton(typeof(ICacheProvider), this.cacheProviderType ?? typeof(CacheProvider));
+            services.TryAddSingleton(typeof(ICache<,>), typeof(CacheProxy<,>));
+            services.ReplaceSingleton(typeof(ICacheProvider), this.cacheProviderType ?? typeof(CacheProvider));
         }
     }
 }

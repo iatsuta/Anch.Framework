@@ -11,7 +11,7 @@ public interface ICache<TKey, TValue> : ICache
 
 public interface ICache
 {
-    object Key { get; }
+    object RootKey { get; }
 
     Type KeyType { get; }
 

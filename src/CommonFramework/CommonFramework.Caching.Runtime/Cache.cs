@@ -2,8 +2,8 @@
 
 namespace CommonFramework.Caching;
 
-public class Cache<TKey, TValue>(object key) : ConcurrentDictionary<TKey, TValue>, ICache<TKey, TValue>
+public class Cache<TKey, TValue>(object rootKey) : ConcurrentDictionary<TKey, TValue>, ICache<TKey, TValue>
     where TKey : notnull
 {
-    public object Key { get; } = key;
+    public object RootKey { get; } = rootKey;
 }
