@@ -1,38 +1,21 @@
-﻿using OData.Domain;
+﻿using System.Collections.Concurrent;
+
+using OData.Domain;
 
 using CommonFramework;
+using CommonFramework.Caching;
 
 namespace OData;
 
-public class SelectOperationParser(IODataCache<string, object> cache, IRawSelectOperationParser rawParser, ILambdaExpressionConverter lambdaExpressionConverter) : ISelectOperationParser
+public class SelectOperationParser(ICacheProvider cacheProvider, IRawSelectOperationParser rawParser, ISelectOperationConverter selectOperationConverter)
+    : ISelectOperationParser
 {
+    private readonly ConcurrentDictionary<Type, ICache> rootCache = [];
+
     public SelectOperation<TDomainObject> Parse<TDomainObject>(string input) =>
 
-        (SelectOperation<TDomainObject>)cache.GetOrAdd(input, _ =>
-        {
-            var rawSelectOperation = rawParser.Parse(input);
-
-            var typedFilter = lambdaExpressionConverter.Convert<Func<TDomainObject, bool>>(rawSelectOperation.Filter);
-
-            var typedOrders = rawSelectOperation.Orders.Select(this.ToTypedOrder<TDomainObject>);
-
-            return new SelectOperation<TDomainObject>(typedFilter, [.. typedOrders], rawSelectOperation.SkipCount, rawSelectOperation.TakeCount)
-            {
-                Expands = rawSelectOperation.Expands,
-                Selects = rawSelectOperation.Selects
-            };
-        });
-
-    private SelectOrder<TDomainObject> ToTypedOrder<TDomainObject>(SelectOrder selectOrder)
-    {
-        var orderKeyType = selectOrder.Path.ExtractTargetType<TDomainObject>();
-
-        return new Func<SelectOrder, SelectOrder<TDomainObject, object>>(this.ToTypedOrder<TDomainObject, object>)
-            .CreateGenericMethod(typeof(TDomainObject), orderKeyType)
-            .Invoke<SelectOrder<TDomainObject>>(this, selectOrder);
-    }
-
-    private SelectOrder<TDomainObject, TOrderKey> ToTypedOrder<TDomainObject, TOrderKey>(SelectOrder selectOrder) =>
-        new(lambdaExpressionConverter.Convert<Func<TDomainObject, TOrderKey>>(selectOrder.Path))
-            { OrderType = selectOrder.OrderType };
+        rootCache
+            .GetOrAddAs(typeof(TDomainObject),
+                _ => cacheProvider.GetCache<string, SelectOperation<TDomainObject>>((typeof(ISelectOperationParser), typeof(TDomainObject))))
+            .GetOrAdd(input, _ => selectOperationConverter.Convert<TDomainObject>(rawParser.Parse(input)));
 }

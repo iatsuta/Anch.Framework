@@ -4,5 +4,5 @@ namespace OData;
 
 public interface ISelectOperationParser
 {
-    public SelectOperation<TDomainObject> Parse<TDomainObject>(string input);
+    SelectOperation<TDomainObject> Parse<TDomainObject>(string input);
 }

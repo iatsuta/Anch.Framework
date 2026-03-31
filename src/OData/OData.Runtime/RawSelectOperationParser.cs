@@ -1,4 +1,5 @@
 ﻿using CommonFramework;
+using CommonFramework.Caching;
 using CommonFramework.Parsing;
 
 using OData.Domain;
@@ -9,11 +10,13 @@ using System.Globalization;
 
 namespace OData;
 
-public class RawSelectOperationParser(IODataCache<string, SelectOperation> cache, ICultureSource? cultureSource = null) : IRawSelectOperationParser
+public class RawSelectOperationParser(ICacheProvider cacheProvider, ICultureSource? cultureSource = null) : IRawSelectOperationParser
 {
+    private readonly ICache<string, SelectOperation> cache = cacheProvider.GetCache<string, SelectOperation>(typeof(IRawSelectOperationParser));
+
     private readonly RawSelectOperationParserParser rawParser = new(cultureSource?.Culture ?? CultureInfo.CurrentCulture, ParameterExpression.Default);
 
     public SelectOperation Parse(string input) =>
 
-        cache.GetOrAdd(input, _ => rawParser.MainParser.Parse(input, unparsedRest => new ODataParsingException($"Can't parse: {unparsedRest}")));
+        this.cache.GetOrAdd(input, _ => rawParser.MainParser.Parse(input, unparsedRest => new ODataParsingException($"Can't parse: {unparsedRest}")));
 }

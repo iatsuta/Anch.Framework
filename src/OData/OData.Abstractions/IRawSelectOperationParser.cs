@@ -4,5 +4,5 @@ namespace OData;
 
 public interface IRawSelectOperationParser
 {
-    public SelectOperation Parse(string input);
+    SelectOperation Parse(string input);
 }
