@@ -8,7 +8,7 @@ namespace GenericQueryable.NHibernate;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddNHibernateGenericQueryable(this IServiceCollection services, Action<IGenericQueryableBuilder>? setupAction = null)
+    public static IServiceCollection AddNHibernateGenericQueryable(this IServiceCollection services, Action<IGenericQueryableSetup>? setupAction = null)
     {
         return services.AddGenericQueryable(v => v
             .SetFetchService<NHibFetchService>()

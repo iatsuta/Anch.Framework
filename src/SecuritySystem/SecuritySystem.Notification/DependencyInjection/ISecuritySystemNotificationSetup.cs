@@ -1,0 +1,3 @@
+﻿namespace SecuritySystem.Notification.DependencyInjection;
+
+public interface ISecuritySystemNotificationSetup;

@@ -6,6 +6,6 @@ namespace CommonFramework.Caching.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCommonCaching(this IServiceCollection services, Action<ICachingBuilder>? setup = null) =>
-        services.Initialize<CachingBuilder>(setup);
+    public static IServiceCollection AddCommonCaching(this IServiceCollection services, Action<ICachingSetup>? setup = null) =>
+        services.Initialize<CachingSetup>(setup);
 }

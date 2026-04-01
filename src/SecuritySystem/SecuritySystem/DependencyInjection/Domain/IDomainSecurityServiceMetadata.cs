@@ -4,7 +4,7 @@ public interface IDomainSecurityServiceMetadata<TDomainObject> : IDomainSecurity
 {
     static Type IDomainSecurityServiceMetadata.DomainType { get; } = typeof(TDomainObject);
 
-    static abstract void Setup(IDomainSecurityServiceBuilder<TDomainObject> builder);
+    static abstract void Setup(IDomainSecurityServiceSetup<TDomainObject> builder);
 }
 
 public interface IDomainSecurityServiceMetadata

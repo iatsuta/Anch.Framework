@@ -1,5 +1,3 @@
 ﻿namespace SecuritySystem.Configurator.Interfaces;
 
-public interface IDeletePrincipalHandler : IHandler
-{
-}
+public interface IDeletePrincipalHandler : IHandler;

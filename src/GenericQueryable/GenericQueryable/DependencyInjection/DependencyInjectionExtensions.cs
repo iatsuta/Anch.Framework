@@ -6,6 +6,6 @@ namespace GenericQueryable.DependencyInjection;
 
 public static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddGenericQueryable(this IServiceCollection services, Action<IGenericQueryableBuilder>? setupAction = null) =>
-        services.Initialize<GenericQueryableBuilder>(setupAction);
+    public static IServiceCollection AddGenericQueryable(this IServiceCollection services, Action<IGenericQueryableSetup>? setupAction = null) =>
+        services.Initialize<GenericQueryableSetup>(setupAction);
 }

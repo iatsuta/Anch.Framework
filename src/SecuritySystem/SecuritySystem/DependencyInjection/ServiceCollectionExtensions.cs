@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddSecuritySystem(Action<ISecuritySystemBuilder> setupAction) =>
-            services.Initialize<SecuritySystemBuilder>(setupAction);
+        public IServiceCollection AddSecuritySystem(Action<ISecuritySystemSetup> setupAction) =>
+            services.Initialize<SecuritySystemSetup>(setupAction);
     }
 }

@@ -2,6 +2,4 @@
 
 namespace SecuritySystem.DiTests.DomainObjects;
 
-public class Location : PersistentDomainObjectBase, ISecurityContext
-{
-}
+public class Location : PersistentDomainObjectBase, ISecurityContext;

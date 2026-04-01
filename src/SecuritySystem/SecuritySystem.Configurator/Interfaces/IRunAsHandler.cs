@@ -1,5 +1,3 @@
 ﻿namespace SecuritySystem.Configurator.Interfaces;
 
-public interface IRunAsHandler : IHandler
-{
-}
+public interface IRunAsHandler : IHandler;

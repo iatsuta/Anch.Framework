@@ -22,7 +22,7 @@ public abstract class TestEnvironment
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
     }
 
-    protected void SetupGenericQueryable(IGenericQueryableBuilder builder)
+    protected void SetupGenericQueryable(IGenericQueryableSetup builder)
     {
         builder
             .AddFetchRuleExpander<AppFetchRuleExpander>()

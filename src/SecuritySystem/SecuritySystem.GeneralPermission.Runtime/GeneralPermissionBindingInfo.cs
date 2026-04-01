@@ -13,9 +13,7 @@ public record GeneralPermissionBindingInfo<TPermission, TSecurityRole> : General
     public PropertyAccessors<TSecurityRole, string>? SecurityRoleDescription { get; init; }
 }
 
-public abstract record GeneralPermissionBindingInfo<TPermission> : GeneralPermissionBindingInfo
-{
-}
+public abstract record GeneralPermissionBindingInfo<TPermission> : GeneralPermissionBindingInfo;
 
 public abstract record GeneralPermissionBindingInfo
 {

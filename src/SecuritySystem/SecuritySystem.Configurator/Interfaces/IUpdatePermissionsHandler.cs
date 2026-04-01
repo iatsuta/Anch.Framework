@@ -1,5 +1,3 @@
 ﻿namespace SecuritySystem.Configurator.Interfaces;
 
-public interface IUpdatePermissionsHandler : IHandler
-{
-}
+public interface IUpdatePermissionsHandler : IHandler;

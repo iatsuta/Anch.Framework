@@ -6,7 +6,7 @@ namespace SecuritySystem.Services;
 
 public class SyncUserNameResolver(
     IUserNameResolver userNameResolver,
-    IDefaultCancellationTokenSource? defaultCancellationTokenSource) : ISyncUserNameResolver
+    IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : ISyncUserNameResolver
 {
     public string GetUserName(UserCredential userCredential)
     {

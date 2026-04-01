@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddSecuritySystemTesting(Action<ISecuritySystemTestingBuilder>? setup = null) =>
-            services.Initialize<SecuritySystemTestingBuilder>(setup);
+        public IServiceCollection AddSecuritySystemTesting(Action<ISecuritySystemTestingSetup>? setup = null) =>
+            services.Initialize<SecuritySystemTestingSetup>(setup);
     }
 }

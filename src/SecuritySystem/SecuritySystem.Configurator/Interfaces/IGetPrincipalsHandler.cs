@@ -1,5 +1,3 @@
 ﻿namespace SecuritySystem.Configurator.Interfaces;
 
-public interface IGetPrincipalsHandler : IHandler
-{
-}
+public interface IGetPrincipalsHandler : IHandler;

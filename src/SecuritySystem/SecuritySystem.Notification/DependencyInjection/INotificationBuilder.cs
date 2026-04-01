@@ -1,3 +1,0 @@
-﻿namespace SecuritySystem.Notification.DependencyInjection;
-
-public interface INotificationBuilder;

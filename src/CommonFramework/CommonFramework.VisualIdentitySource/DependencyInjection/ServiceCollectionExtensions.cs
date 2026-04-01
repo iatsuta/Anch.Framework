@@ -6,6 +6,6 @@ namespace CommonFramework.VisualIdentitySource.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddVisualIdentitySource(this IServiceCollection services, Action<IVisualIdentitySourceBuilder>? setup = null) =>
-        services.Initialize<VisualIdentitySourceBuilder>(setup);
+    public static IServiceCollection AddVisualIdentitySource(this IServiceCollection services, Action<IVisualIdentitySourceSetup>? setupAction = null) =>
+        services.Initialize<VisualIdentitySourceSetup>(setupAction);
 }

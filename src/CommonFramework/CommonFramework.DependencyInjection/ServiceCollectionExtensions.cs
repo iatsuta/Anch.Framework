@@ -9,8 +9,8 @@ public static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddServiceProxyFactory(Action<IServiceProxyBuilder>? setup = null) =>
-            services.Initialize<ServiceProxyBuilder>(setup);
+        public IServiceCollection AddServiceProxyFactory(Action<IServiceProxySetup>? setup = null) =>
+            services.Initialize<ServiceProxySetup>(setup);
 
         public bool AlreadyInitialized<TService>(ServiceLifetime lifetime = ServiceLifetime.Singleton, bool isKeyed = false) =>
 

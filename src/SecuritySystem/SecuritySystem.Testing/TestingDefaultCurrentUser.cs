@@ -7,7 +7,7 @@ public class TestingDefaultCurrentUser(
     TestRootUserInfo testRootUserInfo,
     RootImpersonateServiceState rootImpersonateServiceState,
     ITestingEvaluator<ICurrentUser> currentUserEvaluator,
-    IDefaultCancellationTokenSource? defaultCancellationTokenSource) : ICurrentUser
+    IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : ICurrentUser
 {
     public string Name =>
 

@@ -6,6 +6,6 @@ namespace OData.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddOData(this IServiceCollection services, Action<IODataBuilder>? setupAction = null) =>
-        services.Initialize<ODataBuilder>(setupAction);
+    public static IServiceCollection AddOData(this IServiceCollection services, Action<IODataSetup>? setupAction = null) =>
+        services.Initialize<ODataSetup>(setupAction);
 }

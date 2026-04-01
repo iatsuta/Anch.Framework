@@ -10,9 +10,9 @@ namespace GenericQueryable.EntityFramework;
 
 public class GenericQueryableOptionsExtension : IDbContextOptionsExtension
 {
-    private readonly Action<IGenericQueryableBuilder>? setupAction;
+    private readonly Action<IGenericQueryableSetup>? setupAction;
 
-    public GenericQueryableOptionsExtension(Action<IGenericQueryableBuilder>? setupAction)
+    public GenericQueryableOptionsExtension(Action<IGenericQueryableSetup>? setupAction)
     {
         this.setupAction = setupAction;
         this.Info = new ExtensionInfo(this);

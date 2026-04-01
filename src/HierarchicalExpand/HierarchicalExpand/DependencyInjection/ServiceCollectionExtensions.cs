@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddHierarchicalExpand(Action<IHierarchicalExpandBuilder>? setupAction = null) =>
-            services.Initialize<HierarchicalExpandBuilder>(setupAction);
+        public IServiceCollection AddHierarchicalExpand(Action<IHierarchicalExpandSetup>? setupAction = null) =>
+            services.Initialize<HierarchicalExpandSetup>(setupAction);
     }
 }

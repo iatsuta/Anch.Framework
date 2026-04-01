@@ -1,5 +1,3 @@
 ﻿namespace SecuritySystem.Configurator.Interfaces;
 
-public interface IGetOperationHandler : IHandler
-{
-}
+public interface IGetOperationHandler : IHandler;

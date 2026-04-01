@@ -1,5 +1,3 @@
 ﻿namespace SecuritySystem.Configurator.Interfaces;
 
-public interface IGetBusinessRoleContextsHandler : IHandler
-{
-}
+public interface IGetBusinessRoleContextsHandler : IHandler;
