@@ -1,6 +1,7 @@
 <Solution>
 
   <Folder Name="/__RootSolutionItems/">
+    <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="__RootSolutionItems/RootCommonAssemblyInfo.cs" />
   </Folder>

@@ -13,13 +13,13 @@ public record SelectOperation<TDomainObject>(
     int SkipCount,
     int TakeCount) : IDynamicSelectOperation, IQueryableInjector<TDomainObject>
 {
-    public bool HasPaging => this.SkipCount != 0 || this.TakeCount != 0;
+    public bool HasPaging => this.SkipCount != Default.SkipCount || this.TakeCount != Default.TakeCount;
 
     public ImmutableArray<LambdaExpression> Expands { get; init; } = [];
 
     public ImmutableArray<LambdaExpression> Selects { get; init; } = [];
 
-    public SelectOperation<TDomainObject> WithoutPaging() => this.HasPaging ? this with { SkipCount = 0, TakeCount = 0 } : this;
+    public SelectOperation<TDomainObject> WithoutPaging() => this.HasPaging ? this with { SkipCount = Default.SkipCount, TakeCount = Default.TakeCount } : this;
 
     public SelectOperation<TDomainObject> AddFilter(Expression<Func<TDomainObject, bool>> filter) =>
 
@@ -61,5 +61,5 @@ public record SelectOperation<TDomainObject>(
     }
 
 
-    public static readonly SelectOperation<TDomainObject> Default = new(_ => true, [], 0, int.MaxValue);
+    public static readonly SelectOperation<TDomainObject> Default = new(_ => true, [], SelectOperation.Default.SkipCount, SelectOperation.Default.TakeCount);
 }
