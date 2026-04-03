@@ -2,7 +2,6 @@
 using System.Globalization;
 
 using CommonFramework;
-using CommonFramework.Maybe;
 using CommonFramework.Parsing;
 
 using OData.Domain.QueryLanguage;

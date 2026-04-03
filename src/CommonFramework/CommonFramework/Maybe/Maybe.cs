@@ -1,6 +1,7 @@
-﻿namespace CommonFramework.Maybe;
+﻿// ReSharper disable once CheckNamespace
+namespace CommonFramework;
 
-public readonly record struct Maybe<T>
+public readonly struct Maybe<T> : IEquatable<Maybe<T>>
 {
     private readonly T value;
 
@@ -18,7 +19,17 @@ public readonly record struct Maybe<T>
 
     public static Maybe<T> Just(T value) => new (value, true);
 
-    public override string ToString() => HasValue ? $"{value}" : "";
+    public override string ToString() => this.HasValue ? $"{value}" : "";
+
+    public bool Equals(Maybe<T> other) => this.HasValue == other.HasValue && EqualityComparer<T>.Default.Equals(this.value, other.value);
+
+    public override bool Equals(object? obj) => obj is Maybe<T> other && this.Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(value, HasValue);
+
+    public static bool operator ==(Maybe<T> maybe, Maybe<T> otherMaybe) => maybe.Equals(otherMaybe);
+
+    public static bool operator !=(Maybe<T> maybe, Maybe<T> otherMaybe) => !(maybe == otherMaybe);
 }
 
 public static class Maybe

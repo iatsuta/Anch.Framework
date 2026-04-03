@@ -1,7 +1,5 @@
 ﻿using System.Linq.Expressions;
 
-using CommonFramework.Maybe;
-
 namespace CommonFramework.Visitor;
 
 public class ExpandConstVisitor : ExpressionVisitor
@@ -15,15 +13,16 @@ public class ExpandConstVisitor : ExpressionVisitor
         var baseVisited = base.Visit(baseNode);
 
         var request =
-            
+
             from node in baseVisited.ToMaybe()
 
-            from res in node.GetMemberConstExpression()
+            from res in node.GetConstantExpression()
+
+            where res != node
 
             select res;
 
-        return request
-            .GetValueOrDefault(baseVisited);
+        return request.GetValueOrDefault(baseVisited);
     }
 
 

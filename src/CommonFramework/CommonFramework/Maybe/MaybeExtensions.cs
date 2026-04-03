@@ -1,4 +1,5 @@
-﻿namespace CommonFramework.Maybe;
+﻿// ReSharper disable once CheckNamespace
+namespace CommonFramework;
 
 public static class MaybeExtensions
 {

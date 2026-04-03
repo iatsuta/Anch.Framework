@@ -246,7 +246,7 @@ public abstract class CharParsers<TInput>(CultureInfo culture) : Parsers<TInput>
     protected Parser<TInput, TValue> SpanParser<TValue>(SharedMemoryString str)
         where TValue : struct, ISpanParsable<TValue>
     {
-        return this.MaybeParser(() => Maybe.Maybe.OfCondition(TValue.TryParse(str, culture, out var result), () => result));
+        return this.MaybeParser(() => Maybe.OfCondition(TValue.TryParse(str, culture, out var result), () => result));
     }
 
     public Parser<TInput, TNumber> GetNumberParser<TNumber>()

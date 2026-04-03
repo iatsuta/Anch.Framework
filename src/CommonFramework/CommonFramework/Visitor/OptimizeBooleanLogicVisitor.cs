@@ -1,7 +1,5 @@
 ﻿using System.Linq.Expressions;
 
-using CommonFramework.Maybe;
-
 namespace CommonFramework.Visitor;
 
 public class OptimizeBooleanLogicVisitor : ExpressionVisitor
@@ -16,7 +14,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 
         var evalReq =
             
-            from testObj in visitedTest.GetDeepMemberConstValue<bool>()
+            from testObj in visitedTest.GetConstantValue<bool>()
 
             select this.Visit(testObj ? node.IfTrue : node.IfFalse);
 
@@ -41,7 +39,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
     {
         var left = this.Visit(node.Left);
 
-        var leftValue = left.GetPureDeepMemberConstExpression();
+        var leftValue = left.TryGetConstantExpression();
 
         if (leftValue != null)
         {
@@ -55,7 +53,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
         }
 
         var right = this.Visit(node.Right);
-        var rightValue = right.GetPureDeepMemberConstExpression();
+        var rightValue = right.TryGetConstantExpression();
 
         if (leftValue != null && rightValue != null)
         {
