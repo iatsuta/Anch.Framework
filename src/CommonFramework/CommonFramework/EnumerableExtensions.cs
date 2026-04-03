@@ -1,18 +1,14 @@
-﻿using CommonFramework.Maybe;
-
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace CommonFramework;
 
 public static class EnumerableExtensions
 {
-    public static IEnumerable<T> CollectMaybe<T>(this IEnumerable<Maybe<T>> source)
-    {
-        return
-            from item in source
-            where item.HasValue
-            select item.Value;
-    }
+    public static IEnumerable<T> CollectMaybe<T>(this IEnumerable<Maybe<T>> source) =>
+
+        from item in source
+        where item.HasValue
+        select item.Value;
 
     public static IEnumerable<TState> Scan<TSource, TState>(this IEnumerable<TSource> source, TState state, Func<TState, TSource, TState> selector)
     {
@@ -24,10 +20,7 @@ public static class EnumerableExtensions
         }
     }
 
-    public static IEnumerable<T> SelectMany<T>(this IEnumerable<IEnumerable<T>> source)
-    {
-        return source.SelectMany(v => v);
-    }
+    public static IEnumerable<T> SelectMany<T>(this IEnumerable<IEnumerable<T>> source) => source.SelectMany(v => v);
 
     public static TResult Match<TSource, TResult>(this IEnumerable<TSource> source, Func<TResult> emptyFunc, Func<TSource, TResult> singleFunc,
         Func<TSource[], TResult> manyFunc)
@@ -115,7 +108,7 @@ public static class EnumerableExtensions
 
         var value = enumerator.Current;
 
-        return Maybe.Maybe.OfCondition(!enumerator.MoveNext(), () => value);
+        return Maybe.OfCondition(!enumerator.MoveNext(), () => value);
     }
 
     public static void Foreach<T>(this IEnumerable<T> source, Action<T> action)

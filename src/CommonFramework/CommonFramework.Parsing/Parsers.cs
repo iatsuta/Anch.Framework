@@ -59,7 +59,7 @@ public abstract class Parsers<TInput>
             select new[] { rowPair }.ToDictionary().Concat(subParseResult)).Or(() => this.Return(new Dictionary<string, object>()));
     }
 
-    protected Parser<TInput, TValue> MaybeParser<TValue>(Func<Maybe.Maybe<TValue>> getValue)
+    protected Parser<TInput, TValue> MaybeParser<TValue>(Func<Maybe<TValue>> getValue)
     {
         var value = getValue();
 

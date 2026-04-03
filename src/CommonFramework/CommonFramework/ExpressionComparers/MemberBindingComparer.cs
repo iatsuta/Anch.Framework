@@ -1,7 +1,5 @@
 ﻿using System.Linq.Expressions;
 
-using CommonFramework.Maybe;
-
 namespace CommonFramework.ExpressionComparers;
 
 public class MemberBindingComparer(ExpressionComparer rootComparer) : IEqualityComparer<MemberBinding>

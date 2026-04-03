@@ -3,7 +3,6 @@ using System.Reflection;
 
 using CommonFramework;
 using CommonFramework.DictionaryCache;
-using CommonFramework.Maybe;
 
 namespace SecuritySystem.Builders;
 
@@ -61,8 +60,8 @@ internal class CacheContainsCallVisitor : ExpressionVisitor
         private Maybe<ConstantExpression> GetHashSet<TIdent>(Expression node)
         {
             return from enumerable in
-                    node.GetDeepMemberConstValue<HashSet<TIdent>>().Select(IEnumerable<TIdent> (v) => v!)
-                        .Or(() => node.GetDeepMemberConstValue<IQueryable<TIdent>>().Select(IEnumerable<TIdent> (v) => v!))
+                    node.GetConstantValue<HashSet<TIdent>>().Select(IEnumerable<TIdent> (v) => v!)
+                        .Or(() => node.GetConstantValue<IQueryable<TIdent>>().Select(IEnumerable<TIdent> (v) => v!))
 
                 select this.constCache.GetValueOrCreate(enumerable, () => Expression.Constant(enumerable.ToHashSet(), typeof(HashSet<TIdent>)));
         }

@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 
 using CommonFramework;
-using CommonFramework.Maybe;
-
 using SExpressions = System.Linq.Expressions;
 
 namespace OData;
@@ -42,7 +40,7 @@ public static class StandardExpressionExtensions
 
     private static SExpressions.Expression UpToSuperType(SExpressions.Expression baseExpression, Type superType)
     {
-        return (from constValue in baseExpression.GetDeepMemberConstValue()
+        return (from constValue in baseExpression.GetConstantValue()
 
                 let converterValue = Convert.ChangeType(constValue, superType, null)
 
@@ -54,7 +52,7 @@ public static class StandardExpressionExtensions
 
     public static SExpressions.Expression TryConvertToEnumExpression(this SExpressions.Expression baseExpression, Type enumType)
     {
-        var request = from value in baseExpression.GetDeepMemberConstValue()
+        var request = from value in baseExpression.GetConstantValue()
 
             where value != null && enumType.IsEnum && value.GetType() != enumType
 
@@ -92,7 +90,7 @@ public static class StandardExpressionExtensions
             return SExpressions.Expression.Convert(expression, expectedNullableType);
         }
 
-        return expression.GetDeepMemberConstValue().Select(value =>
+        return expression.GetConstantValue().Select(value =>
         {
             if (value == null)
             {

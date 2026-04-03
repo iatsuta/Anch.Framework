@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
-using CommonFramework.Maybe;
 
 namespace CommonFramework.ExpressionEvaluate;
 
@@ -41,7 +40,7 @@ public static class InlineEvaluateExpressionExtensions
 
                 where node.Method.IsGenericMethodImplementation(CompileMethod)
 
-                from compileLambda in node.Arguments.Single().GetDeepMemberConstValue<LambdaExpression>()
+                from compileLambda in node.Arguments.Single().GetConstantValue<LambdaExpression>()
 
                 select (Expression)compileLambda;
         }
@@ -52,7 +51,7 @@ public static class InlineEvaluateExpressionExtensions
 
                    where EvalMethods.Any(evalMethod => node.Method.IsGenericMethodImplementation(evalMethod))
 
-                   from evalLambda in node.Arguments.First().GetDeepMemberConstValue<LambdaExpression>()
+                   from evalLambda in node.Arguments.First().GetConstantValue<LambdaExpression>()
 
                    select node.Arguments.Skip(1)
                               .ZipStrong(evalLambda.Parameters, (arg, param) => new { arg, param })

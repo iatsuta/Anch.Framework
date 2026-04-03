@@ -1,8 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-using CommonFramework.Maybe;
-
 namespace CommonFramework.ExpressionEvaluate;
 
 public class OverrideStringEqualityExpressionVisitor(StringComparison stringComparison) : ExpressionVisitor
@@ -26,7 +24,7 @@ public class OverrideStringEqualityExpressionVisitor(StringComparison stringComp
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
         var request =
-            
+
             from targetMethod in CallMap.GetMaybeValue(node.Method)
 
             let input = node.GetChildren().Select(this.Visit).ToArray()

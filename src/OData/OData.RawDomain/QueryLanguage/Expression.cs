@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 
 using CommonFramework;
-using CommonFramework.Maybe;
-
 using OData.Domain.QueryLanguage.Constant;
 using OData.Domain.QueryLanguage.Constant.Base;
 
@@ -25,7 +23,7 @@ public abstract record Expression
          select new LambdaExpression(expression))
 
 
-        .Or(() => from expression in baseExpression.GetDeepMemberConstExpression()
+        .Or(() => from expression in baseExpression.GetConstantExpression()
 
                   select (Expression)CreateConstant(expression.Type, expression.Value))
 
@@ -43,7 +41,7 @@ public abstract record Expression
 
                   where left.Type.IsEnum
 
-                  from enumUnderValue in expression.Right.GetDeepMemberConstValue()
+                  from enumUnderValue in expression.Right.GetConstantValue()
 
                   let enumValue = Enum.ToObject(left.Type, enumUnderValue)
 
@@ -58,7 +56,7 @@ public abstract record Expression
 
                   where right.Type.IsEnum
 
-                  from enumUnderValue in expression.Left.GetDeepMemberConstValue()
+                  from enumUnderValue in expression.Left.GetConstantValue()
 
                   let enumValue = Enum.ToObject(right.Type, enumUnderValue)
 

@@ -1,8 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-using CommonFramework.Maybe;
-
 namespace CommonFramework.ExpressionEvaluate;
 
 public static class InjectMaybeExpressionExtensions
@@ -33,15 +31,15 @@ public static class InjectMaybeExpressionExtensions
 
         if (nullableType != null)
         {
-            var wrapMethod = new Func<Ignore?, Maybe<Ignore>>(Maybe.Maybe.ToMaybe).Method;
+            var wrapMethod = new Func<Ignore?, Maybe<Ignore>>(Maybe.ToMaybe).Method;
 
             return Expression.Call(wrapMethod.GetGenericMethodDefinition().MakeGenericMethod(nullableType), expression);
 
         }
         else
         {
-            var wrapMethod = expression.Type.IsValueType ? new Func<Ignore, Maybe<Ignore>>(Maybe.Maybe.Return).Method
-                : new Func<object, Maybe<object>>(Maybe.Maybe.ToMaybe).Method;
+            var wrapMethod = expression.Type.IsValueType ? new Func<Ignore, Maybe<Ignore>>(Maybe.Return).Method
+                : new Func<object, Maybe<object>>(Maybe.ToMaybe).Method;
 
             return Expression.Call(wrapMethod.GetGenericMethodDefinition().MakeGenericMethod(expression.Type), expression);
         }

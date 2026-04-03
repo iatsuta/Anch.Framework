@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
-using CommonFramework.Maybe;
 
 namespace CommonFramework.ExpressionEvaluate;
 
@@ -18,7 +17,7 @@ public class InjectMaybeVisitor : ExpressionVisitor
 
     private static readonly MethodInfo SelectMethod = new Func<Maybe<object>, Func<object, object>, Maybe<object>>(LinqMaybeExtensions.Select).Method.GetGenericMethodDefinition();
 
-    private static readonly MethodInfo OfConditionMethod = new Func<bool, Func<Maybe<object>>, Func<Maybe<object>>, Maybe<object>>(Maybe.Maybe.OfCondition).Method.GetGenericMethodDefinition();
+    private static readonly MethodInfo OfConditionMethod = new Func<bool, Func<Maybe<object>>, Func<Maybe<object>>, Maybe<object>>(Maybe.OfCondition).Method.GetGenericMethodDefinition();
 
 
     private InjectMaybeVisitor()

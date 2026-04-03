@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
 
-using CommonFramework.Maybe;
-
 namespace CommonFramework;
 
 public static class DictionaryExtensions
@@ -57,7 +55,7 @@ public static class DictionaryExtensions
 
         public Maybe<TValue> GetMaybeValue(TKey key)
         {
-            return source.TryGetValue(key, out var value) ? Maybe.Maybe.Return(value) : Maybe<TValue>.Nothing;
+            return source.TryGetValue(key, out var value) ? Maybe.Return(value) : Maybe<TValue>.Nothing;
         }
 
         public Dictionary<TKey, TValue> Concat(IReadOnlyDictionary<TKey, TValue> other)
