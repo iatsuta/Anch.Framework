@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
+
 using CommonFramework.Visitor;
 
 using System.Linq.Expressions;
@@ -220,7 +220,7 @@ public static class ExpressionExtensions
 
                     result,
 
-                MemberExpression { Expression: var baseExpr, Member : { IsStatic: false } member }
+                MemberExpression { Expression: {} baseExpr, Member : { IsStatic: false } member }
 
                     when baseExpr.TryGetConstantExpression() is { Value: { } baseValue }
 
