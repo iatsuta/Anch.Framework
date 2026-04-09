@@ -9,7 +9,7 @@ public readonly record struct MergeResult<TSource, TTarget>(
         IEnumerable<TTarget> addingItems,
         IEnumerable<ValueTuple<TSource, TTarget>> combineItems,
         IEnumerable<TSource> removingItems)
-        : this(addingItems.ToList(), combineItems.ToList(), removingItems.ToList())
+        : this([..addingItems], [..combineItems], [..removingItems])
     {
     }
 

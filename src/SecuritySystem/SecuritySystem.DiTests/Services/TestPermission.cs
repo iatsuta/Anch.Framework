@@ -1,3 +1,6 @@
-﻿namespace SecuritySystem.DiTests.Services;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
 
-public record TestPermission(SecurityRole SecurityRole, IReadOnlyDictionary<Type, IReadOnlyList<Guid>> Restrictions);
+namespace SecuritySystem.DiTests.Services;
+
+public record TestPermission(SecurityRole SecurityRole, FrozenDictionary<Type, ImmutableArray<Guid>> Restrictions);

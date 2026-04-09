@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 
 using CommonFramework;
 
@@ -6,8 +8,8 @@ namespace GenericQueryable.Fetching;
 
 public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleHeaderInfoList) : IFetchRuleExpander
 {
-    private readonly IReadOnlyDictionary<Type, IReadOnlyList<FetchRuleHeaderInfo>> headersDict =
-        fetchRuleHeaderInfoList.GroupBy(v => v.SourceType).ToDictionary(g => g.Key, IReadOnlyList<FetchRuleHeaderInfo> (g) => g.ToList());
+    private readonly FrozenDictionary<Type, ImmutableArray<FetchRuleHeaderInfo>> headersDict =
+        fetchRuleHeaderInfoList.GroupBy(v => v.SourceType).ToFrozenDictionary(g => g.Key, ImmutableArray<FetchRuleHeaderInfo> (g) => [..g]);
 
     private readonly ConcurrentDictionary<Type, object> cache = [];
 
@@ -20,7 +22,7 @@ public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleH
                     .GetValueOrDefault(typeof(TSource))
                     .EmptyIfNull()
                     .Cast<FetchRuleHeaderInfo<TSource>>()
-                    .ToDictionary(info => info.Header, info => info.Implementation))
+                    .ToFrozenDictionary(info => info.Header, info => info.Implementation))
                 .GetValueOrDefault(fetchRuleHeader);
         }
         else

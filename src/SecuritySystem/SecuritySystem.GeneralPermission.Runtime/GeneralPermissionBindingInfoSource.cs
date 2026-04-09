@@ -1,17 +1,19 @@
-﻿namespace SecuritySystem.GeneralPermission;
+﻿using System.Collections.Frozen;
+
+namespace SecuritySystem.GeneralPermission;
 
 public class GeneralPermissionBindingInfoSource : IGeneralPermissionBindingInfoSource
 {
-    private readonly IReadOnlyDictionary<Type, GeneralPermissionBindingInfo> permissionDict;
+    private readonly FrozenDictionary<Type, GeneralPermissionBindingInfo> permissionDict;
 
-    private readonly IReadOnlyDictionary<Type, GeneralPermissionBindingInfo> securityRoleDict;
+    private readonly FrozenDictionary<Type, GeneralPermissionBindingInfo> securityRoleDict;
 
     public GeneralPermissionBindingInfoSource(IEnumerable<GeneralPermissionBindingInfo> bindingInfoList)
     {
         var cache = bindingInfoList.ToList();
 
-        this.permissionDict = cache.ToDictionary(v => v.PermissionType);
-        this.securityRoleDict = cache.ToDictionary(v => v.SecurityRoleType);
+        this.permissionDict = cache.ToFrozenDictionary(v => v.PermissionType);
+        this.securityRoleDict = cache.ToFrozenDictionary(v => v.SecurityRoleType);
     }
 
     public GeneralPermissionBindingInfo GetForPermission(Type permissionType) => this.permissionDict[permissionType];

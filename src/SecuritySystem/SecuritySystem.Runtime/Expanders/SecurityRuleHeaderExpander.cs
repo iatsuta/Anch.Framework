@@ -1,4 +1,6 @@
-﻿using CommonFramework;
+﻿using System.Collections.Frozen;
+
+using CommonFramework;
 
 using SecuritySystem.SecurityRuleInfo;
 
@@ -6,8 +8,8 @@ namespace SecuritySystem.Expanders;
 
 public class SecurityRuleHeaderExpander(IEnumerable<SecurityRuleHeaderInfo> securityRuleFullInfoList) : ISecurityRuleHeaderExpander
 {
-    private readonly IReadOnlyDictionary<DomainSecurityRule.SecurityRuleHeader, DomainSecurityRule> dict =
-        securityRuleFullInfoList.ToDictionary(pair => pair.Header, pair => pair.Implementation);
+    private readonly FrozenDictionary<DomainSecurityRule.SecurityRuleHeader, DomainSecurityRule> dict =
+        securityRuleFullInfoList.ToFrozenDictionary(pair => pair.Header, pair => pair.Implementation);
 
     public DomainSecurityRule Expand(DomainSecurityRule.SecurityRuleHeader baseSecurityRule) =>
         baseSecurityRule.WithDefaultCredential(securityRuleHeader =>

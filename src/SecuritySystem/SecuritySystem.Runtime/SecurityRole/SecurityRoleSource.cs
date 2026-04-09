@@ -3,6 +3,7 @@
 using SecuritySystem.Services;
 
 using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 // ReSharper disable once CheckNamespace
@@ -10,9 +11,9 @@ namespace SecuritySystem;
 
 public class SecurityRoleSource : ISecurityRoleSource
 {
-    private readonly IReadOnlyDictionary<TypedSecurityIdentity, FullSecurityRole> identityDict;
+    private readonly FrozenDictionary<TypedSecurityIdentity, FullSecurityRole> identityDict;
 
-    private readonly IReadOnlyDictionary<string, FullSecurityRole> nameDict;
+    private readonly FrozenDictionary<string, FullSecurityRole> nameDict;
 
     private readonly ConcurrentDictionary<SecurityIdentity, FullSecurityRole> baseIdentityCache = new();
 
@@ -22,9 +23,9 @@ public class SecurityRoleSource : ISecurityRoleSource
     {
         this.SecurityRoles = [..securityRoles];
 
-        this.identityDict = this.SecurityRoles.ToDictionary(v => v.Identity);
+        this.identityDict = this.SecurityRoles.ToFrozenDictionary(v => v.Identity);
 
-        this.nameDict = this.SecurityRoles.ToDictionary(v => v.Name);
+        this.nameDict = this.SecurityRoles.ToFrozenDictionary(v => v.Name);
 
         this.rootIdentityConverter =
             serviceProxyFactory.Create<ISecurityIdentityConverter, RootSecurityIdentityConverter>(

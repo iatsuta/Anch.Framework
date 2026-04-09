@@ -518,7 +518,8 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
                 return factoryList.Select(factory => factory.Create(securityRuleCredential));
             })
 
-            .AddSingleton<ISecurityRolesIdentsResolver, SecurityRolesIdentsResolver>()
+            .AddSingleton<ISecurityRoleResolver, SecurityRoleResolver>()
+            .AddSingleton<ISecurityRoleIdentsResolver, SecurityRoleIdentsResolver>()
 
             .AddSingleton<IRuntimePermissionOptimizationService, RuntimePermissionOptimizationService>()
 

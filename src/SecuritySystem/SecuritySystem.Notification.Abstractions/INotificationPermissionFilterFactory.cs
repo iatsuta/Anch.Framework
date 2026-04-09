@@ -2,7 +2,7 @@
 
 namespace SecuritySystem.Notification;
 
-public interface INotificationGeneralPermissionFilterFactory<TPermission>
+public interface INotificationPermissionFilterFactory<TPermission>
 {
     Expression<Func<TPermission, bool>> Create(IEnumerable<SecurityRole> securityRoles);
 }

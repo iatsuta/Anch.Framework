@@ -3,6 +3,7 @@
 using SecuritySystem.Services;
 
 using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 // ReSharper disable once CheckNamespace
@@ -10,11 +11,11 @@ namespace SecuritySystem;
 
 public class SecurityContextInfoSource : ISecurityContextInfoSource
 {
-    private readonly IReadOnlyDictionary<Type, SecurityContextInfo> typeDict;
+    private readonly FrozenDictionary<Type, SecurityContextInfo> typeDict;
 
-    private readonly IReadOnlyDictionary<TypedSecurityIdentity, SecurityContextInfo> identityDict;
+    private readonly FrozenDictionary<TypedSecurityIdentity, SecurityContextInfo> identityDict;
 
-    private readonly IReadOnlyDictionary<string, SecurityContextInfo> nameDict;
+    private readonly FrozenDictionary<string, SecurityContextInfo> nameDict;
 
 
     private readonly ConcurrentDictionary<SecurityIdentity, SecurityContextInfo> baseIdentityCache = new();
@@ -25,9 +26,9 @@ public class SecurityContextInfoSource : ISecurityContextInfoSource
     {
         this.SecurityContextInfoList = [..securityContextInfoList];
 
-        this.typeDict = this.SecurityContextInfoList.ToDictionary(v => v.Type);
-        this.identityDict = this.typeDict.Values.ToDictionary(v => v.Identity);
-        this.nameDict = this.typeDict.Values.ToDictionary(v => v.Name);
+        this.typeDict = this.SecurityContextInfoList.ToFrozenDictionary(v => v.Type);
+        this.identityDict = this.typeDict.Values.ToFrozenDictionary(v => v.Identity);
+        this.nameDict = this.typeDict.Values.ToFrozenDictionary(v => v.Name);
 
         this.rootIdentityConverter =
             serviceProxyFactory.Create<ISecurityIdentityConverter, RootSecurityIdentityConverter>(

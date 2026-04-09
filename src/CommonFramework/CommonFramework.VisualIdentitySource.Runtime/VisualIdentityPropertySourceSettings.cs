@@ -1,6 +1,8 @@
-﻿namespace CommonFramework.VisualIdentitySource;
+﻿using System.Collections.Immutable;
 
-public record VisualIdentityPropertySourceSettings(IReadOnlyList<string> PropertyNameList)
+namespace CommonFramework.VisualIdentitySource;
+
+public record VisualIdentityPropertySourceSettings(ImmutableArray<string> PropertyNameList)
 {
 	public static VisualIdentityPropertySourceSettings Default { get; } = new(["Login", "Name", "Code"]);
 }

@@ -1,4 +1,5 @@
-﻿using CommonFramework;
+﻿using System.Collections.Immutable;
+using CommonFramework;
 using CommonFramework.GenericRepository;
 
 using GenericQueryable;
@@ -59,13 +60,13 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
     {
         var expectedParents = await domainObjectExpander.GetAllParents([domainObject], cancellationToken);
 
-        var existsParentLinks = await queryableSource
+        var existsParents = await queryableSource
             .GetQueryable<TDirectAncestorLink>()
             .Where(ancestorLinkInfo.To.Path.Select(toObj => toObj == domainObject))
-            .WithFetch(linkFetchRule)
+            .Select(ancestorLinkInfo.From.Path)
             .GenericToListAsync(cancellationToken);
 
-        var mergeResult = existsParentLinks.Select(ancestorLinkInfo.From.Getter).GetMergeResult(expectedParents);
+        var mergeResult = existsParents.GetMergeResult(expectedParents);
 
         if (mergeResult.IsEmpty)
         {
@@ -93,12 +94,17 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
         }
     }
 
-    private async ValueTask<IReadOnlyList<TDirectAncestorLink>> GetExistsLinks(IEnumerable<TDomainObject> domainObjects, CancellationToken cancellationToken)
+    private ValueTask<ImmutableArray<TDirectAncestorLink>> GetExistsLinks(IEnumerable<TDomainObject> domainObjects, CancellationToken cancellationToken)
     {
         var filter = ancestorLinkInfo.From.Path.Select(fromObj => domainObjects.Contains(fromObj))
             .BuildOr(ancestorLinkInfo.To.Path.Select(toObj => domainObjects.Contains(toObj)));
 
-        return await queryableSource.GetQueryable<TDirectAncestorLink>().Where(filter).WithFetch(linkFetchRule).GenericToListAsync(cancellationToken);
+        return queryableSource
+            .GetQueryable<TDirectAncestorLink>()
+            .Where(filter)
+            .WithFetch(linkFetchRule)
+            .GenericAsAsyncEnumerable()
+            .ToImmutableArrayAsync(cancellationToken);
     }
 
     private AncestorLinkData<TDomainObject> ToInfo(TDirectAncestorLink link)

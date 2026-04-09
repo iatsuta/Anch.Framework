@@ -7,7 +7,8 @@ namespace SecuritySystem.VirtualPermission.DependencyInjection;
 public class VirtualBindingInfoSettingsSetup<TPermission> : IVirtualBindingInfoSettingsSetup<TPermission>
     where TPermission : notnull
 {
-    private readonly List<Func<VirtualPermissionSecurityRoleItemBindingInfo<TPermission>, VirtualPermissionSecurityRoleItemBindingInfo<TPermission>>> initList = new();
+    private readonly List<Func<VirtualPermissionSecurityRoleItemBindingInfo<TPermission>, VirtualPermissionSecurityRoleItemBindingInfo<TPermission>>> initList =
+        [];
 
     public IVirtualBindingInfoSettingsSetup<TPermission> AddFilter(
         Func<IServiceProvider, Expression<Func<TPermission, bool>>> getFilter)

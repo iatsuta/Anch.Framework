@@ -4,12 +4,13 @@ using CommonFramework;
 using CommonFramework.GenericRepository;
 
 using GenericQueryable;
+
 using SecuritySystem.Notification.Domain;
 
 namespace SecuritySystem.Notification;
 
 public class NotificationPermissionExtractor<TPermission>(
-    INotificationGeneralPermissionFilterFactory<TPermission> notificationGeneralPermissionFilterFactory,
+    INotificationPermissionFilterFactory<TPermission> notificationPermissionFilterFactory,
     IServiceProxyFactory serviceProxyFactory,
     IQueryableSource queryableSource) : INotificationPermissionExtractor<TPermission>
     where TPermission : class
@@ -23,7 +24,7 @@ public class NotificationPermissionExtractor<TPermission>(
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups)
     {
         var startPermissionQ = queryableSource.GetQueryable<TPermission>()
-            .Where(notificationGeneralPermissionFilterFactory.Create(securityRoles))
+            .Where(notificationPermissionFilterFactory.Create(securityRoles))
             .Select(p => new PermissionLevelInfo<TPermission> { Permission = p, LevelInfo = "" });
 
         var typeArr = notificationFilterGroups.Select(g => g.GetSecurityContextType()).ToArray();

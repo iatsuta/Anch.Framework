@@ -1,4 +1,5 @@
-﻿using CommonFramework.GenericRepository;
+﻿using System.Collections.Immutable;
+using CommonFramework.GenericRepository;
 
 using HierarchicalExpand.Tests.Domain;
 
@@ -106,7 +107,7 @@ public class DomainObjectExpanderTests
         ];
     }
 
-    private static readonly IReadOnlyList<DomainObject> AllNodes = BuildTree().ToArray();
+    private static readonly ImmutableArray<DomainObject> AllNodes = [.. BuildTree()];
 
     public static IEnumerable<object[]> GetTraversalCases()
     {

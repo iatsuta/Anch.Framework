@@ -15,9 +15,7 @@ public class AvailablePermissionFilterFactory<TPermission>(
     {
         var innerServiceType = typeof(AvailablePermissionFilterFactory<,>).MakeGenericType(bindingInfo.PrincipalType, bindingInfo.PermissionType);
 
-        return serviceProxyFactory.Create<IAvailablePermissionFilterFactory<TPermission>>(
-            innerServiceType,
-            bindingInfo);
+        return serviceProxyFactory.Create<IAvailablePermissionFilterFactory<TPermission>>(innerServiceType, bindingInfo);
     });
 
     public Expression<Func<TPermission, bool>> CreateFilter(DomainSecurityRule.RoleBaseSecurityRule securityRule) =>
@@ -28,7 +26,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     TimeProvider timeProvider,
     IUserNameResolver<TPrincipal> userNameResolver,
-    IPermissionSecurityRoleIdentsFilterFactory<TPermission> permissionSecurityRoleIdentsFilterFactory,
+    IPermissionSecurityRoleFilterFactory<TPermission> permissionSecurityRoleFilterFactory,
     IPermissionFilterFactory<TPermission> permissionFilterFactory,
     SecurityRuleCredential defaultSecurityRuleCredential,
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
@@ -44,14 +42,15 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
             yield return bindingInfo.GetPeriodFilter(timeProvider.GetUtcNow().Date);
         }
 
-        var principalName = defaultCancellationTokenSource.RunSync(ct => userNameResolver.ResolveAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
+        var principalName =
+            defaultCancellationTokenSource.RunSync(ct => userNameResolver.ResolveAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
 
         if (principalName != null)
         {
             yield return bindingInfo.Principal.Path.Select(principalVisualIdentityInfo.Name.Path).Select(name => name == principalName);
         }
 
-        yield return permissionSecurityRoleIdentsFilterFactory.CreateFilter(securityRule);
+        yield return permissionSecurityRoleFilterFactory.CreateFilter(securityRule);
 
         foreach (var securityContextRestriction in securityRule.GetSafeSecurityContextRestrictions())
         {

@@ -1,4 +1,6 @@
-﻿namespace CommonFramework.DependencyInjection;
+﻿using System.Collections.Immutable;
+
+namespace CommonFramework.DependencyInjection;
 
 /// <summary>
 /// Represents the result of validating a collection of services or other entities.
@@ -7,21 +9,21 @@
 /// This type is intended for use with DI container validators, where a validation
 /// may produce multiple errors. Each error is represented as a string in the <see cref="Errors"/> list.
 /// </remarks>
-public record ValidationResult(IReadOnlyList<string> Errors)
+public record ValidationResult(ImmutableArray<string> Errors)
 {
     /// <summary>
     /// Initializes a new instance of <see cref="ValidationResult"/> from an enumerable of error messages.
     /// </summary>
     /// <param name="errors">A sequence of error messages produced by the validation.</param>
     public ValidationResult(IEnumerable<string> errors)
-        : this(errors.ToList())
+        : this([..errors])
     {
     }
 
     /// <summary>
     /// Gets a value indicating whether the validation was successful (i.e., no errors were reported).
     /// </summary>
-    public bool IsSuccess => this.Errors.Count == 0;
+    public bool IsSuccess => this.Errors.Length == 0;
 
     /// <summary>
     /// Gets a shared <see cref="ValidationResult"/> instance representing a successful validation.

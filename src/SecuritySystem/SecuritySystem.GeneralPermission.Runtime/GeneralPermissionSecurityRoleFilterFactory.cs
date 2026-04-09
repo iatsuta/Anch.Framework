@@ -3,11 +3,13 @@ using System.Linq.Expressions;
 
 using CommonFramework;
 
-namespace SecuritySystem.Services;
+using SecuritySystem.Services;
 
-public class PermissionSecurityRoleIdentsFilterFactory<TPermission>(
-    IPermissionSecurityRoleFilterFactory<TPermission> permissionSecurityRoleFilterFactory,
-    ISecurityRolesIdentsResolver securityRolesIdentsResolver) : IPermissionSecurityRoleIdentsFilterFactory<TPermission>
+namespace SecuritySystem.GeneralPermission;
+
+public class GeneralPermissionSecurityRoleFilterFactory<TPermission>(
+    IPermissionSecurityRoleByIdentsFilterFactory<TPermission> permissionSecurityRoleByIdentsFilterFactory,
+    ISecurityRoleIdentsResolver securityRolesIdentsResolver) : Services.IPermissionSecurityRoleFilterFactory<TPermission>
 {
     private readonly ConcurrentDictionary<DomainSecurityRule.RoleBaseSecurityRule, Expression<Func<TPermission, bool>>> cache = [];
 
@@ -18,7 +20,7 @@ public class PermissionSecurityRoleIdentsFilterFactory<TPermission>(
     {
         foreach (var (securityRoleIdentType, securityRoleIdents) in securityRolesIdentsResolver.Resolve(securityRule))
         {
-            yield return permissionSecurityRoleFilterFactory.CreateFilter(securityRoleIdentType, securityRoleIdents);
+            yield return permissionSecurityRoleByIdentsFilterFactory.CreateFilter(securityRoleIdentType, securityRoleIdents);
         }
     }
 }

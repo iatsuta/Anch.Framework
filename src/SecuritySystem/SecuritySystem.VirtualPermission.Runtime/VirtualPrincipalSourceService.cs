@@ -100,11 +100,11 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
         var restrictions = virtualBindingInfo
             .SecurityContextTypes
             .Select(identityInfoSource.GetIdentityInfo)
-            .Select(identityInfo =>
-                (identityInfo.DomainObjectType, getRestrictionsMethod
+            .ToImmutableDictionary(
+                identityInfo => identityInfo.DomainObjectType,
+                identityInfo => getRestrictionsMethod
                     .MakeGenericMethod(identityInfo.DomainObjectType, identityInfo.IdentityType)
-                    .Invoke<Array>(this, permission, identityInfo)))
-            .ToImmutableDictionary();
+                    .Invoke<Array>(this, permission, identityInfo));
 
         return new ManagedPermission
         {

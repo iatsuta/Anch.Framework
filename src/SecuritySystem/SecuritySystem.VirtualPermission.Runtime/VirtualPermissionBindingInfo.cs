@@ -28,7 +28,6 @@ public abstract record VirtualPermissionBindingInfo
 }
 
 public record VirtualPermissionBindingInfo<TPermission> : VirtualPermissionBindingInfo
-    where TPermission : notnull
 {
     private ImmutableArray<VirtualPermissionSecurityRoleItemBindingInfo>? baseItems;
 

@@ -223,13 +223,11 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
                         IRawPermissionConverter<TPermissionRestriction>,
                         RawPermissionConverter<TPermissionRestriction, TSecurityContextObjectIdent>>()
 
-                    .AddSingleton<
-                        IPermissionSecurityRoleIdentsFilterFactory<TPermission>,
-                        PermissionSecurityRoleIdentsFilterFactory<TPermission>>()
+                    .AddSingleton<IPermissionSecurityRoleFilterFactory<TPermission>, GeneralPermissionSecurityRoleFilterFactory<TPermission>>()
 
                     .AddScoped<
                         IPermissionFilterFactory<TPermission>,
-                        PermissionFilterFactory<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>()
+                        GeneralPermissionFilterFactory<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>()
 
                     .AddScoped<
                         IDisplayPermissionService<TPermission, TPermissionRestriction>,
@@ -292,7 +290,7 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
                 }
 
                 services
-                    .AddSingleton(typeof(IPermissionSecurityRoleFilterFactory<>), typeof(PermissionSecurityRoleFilterFactory<>))
+                    .AddSingleton(typeof(IPermissionSecurityRoleByIdentsFilterFactory<>), typeof(PermissionSecurityRoleByIdentsFilterFactory<>))
 
                     .AddScoped<ISecurityRoleInitializer, SecurityRoleInitializer>()
 

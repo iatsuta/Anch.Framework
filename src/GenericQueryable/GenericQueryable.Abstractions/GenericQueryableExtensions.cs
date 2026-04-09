@@ -8,7 +8,7 @@ public static class GenericQueryableExtensions
 {
 	extension<TSource>(IQueryable<TSource> source)
 	{
-		public Task<TSource[]> GenericToArrayAsync(CancellationToken cancellationToken = default) =>
+        public Task<TSource[]> GenericToArrayAsync(CancellationToken cancellationToken = default) =>
 			source.Execute(() => source.GenericToArrayAsync(cancellationToken));
 
 		public Task<List<TSource>> GenericToListAsync(CancellationToken cancellationToken = default) =>

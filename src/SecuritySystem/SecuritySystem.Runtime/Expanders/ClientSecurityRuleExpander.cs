@@ -1,11 +1,12 @@
-﻿using SecuritySystem.SecurityRuleInfo;
+﻿using System.Collections.Frozen;
+using SecuritySystem.SecurityRuleInfo;
 
 namespace SecuritySystem.Expanders;
 
 public class ClientSecurityRuleExpander(IClientSecurityRuleInfoSource clientSecurityRuleInfoSource) : IClientSecurityRuleExpander
 {
-    private readonly IReadOnlyDictionary<DomainSecurityRule.ClientSecurityRule, DomainSecurityRule> dict =
-        clientSecurityRuleInfoSource.GetInfos().ToDictionary(info => info.Rule, info => info.Implementation);
+    private readonly FrozenDictionary<DomainSecurityRule.ClientSecurityRule, DomainSecurityRule> dict =
+        clientSecurityRuleInfoSource.GetInfos().ToFrozenDictionary(info => info.Rule, info => info.Implementation);
 
     public DomainSecurityRule Expand(DomainSecurityRule.ClientSecurityRule baseSecurityRule)
     {
