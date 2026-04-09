@@ -4,8 +4,6 @@ namespace SecuritySystem.GeneralPermission;
 
 public record GeneralPermissionBindingInfo<TPermission, TSecurityRole> : GeneralPermissionBindingInfo<TPermission>
 {
-    public sealed override Type PermissionType { get; } = typeof(TPermission);
-
     public sealed override Type SecurityRoleType { get; } = typeof(TSecurityRole);
 
     public required PropertyAccessors<TPermission, TSecurityRole> SecurityRole { get; init; }
@@ -13,7 +11,10 @@ public record GeneralPermissionBindingInfo<TPermission, TSecurityRole> : General
     public PropertyAccessors<TSecurityRole, string>? SecurityRoleDescription { get; init; }
 }
 
-public abstract record GeneralPermissionBindingInfo<TPermission> : GeneralPermissionBindingInfo;
+public abstract record GeneralPermissionBindingInfo<TPermission> : GeneralPermissionBindingInfo
+{
+    public sealed override Type PermissionType { get; } = typeof(TPermission);
+}
 
 public abstract record GeneralPermissionBindingInfo
 {

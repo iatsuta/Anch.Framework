@@ -8,8 +8,6 @@ namespace SecuritySystem.VirtualPermission;
 
 public class VirtualPermissionTypedRestrictionBindingInfo<TPermission>(VirtualPermissionBindingInfo<TPermission> bindingInfo)
     : IPermissionTypedRestrictionBindingInfo<TPermission>
-
-    where TPermission : notnull
 {
     public Expression<Func<TPermission, IQueryable<TSecurityContext>>> GetRestrictionsPath<TSecurityContext>()
         where TSecurityContext : class, ISecurityContext =>

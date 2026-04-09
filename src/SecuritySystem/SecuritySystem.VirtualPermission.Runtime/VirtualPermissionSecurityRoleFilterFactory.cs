@@ -11,7 +11,6 @@ public class VirtualPermissionSecurityRoleFilterFactory<TPermission>(
     IServiceProvider serviceProvider,
     VirtualPermissionBindingInfo<TPermission> virtualPermissionBindingInfo,
     ISecurityRoleResolver securityRoleResolver) : IPermissionSecurityRoleFilterFactory<TPermission>
-    where TPermission : notnull
 {
     private readonly ConcurrentDictionary<DomainSecurityRule.RoleBaseSecurityRule, Expression<Func<TPermission, bool>>> cache = [];
 

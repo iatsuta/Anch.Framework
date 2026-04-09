@@ -15,9 +15,7 @@ public class AvailablePermissionFilterFactory<TPermission>(
     {
         var innerServiceType = typeof(AvailablePermissionFilterFactory<,>).MakeGenericType(bindingInfo.PrincipalType, bindingInfo.PermissionType);
 
-        return serviceProxyFactory.Create<IAvailablePermissionFilterFactory<TPermission>>(
-            innerServiceType,
-            bindingInfo);
+        return serviceProxyFactory.Create<IAvailablePermissionFilterFactory<TPermission>>(innerServiceType, bindingInfo);
     });
 
     public Expression<Func<TPermission, bool>> CreateFilter(DomainSecurityRule.RoleBaseSecurityRule securityRule) =>
@@ -44,7 +42,8 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
             yield return bindingInfo.GetPeriodFilter(timeProvider.GetUtcNow().Date);
         }
 
-        var principalName = defaultCancellationTokenSource.RunSync(ct => userNameResolver.ResolveAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
+        var principalName =
+            defaultCancellationTokenSource.RunSync(ct => userNameResolver.ResolveAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
 
         if (principalName != null)
         {

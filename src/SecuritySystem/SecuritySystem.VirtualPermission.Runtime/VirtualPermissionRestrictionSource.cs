@@ -12,11 +12,11 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
     IServiceProvider serviceProvider,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,
     VirtualPermissionBindingInfo<TPermission> virtualBindingInfo,
-    Tuple<SecurityContextRestrictionFilterInfo<TSecurityContext>?> restrictionFilterInfoWrapper) : IPermissionRestrictionSource<TPermission, TSecurityContextIdent>
+    Tuple<SecurityContextRestrictionFilterInfo<TSecurityContext>?> restrictionFilterInfoWrapper)
+    : IPermissionRestrictionSource<TPermission, TSecurityContextIdent>
 
     where TSecurityContext : class, ISecurityContext
     where TSecurityContextIdent : notnull
-    where TPermission : notnull
 {
     private readonly SecurityContextRestrictionFilterInfo<TSecurityContext>? restrictionFilterInfo = restrictionFilterInfoWrapper.Item1;
 

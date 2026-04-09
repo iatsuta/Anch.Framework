@@ -227,7 +227,7 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
 
                     .AddScoped<
                         IPermissionFilterFactory<TPermission>,
-                        PermissionFilterFactory<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>()
+                        GeneralPermissionFilterFactory<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>()
 
                     .AddScoped<
                         IDisplayPermissionService<TPermission, TPermissionRestriction>,

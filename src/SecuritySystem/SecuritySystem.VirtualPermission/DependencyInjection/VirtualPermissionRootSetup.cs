@@ -119,6 +119,7 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
             services.AddScoped<IPermissionSystemFactory, VirtualPermissionSystemFactory<TPermission>>();
 
             services.AddScoped<IPermissionSecurityRoleFilterFactory<TPermission>, VirtualPermissionSecurityRoleFilterFactory<TPermission>>();
+            services.AddScoped<IPermissionFilterFactory<TPermission>, VirtualPermissionFilterFactory<TPermission>>();
 
             services.TryAddSingleton<IVirtualPermissionBindingInfoValidator, VirtualPermissionBindingInfoValidator>();
         });
