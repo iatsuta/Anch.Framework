@@ -1,4 +1,6 @@
-﻿using CommonFramework;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
+using CommonFramework;
 using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
 
@@ -26,7 +28,7 @@ public class SecurityPathTests : TestBase
     {
         yield return new TestPermission(
             ExampleSecurityRole.TestKeyedRole,
-            new Dictionary<Type, IReadOnlyList<Guid>> { { typeof(BusinessUnit), [this.bu1.Id] } });
+            new Dictionary<Type, ImmutableArray<Guid>> { { typeof(BusinessUnit), [this.bu1.Id] } }.ToFrozenDictionary());
     }
 
     [Fact]
@@ -119,11 +121,11 @@ public class SecurityPathTests : TestBase
         await using var scope = this.RootServiceProvider.CreateAsyncScope();
 
         var testSecurityPath = SecurityPath<Employee>
-                               .Create(employee => employee.Location)
-                               .And(employee => employee.BusinessUnit, true, key: "testKey");
+            .Create(employee => employee.Location)
+            .And(employee => employee.BusinessUnit, true, key: "testKey");
 
         var securityProvider = scope.ServiceProvider.GetRequiredService<IDomainSecurityProviderFactory<Employee>>()
-                                    .Create(ExampleSecurityRole.TestKeyedRole, testSecurityPath);
+            .Create(ExampleSecurityRole.TestKeyedRole, testSecurityPath);
 
         var testEmployee1 = new Employee { BusinessUnit = this.bu1 };
         var testEmployee2 = new Employee();
@@ -144,11 +146,11 @@ public class SecurityPathTests : TestBase
         await using var scope = this.RootServiceProvider.CreateAsyncScope();
 
         var testSecurityPath = SecurityPath<Employee>
-                               .Create(employee => employee.Location)
-                               .And(employee => employee.BusinessUnit, key: "testKey");
+            .Create(employee => employee.Location)
+            .And(employee => employee.BusinessUnit, key: "testKey");
 
         var securityProvider = scope.ServiceProvider.GetRequiredService<IDomainSecurityProviderFactory<Employee>>()
-                                    .Create(ExampleSecurityRole.TestKeyedRole, testSecurityPath);
+            .Create(ExampleSecurityRole.TestKeyedRole, testSecurityPath);
 
         var testEmployee1 = new Employee { BusinessUnit = this.bu1 };
         var testEmployee2 = new Employee();
@@ -167,7 +169,7 @@ public class SecurityPathTests : TestBase
         var queryableSource = Substitute.For<IQueryableSource>();
 
         queryableSource.GetQueryable<BusinessUnitDirectAncestorLink>()
-                       .Returns(this.GetBusinessUnitAncestorLinkSource().AsQueryable());
+            .Returns(this.GetBusinessUnitAncestorLinkSource().AsQueryable());
 
         return queryableSource;
     }

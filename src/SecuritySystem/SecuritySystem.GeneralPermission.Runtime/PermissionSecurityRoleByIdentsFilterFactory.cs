@@ -7,31 +7,31 @@ using System.Linq.Expressions;
 
 namespace SecuritySystem.GeneralPermission;
 
-public class PermissionSecurityRoleFilterFactory<TPermission>(
+public class PermissionSecurityRoleByIdentsFilterFactory<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     GeneralPermissionBindingInfo<TPermission> generalBindingInfo,
-    IIdentityInfoSource identityInfoSource) : IPermissionSecurityRoleFilterFactory<TPermission>
+    IIdentityInfoSource identityInfoSource) : IPermissionSecurityRoleByIdentsFilterFactory<TPermission>
 {
-    private readonly Lazy<IPermissionSecurityRoleFilterFactory<TPermission>> lazyInnerService = new(() =>
+    private readonly Lazy<IPermissionSecurityRoleByIdentsFilterFactory<TPermission>> lazyInnerService = new(() =>
     {
         var securityRoleIdentityInfo = identityInfoSource.GetIdentityInfo(generalBindingInfo.SecurityRoleType);
 
-        var innerServiceType = typeof(PermissionSecurityRoleFilterFactory<,,>).MakeGenericType(
+        var innerServiceType = typeof(PermissionSecurityRoleByIdentsFilterFactory<,,>).MakeGenericType(
             generalBindingInfo.PermissionType,
             generalBindingInfo.SecurityRoleType,
             securityRoleIdentityInfo.IdentityType);
 
-        return serviceProxyFactory.Create<IPermissionSecurityRoleFilterFactory<TPermission>>(innerServiceType);
+        return serviceProxyFactory.Create<IPermissionSecurityRoleByIdentsFilterFactory<TPermission>>(innerServiceType);
     });
 
     public Expression<Func<TPermission, bool>> CreateFilter(Type identType, Array idents) =>
         this.lazyInnerService.Value.CreateFilter(identType, idents);
 }
 
-public class PermissionSecurityRoleFilterFactory<TPermission, TSecurityRole, TSecurityRoleIdent>(
+public class PermissionSecurityRoleByIdentsFilterFactory<TPermission, TSecurityRole, TSecurityRoleIdent>(
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,
     ISecurityIdentityConverter<TSecurityRoleIdent> securityIdentityConverter,
-    IIdentityInfo<TSecurityRole, TSecurityRoleIdent> identityInfo) : IPermissionSecurityRoleFilterFactory<TPermission>
+    IIdentityInfo<TSecurityRole, TSecurityRoleIdent> identityInfo) : IPermissionSecurityRoleByIdentsFilterFactory<TPermission>
     where TSecurityRoleIdent : notnull
 {
     public Expression<Func<TPermission, bool>> CreateFilter(Type identType, Array idents)

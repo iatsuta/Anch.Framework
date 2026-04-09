@@ -501,6 +501,33 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         principalNames.Should().BeEquivalentTo(testUserName);
     }
 
+    [Fact]
+    public async Task VirtualPermissionTest()
+    {
+        // Arrange
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", this.CancellationToken);
+
+        var notificationFilterGroup = new NotificationFilterGroup<Guid>
+        {
+            SecurityContextType = typeof(BusinessUnit),
+            Idents = [buIdentity.Id],
+            ExpandType = NotificationExpandType.DirectOrFirstParent
+        };
+
+        // Act
+        var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>()
+            .EvaluateAsync(TestingScopeMode.Read, async extractor =>
+                await extractor.GetPrincipalsAsync([testSecurityRole], [notificationFilterGroup])
+                    .Select(employee => employee.Login)
+                    .ToArrayAsync(this.CancellationToken));
+
+        // Assert
+
+        return;
+
+        //result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult);
+    }
+
     private Task<string[]> GetNotificationPrincipalsAsync(params NotificationFilterGroup[] notificationFilterGroups) =>
 
         this.GetEvaluator<INotificationPrincipalExtractor<ExampleApp.Domain.Auth.General.Principal>>()
@@ -531,34 +558,4 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         {
             Login = login
         }, this.CancellationToken);
-
-
-    //[Fact]
-    //public async Task VirtualPermissionTest()
-    //{
-    //    // Arrange
-    //    var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", this.CancellationToken);
-
-    //    var notificationFilterGroup = new NotificationFilterGroup<Guid>
-    //    {
-    //        SecurityContextType = typeof(BusinessUnit),
-    //        Idents = [buIdentity.Id],
-    //        ExpandType = NotificationExpandType.DirectOrFirstParent
-    //    };
-
-    //    // Act
-    //    var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>().EvaluateAsync<string[]>(TestingScopeMode.Read,
-    //        async
-    //            notificationPrincipalExtractor =>
-    //            await notificationPrincipalExtractor
-    //                .GetPrincipalsAsync([ExampleSecurityRole.TestManager], [notificationFilterGroup])
-    //                .Select(employee => employee.Login)
-    //                .ToArrayAsync(this.CancellationToken));
-
-    //    // Assert
-
-    //    return;
-
-    //    //result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult);
-    //}
 }

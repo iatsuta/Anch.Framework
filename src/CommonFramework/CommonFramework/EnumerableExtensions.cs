@@ -4,6 +4,10 @@ namespace CommonFramework;
 
 public static class EnumerableExtensions
 {
+    //public static FrozenDictionary<TKey, TValue> ToFrozenDictionary<TKey, TValue>(this IEnumerable<Tuple<TKey, TValue>> pairs, IEqualityComparer<TKey>? comparer = null)
+    //    where TKey : notnull =>
+    //    pairs.ToFrozenDictionary(pair => pair.Item1, pair => pair.Item2, comparer);
+
     public static IEnumerable<T> CollectMaybe<T>(this IEnumerable<Maybe<T>> source) =>
 
         from item in source

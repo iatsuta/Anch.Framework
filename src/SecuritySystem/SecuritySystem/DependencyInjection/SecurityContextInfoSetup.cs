@@ -13,7 +13,7 @@ namespace SecuritySystem.DependencyInjection;
 public class SecurityContextInfoSetup<TSecurityContext>(TypedSecurityIdentity identity) : ISecurityContextInfoSetup<TSecurityContext>
 	where TSecurityContext : class, ISecurityContext
 {
-	private readonly List<Action<IServiceCollection>> extensions = new();
+	private readonly List<Action<IServiceCollection>> extensions = [];
 
 	private string name = typeof(TSecurityContext).Name;
 

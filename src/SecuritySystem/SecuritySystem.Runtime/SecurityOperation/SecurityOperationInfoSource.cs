@@ -1,11 +1,13 @@
-﻿using CommonFramework;
+﻿using System.Collections.Frozen;
+
+using CommonFramework;
 
 // ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public class SecurityOperationInfoSource(IEnumerable<FullSecurityOperation> securityOperations) : ISecurityOperationInfoSource
 {
-    private readonly IReadOnlyDictionary<SecurityOperation, SecurityOperationInfo> dict = securityOperations.ToDictionary(
+    private readonly FrozenDictionary<SecurityOperation, SecurityOperationInfo> dict = securityOperations.ToFrozenDictionary(
         pair => pair.SecurityOperation,
         pair => pair.Info);
 

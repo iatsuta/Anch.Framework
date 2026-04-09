@@ -2,7 +2,7 @@
 
 namespace OData.Domain;
 
-public record SelectOperationResult<T>(ImmutableArray<T> Items, int TotalCount) : ISelectOperationResult<T>
+public record SelectOperationResult<T>(ImmutableArray<T> Items, int TotalCount)
 {
     public SelectOperationResult(ImmutableArray<T> items)
         : this(items, items.Length)
@@ -18,12 +18,4 @@ public record SelectOperationResult<T>(ImmutableArray<T> Items, int TotalCount) 
         : this([..items], totalCount)
     {
     }
-
-    #region ISelectOperationResult Members
-
-    Type ISelectOperationResult.ElementType { get; } = typeof(T);
-
-    IReadOnlyList<T> ISelectOperationResult<T>.Items => this.Items;
-
-    #endregion
 }

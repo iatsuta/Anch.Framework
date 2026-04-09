@@ -1,4 +1,6 @@
-﻿using CommonFramework.DependencyInjection;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
+using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
 
 using HierarchicalExpand.Denormalization;
@@ -11,16 +13,16 @@ namespace HierarchicalExpand.Tests;
 
 public class AncestorLinkExtractorTests
 {
-	[Theory]
-	[MemberData(nameof(GetMoveCases))]
-	public async Task MoveNode_UpdatesLinksCorrectly(MoveTestCase testCase)
-	{
-		// Arrange
-		var ct = TestContext.Current.CancellationToken;
-		var queryableSource = Substitute.For<IQueryableSource>();
+    [Theory]
+    [MemberData(nameof(GetMoveCases))]
+    public async Task MoveNode_UpdatesLinksCorrectly(MoveTestCase testCase)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var queryableSource = Substitute.For<IQueryableSource>();
 
-		queryableSource.GetQueryable<DomainObject>().Returns(testCase.Nodes.AsQueryable());
-		queryableSource.GetQueryable<DirectAncestorLink>().Returns(testCase.ExistingOldLinks.AsQueryable());
+        queryableSource.GetQueryable<DomainObject>().Returns(testCase.Nodes.ToArray().AsQueryable());
+        queryableSource.GetQueryable<DirectAncestorLink>().Returns(testCase.ExistingOldLinks.ToArray().AsQueryable());
 
         var serviceProvider = new ServiceCollection()
 
@@ -52,12 +54,12 @@ public class AncestorLinkExtractorTests
                 result.Removing.OrderBy(link => link.From.Name).ThenBy(link => link.To.Name));
 
         orderedResult.Should().Be(testCase.ExpectedResult);
-	}
+    }
 
     public record MoveTestCase(
-        IReadOnlyList<DomainObject> Nodes,
-        IReadOnlyList<DirectAncestorLink> ExistingOldLinks,
-        IReadOnlyDictionary<DomainObject, DomainObject> UpdateParents,
+        ImmutableArray<DomainObject> Nodes,
+        ImmutableArray<DirectAncestorLink> ExistingOldLinks,
+        FrozenDictionary<DomainObject, DomainObject> UpdateParents,
         SyncResult<DomainObject, DirectAncestorLink> ExpectedResult);
 
     public static IEnumerable<object[]> GetMoveCases()
@@ -78,19 +80,19 @@ public class AncestorLinkExtractorTests
         var updateParents = new Dictionary<DomainObject, DomainObject>
         {
             { c, a }
-        };
+        }.ToFrozenDictionary();
 
-        var nodes = new[] { a, b, c };
+        ImmutableArray<DomainObject> nodes = [a, b, c];
 
-        var existingOldLinks = new List<DirectAncestorLink>
-        {
+        ImmutableArray<DirectAncestorLink> existingOldLinks =
+        [
             new() { From = a, To = a },
             new() { From = a, To = b },
             new() { From = a, To = c },
             new() { From = b, To = b },
             new() { From = b, To = c },
             new() { From = c, To = c },
-        };
+        ];
 
         var expectedResult = new SyncResult<DomainObject, DirectAncestorLink>(
             [],
@@ -117,10 +119,10 @@ public class AncestorLinkExtractorTests
         var c1 = new DomainObject { Name = "C1", Parent = b1 };
         var c2 = new DomainObject { Name = "C2", Parent = b1 };
 
-        var nodes = new[] { a, a1, a2, b1, b2, c1, c2 };
+        ImmutableArray<DomainObject> nodes = [a, a1, a2, b1, b2, c1, c2];
 
-        var existingOldLinks = new List<DirectAncestorLink>
-        {
+        ImmutableArray<DirectAncestorLink> existingOldLinks =
+        [
             new() { From = a, To = a },
             new() { From = a, To = a1 },
             new() { From = a, To = a2 },
@@ -136,14 +138,14 @@ public class AncestorLinkExtractorTests
             new() { From = b1, To = b1 },
             new() { From = b1, To = c1 },
             new() { From = b1, To = c2 },
-			new() { From = c1, To = c1 },
+            new() { From = c1, To = c1 },
             new() { From = c2, To = c2 },
-        };
+        ];
 
         var updateParents = new Dictionary<DomainObject, DomainObject>
         {
             { b1, a2 }
-        };
+        }.ToFrozenDictionary();
 
         var expectedResult = new SyncResult<DomainObject, DirectAncestorLink>(
             new[]
@@ -182,12 +184,12 @@ public class AncestorLinkExtractorTests
         var updateParents = new Dictionary<DomainObject, DomainObject>
         {
             { a1B1, a2A }
-        };
+        }.ToFrozenDictionary();
 
-        var nodes = new[] { a, a1, a1A, a1A1, a1B, a1B1, a1B1A, a1B1B, a1B1B1, a1B1C, a2, a2A, a2A1, a2B };
+        ImmutableArray<DomainObject> nodes = [a, a1, a1A, a1A1, a1B, a1B1, a1B1A, a1B1B, a1B1B1, a1B1C, a2, a2A, a2A1, a2B];
 
-        var existingOldLinks = new List<DirectAncestorLink>
-        {
+        ImmutableArray<DirectAncestorLink> existingOldLinks =
+        [
             new() { From = a, To = a },
             new() { From = a, To = a1 },
             new() { From = a, To = a1A },
@@ -248,7 +250,7 @@ public class AncestorLinkExtractorTests
             new() { From = a2A1, To = a2A1 },
 
             new() { From = a2B, To = a2B }
-        };
+        ];
 
         var expectedResult = new SyncResult<DomainObject, DirectAncestorLink>(
             new[]

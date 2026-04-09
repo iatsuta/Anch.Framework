@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-
+using System.Collections.Frozen;
 using CommonFramework;
 using CommonFramework.ExpressionEvaluate;
 using CommonFramework.IdentitySource;
@@ -100,11 +100,11 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
         return new NestedManyFilterBuilder<TDomainObject, TNestedObject>(nestedBuilderFactory, securityPath, securityContextRestrictions);
     }
 
-    private Dictionary<Type, IEnumerable> TryExpandPermission(
+    private FrozenDictionary<Type, IEnumerable> TryExpandPermission(
         IReadOnlyDictionary<Type, Array> permission,
         HierarchicalExpandType expandType)
     {
-        return permission.ToDictionary(
+        return permission.ToFrozenDictionary(
             pair => pair.Key,
             pair => hierarchicalObjectExpanderFactory.Create(pair.Key).Expand(pair.Value, expandType));
     }

@@ -1,28 +1,20 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Immutable;
+﻿using CommonFramework;
 
-using CommonFramework;
-
-using SecuritySystem.Expanders;
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
 
 namespace SecuritySystem.Services;
 
-public class SecurityRolesIdentsResolver(ISecurityRuleExpander securityRuleExpander, ISecurityRoleSource securityRoleSource) : ISecurityRolesIdentsResolver
+public class SecurityRoleIdentsResolver(ISecurityRoleResolver securityRoleResolver) : ISecurityRoleIdentsResolver
 {
-    private readonly ConcurrentDictionary<(DomainSecurityRule.RoleBaseSecurityRule, bool), ImmutableDictionary<Type, Array>> cache = [];
+    private readonly ConcurrentDictionary<(DomainSecurityRule.RoleBaseSecurityRule, bool), FrozenDictionary<Type, Array>> cache = [];
 
-    public ImmutableDictionary<Type, Array> Resolve(DomainSecurityRule.RoleBaseSecurityRule baseSecurityRule, bool includeVirtual = false) =>
+    public FrozenDictionary<Type, Array> Resolve(DomainSecurityRule.RoleBaseSecurityRule baseSecurityRule, bool includeVirtual = false) =>
 
         this.cache.GetOrAdd((baseSecurityRule.WithDefaultCustoms(), includeVirtual), pair =>
 
-            securityRuleExpander
-                .FullRoleExpand(pair.Item1)
-                .Children
-                .SelectMany(c => c.SecurityRoles)
-                .Distinct()
-                .Select(securityRoleSource.GetSecurityRole)
-                .Where(sr => includeVirtual || !sr.Information.IsVirtual)
+            securityRoleResolver.Resolve(pair.Item1, pair.Item2)
                 .Select(sr => sr.Identity)
                 .GroupBy(i => i.IdentType, i => i.GetId())
-                .ToImmutableDictionary(g => g.Key, g => g.ToArray(g.Key)));
+                .ToFrozenDictionary(g => g.Key, g => g.ToArray(g.Key)));
 }

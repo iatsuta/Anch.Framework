@@ -8,7 +8,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
     : IDomainObjectExpander<TDomainObject>
     where TDomainObject : class
 {
-    private Dictionary<TDomainObject, TDomainObject?>? baseCache;
+    private IReadOnlyDictionary<TDomainObject, TDomainObject?>? baseCache;
 
     public async ValueTask<HashSet<TDomainObject>> GetAllParents(IEnumerable<TDomainObject> startDomainObjects, CancellationToken cancellationToken)
     {

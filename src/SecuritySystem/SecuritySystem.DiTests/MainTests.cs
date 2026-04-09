@@ -1,4 +1,6 @@
-﻿using CommonFramework.DependencyInjection;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
+using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +53,7 @@ public class MainTests : TestBase
     {
         yield return new TestPermission(
             ExampleSecurityRole.TestRole,
-            new Dictionary<Type, IReadOnlyList<Guid>> { { typeof(BusinessUnit), [this.bu1.Id] } });
+            new Dictionary<Type, ImmutableArray<Guid>> { { typeof(BusinessUnit), [this.bu1.Id] } }.ToFrozenDictionary());
     }
 
     [Fact]

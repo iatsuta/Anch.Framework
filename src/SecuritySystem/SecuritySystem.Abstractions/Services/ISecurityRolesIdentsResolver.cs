@@ -1,8 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
 
 namespace SecuritySystem.Services;
 
-public interface ISecurityRolesIdentsResolver
+public interface ISecurityRoleIdentsResolver
 {
-    ImmutableDictionary<Type, Array> Resolve(DomainSecurityRule.RoleBaseSecurityRule securityRule, bool includeVirtual = false);
+    FrozenDictionary<Type, Array> Resolve(DomainSecurityRule.RoleBaseSecurityRule securityRule, bool includeVirtual = false);
 }

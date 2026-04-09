@@ -1,13 +1,14 @@
 ﻿using CommonFramework;
 
 using SecuritySystem.SecurityRuleInfo;
+using System.Collections.Frozen;
 
 namespace SecuritySystem.Expanders;
 
 public class SecurityModeExpander(IEnumerable<DomainModeSecurityRuleInfo> infoList) : ISecurityModeExpander
 {
-    private readonly IReadOnlyDictionary<DomainSecurityRule.DomainModeSecurityRule, DomainSecurityRule> dict =
-        infoList.Select(info => (info.SecurityRule, info.Implementation)).ToDictionary();
+    private readonly FrozenDictionary<DomainSecurityRule.DomainModeSecurityRule, DomainSecurityRule> dict =
+        infoList.ToFrozenDictionary(info => info.SecurityRule, info => info.Implementation);
 
     public DomainSecurityRule? TryExpand(DomainSecurityRule.DomainModeSecurityRule securityRule)
     {

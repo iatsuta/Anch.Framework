@@ -1,4 +1,6 @@
-﻿using SecuritySystem.AccessDenied;
+﻿using System.Collections.Immutable;
+
+using SecuritySystem.AccessDenied;
 using SecuritySystem.ExternalSystem;
 using SecuritySystem.Providers;
 using SecuritySystem.SecurityRuleInfo;
@@ -8,7 +10,7 @@ namespace SecuritySystem;
 
 public class SecuritySystem(
     IAccessDeniedExceptionService accessDeniedExceptionService,
-    IReadOnlyList<IPermissionSystem> permissionSystems,
+    ImmutableArray<IPermissionSystem> permissionSystems,
     IDomainSecurityRoleExtractor domainSecurityRoleExtractor) : ISecuritySystem
 {
     public ValueTask<bool> HasAccessAsync(DomainSecurityRule securityRule, CancellationToken cancellationToken) =>

@@ -1,11 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SecuritySystem.Services;
 
 public class RootSecurityIdentityConverter(IServiceProvider serviceProvider, IEnumerable<Type> types) : ISecurityIdentityConverter
 {
-    private readonly IReadOnlyList<ISecurityIdentityConverter> converters = types.Distinct().Select(identType =>
-        (ISecurityIdentityConverter)serviceProvider.GetRequiredService(typeof(ISecurityIdentityConverter<>).MakeGenericType(identType))).ToList();
+    private readonly ImmutableArray<ISecurityIdentityConverter> converters =
+    [
+        ..types.Distinct().Select(identType =>
+            (ISecurityIdentityConverter)serviceProvider.GetRequiredService(typeof(ISecurityIdentityConverter<>).MakeGenericType(identType)))
+    ];
 
     public TypedSecurityIdentity? TryConvert(SecurityIdentity securityIdentity)
     {

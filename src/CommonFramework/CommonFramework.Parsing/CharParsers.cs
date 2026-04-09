@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Numerics;
 
@@ -91,7 +92,7 @@ public class CharParsers(CultureInfo culture) : CharParsers<SharedMemoryString>(
 
 public abstract class CharParsers<TInput>(CultureInfo culture) : Parsers<TInput>
 {
-    protected virtual ImmutableHashSet<char> SpaceChars { get; } = [' '];
+    protected virtual FrozenSet<char> SpaceChars { get; } = [' '];
 
     protected virtual bool IsWordChar(char c, bool isBodyChar = true)
     {
