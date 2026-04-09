@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 
 using CommonFramework;
-using CommonFramework.GenericRepository;
 
 using SecuritySystem.Services;
 

@@ -32,7 +32,7 @@ public class GeneralPermissionTypedRestrictionBindingInfo<TPermission, TPermissi
 
         var eqIdentExpr = ExpressionHelper.GetEquality<TSecurityContextObjectIdent>();
 
-        var result = ExpressionEvaluateHelper.InlineEvaluate<Func<TPermission, IQueryable<TSecurityContext>>>(ee =>
+        return ExpressionEvaluateHelper.InlineEvaluate<Func<TPermission, IQueryable<TSecurityContext>>>(ee =>
         {
             return permission => securityContextQ.Where(sc =>
 
@@ -43,8 +43,6 @@ public class GeneralPermissionTypedRestrictionBindingInfo<TPermission, TPermissi
                         ee.Evaluate(eqIdentExpr, securityContextId, ee.Evaluate(securityContextIdentityInfo.Id.Path, sc)))
             );
         });
-
-        return result;
     }
 
     public Expression<Func<TPermission, bool>> GetUnrestrictedFilter<TSecurityContext>()
