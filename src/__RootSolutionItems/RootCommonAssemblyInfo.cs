@@ -2,7 +2,7 @@
 
 [assembly: AssemblyCompany("IvAt")]
 
-[assembly: AssemblyVersion("3.2.4.0")]
+[assembly: AssemblyVersion("3.2.5.0")]
 [assembly: AssemblyInformationalVersion("changes at build")]
 
 #if DEBUG

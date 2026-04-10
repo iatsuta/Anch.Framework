@@ -72,7 +72,7 @@ public static class TypeExtensions
             {
                 var genericType = type.GetGenericTypeDefinition();
 
-                if (CollectionTypes.Contains(genericType))
+                if (CollectionTypes.Contains(genericType.UnderlyingSystemType))
                 {
                     return genericType;
                 }
