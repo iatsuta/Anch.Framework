@@ -10,7 +10,8 @@ using System.Globalization;
 
 namespace OData;
 
-public class RawSelectOperationParser(ICacheProvider cacheProvider, ICultureSource? cultureSource = null) : IRawSelectOperationParser
+public class RawSelectOperationParser(ICacheProvider cacheProvider, IParsingExceptionFactory errorParsingHandler, ICultureSource? cultureSource = null)
+    : IRawSelectOperationParser
 {
     private readonly ICache<string, SelectOperation> cache = cacheProvider.GetCache<string, SelectOperation>(typeof(IRawSelectOperationParser));
 
@@ -18,5 +19,5 @@ public class RawSelectOperationParser(ICacheProvider cacheProvider, ICultureSour
 
     public SelectOperation Parse(string input) =>
 
-        this.cache.GetOrAdd(input, _ => rawParser.MainParser.Parse(input, unparsedRest => new ODataParsingException($"Can't parse: {unparsedRest}")));
+        this.cache.GetOrAdd(input, _ => rawParser.MainParser.Parse(input, unparsedRest => errorParsingHandler.GetError(input, unparsedRest)));
 }

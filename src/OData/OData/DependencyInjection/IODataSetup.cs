@@ -1,3 +1,7 @@
 ﻿namespace OData.DependencyInjection;
 
-public interface IODataSetup;
+public interface IODataSetup
+{
+    IODataSetup SetParsingExceptionFactory<TParsingExceptionFactory>()
+        where TParsingExceptionFactory : IParsingExceptionFactory;
+}
