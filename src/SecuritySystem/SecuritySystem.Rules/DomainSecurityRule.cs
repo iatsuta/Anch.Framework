@@ -2,7 +2,6 @@
 
 using HierarchicalExpand;
 
-// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public abstract record DomainSecurityRule : SecurityRule

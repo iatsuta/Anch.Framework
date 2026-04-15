@@ -2,8 +2,6 @@
 using CommonFramework.Auth;
 using CommonFramework.GenericRepository;
 using Microsoft.Extensions.DependencyInjection;
-using SecuritySystem.Credential;
-
 using SecuritySystem.UserSource;
 
 namespace SecuritySystem.Services;

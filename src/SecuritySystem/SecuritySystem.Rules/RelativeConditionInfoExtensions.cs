@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 
-// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public static class RelativeConditionInfoExtensions

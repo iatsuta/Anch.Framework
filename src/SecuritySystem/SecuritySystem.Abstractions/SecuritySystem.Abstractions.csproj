@@ -6,13 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\GenericQueryable\GenericQueryable.Abstractions\GenericQueryable.Abstractions.csproj" />
     <ProjectReference Include="..\..\HierarchicalExpand\HierarchicalExpand.Abstractions\HierarchicalExpand.Abstractions.csproj" />
     <ProjectReference Include="..\SecuritySystem.Domain\SecuritySystem.Domain.csproj" />
+    <ProjectReference Include="..\SecuritySystem.Rules\SecuritySystem.Rules.csproj" />
   </ItemGroup>
 
 </Project>

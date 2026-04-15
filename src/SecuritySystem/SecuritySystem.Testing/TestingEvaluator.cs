@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem.Credential;
 using SecuritySystem.Services;
 
 namespace SecuritySystem.Testing;

@@ -2,8 +2,6 @@
 
 using GenericQueryable;
 
-using SecuritySystem.Credential;
-
 namespace SecuritySystem.UserSource;
 
 public class UserSource<TUser>(IUserQueryableSource<TUser> userQueryableSource, IMissedUserService<TUser> missedUserService) : IUserSource<TUser>

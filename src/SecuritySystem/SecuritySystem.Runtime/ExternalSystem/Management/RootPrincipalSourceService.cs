@@ -2,7 +2,6 @@
 
 using CommonFramework;
 
-using SecuritySystem.Credential;
 using SecuritySystem.UserSource;
 
 namespace SecuritySystem.ExternalSystem.Management;

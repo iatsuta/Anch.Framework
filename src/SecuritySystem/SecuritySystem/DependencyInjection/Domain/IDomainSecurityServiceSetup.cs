@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+
 using SecuritySystem.DomainServices;
 
 namespace SecuritySystem.DependencyInjection.Domain;
@@ -48,7 +49,4 @@ public interface IDomainSecurityServiceSetup<TDomainObject>
 
     IDomainSecurityServiceSetup<TDomainObject> SetCustomService<TDomainSecurityService>()
         where TDomainSecurityService : IDomainSecurityService<TDomainObject>;
-
-    IDomainSecurityServiceSetup<TDomainObject> Override<TSecurityFunctor>()
-        where TSecurityFunctor : IOverrideSecurityProviderFunctor<TDomainObject>;
 }

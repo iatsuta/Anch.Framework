@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using System.Linq.Expressions;
 
-// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public abstract record SecurityContextRestrictionFilterInfo

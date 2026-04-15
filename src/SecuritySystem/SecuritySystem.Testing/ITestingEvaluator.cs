@@ -1,6 +1,4 @@
-﻿using SecuritySystem.Credential;
-
-namespace SecuritySystem.Testing;
+﻿namespace SecuritySystem.Testing;
 
 public interface ITestingEvaluator<out TService>
 {

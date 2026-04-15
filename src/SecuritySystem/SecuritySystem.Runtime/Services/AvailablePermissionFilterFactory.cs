@@ -3,8 +3,6 @@
 using CommonFramework;
 using CommonFramework.VisualIdentitySource;
 
-using SecuritySystem.Credential;
-
 namespace SecuritySystem.Services;
 
 public class AvailablePermissionFilterFactory<TPermission>(
@@ -43,7 +41,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
         }
 
         var principalName =
-            defaultCancellationTokenSource.RunSync(ct => userNameResolver.ResolveAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
+            defaultCancellationTokenSource.RunSync(ct => userNameResolver.GetUserNameAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
 
         if (principalName != null)
         {

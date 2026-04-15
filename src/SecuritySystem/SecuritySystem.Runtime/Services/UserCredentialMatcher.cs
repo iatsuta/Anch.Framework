@@ -2,8 +2,6 @@
 using CommonFramework.IdentitySource;
 using CommonFramework.VisualIdentitySource;
 
-using SecuritySystem.Credential;
-
 namespace SecuritySystem.Services;
 
 public class UserCredentialMatcher<TUser>(

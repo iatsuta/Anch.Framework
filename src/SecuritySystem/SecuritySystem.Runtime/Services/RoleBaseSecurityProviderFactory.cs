@@ -11,9 +11,10 @@ public class RoleBaseSecurityProviderFactory<TDomainObject>(
     IAccessorsFilterFactory<TDomainObject> accessorsFilterFactory,
     ISecurityRuleExpander securityRuleExpander,
     ISecurityPathRestrictionService securityPathRestrictionService,
+    SecurityPath<TDomainObject>? defaultSecurityPath = null,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : IRoleBaseSecurityProviderFactory<TDomainObject>
 {
-    public virtual ISecurityProvider<TDomainObject> Create(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath) =>
+    public virtual ISecurityProvider<TDomainObject> Create(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject>? securityPath) =>
 
         securityRuleExpander
             .FullRoleExpand(securityRule)
@@ -21,12 +22,14 @@ public class RoleBaseSecurityProviderFactory<TDomainObject>(
             .Select(innerSecurityRule => this.Create(innerSecurityRule, securityPath))
             .Or();
 
-    private ISecurityProvider<TDomainObject> Create(DomainSecurityRule.ExpandedRolesSecurityRule securityRule, SecurityPath<TDomainObject> securityPath) =>
+    private ISecurityProvider<TDomainObject> Create(DomainSecurityRule.ExpandedRolesSecurityRule securityRule, SecurityPath<TDomainObject>? securityPath) =>
 
         new RoleBaseSecurityPathProvider<TDomainObject>(
             securityFilterFactory,
             accessorsFilterFactory,
             securityRule,
-            securityPathRestrictionService.ApplyRestriction(securityPath, securityRule.CustomRestriction ?? SecurityPathRestriction.Default),
+            securityPathRestrictionService.ApplyRestriction(
+                securityPath ?? defaultSecurityPath,
+                securityRule.CustomRestriction ?? SecurityPathRestriction.Default),
             defaultCancellationTokenSource);
 }

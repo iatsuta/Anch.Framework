@@ -2,7 +2,6 @@
 
 using CommonFramework.ExpressionComparers;
 
-// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public abstract record RelativeConditionInfo

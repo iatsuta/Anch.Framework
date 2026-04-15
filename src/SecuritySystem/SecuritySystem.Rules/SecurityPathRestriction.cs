@@ -2,7 +2,6 @@
 
 using CommonFramework;
 
-// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 /// <summary>
@@ -11,28 +10,28 @@ namespace SecuritySystem;
 /// <param name="SecurityContextRestrictions"></param>
 /// <param name="ConditionFactoryTypes"></param>
 /// <param name="RelativeConditions"></param>
-/// <param name="ApplyBasePath">Применение базового SecurityPath от доменного объекта</param>
+/// <param name="IgnoreSecurityPath">Игнорирование SecurityPath</param>
 public record SecurityPathRestriction(
     DeepEqualsCollection<SecurityContextRestriction>? SecurityContextRestrictions,
     DeepEqualsCollection<Type> ConditionFactoryTypes,
     DeepEqualsCollection<RelativeConditionInfo> RelativeConditions,
-    bool ApplyBasePath)
+    bool IgnoreSecurityPath)
 {
     public IEnumerable<Type>? SecurityContextTypes => this.SecurityContextRestrictions?.Select(v => v.SecurityContextType);
 
     /// <summary>
-    /// Ограничения по умолчанию для ролей (доступны все типы контекстов, базовый SecurityPath применяется)
+    /// Ограничения по умолчанию для ролей (доступны все типы контекстов, SecurityPath применяется)
     /// </summary>
-    public static SecurityPathRestriction Default { get; } = new(null, Array.Empty<Type>(), Array.Empty<RelativeConditionInfo>(), true);
+    public static SecurityPathRestriction Default { get; } = new(null, Array.Empty<Type>(), Array.Empty<RelativeConditionInfo>(), false);
 
     /// <summary>
-    /// Ограничения для базовых ролей 'Administrator' и 'SystemIntegration' (запрещены все контексты и базоый SecurityPath не применяются)
+    /// Ограничения для базовых ролей 'Administrator' и 'SystemIntegration' (запрещены все контексты и SecurityPath не применяются)
     /// </summary>
     public static SecurityPathRestriction Ignored { get; } = new(
         Array.Empty<SecurityContextRestriction>(),
         Array.Empty<Type>(),
         Array.Empty<RelativeConditionInfo>(),
-        false);
+        true);
 
     public SecurityPathRestriction Add<TSecurityContext>(
         bool required = false,

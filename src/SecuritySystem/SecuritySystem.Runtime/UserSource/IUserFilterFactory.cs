@@ -1,7 +1,5 @@
 ﻿using System.Linq.Expressions;
 
-using SecuritySystem.Credential;
-
 namespace SecuritySystem.UserSource;
 
 public interface IUserFilterFactory<TUser>

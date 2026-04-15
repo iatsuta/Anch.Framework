@@ -1,33 +1,23 @@
-﻿using CommonFramework.DictionaryCache;
+﻿using System.Collections.Concurrent;
 using SecuritySystem.Expanders;
-
 
 namespace SecuritySystem.Services;
 
-public class SecurityRuleDeepOptimizer : ISecurityRuleDeepOptimizer
+public class SecurityRuleDeepOptimizer(
+    ISecurityRuleExpander expander,
+    ISecurityRuleBasicOptimizer basicOptimizer)
+    : ISecurityRuleDeepOptimizer
 {
-    private readonly ISecurityRuleExpander expander;
-
-    private readonly ISecurityRuleBasicOptimizer basicOptimizer;
-
-    private readonly IDictionaryCache<DomainSecurityRule, DomainSecurityRule> cache;
-
-    public SecurityRuleDeepOptimizer(
-        ISecurityRuleExpander expander,
-        ISecurityRuleBasicOptimizer basicOptimizer)
-    {
-        this.expander = expander;
-        this.basicOptimizer = basicOptimizer;
-        this.cache = new DictionaryCache<DomainSecurityRule, DomainSecurityRule>(this.Visit).WithLock();
-    }
+    private readonly ConcurrentDictionary<DomainSecurityRule, DomainSecurityRule> cache = [];
 
     protected virtual DomainSecurityRule Visit(DomainSecurityRule baseSecurityRule)
     {
-        var visitedRule = this.basicOptimizer.Optimize(this.expander.FullDomainExpand(baseSecurityRule));
+        var visitedRule = basicOptimizer.Optimize(expander.FullDomainExpand(baseSecurityRule));
 
         return visitedRule == baseSecurityRule ? visitedRule : this.Visit(visitedRule);
     }
 
-    DomainSecurityRule ISecurityRuleDeepOptimizer.Optimize(DomainSecurityRule securityRule) =>
-        this.cache[securityRule];
+    DomainSecurityRule ISecurityRuleDeepOptimizer.Optimize(DomainSecurityRule baseSecurityRule) =>
+
+        baseSecurityRule.WithDefaultCredential(securityRule => this.cache.GetOrAdd(securityRule, _ => this.Visit(securityRule)));
 }

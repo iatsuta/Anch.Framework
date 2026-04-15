@@ -1,6 +1,4 @@
-﻿using SecuritySystem.Credential;
-
-namespace SecuritySystem.UserSource;
+﻿namespace SecuritySystem.UserSource;
 
 public class ExistUserRunAsValidator<TUser>(IMissedUserErrorSource missedUserErrorSource, IUserSource<TUser> userSource) : IRunAsValidator
 {

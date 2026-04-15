@@ -1,4 +1,5 @@
 ﻿using SecuritySystem.Services;
+using static SecuritySystem.SecurityRule;
 
 namespace SecuritySystem.Expanders;
 
@@ -58,6 +59,15 @@ public class RootSecurityRuleExpander(
 
     public DomainSecurityRule FullDomainExpand(DomainSecurityRule securityRule) =>
         new FullDomainExpandVisitor(this).Visit(securityRule);
+
+    public DomainSecurityRule ToDomain<TDomainObject>(SecurityRule securityRule) =>
+
+        securityRule switch
+        {
+            DomainSecurityRule domainSecurityRule => domainSecurityRule,
+            ModeSecurityRule modeSecurityRule => modeSecurityRule.ToDomain<TDomainObject>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(securityRule))
+        };
 
     private class FullDomainExpandVisitor(ISecurityRuleExpander expander) : SecurityRuleVisitor
     {

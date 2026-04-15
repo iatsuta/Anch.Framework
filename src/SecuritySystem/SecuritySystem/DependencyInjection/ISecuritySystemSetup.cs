@@ -58,9 +58,6 @@ public interface ISecuritySystemSetup
         });
     }
 
-    ISecuritySystemSetup AddDomainSecurityMetadata<TMetadata>()
-        where TMetadata : IDomainSecurityServiceMetadata;
-
     ISecuritySystemSetup AddSecurityRole(SecurityRole securityRole, SecurityRoleInfo info);
 
     ISecuritySystemSetup AddSecurityRule(DomainSecurityRule.SecurityRuleHeader header, DomainSecurityRule implementation);

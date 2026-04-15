@@ -1,6 +1,4 @@
 ﻿using CommonFramework;
-
-using SecuritySystem.Credential;
 using SecuritySystem.ExternalSystem.Management;
 
 namespace SecuritySystem.Testing;

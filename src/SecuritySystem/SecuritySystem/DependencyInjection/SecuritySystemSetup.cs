@@ -6,6 +6,7 @@ using CommonFramework.GenericRepository;
 using CommonFramework.IdentitySource.DependencyInjection;
 using CommonFramework.RelativePath;
 using CommonFramework.VisualIdentitySource.DependencyInjection;
+
 using HierarchicalExpand.DependencyInjection;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,6 @@ using SecuritySystem.AccessDenied;
 using SecuritySystem.AvailableSecurity;
 using SecuritySystem.Builders._Factory;
 using SecuritySystem.Builders.AccessorsBuilder;
-using SecuritySystem.Credential;
 using SecuritySystem.DependencyInjection.Domain;
 using SecuritySystem.DomainServices;
 using SecuritySystem.Expanders;
@@ -29,8 +29,6 @@ using SecuritySystem.SecurityRuleInfo;
 using SecuritySystem.Services;
 using SecuritySystem.UserSource;
 using SecuritySystem.Builders.MaterializedBuilder;
-
-using System.Reflection;
 
 namespace SecuritySystem.DependencyInjection;
 
@@ -120,20 +118,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
         this.domainBuilders.Add(builder);
 
         return this;
-    }
-
-    public ISecuritySystemSetup AddDomainSecurityMetadata<TMetadata>()
-        where TMetadata : IDomainSecurityServiceMetadata
-    {
-        return this.GetType().GetMethod(nameof(this.AddDomainSecurityMetadataInternal), BindingFlags.Instance | BindingFlags.NonPublic)!
-            .MakeGenericMethod(typeof(TMetadata), TMetadata.DomainType)
-            .Invoke<ISecuritySystemSetup>(this);
-    }
-
-    private ISecuritySystemSetup AddDomainSecurityMetadataInternal<TMetadata, TDomainObject>()
-        where TMetadata : IDomainSecurityServiceMetadata<TDomainObject>
-    {
-        return this.AddDomainSecurity<TDomainObject>(b => b.Override<TMetadata>().Pipe(TMetadata.Setup));
     }
 
     public ISecuritySystemSetup AddSecurityRole(SecurityRole securityRole, SecurityRoleInfo info)
@@ -494,7 +478,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
                 typeof(AccessDeniedSecurityProvider<>))
             .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.Disabled), typeof(DisabledSecurityProvider<>))
             .AddSingleton(typeof(ISecurityProvider<>), typeof(DisabledSecurityProvider<>))
-            .AddScoped(typeof(IDomainSecurityService<>), typeof(ContextDomainSecurityService<>))
+            .AddScoped(typeof(IDomainSecurityService<>), typeof(DomainSecurityService<>))
 
             .AddScoped<ISecuritySystemFactory, SecuritySystemFactory>()
             .AddScoped(sp =>

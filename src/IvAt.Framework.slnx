@@ -85,6 +85,7 @@
     <Project Path="SecuritySystem/SecuritySystem.Notification.Domain/SecuritySystem.Notification.Domain.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Notification.Runtime/SecuritySystem.Notification.Runtime.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Notification/SecuritySystem.Notification.csproj" />
+    <Project Path="SecuritySystem/SecuritySystem.Rules/SecuritySystem.Rules.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Runtime/SecuritySystem.Runtime.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.Testing/SecuritySystem.Testing.csproj" />
     <Project Path="SecuritySystem/SecuritySystem.VirtualPermission.Runtime/SecuritySystem.VirtualPermission.Runtime.csproj" />

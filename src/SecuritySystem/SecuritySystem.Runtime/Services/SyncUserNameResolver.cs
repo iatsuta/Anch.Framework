@@ -1,7 +1,5 @@
 ﻿using CommonFramework;
 
-using SecuritySystem.Credential;
-
 namespace SecuritySystem.Services;
 
 public class SyncUserNameResolver(

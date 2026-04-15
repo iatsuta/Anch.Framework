@@ -5,8 +5,4 @@
     <RootNamespace>SecuritySystem</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\HierarchicalExpand\HierarchicalExpand.Domain\HierarchicalExpand.Domain.csproj" />
-  </ItemGroup>
-
 </Project>

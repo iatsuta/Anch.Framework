@@ -7,8 +7,6 @@ using CommonFramework.RelativePath;
 using CommonFramework.VisualIdentitySource;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem.Credential;
 using SecuritySystem.Providers;
 using SecuritySystem.SecurityAccessor;
 using SecuritySystem.Services;
@@ -95,7 +93,7 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
             {
                 var securityRuleCredential = baseSecurityRuleCredential ?? new SecurityRuleCredential.CurrentUserWithRunAsCredential();
 
-                var userName = await userNameResolver.ResolveAsync(securityRuleCredential, ct);
+                var userName = await userNameResolver.GetUserNameAsync(securityRuleCredential, ct);
 
                 if (userName == null)
                 {

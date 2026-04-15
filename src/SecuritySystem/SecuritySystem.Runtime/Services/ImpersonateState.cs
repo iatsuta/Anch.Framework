@@ -1,6 +1,4 @@
-﻿using SecuritySystem.Credential;
-
-namespace SecuritySystem.Services;
+﻿namespace SecuritySystem.Services;
 
 public record ImpersonateState : IImpersonateState
 {

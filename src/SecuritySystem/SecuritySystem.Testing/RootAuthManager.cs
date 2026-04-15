@@ -7,8 +7,6 @@ using GenericQueryable;
 
 using HierarchicalExpand;
 using HierarchicalExpand.Denormalization;
-
-using SecuritySystem.Credential;
 using SecuritySystem.DomainServices;
 
 using Microsoft.Extensions.DependencyInjection;

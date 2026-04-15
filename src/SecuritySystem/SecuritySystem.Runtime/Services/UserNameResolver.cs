@@ -1,5 +1,8 @@
 ﻿using CommonFramework;
-using SecuritySystem.Credential;
+using CommonFramework.Auth;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using SecuritySystem.UserSource;
 
 namespace SecuritySystem.Services;
@@ -32,5 +35,30 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
 
             default: throw new ArgumentOutOfRangeException(nameof(userCredential));
         }
+    }
+}
+public class UserNameResolver<TUser>(
+    ICurrentUser currentUser,
+    [FromKeyedServices(ICurrentUser.ImpersonatedKey)] ICurrentUser impersonatedCurrentUser,
+    IUserSource<TUser> userSource) : IUserNameResolver<TUser>
+{
+    private readonly IUserSource<User> simpleUserSource = userSource.ToSimple();
+
+    public async ValueTask<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken cancellationToken)
+    {
+        return credential switch
+        {
+            SecurityRuleCredential.CustomUserSecurityRuleCredential customUserSecurityRuleCredential =>
+
+                (await simpleUserSource.GetUserAsync(customUserSecurityRuleCredential.UserCredential, cancellationToken)).Name,
+
+            SecurityRuleCredential.CurrentUserWithRunAsCredential => currentUser.Name,
+
+            SecurityRuleCredential.CurrentUserWithoutRunAsCredential => impersonatedCurrentUser.Name,
+
+            SecurityRuleCredential.AnyUserCredential => null,
+
+            _ => throw new ArgumentOutOfRangeException(nameof(credential))
+        };
     }
 }

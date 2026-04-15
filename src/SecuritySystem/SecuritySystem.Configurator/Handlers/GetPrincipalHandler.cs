@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using SecuritySystem.Attributes;
 using SecuritySystem.Configurator.Interfaces;
 using SecuritySystem.Configurator.Models;
-using SecuritySystem.Credential;
 using SecuritySystem.ExternalSystem.ApplicationSecurity;
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.ExternalSystem.SecurityContextStorage;

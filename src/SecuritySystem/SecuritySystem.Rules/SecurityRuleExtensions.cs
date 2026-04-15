@@ -6,7 +6,6 @@ using HierarchicalExpand;
 
 using static SecuritySystem.DomainSecurityRule;
 
-// ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
 public static class SecurityRuleExtensions

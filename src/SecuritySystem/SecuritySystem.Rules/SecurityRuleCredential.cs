@@ -1,7 +1,4 @@
-﻿using SecuritySystem.Credential;
-
-// ReSharper disable once CheckNamespace
-namespace SecuritySystem;
+﻿namespace SecuritySystem;
 
 public abstract record SecurityRuleCredential
 {

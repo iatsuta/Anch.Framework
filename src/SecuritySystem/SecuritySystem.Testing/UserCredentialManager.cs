@@ -1,6 +1,4 @@
 ﻿using CommonFramework.Auth;
-
-using SecuritySystem.Credential;
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.Services;
 

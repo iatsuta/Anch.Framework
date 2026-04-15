@@ -6,11 +6,11 @@ using CommonFramework.VisualIdentitySource;
 
 using GenericQueryable;
 
-using SecuritySystem.Credential;
-using SecuritySystem.ExternalSystem;
-
 using System.Collections.Immutable;
 using System.Linq.Expressions;
+
+using SecuritySystem.Services;
+using SecuritySystem.ExternalSystem;
 
 namespace SecuritySystem.VirtualPermission;
 
@@ -56,7 +56,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
             .Where(bindingInfo.GetPeriodFilter(timeProvider.GetLocalNow().Date))
             .PipeMaybe(
                 defaultCancellationTokenSource.RunSync(ct =>
-                    userNameResolver.ResolveAsync(customSecurityRuleCredential ?? securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct)),
+                    userNameResolver.GetUserNameAsync(customSecurityRuleCredential ?? securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct)),
                 (q, principalName) => q.Where(this.fullNamePath.Select(name => name == principalName)));
     }
 

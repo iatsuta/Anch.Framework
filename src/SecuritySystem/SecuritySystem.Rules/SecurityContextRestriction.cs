@@ -1,5 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-namespace SecuritySystem;
+﻿namespace SecuritySystem;
 
 public abstract record SecurityContextRestriction(bool Required, string? Key)
 {

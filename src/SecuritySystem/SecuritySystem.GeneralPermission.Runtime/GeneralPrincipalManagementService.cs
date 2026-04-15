@@ -1,8 +1,6 @@
 ﻿using CommonFramework;
 using CommonFramework.GenericRepository;
 using CommonFramework.VisualIdentitySource;
-
-using SecuritySystem.Credential;
 using SecuritySystem.ExternalSystem.Management;
 using SecuritySystem.GeneralPermission.Validation.Principal;
 using SecuritySystem.Services;

@@ -1,37 +1,33 @@
 ﻿using System.Linq.Expressions;
-
 using CommonFramework;
 
 // ReSharper disable once CheckNamespace
 namespace SecuritySystem;
 
-public class SecurityPathRestrictionService(
-    IServiceProvider serviceProvider,
-    IServiceProxyFactory serviceProxyFactory)
+public class SecurityPathRestrictionService(IServiceProvider serviceProvider, IServiceProxyFactory serviceProxyFactory)
     : ISecurityPathRestrictionService
 {
-    public SecurityPath<TDomainObject> ApplyRestriction<TDomainObject>(
-        SecurityPath<TDomainObject> securityPath,
-        SecurityPathRestriction restriction)
-    {
-        return this.VisitSecurityContexts(securityPath, restriction)
+    public SecurityPath<TDomainObject> ApplyRestriction<TDomainObject>(SecurityPath<TDomainObject>? securityPath, SecurityPathRestriction restriction) =>
+
+        this.VisitSecurityContexts(securityPath, restriction)
             .Pipe(v => restriction.ConditionFactoryTypes.Aggregate(v, this.TryAddConditionFactory))
             .Pipe(v => restriction.RelativeConditions.Aggregate(v, this.TryAddRelativeCondition));
-    }
 
     private SecurityPath<TDomainObject> VisitSecurityContexts<TDomainObject>(
-        SecurityPath<TDomainObject> securityPath,
+        SecurityPath<TDomainObject>? securityPath,
         SecurityPathRestriction restriction)
     {
-        var realSecurityPath = restriction.ApplyBasePath ? securityPath : SecurityPath<TDomainObject>.Empty;
-
-        if (restriction.SecurityContextRestrictions == null)
+        if (securityPath == null || restriction.IgnoreSecurityPath)
         {
-            return realSecurityPath;
+            return SecurityPath<TDomainObject>.Empty;
+        }
+        else if (restriction.SecurityContextRestrictions == null)
+        {
+            return securityPath;
         }
         else
         {
-            return this.Visit(realSecurityPath, restriction.SecurityContextRestrictions);
+            return this.Visit(securityPath, restriction.SecurityContextRestrictions);
         }
     }
 
@@ -89,9 +85,8 @@ public class SecurityPathRestrictionService(
         }
         else if (securityPath is IContextSecurityPath contextSecurityPath)
         {
-            var containsKey = securityContextRestrictions.Any(
-                                  restriction => restriction.SecurityContextType == contextSecurityPath.SecurityContextType
-                                                 && restriction.Key == contextSecurityPath.Key);
+            var containsKey = securityContextRestrictions.Any(restriction => restriction.SecurityContextType == contextSecurityPath.SecurityContextType
+                                                                             && restriction.Key == contextSecurityPath.Key);
 
             return containsKey ? securityPath : SecurityPath<TDomainObject>.Empty;
         }

@@ -1,6 +1,4 @@
-﻿using SecuritySystem.Credential;
-
-namespace SecuritySystem.UserSource;
+﻿namespace SecuritySystem.UserSource;
 
 public interface IMissedUserService<out TUser>
 {

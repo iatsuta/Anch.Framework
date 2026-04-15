@@ -1,4 +1,4 @@
-﻿namespace SecuritySystem.Credential;
+﻿namespace SecuritySystem;
 
 public abstract record UserCredential
 {

@@ -1,12 +1,13 @@
-﻿using System.Linq.Expressions;
-
-using CommonFramework;
+﻿using CommonFramework;
 using CommonFramework.ExpressionEvaluate;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using SecuritySystem.Providers;
 using SecuritySystem.UserSource;
+using SecuritySystem.Expanders;
+
+using System.Linq.Expressions;
 
 namespace SecuritySystem.Services;
 
@@ -15,16 +16,13 @@ public class DomainSecurityProviderFactory<TDomainObject>(
     IServiceProxyFactory serviceProxyFactory,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     ISecurityRuleDeepOptimizer deepOptimizer,
-    IRoleBaseSecurityProviderFactory<TDomainObject> roleBaseSecurityProviderFactory) : IDomainSecurityProviderFactory<TDomainObject>
+    IRoleBaseSecurityProviderFactory<TDomainObject> roleBaseSecurityProviderFactory,
+    ISecurityRuleExpander securityRuleExpander) : IDomainSecurityProviderFactory<TDomainObject>
 {
-    public virtual ISecurityProvider<TDomainObject> Create(DomainSecurityRule securityRule, SecurityPath<TDomainObject> securityPath)
-    {
-        return this.CreateInternal(deepOptimizer.Optimize(securityRule), securityPath);
-    }
+    public ISecurityProvider<TDomainObject> Create(SecurityRule securityRule, SecurityPath<TDomainObject>? securityPath) =>
+        this.CreateInternal(deepOptimizer.Optimize(securityRuleExpander.ToDomain<TDomainObject>(securityRule)), securityPath);
 
-    protected virtual ISecurityProvider<TDomainObject> CreateInternal(
-        DomainSecurityRule baseSecurityRule,
-        SecurityPath<TDomainObject> securityPath)
+    protected virtual ISecurityProvider<TDomainObject> CreateInternal(DomainSecurityRule baseSecurityRule, SecurityPath<TDomainObject>? securityPath)
     {
         switch (baseSecurityRule)
         {
