@@ -3,7 +3,8 @@ using SyncWorkflow.States;
 
 namespace SyncWorkflow.Storage.Inline;
 
-public class StateInstanceSerializer<TSource>(IWorkflow<TSource> workflow,
+public class StateInstanceSerializer<TSource>(
+    IWorkflow<TSource> workflow,
     IStateDefinitionResolverFactory stateDefinitionResolverFactory) : IStateInstanceSerializer<TSource>
 {
     private readonly IStateDefinitionResolver<TSource> stateDefinitionResolver = stateDefinitionResolverFactory.Create(workflow);

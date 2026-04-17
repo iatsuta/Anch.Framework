@@ -2,9 +2,7 @@
 
 namespace SyncWorkflow.Storage.Inline;
 
-public interface IStateInstanceSerializer<in TSource, TState>
-{
-}
+public interface IStateInstanceSerializer<in TSource, TState>;
 
 public interface IStateInstanceSerializer<in TSource>
 {

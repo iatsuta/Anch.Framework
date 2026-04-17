@@ -2,7 +2,4 @@
 
 namespace SyncWorkflow.Storage.Inline;
 
-public class TaskStateInstanceSerializer : IStateInstanceSerializer<TaskState>
-{
-
-}
+public class TaskStateInstanceSerializer : IStateInstanceSerializer<TaskState>;

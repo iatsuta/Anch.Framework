@@ -3,6 +3,7 @@
     <Project Path="SyncWorkflow/SyncWorkflow.Abstractions/SyncWorkflow.Abstractions.csproj" />
     <Project Path="SyncWorkflow/SyncWorkflow.Runtime/SyncWorkflow.Runtime.csproj" />
     <Project Path="SyncWorkflow/SyncWorkflow.Tests/SyncWorkflow.Tests.csproj" />
+    <Project Path="SyncWorkflow/SyncWorkflow/SyncWorkflow.csproj" />
   </Folder>
 
   <Folder Name="/__RootSolutionItems/">

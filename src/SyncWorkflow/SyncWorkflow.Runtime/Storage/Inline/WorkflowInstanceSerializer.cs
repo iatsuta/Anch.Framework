@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using CommonFramework;
 using CommonFramework.ExpressionEvaluate;
+using CommonFramework.IdentitySource;
 using Microsoft.Extensions.DependencyInjection;
 using SyncWorkflow.Definition;
 using SyncWorkflow.Domain.Runtime;
@@ -12,12 +13,11 @@ namespace SyncWorkflow.Storage.Inline;
 public class WorkflowInstanceSerializer<TSource>(
     IServiceProvider serviceProvider,
     IWorkflow<TSource> workflow,
-    IStateInstanceSerializerFactory stateInstanceSerializerFactory)
+    IStateInstanceSerializerFactory stateInstanceSerializerFactory,
+    IIdentityInfo<TSource, Guid> identityInfo)
     : IWorkflowInstanceSerializer<TSource>
 {
     private readonly IStateInstanceSerializer<TSource> stateDefinitionResolver = stateInstanceSerializerFactory.Create(workflow);
-
-    private readonly Func<TSource, Guid> getId = ((Expression<Func<TSource, Guid>>)workflow.Definition.IdProperty!).Compile(LambdaCompileCache.Default);
 
     public WorkflowInstance Deserialize(TSource source)
     {
@@ -27,7 +27,7 @@ public class WorkflowInstanceSerializer<TSource>(
         {
             Definition = workflow.Definition,
             Source = source!,
-            Id = this.getId(source),
+            Id = identityInfo.Id.Getter(source),
             CurrentState = currentState,
             Status = this.GetWorkflowStatus(currentState.Definition)
         };
@@ -87,31 +87,18 @@ public class WorkflowInstanceSerializer<TSource>(
 }
 
 public class TerminateStateInstanceSerializer<TWorkflow, TSource, TElement> : IStateInstanceSerializer<TWorkflow, TSource, StartWorkflowsState<TSource, TElement>, TElement>
-    where TWorkflow : IWorkflow<TSource>
-{
-}
+    where TWorkflow : IWorkflow<TSource>;
 
 public class TerminateStateInstanceSerializer<TWorkflow, TSource> : IStateInstanceSerializer<TWorkflow, TSource, TerminateState, Ignore>
-    where TWorkflow : IWorkflow<TSource>
-{
-}
+    where TWorkflow : IWorkflow<TSource>;
 
-public class FinalStateInstanceSerializer<TSource> : IStateInstanceSerializer<TWorkflow, TSource, FinalState, Ignore>
-    where TWorkflow : IWorkflow<TSource>
-{
-}
+public class FinalStateInstanceSerializer<TWorkflow, TSource> : IStateInstanceSerializer<TWorkflow, TSource, FinalState, Ignore>
+    where TWorkflow : IWorkflow<TSource>;
 
-public class TaskStateInstanceSerializer<TSource> : IStateInstanceSerializer<TWorkflow, TSource, TaskState, Ignore>
-    where TWorkflow : IWorkflow<TSource>
-{
-}
+public class TaskStateInstanceSerializer<TWorkflow, TSource> : IStateInstanceSerializer<TWorkflow, TSource, TaskState, Ignore>
+    where TWorkflow : IWorkflow<TSource>;
 
-public interface IStateInstanceSerializer<TSource, TState, TElement>
-    where TWorkflow : IWorkflow<TSource>
-{
-}
+public interface IStateInstanceSerializer<TWorkflow, TSource, TState, TElement>
+    where TWorkflow : IWorkflow<TSource>;
 
-public interface IWorkflowStatusSerializer
-{
-
-}
+public interface IWorkflowStatusSerializer;

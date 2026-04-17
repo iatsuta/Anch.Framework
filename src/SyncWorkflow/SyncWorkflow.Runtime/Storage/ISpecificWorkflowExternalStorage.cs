@@ -1,5 +1,3 @@
 ﻿namespace SyncWorkflow.Storage;
 
-public interface ISpecificWorkflowExternalStorage : ISpecificWorkflowStorage
-{
-}
+public interface ISpecificWorkflowExternalStorage : ISpecificWorkflowStorage;
