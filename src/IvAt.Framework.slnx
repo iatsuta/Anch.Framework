@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/SyncWorkflow/" />
+  <Folder Name="/SyncWorkflow/">
+    <Project Path="SyncWorkflow/SyncWorkflow.Runtime/SyncWorkflow.Runtime.csproj" />
+  </Folder>
 
   <Folder Name="/__RootSolutionItems/">
     <File Path="Directory.Build.props" />

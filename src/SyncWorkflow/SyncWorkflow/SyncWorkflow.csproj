@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<ItemGroup>
-		<PackageReference Include="Luxoft.Framework.DependencyInjection" Version="23.2.7" />
-		<PackageReference Include="Luxoft.Framework.Core" Version="23.2.7" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
-	</ItemGroup>
-
-</Project>
