@@ -1,4 +1,4 @@
-﻿namespace SyncWorkflow.Domain.Definition;
+﻿namespace SyncWorkflow.Definition;
 
 public interface IStateDefinition
 {

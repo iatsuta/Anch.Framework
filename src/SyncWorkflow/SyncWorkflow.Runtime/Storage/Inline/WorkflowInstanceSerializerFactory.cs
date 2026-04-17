@@ -1,4 +1,6 @@
-﻿namespace SyncWorkflow.Storage.Inline;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace SyncWorkflow.Storage.Inline;
 
 public class WorkflowInstanceSerializerFactory(IServiceProvider serviceProvider) : IWorkflowInstanceSerializerFactory
 {

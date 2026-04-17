@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>IvAt.SyncWorkflow.Abstractions</PackageId>
+    <RootNamespace>SyncWorkflow</RootNamespace>
+  </PropertyGroup>
+
+</Project>

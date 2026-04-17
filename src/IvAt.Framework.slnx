@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/SyncWorkflow/">
+    <Project Path="SyncWorkflow/SyncWorkflow.Abstractions/SyncWorkflow.Abstractions.csproj" />
     <Project Path="SyncWorkflow/SyncWorkflow.Runtime/SyncWorkflow.Runtime.csproj" />
   </Folder>
 

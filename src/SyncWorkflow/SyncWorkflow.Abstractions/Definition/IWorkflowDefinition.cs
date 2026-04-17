@@ -1,17 +1,17 @@
 ﻿using System.Linq.Expressions;
 
-namespace SyncWorkflow.Domain.Definition;
+namespace SyncWorkflow.Definition;
 
 public interface IWorkflowDefinition
 {
     WorkflowDefinitionIdentity Identity { get; }
-    
+
     long Version => 1;
 
     LambdaExpression? IdProperty { get; }
-    
+
     LambdaExpression? StatusProperty { get; }
-    
+
     LambdaExpression? VersionProperty { get; }
 
     bool InTechnical { get; }
@@ -28,7 +28,7 @@ public interface IWorkflowDefinition
 
     IReadOnlyDictionary<string, object> Settings { get; }
 
-    public void Validate();
+    void Validate();
 }
 
 

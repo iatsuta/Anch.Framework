@@ -1,4 +1,5 @@
 ﻿using CommonFramework.DictionaryCache;
+using Microsoft.Extensions.DependencyInjection;
 using SyncWorkflow.Domain.Runtime;
 using SyncWorkflow.Storage;
 
