@@ -117,7 +117,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
     {
         if (managedPermission.IsVirtual || managedPermission.Identity.IsDefault)
         {
-            throw new SecuritySystemException("wrong permission");
+            throw new InvalidOperationException("wrong permission");
         }
 
         if (!managedPermission.DelegatedFrom.IsDefault)
@@ -128,7 +128,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
 
             if (delegatedFromPermission != delegatedFromAccessors.Getter(dbPermission))
             {
-                throw new InvalidOperationException("Delegated source can't be changed");
+                throw new SecuritySystemException("Delegated source can't be changed");
             }
         }
 

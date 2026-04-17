@@ -18,8 +18,8 @@ public class GeneralPrincipalManagementService(
     {
         var bindingInfo = bindingInfoList.Single(
             bi => !bi.IsReadonly,
-            () => new InvalidOperationException("No writable management service was found"),
-            () => new InvalidOperationException("Multiple writable management services were found"));
+            () => new SecuritySystemException("No writable management service was found"),
+            () => new SecuritySystemException("Multiple writable management services were found"));
 
         var restrictionBindingInfo = restrictionBindingInfoSource.GetForPermission(bindingInfo.PermissionType);
 
