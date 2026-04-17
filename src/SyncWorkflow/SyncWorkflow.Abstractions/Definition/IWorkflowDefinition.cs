@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
+using System.Linq.Expressions;
 
 namespace SyncWorkflow.Definition;
 
@@ -6,9 +8,9 @@ public interface IWorkflowDefinition
 {
     WorkflowDefinitionIdentity Identity { get; }
 
-    long Version => 1;
+    Type SourceType { get; }
 
-    LambdaExpression? IdProperty { get; }
+    long Version => 1;
 
     LambdaExpression? StatusProperty { get; }
 
@@ -16,9 +18,7 @@ public interface IWorkflowDefinition
 
     bool InTechnical { get; }
 
-    Type SourceType { get; }
-
-    IEnumerable<IStateDefinition> States { get; }
+    ImmutableArray<IStateDefinition> States { get; }
 
     IStateDefinition StartState { get; }
 
@@ -26,15 +26,5 @@ public interface IWorkflowDefinition
 
     IStateDefinition TerminateState { get; }
 
-    IReadOnlyDictionary<string, object> Settings { get; }
-
-    void Validate();
+    FrozenDictionary<string, object> Settings { get; }
 }
-
-
-
-
-//public record InlinePropertyData(LambdaExpression IdProperty, LambdaExpression StatusProperty, LambdaExpression? VersionProperty = null)
-//{
-
-//}

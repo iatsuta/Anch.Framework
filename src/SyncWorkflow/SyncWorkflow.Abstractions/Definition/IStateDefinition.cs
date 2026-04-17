@@ -1,4 +1,7 @@
-﻿namespace SyncWorkflow.Definition;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
+
+namespace SyncWorkflow.Definition;
 
 public interface IStateDefinition
 {
@@ -10,13 +13,13 @@ public interface IStateDefinition
 
     Type StateType { get; set; }
 
-    IEnumerable<Delegate> InputActions { get; }
+    ImmutableArray<Delegate> InputActions { get; }
 
-    IEnumerable<Delegate> OutputActions { get; }
+    ImmutableArray<Delegate> OutputActions { get; }
 
-    IEnumerable<ITransitionDefinition> Transitions { get; }
+    ImmutableArray<ITransitionDefinition> Transitions { get; }
 
-    IEnumerable<IWorkflow> SubWorkflow { get; }
+    ImmutableArray<IWorkflow> SubWorkflow { get; }
 
-    IReadOnlyDictionary<string, object> AdditionalInfo { get; }
+    FrozenDictionary<string, object> AdditionalInfo { get; }
 }

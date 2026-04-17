@@ -2,7 +2,7 @@
 
 public interface ITransitionDefinition
 {
-    public IEventDefinition Event { get; }
+    IEventDefinition Event { get; }
 
-    public IStateDefinition To { get; }
+    IStateDefinition To { get; }
 }
