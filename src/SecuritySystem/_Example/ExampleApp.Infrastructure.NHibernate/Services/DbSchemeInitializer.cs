@@ -1,6 +1,8 @@
 ﻿using System.Data.Common;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using NHibernate.Tool.hbm2ddl;
 
 namespace ExampleApp.Infrastructure.Services;
@@ -23,7 +25,6 @@ public class DbSchemeInitializer(
 
         var schemaExport = new SchemaExport(nhibConfiguration);
 
-        //await schemaExport.DropAsync(false, true, cancellationToken);
         await schemaExport.CreateAsync(false, true, cancellationToken);
 
         var session = serviceProvider.GetRequiredService<AutoCommitSession>();

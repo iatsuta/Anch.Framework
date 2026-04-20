@@ -1,5 +1,5 @@
-﻿using CommonFramework;
-using CommonFramework.DependencyInjection;
+﻿using CommonFramework.DependencyInjection;
+using CommonFramework.Testing;
 
 using GenericQueryable.DependencyInjection;
 using GenericQueryable.Fetching;
@@ -9,27 +9,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public abstract class TestEnvironment
+public class TestServiceProviderBuilderBase : ITestServiceProviderBuilder
 {
-    public IServiceProvider RootServiceProvider => field ??= this.BuildServiceProvider();
+    public virtual IServiceProvider Build(IServiceCollection services) =>
 
-    protected IServiceProvider BuildServiceProvider()
-    {
-        return new ServiceCollection()
-            .Pipe(this.InitializeServices)
+        services
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-    }
 
-    protected void SetupGenericQueryable(IGenericQueryableSetup builder)
-    {
+    protected static void SetupGenericQueryable(IGenericQueryableSetup builder) =>
+
         builder
             .AddFetchRuleExpander<AppFetchRuleExpander>()
             .AddFetchRule(AppFetchRule.TestFetchRule, FetchRule<TestObject>.Create(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject));
-    }
-
-    protected abstract IServiceCollection InitializeServices(IServiceCollection services);
-
-    public abstract Task InitializeDatabase();
 }

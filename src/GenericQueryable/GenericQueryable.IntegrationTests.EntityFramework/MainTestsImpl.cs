@@ -1,5 +1,3 @@
-﻿using GenericQueryable.IntegrationTests.Environment;
+﻿namespace GenericQueryable.IntegrationTests;
 
-namespace GenericQueryable.IntegrationTests;
-
-public class MainTestsImpl() : MainTests(TestEnvironmentImpl.Instance);
+public class MainTestsImpl(IServiceProvider rootServiceProvider) : MainTests(rootServiceProvider);

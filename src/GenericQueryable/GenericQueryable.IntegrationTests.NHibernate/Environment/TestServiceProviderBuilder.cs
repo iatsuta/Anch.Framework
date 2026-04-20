@@ -1,21 +1,24 @@
-﻿using CommonFramework.DependencyInjection;
+﻿using CommonFramework;
+using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
 using CommonFramework.IdentitySource.DependencyInjection;
 
+using GenericQueryable.IntegrationTests.Environment;
 using GenericQueryable.NHibernate;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using NHibernate;
 
+[assembly:CommonFramework.Testing.CommonTestFramework<TestServiceProviderBuilder>]
+
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class TestEnvironmentImpl : TestEnvironment
+public class TestServiceProviderBuilder : TestServiceProviderBuilderBase
 {
-    protected override IServiceCollection InitializeServices(IServiceCollection services)
-    {
-        return services
+    public override IServiceProvider Build(IServiceCollection services) =>
 
+        services
             .AddIdentitySource()
             .AddSingleton(BuildConfigurationHelper.BuildConfiguration("Data Source=TestSystem.sqlite"))
             .AddSingletonFrom((global::NHibernate.Cfg.Configuration cfg) => cfg.BuildSessionFactory())
@@ -26,12 +29,10 @@ public class TestEnvironmentImpl : TestEnvironment
 
             .AddScoped<IGenericRepository, NHibGenericRepository>()
             .AddScoped<IQueryableSource, NHibQueryableSource>()
-            .AddNHibernateGenericQueryable(this.SetupGenericQueryable);
-    }
 
-    public override async Task InitializeDatabase()
-    {
-    }
+            .AddScoped<IDbSchemeInitializer, DbSchemeInitializer>()
 
-    public static TestEnvironmentImpl Instance { get; } = new ();
+            .AddNHibernateGenericQueryable(SetupGenericQueryable)
+
+            .Pipe(base.Build);
 }

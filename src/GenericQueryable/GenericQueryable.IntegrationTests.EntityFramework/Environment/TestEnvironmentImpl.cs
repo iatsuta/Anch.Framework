@@ -1,36 +1,30 @@
-﻿using CommonFramework.GenericRepository;
+﻿using CommonFramework;
+using CommonFramework.GenericRepository;
 
 using GenericQueryable.EntityFramework;
+using GenericQueryable.IntegrationTests.Environment;
 
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.DependencyInjection;
+
+[assembly: CommonFramework.Testing.CommonTestFramework<TestServiceProviderBuilder>]
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class TestEnvironmentImpl : TestEnvironment
+public class TestServiceProviderBuilder : TestServiceProviderBuilderBase
 {
-    protected override IServiceCollection InitializeServices(IServiceCollection services)
-    {
-        return services
+    public override IServiceProvider Build(IServiceCollection services) =>
+
+        services
+
             .AddDbContext<TestDbContext>(optionsBuilder => optionsBuilder
                 .UseSqlite("Data Source=test.db")
-                .UseGenericQueryable(this.SetupGenericQueryable))
+                .UseGenericQueryable(SetupGenericQueryable))
+
             .AddScoped<IGenericRepository, EfGenericRepository>()
-            .AddScoped<IQueryableSource, EfQueryableSource>();
-    }
+            .AddScoped<IQueryableSource, EfQueryableSource>()
 
-    public override async Task InitializeDatabase()
-    {
-        var cancellationToken = TestContext.Current.CancellationToken;
+            .AddScoped<IDbSchemeInitializer, DbSchemeInitializer>()
 
-        await using var scope = this.RootServiceProvider.CreateAsyncScope();
-
-        var dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-
-        await dbContext.Database.EnsureDeletedAsync(cancellationToken);
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
-    }
-
-    public static TestEnvironmentImpl Instance { get; } = new ();
+            .Pipe(base.Build);
 }

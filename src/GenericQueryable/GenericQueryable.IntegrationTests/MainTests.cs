@@ -7,27 +7,31 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GenericQueryable.IntegrationTests;
 
-public abstract class MainTests(TestEnvironment testEnvironment) : IAsyncLifetime
+public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLifetime
 {
     private readonly Guid testObjId = Guid.NewGuid();
 
-    public async ValueTask InitializeAsync()
+    protected virtual async ValueTask InitializeAsync(CancellationToken ct)
     {
-        await testEnvironment.InitializeDatabase();
+        {
+            await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        var cancellationToken = TestContext.Current.CancellationToken;
+            await scope.ServiceProvider.GetRequiredService<IDbSchemeInitializer>().Initialize(ct);
+        }
 
-        await using var scope = testEnvironment.RootServiceProvider.CreateAsyncScope();
+        {
+            await using var scope = rootServiceProvider.CreateAsyncScope();
+            var serviceProvider = scope.ServiceProvider;
+            var genericRepository = serviceProvider.GetRequiredService<IGenericRepository>();
 
-        var serviceProvider = scope.ServiceProvider;
+            var fetchObj = new FetchObject();
 
-        var genericRepository = serviceProvider.GetRequiredService<IGenericRepository>();
-
-        var fetchObj = new FetchObject();
-
-        await genericRepository.SaveAsync(fetchObj, cancellationToken);
-        await genericRepository.SaveAsync(new TestObject { Id = this.testObjId, FetchObject = fetchObj }, cancellationToken);
+            await genericRepository.SaveAsync(fetchObj, ct);
+            await genericRepository.SaveAsync(new TestObject { Id = this.testObjId, FetchObject = fetchObj }, ct);
+        }
     }
+
+    ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task DefaultGenericQueryable_InvokeToListAsync_MethodInvoked()
@@ -35,7 +39,7 @@ public abstract class MainTests(TestEnvironment testEnvironment) : IAsyncLifetim
         // Arrange
         var cancellationToken = TestContext.Current.CancellationToken;
 
-        await using var scope = testEnvironment.RootServiceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var serviceProvider = scope.ServiceProvider;
 

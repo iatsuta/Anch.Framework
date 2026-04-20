@@ -1,5 +1,6 @@
 ﻿using CommonFramework.GenericRepository;
 using CommonFramework.Testing;
+
 using ExampleApp.Application;
 using ExampleApp.Domain;
 
