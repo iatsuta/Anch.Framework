@@ -104,7 +104,7 @@ public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizati
 
         public GroupKey(Dictionary<Type, Array> dataItem, Type excludedType)
         {
-            keyData = new Dictionary<Type, HashSet<object>>(dataItem.Count);
+            this.keyData = new Dictionary<Type, HashSet<object>>(dataItem.Count);
             foreach (var pair in dataItem)
             {
                 if (pair.Key == excludedType)
@@ -114,29 +114,30 @@ public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizati
                 foreach (var el in pair.Value)
                     set.Add(el!);
 
-                keyData.Add(pair.Key, set);
+                this.keyData.Add(pair.Key, set);
             }
-            hashCode = CalculateHashCode();
+
+            this.hashCode = this.CalculateHashCode();
         }
 
         public GroupKey(Dictionary<Type, HashSet<object>> dataItem, Type excludedType)
         {
-            keyData = new Dictionary<Type, HashSet<object>>(dataItem.Where(pair => pair.Key != excludedType));
-            hashCode = CalculateHashCode();
+            this.keyData = new Dictionary<Type, HashSet<object>>(dataItem.Where(pair => pair.Key != excludedType));
+            this.hashCode = this.CalculateHashCode();
         }
 
-        public IEnumerable<KeyValuePair<Type, HashSet<object>>> GetKeyPairs() => keyData;
-        public override int GetHashCode() => hashCode;
+        public IEnumerable<KeyValuePair<Type, HashSet<object>>> GetKeyPairs() => this.keyData;
+        public override int GetHashCode() => this.hashCode;
 
-        public bool Equals(GroupKey? other) => Equals((object?)other);
+        public bool Equals(GroupKey? other) => this.Equals((object?)other);
 
         public override bool Equals(object? obj) =>
-            obj is GroupKey gk && DataEquals(gk);
+            obj is GroupKey gk && this.DataEquals(gk);
 
         private int CalculateHashCode()
         {
             var result = 0;
-            foreach (var pair in keyData)
+            foreach (var pair in this.keyData)
             {
                 result ^= pair.Key.GetHashCode();
                 foreach (var val in pair.Value)
@@ -149,10 +150,10 @@ public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizati
 
         private bool DataEquals(GroupKey other)
         {
-            if (keyData.Count != other.keyData.Count)
+            if (this.keyData.Count != other.keyData.Count)
                 return false;
 
-            foreach (var pair in keyData)
+            foreach (var pair in this.keyData)
             {
                 if (!other.keyData.TryGetValue(pair.Key, out var otherSet))
                     return false;

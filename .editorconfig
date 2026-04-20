@@ -5,3 +5,6 @@ indent_size = 2
 [*.{props,targets,csproj}]
 indent_style = space
 indent_size = 2
+
+[*.cs]
+dotnet_diagnostic.SA1101.severity = error

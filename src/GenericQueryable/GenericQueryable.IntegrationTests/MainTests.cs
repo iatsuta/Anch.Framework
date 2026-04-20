@@ -26,7 +26,7 @@ public abstract class MainTests(TestEnvironment testEnvironment) : IAsyncLifetim
         var fetchObj = new FetchObject();
 
         await genericRepository.SaveAsync(fetchObj, cancellationToken);
-        await genericRepository.SaveAsync(new TestObject { Id = testObjId, FetchObject = fetchObj }, cancellationToken);
+        await genericRepository.SaveAsync(new TestObject { Id = this.testObjId, FetchObject = fetchObj }, cancellationToken);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public abstract class MainTests(TestEnvironment testEnvironment) : IAsyncLifetim
             .ToArrayAsync(cancellationToken);
 
         //Assert
-        result0.Should().ContainSingle(testObj => testObj.Id == testObjId);
+        result0.Should().ContainSingle(testObj => testObj.Id == this.testObjId);
     }
 
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;

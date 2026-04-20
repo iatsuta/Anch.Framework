@@ -18,14 +18,13 @@ public class NotificationPrincipalExtractor<TPrincipal>(IServiceProxyFactory ser
 
     public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(ImmutableArray<SecurityRole> securityRoles,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups) =>
-
-        lazyInnerServices.Value switch
+        this.lazyInnerServices.Value switch
         {
             [] => throw new InvalidOperationException($"NotificationPrincipalExtractors for {nameof(TPrincipal)} not exists"),
 
             [var innerService] => innerService.GetPrincipalsAsync(securityRoles, notificationFilterGroups),
 
-            _ => lazyInnerServices.Value.ToAsyncEnumerable()
+            _ => this.lazyInnerServices.Value.ToAsyncEnumerable()
                 .SelectMany(innerService => innerService.GetPrincipalsAsync(securityRoles, notificationFilterGroups))
         };
 }

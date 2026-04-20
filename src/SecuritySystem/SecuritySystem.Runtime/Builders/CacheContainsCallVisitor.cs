@@ -43,7 +43,7 @@ internal class CacheContainsCallVisitor : ExpressionVisitor
 
                 let identType = methodInfo.GetGenericArguments().Single()
 
-                from hashSet in GetHashSet(node.Arguments[0], identType)
+                from hashSet in this.GetHashSet(node.Arguments[0], identType)
 
                 select Expression.Call(hashSet, HashSetContainsMethods[identType], node.Arguments[1]);
 

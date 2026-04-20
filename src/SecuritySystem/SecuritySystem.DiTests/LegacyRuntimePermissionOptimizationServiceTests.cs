@@ -16,7 +16,7 @@ public class LegacyRuntimePermissionOptimizationServiceTests
             new() { { typeof(string), new Guid[] { Guid.Parse("11111111-1111-1111-1111-111111111111") } } }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(1);
         var array = (Guid[])result[0][typeof(string)];
@@ -35,7 +35,7 @@ public class LegacyRuntimePermissionOptimizationServiceTests
             new() { { typeof(int), new Guid[] { Guid.NewGuid() } } }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(2);
         result.Any(d => d.ContainsKey(typeof(string))).Should().BeTrue();
@@ -59,7 +59,7 @@ public class LegacyRuntimePermissionOptimizationServiceTests
             }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(2);
         result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))).Should().BeTrue();
@@ -69,7 +69,7 @@ public class LegacyRuntimePermissionOptimizationServiceTests
     [Fact]
     public void Optimize_NoPermissions_ReturnsEmpty()
     {
-        var result = service.Optimize(new List<Dictionary<Type, Array>>()).ToList();
+        var result = this.service.Optimize(new List<Dictionary<Type, Array>>()).ToList();
         result.Should().BeEmpty();
     }
 }

@@ -25,9 +25,9 @@ public class DecimalParser(CultureInfo culture) : CharParsers(culture)
                 {
                     var sepIndex = 0;
 
-                    for (; index < span.Length && sepIndex < separator.Length; sepIndex++)
+                    for (; index < span.Length && sepIndex < this.separator.Length; sepIndex++)
                     {
-                        if (span[index] == separator[sepIndex])
+                        if (span[index] == this.separator[sepIndex])
                         {
                             index++;
                         }
@@ -37,7 +37,7 @@ public class DecimalParser(CultureInfo culture) : CharParsers(culture)
                         }
                     }
 
-                    if (sepIndex == 0 || (sepIndex == separator.Length && ReadNumber(input, ref index)))
+                    if (sepIndex == 0 || (sepIndex == this.separator.Length && ReadNumber(input, ref index)))
                     {
                         var parts = input.Split(index);
 

@@ -24,8 +24,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction>(
             restrictionBindingInfo);
     });
 
-    public Task ValidateAsync(TPermissionRestriction value, CancellationToken cancellationToken) =>
-        lazyInnerService.Value.ValidateAsync(value, cancellationToken);
+    public Task ValidateAsync(TPermissionRestriction value, CancellationToken cancellationToken) => this.lazyInnerService.Value.ValidateAsync(value, cancellationToken);
 }
 
 public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(

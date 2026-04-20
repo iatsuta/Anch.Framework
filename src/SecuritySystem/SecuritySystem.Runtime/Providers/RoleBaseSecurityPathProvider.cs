@@ -46,7 +46,7 @@ public class RoleBaseSecurityPathProvider<TDomainObject>(
 
     public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
     {
-        var accessorsFilter = accessorsFilterCache ??= await accessorsFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
+        var accessorsFilter = this.accessorsFilterCache ??= await accessorsFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
 
         var accessors = await accessorsFilter.GetAccessorsFunc(domainObject).ToImmutableArrayAsync(cancellationToken);
 
@@ -55,6 +55,6 @@ public class RoleBaseSecurityPathProvider<TDomainObject>(
 
     private async ValueTask<SecurityFilterInfo<TDomainObject>> GetOrCreateSecurityFilterInfo(CancellationToken cancellationToken)
     {
-        return securityFilterCache ??= await securityFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
+        return this.securityFilterCache ??= await securityFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
     }
 }

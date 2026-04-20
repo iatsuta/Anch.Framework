@@ -34,7 +34,7 @@ public class SecurityContextStorage : ISecurityContextStorage
 
     private ITypedSecurityContextStorage GetTypedInternal(Type securityContextType)
     {
-        var identityType = identityInfoSource.GetIdentityInfo(securityContextType).IdentityType;
+        var identityType = this.identityInfoSource.GetIdentityInfo(securityContextType).IdentityType;
 
         return new Func<ITypedSecurityContextStorage>(this.GetTypedInternal<ISecurityContext, Ignore>).CreateGenericMethod(securityContextType, identityType)
             .Invoke<ITypedSecurityContextStorage>(this);
@@ -50,7 +50,7 @@ public class SecurityContextStorage : ISecurityContextStorage
             ? (typeof(PlainTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>), Array.Empty<object>())
             : (typeof(HierarchicalTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>), [hierarchicalInfo]);
 
-        var typedSecurityContextStorage = serviceProxyFactory.Create<ITypedSecurityContextStorage<TSecurityContextIdent>>(serviceType, args);
+        var typedSecurityContextStorage = this.serviceProxyFactory.Create<ITypedSecurityContextStorage<TSecurityContextIdent>>(serviceType, args);
 
         return typedSecurityContextStorage.WithCache();
     }

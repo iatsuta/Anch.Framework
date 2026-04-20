@@ -18,7 +18,7 @@ public class RootFetchRuleExpander([FromKeyedServices(IFetchRuleExpander.Element
         }
         else
         {
-            return cache
+            return this.cache
                 .GetOrAddAs(fetchRule.GetType(), _ => new ConcurrentDictionary<FetchRule<TSource>, PropertyFetchRule<TSource>?>())
                 .GetOrAdd(fetchRule, _ =>
                 {

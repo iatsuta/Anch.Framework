@@ -11,7 +11,7 @@ public abstract class ConfiguratorApiTests(IServiceProvider rootServiceProvider)
         // Arrange
         var securityRole = SecurityRole.Administrator;
 
-        var additionalAdmin = nameof(GetLinkedPrincipalsAsync_ReturnsAllPrincipalsLinkedToRole);
+        var additionalAdmin = nameof(this.GetLinkedPrincipalsAsync_ReturnsAllPrincipalsLinkedToRole);
 
         await this.AuthManager.For(additionalAdmin).AddRoleAsync(securityRole, this.CancellationToken);
 

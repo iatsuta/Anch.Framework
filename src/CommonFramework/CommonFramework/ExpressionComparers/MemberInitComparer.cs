@@ -8,6 +8,6 @@ public class MemberInitComparer(ExpressionComparer rootComparer) : ExpressionCom
 
 	protected override bool PureEquals(MemberInitExpression x, MemberInitExpression y)
     {
-        return rootComparer.Equals(x.NewExpression, y.NewExpression) && x.Bindings.SequenceEqual(y.Bindings, memberBindingComparer);
+        return rootComparer.Equals(x.NewExpression, y.NewExpression) && x.Bindings.SequenceEqual(y.Bindings, this.memberBindingComparer);
     }
 }

@@ -17,13 +17,13 @@ public class UserSource<TUser>(IUserQueryableSource<TUser> userQueryableSource, 
 
     public ValueTask<TUser?> TryGetUserAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
-        return tryGetUserCache.GetValueOrCreateAsync(userCredential,
+        return this.tryGetUserCache.GetValueOrCreateAsync(userCredential,
             async () => await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken));
     }
 
     public ValueTask<TUser> GetUserAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
-        return getUserCache.GetValueOrCreateAsync(userCredential, async () =>
+        return this.getUserCache.GetValueOrCreateAsync(userCredential, async () =>
             await this.TryGetUserAsync(userCredential, cancellationToken) ?? missedUserService.GetUser(userCredential));
     }
 

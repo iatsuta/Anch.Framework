@@ -11,7 +11,7 @@ namespace GenericQueryable.IntegrationTests.Environment;
 
 public abstract class TestEnvironment
 {
-    public IServiceProvider RootServiceProvider => field ??= BuildServiceProvider();
+    public IServiceProvider RootServiceProvider => field ??= this.BuildServiceProvider();
 
     protected IServiceProvider BuildServiceProvider()
     {

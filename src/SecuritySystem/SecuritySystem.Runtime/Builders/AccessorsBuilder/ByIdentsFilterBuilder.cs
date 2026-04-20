@@ -28,7 +28,7 @@ public abstract class ByIdentsFilterBuilder<TDomainObject, TPermission, TSecurit
         var allowsUnrestrictedAccess = securityContextRestriction?.Required != true;
 
         var unrestrictedFilter = allowsUnrestrictedAccess
-            ? permissionRestrictionSource.GetUnrestrictedFilter()
+            ? this.permissionRestrictionSource.GetUnrestrictedFilter()
             : _ => false;
 
         if (securityObjects.Any())
@@ -37,7 +37,7 @@ public abstract class ByIdentsFilterBuilder<TDomainObject, TPermission, TSecurit
                 .Create<TSecurityContextIdent>(typeof(TSecurityContext))
                 .Expand(securityObjects.Select(identityInfo.Id.Getter), expandType.Reverse());
 
-            return unrestrictedFilter.BuildOr(permissionRestrictionSource.GetContainsIdentsExpr(securityIdents));
+            return unrestrictedFilter.BuildOr(this.permissionRestrictionSource.GetContainsIdentsExpr(securityIdents));
         }
         else
         {

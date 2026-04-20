@@ -19,7 +19,7 @@ public class DefaultUserConverter<TUser>(
         return new Tuple<Expression<Func<TUser, User>>, Func<TUser, User>>(convertExpr, convertExpr.Compile());
     }).Invoke();
 
-    public Expression<Func<TUser, User>> ConvertExpression => convertData.Item1;
+    public Expression<Func<TUser, User>> ConvertExpression => this.convertData.Item1;
 
-    public Func<TUser, User> ConvertFunc => convertData.Item2;
+    public Func<TUser, User> ConvertFunc => this.convertData.Item2;
 }

@@ -39,11 +39,11 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
         {
             HierarchicalExpandType.None => idents,
 
-            HierarchicalExpandType.Children => ExpandEnumerable(idents, fullAncestorLinkInfo.Directed),
+            HierarchicalExpandType.Children => this.ExpandEnumerable(idents, fullAncestorLinkInfo.Directed),
 
-            HierarchicalExpandType.Parents => ExpandEnumerable(idents, fullAncestorLinkInfo.Directed.Reverse()),
+            HierarchicalExpandType.Parents => this.ExpandEnumerable(idents, fullAncestorLinkInfo.Directed.Reverse()),
 
-            HierarchicalExpandType.All => ExpandEnumerable(idents, fullAncestorLinkInfo.Undirected),
+            HierarchicalExpandType.All => this.ExpandEnumerable(idents, fullAncestorLinkInfo.Undirected),
 
             _ => throw new ArgumentOutOfRangeException(nameof(expandType))
         };

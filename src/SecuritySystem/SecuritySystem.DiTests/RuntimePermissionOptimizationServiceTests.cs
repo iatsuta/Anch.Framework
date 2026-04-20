@@ -19,7 +19,7 @@ public class RuntimePermissionOptimizationServiceTests
             new() { { typeof(string), new[] { g1 } } }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(1);
         var arr = (Guid[])result[0][typeof(string)];
@@ -35,7 +35,7 @@ public class RuntimePermissionOptimizationServiceTests
             new() { { typeof(int), new[] { 42 } } }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(2);
         result.Any(d => d.ContainsKey(typeof(string))).Should().BeTrue();
@@ -59,7 +59,7 @@ public class RuntimePermissionOptimizationServiceTests
             }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(2);
         result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))).Should().BeTrue();
@@ -69,7 +69,7 @@ public class RuntimePermissionOptimizationServiceTests
     [Fact]
     public void Optimize_EmptyInput_ReturnsEmpty()
     {
-        var result = service.Optimize(new List<Dictionary<Type, Array>>()).ToList();
+        var result = this.service.Optimize(new List<Dictionary<Type, Array>>()).ToList();
         result.Should().BeEmpty();
     }
 
@@ -82,7 +82,7 @@ public class RuntimePermissionOptimizationServiceTests
             new() { { typeof(int), new[] { 2, 3 } } }
         };
 
-        var result = service.Optimize(permissions).ToList();
+        var result = this.service.Optimize(permissions).ToList();
 
         result.Should().HaveCount(1);
         var arr = (int[])result[0][typeof(int)];

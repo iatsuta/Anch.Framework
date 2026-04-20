@@ -9,7 +9,7 @@ public class ServiceProxyTypeRedirector(IEnumerable<ServiceProxyTypeRedirectInfo
 
     private readonly ConcurrentDictionary<Type, Type?> cache = [];
 
-    public Type? TryRedirect(Type sourceType) => cache.GetOrAdd(sourceType, _ => this.TryFindRedirectInfo(sourceType).Maybe(this.GetTargetType));
+    public Type? TryRedirect(Type sourceType) => this.cache.GetOrAdd(sourceType, _ => this.TryFindRedirectInfo(sourceType).Maybe(this.GetTargetType));
 
     private Type GetTargetType(ServiceProxyTypeRedirectInfo redirectInfo) =>
         redirectInfo.IsBinder ? nativeActivator.Create<IServiceProxyBinder>(redirectInfo.TargetType).GetTargetServiceType() : redirectInfo.TargetType;
@@ -30,7 +30,7 @@ public class ServiceProxyTypeRedirector(IEnumerable<ServiceProxyTypeRedirectInfo
 
     private IEnumerable<ServiceProxyTypeRedirectInfo> GetRedirectCandidates(Type sourceType)
     {
-        foreach (var redirectInfo in cachedList)
+        foreach (var redirectInfo in this.cachedList)
         {
             if (redirectInfo.SourceType == sourceType)
             {

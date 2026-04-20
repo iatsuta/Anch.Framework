@@ -12,7 +12,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericSumAsync(cancellationToken: ct);
+        var result = await qSource.GenericSumAsync(cancellationToken: this.ct);
 
         //Assert
         result.Should().Be(baseSource.Sum());
@@ -26,7 +26,7 @@ public class MainTests
 	    var qSource = baseSource.AsQueryable();
 
 	    // Act
-	    var result = await qSource.GenericToArrayAsync(cancellationToken: ct);
+	    var result = await qSource.GenericToArrayAsync(cancellationToken: this.ct);
 
 	    //Assert
 	    result.Should().BeEquivalentTo(baseSource);
@@ -40,7 +40,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToListAsync(cancellationToken: ct);
+        var result = await qSource.GenericToListAsync(cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource);
@@ -54,7 +54,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToHashSetAsync(cancellationToken: ct);
+        var result = await qSource.GenericToHashSetAsync(cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource);
@@ -68,7 +68,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToHashSetAsync(EqualityComparer<int>.Default, cancellationToken: ct);
+        var result = await qSource.GenericToHashSetAsync(EqualityComparer<int>.Default, cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource);
@@ -83,7 +83,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToDictionaryAsync(v => v, cancellationToken: ct);
+        var result = await qSource.GenericToDictionaryAsync(v => v, cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
@@ -97,7 +97,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToDictionaryAsync(v => v, EqualityComparer<int>.Default, cancellationToken: ct);
+        var result = await qSource.GenericToDictionaryAsync(v => v, EqualityComparer<int>.Default, cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
@@ -111,7 +111,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToDictionaryAsync(v => v, v => v, cancellationToken: ct);
+        var result = await qSource.GenericToDictionaryAsync(v => v, v => v, cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
@@ -125,7 +125,7 @@ public class MainTests
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToDictionaryAsync(v => v, v => v, EqualityComparer<int>.Default, cancellationToken: ct);
+        var result = await qSource.GenericToDictionaryAsync(v => v, v => v, EqualityComparer<int>.Default, cancellationToken: this.ct);
 
         //Assert
         result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
@@ -153,7 +153,7 @@ public class MainTests
         var qSource = new[] { baseSource }.AsQueryable();
 
         // Act
-        var result = await qSource.GenericSingleOrDefaultAsync(_ => true, cancellationToken: ct);
+        var result = await qSource.GenericSingleOrDefaultAsync(_ => true, cancellationToken: this.ct);
 
         //Assert
         result.Should().Be(baseSource);
@@ -167,7 +167,7 @@ public class MainTests
         var qSource = new[] { baseSource }.AsQueryable();
 
         // Act
-        var result = await qSource.GenericAsAsyncEnumerable().SingleAsync(cancellationToken: ct);
+        var result = await qSource.GenericAsAsyncEnumerable().SingleAsync(cancellationToken: this.ct);
 
         //Assert
         result.Should().Be(baseSource);
@@ -182,7 +182,7 @@ public class MainTests
 
         // Act
         var result = await qSource.WithFetch(nameof(string.Length))
-            .GenericSingleOrDefaultAsync(_ => true, cancellationToken: ct);
+            .GenericSingleOrDefaultAsync(_ => true, cancellationToken: this.ct);
 
         //Assert
         result.Should().Be(baseSource);

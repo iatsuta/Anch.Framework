@@ -80,7 +80,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
 
                 var getIdentsArrayExpr = virtualBindingInfo.GetRestrictionsArrayExpr(pureFilter, identityInfo);
 
-                return (securityContextType, expressionEvaluator.Evaluate(getIdentsArrayExpr, permission));
+                return (securityContextType, this.expressionEvaluator.Evaluate(getIdentsArrayExpr, permission));
             })
             .ToDictionary();
     }

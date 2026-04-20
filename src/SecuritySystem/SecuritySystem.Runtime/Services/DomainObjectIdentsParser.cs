@@ -11,7 +11,7 @@ public class DomainObjectIdentsParser(IServiceProvider serviceProvider, IIdentit
 	private readonly ConcurrentDictionary<Type, IIdentsParser> parsersCache = new();
 
 	public Array Parse(Type domainObjectType, IEnumerable<string> idents) =>
-		parsersCache.GetOrAdd(domainObjectType, _ =>
+        this.parsersCache.GetOrAdd(domainObjectType, _ =>
 			{
 				var identityInfo = identityInfoSource.GetIdentityInfo(domainObjectType);
 

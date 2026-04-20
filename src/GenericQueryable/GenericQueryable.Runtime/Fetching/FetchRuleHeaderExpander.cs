@@ -17,8 +17,8 @@ public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleH
     {
         if (fetchRule is FetchRuleHeader<TSource> fetchRuleHeader)
         {
-            return cache
-                .GetOrAddAs(fetchRuleHeader.GetType(), _ => headersDict
+            return this.cache
+                .GetOrAddAs(fetchRuleHeader.GetType(), _ => this.headersDict
                     .GetValueOrDefault(typeof(TSource))
                     .EmptyIfNull()
                     .Cast<FetchRuleHeaderInfo<TSource>>()

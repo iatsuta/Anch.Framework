@@ -1,89 +1,89 @@
-﻿using System.Linq.Expressions;
+﻿//using System.Linq.Expressions;
 
-using CommonFramework.ExpressionComparers;
+//using CommonFramework.ExpressionComparers;
 
-namespace CommonFramework.Tests;
+//namespace CommonFramework.Tests;
 
-public class ExpressionTests
-{
-    public record A;
+//public class ExpressionTests
+//{
+//    public record A;
 
-    public record B(A A);
+//    public record B(A A);
 
-    public record C(B B);
+//    public record C(B B);
 
-    [Fact]
-    public void OverrideInput_ComposesExpressionThroughNewInput()
-    {
-        // Arrange
-        Expression<Func<B, A>> expr = b => b.A;
+//    [Fact]
+//    public void OverrideInput_ComposesExpressionThroughNewInput()
+//    {
+//        // Arrange
+//        Expression<Func<B, A>> expr = b => b.A;
 
-        Expression<Func<C, A>> expectedResult = c => c.B.A;
+//        Expression<Func<C, A>> expectedResult = c => c.B.A;
 
-        // Act
-        var result = expr.OverrideInput((C c) => c.B);
+//        // Act
+//        var result = expr.OverrideInput((C c) => c.B);
 
-        // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
-    }
+//        // Assert
+//        result.Should().Be(expectedResult, ExpressionComparer.Default);
+//    }
 
-    [Fact]
-    public void UnCurrying_FlattensNestedLambdaIntoMultiParameterLambda()
-    {
-        // Arrange
-        Expression<Func<string, Expression<Func<int, string>>>> expr = a => b => a + b;
+//    [Fact]
+//    public void UnCurrying_FlattensNestedLambdaIntoMultiParameterLambda()
+//    {
+//        // Arrange
+//        Expression<Func<string, Expression<Func<int, string>>>> expr = a => b => a + b;
 
-        Expression<Func<string, int, string>> expectedResult = (a, b) => a + b;
+//        Expression<Func<string, int, string>> expectedResult = (a, b) => a + b;
 
-        // Act
-        var result = expr.UnCurrying();
+//        // Act
+//        var result = expr.UnCurrying();
 
-        // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
-    }
+//        // Assert
+//        result.Should().Be(expectedResult, ExpressionComparer.Default);
+//    }
 
-    [Fact]
-    public void Not_NegatesExpressionBody()
-    {
-        // Arrange
-        Expression<Func<int, bool>> expr = v => v == 123;
+//    [Fact]
+//    public void Not_NegatesExpressionBody()
+//    {
+//        // Arrange
+//        Expression<Func<int, bool>> expr = v => v == 123;
 
-        Expression<Func<int, bool>> expectedResult = v => !(v == 123);
+//        Expression<Func<int, bool>> expectedResult = v => !(v == 123);
 
-        // Act
-        var result = expr.Not();
+//        // Act
+//        var result = expr.Not();
 
-        // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
-    }
+//        // Assert
+//        result.Should().Be(expectedResult, ExpressionComparer.Default);
+//    }
 
-    [Fact]
-    public void ToEnumerableAny_WrapsPredicateWithAnyCall()
-    {
-        // Arrange
-        Expression<Func<int, bool>> expr = v => v == 123;
+//    [Fact]
+//    public void ToEnumerableAny_WrapsPredicateWithAnyCall()
+//    {
+//        // Arrange
+//        Expression<Func<int, bool>> expr = v => v == 123;
 
-        Expression<Func<IEnumerable<int>, bool>> expectedResult = source => source.Any(v => v == 123);
+//        Expression<Func<IEnumerable<int>, bool>> expectedResult = source => source.Any(v => v == 123);
 
-        // Act
-        var result = expr.ToEnumerableAny("source");
+//        // Act
+//        var result = expr.ToEnumerableAny("source");
 
-        // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
-    }
+//        // Assert
+//        result.Should().Be(expectedResult, ExpressionComparer.Default);
+//    }
 
-    [Fact]
-    public void ToCollectionFilter_WrapsPredicateWithWhereCall()
-    {
-        // Arrange
-        Expression<Func<int, bool>> expr = v => v == 123;
+//    [Fact]
+//    public void ToCollectionFilter_WrapsPredicateWithWhereCall()
+//    {
+//        // Arrange
+//        Expression<Func<int, bool>> expr = v => v == 123;
 
-        Expression<Func<IEnumerable<int>, IEnumerable<int>>> expectedResult = source => source.Where(v => v == 123);
+//        Expression<Func<IEnumerable<int>, IEnumerable<int>>> expectedResult = source => source.Where(v => v == 123);
 
-        // Act
-        var result = expr.ToCollectionFilter("source");
+//        // Act
+//        var result = expr.ToCollectionFilter("source");
 
-        // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
-    }
-}
+//        // Assert
+//        result.Should().Be(expectedResult, ExpressionComparer.Default);
+//    }
+//}

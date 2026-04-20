@@ -50,7 +50,7 @@ public class UserNameResolver<TUser>(
         {
             SecurityRuleCredential.CustomUserSecurityRuleCredential customUserSecurityRuleCredential =>
 
-                (await simpleUserSource.GetUserAsync(customUserSecurityRuleCredential.UserCredential, cancellationToken)).Name,
+                (await this.simpleUserSource.GetUserAsync(customUserSecurityRuleCredential.UserCredential, cancellationToken)).Name,
 
             SecurityRuleCredential.CurrentUserWithRunAsCredential => currentUser.Name,
 

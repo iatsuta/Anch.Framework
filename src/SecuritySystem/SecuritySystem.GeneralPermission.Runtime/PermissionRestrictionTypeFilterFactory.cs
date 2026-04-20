@@ -22,7 +22,7 @@ public class PermissionRestrictionTypeFilterFactory<TPermissionRestriction, TSec
     public Expression<Func<TPermissionRestriction, bool>> CreateFilter<TSecurityContext>()
         where TSecurityContext : class, ISecurityContext
     {
-        return cache.GetOrAddAs(typeof(TSecurityContext), _ =>
+        return this.cache.GetOrAddAs(typeof(TSecurityContext), _ =>
         {
             var securityContextTypeId = securityContextTypeIdentConverter.Convert(securityContextInfoSource.GetSecurityContextInfo<TSecurityContext>().Identity)
                 .Id;

@@ -47,16 +47,16 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         await base.InitializeAsync();
 
         this.rootBusinessUnit = await this.SaveBusinessUnit(nameof(this.rootBusinessUnit));
-        this.child_1_0_BusinessUnit = await this.SaveBusinessUnit(nameof(child_1_0_BusinessUnit), this.rootBusinessUnit);
-        this.child_1_1_BusinessUnit = await this.SaveBusinessUnit(nameof(child_1_1_BusinessUnit), this.child_1_0_BusinessUnit);
-        this.child_2_0_BusinessUnit = await this.SaveBusinessUnit(nameof(child_2_0_BusinessUnit), this.rootBusinessUnit);
-        this.child_2_1_BusinessUnit = await this.SaveBusinessUnit(nameof(child_2_1_BusinessUnit), this.child_2_0_BusinessUnit);
+        this.child_1_0_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_0_BusinessUnit), this.rootBusinessUnit);
+        this.child_1_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_1_BusinessUnit), this.child_1_0_BusinessUnit);
+        this.child_2_0_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_2_0_BusinessUnit), this.rootBusinessUnit);
+        this.child_2_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_2_1_BusinessUnit), this.child_2_0_BusinessUnit);
 
         this.rootManagementUnit = await this.SaveManagementUnit(nameof(this.rootManagementUnit));
-        this.child_1_0_ManagementUnit = await this.SaveManagementUnit(nameof(child_1_0_ManagementUnit), this.rootManagementUnit);
-        this.child_1_1_ManagementUnit = await this.SaveManagementUnit(nameof(child_1_1_ManagementUnit), this.child_1_0_ManagementUnit);
-        this.child_2_0_ManagementUnit = await this.SaveManagementUnit(nameof(child_2_0_ManagementUnit), this.rootManagementUnit);
-        this.child_2_1_ManagementUnit = await this.SaveManagementUnit(nameof(child_2_1_ManagementUnit), this.child_2_0_ManagementUnit);
+        this.child_1_0_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_1_0_ManagementUnit), this.rootManagementUnit);
+        this.child_1_1_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_1_1_ManagementUnit), this.child_1_0_ManagementUnit);
+        this.child_2_0_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_2_0_ManagementUnit), this.rootManagementUnit);
+        this.child_2_1_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_2_1_ManagementUnit), this.child_2_0_ManagementUnit);
 
         this.rootEmployee = await this.SaveEmployee(nameof(this.rootEmployee));
     }
@@ -66,7 +66,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
     {
         // Arrange
         await this.AuthManager.For(this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.child_1_1_BusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit,
@@ -74,7 +74,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
             }, this.CancellationToken);
 
         await this.AuthManager.For(this.searchNotificationEmployeeLogin2).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -115,7 +115,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -148,7 +148,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -189,7 +189,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit,
@@ -231,14 +231,14 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 ManagementUnit = this.child_1_1_ManagementUnit
             }, this.CancellationToken);
 
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin2).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -272,7 +272,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.child_1_0_BusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -280,7 +280,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin2).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -314,7 +314,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_0_ManagementUnit
@@ -322,7 +322,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin2).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.rootManagementUnit
@@ -357,7 +357,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.child_1_0_BusinessUnit,
                 ManagementUnit = this.rootManagementUnit
@@ -365,7 +365,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin2).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_0_ManagementUnit
@@ -400,7 +400,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Arrange
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin1).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.child_1_0_BusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -408,7 +408,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         await this.AuthManager.For(
             this.searchNotificationEmployeeLogin2).SetRoleAsync(
-            new TestPermission(testSecurityRole)
+            new TestPermission(this.testSecurityRole)
             {
                 BusinessUnit = this.rootBusinessUnit,
                 ManagementUnit = this.child_1_1_ManagementUnit
@@ -455,9 +455,9 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
             ExpandType = NotificationExpandType.DirectOrFirstParent
         };
 
-        var testUserName = nameof(NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit);
+        var testUserName = nameof(this.NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit);
 
-        await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(testSecurityRole) { BusinessUnit = permissionBuIdentity }, this.CancellationToken);
+        await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(this.testSecurityRole) { BusinessUnit = permissionBuIdentity }, this.CancellationToken);
 
         // Act
         var principalNames = await this.GetNotificationPrincipalsAsync(notificationFilterGroup);
@@ -477,9 +477,9 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
             await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2-Child", this.CancellationToken);
 
 
-        var testUserName = nameof(NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit);
+        var testUserName = nameof(this.NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit);
 
-        await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(testSecurityRole) { BusinessUnit = permissionBuIdentity }, this.CancellationToken);
+        await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(this.testSecurityRole) { BusinessUnit = permissionBuIdentity }, this.CancellationToken);
 
         // Act
         var principalNames = await this.GetEvaluator<IServiceProvider>()
@@ -494,7 +494,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
                     ExpandType = NotificationExpandType.DirectOrFirstParent
                 };
 
-                return await extractor.GetPrincipalsAsync([testSecurityRole], [notificationFilterGroup]).Select(p => p.Name).ToArrayAsync(this.CancellationToken);
+                return await extractor.GetPrincipalsAsync([this.testSecurityRole], [notificationFilterGroup]).Select(p => p.Name).ToArrayAsync(this.CancellationToken);
             });
 
         // Assert
@@ -532,7 +532,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         this.GetEvaluator<INotificationPrincipalExtractor<ExampleApp.Domain.Auth.General.Principal>>()
             .EvaluateAsync(TestingScopeMode.Read, async extractor =>
-                await extractor.GetPrincipalsAsync([testSecurityRole], [.. notificationFilterGroups])
+                await extractor.GetPrincipalsAsync([this.testSecurityRole], [.. notificationFilterGroups])
                     .Select(p => p.Name)
                     .ToArrayAsync(this.CancellationToken));
 

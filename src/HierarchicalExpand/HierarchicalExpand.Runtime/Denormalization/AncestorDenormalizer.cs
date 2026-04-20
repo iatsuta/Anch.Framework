@@ -61,7 +61,7 @@ public class AncestorDenormalizer<TDomainObject, TDirectAncestorLink>(
     {
         foreach (var addLink in syncResult.Adding)
         {
-            await this.SaveAncestor(CreateLink(addLink.Ancestor, addLink.Child), cancellationToken);
+            await this.SaveAncestor(this.CreateLink(addLink.Ancestor, addLink.Child), cancellationToken);
         }
 
         foreach (var removeLink in syncResult.Removing)

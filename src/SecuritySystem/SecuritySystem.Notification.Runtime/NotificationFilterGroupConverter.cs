@@ -20,7 +20,7 @@ public class NotificationFilterGroupConverter(IIdentityInfoSource identityInfoSo
         }
         else
         {
-            return cache.GetOrAddAs(notificationFilterGroup.GetSecurityContextType(), securityContextType =>
+            return this.cache.GetOrAddAs(notificationFilterGroup.GetSecurityContextType(), securityContextType =>
                 new Func<Func<NotificationFilterGroup, NotificationFilterGroup<TSecurityContextIdent>>>(
                         this.GetConvertFunc<ISecurityContext, TSecurityContextIdent>)
                     .CreateGenericMethod(securityContextType, typeof(TSecurityContextIdent))

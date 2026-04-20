@@ -27,7 +27,7 @@ public class GenericQueryableExecutor(IEnumerable<IMethodRedirector> methodRedir
         var redirectedExpression = redirectedExpressionRequest.FirstOrDefault()
                                    ?? throw new ArgumentOutOfRangeException(nameof(callExpression), "Expression can't be redirected");
 
-        return compileCache.GetFunc(redirectedExpression).Invoke();
+        return this.compileCache.GetFunc(redirectedExpression).Invoke();
     }
 
     public static IGenericQueryableExecutor Sync { get; } =

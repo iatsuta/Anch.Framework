@@ -10,7 +10,7 @@ public abstract class ImpersonateServiceTests(IServiceProvider rootServiceProvid
     public async Task EvaluateAsync_ShouldReturnImpersonatedUserName()
     {
         // Arrange
-        var userName = nameof(EvaluateAsync_ShouldReturnImpersonatedUserName);
+        var userName = nameof(this.EvaluateAsync_ShouldReturnImpersonatedUserName);
         var user = await this.AuthManager.For(userName).SetRoleAsync(ExampleSecurityRole.DefaultRole, this.CancellationToken);
 
         // Act

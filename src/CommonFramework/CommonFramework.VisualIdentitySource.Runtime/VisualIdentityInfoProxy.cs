@@ -4,7 +4,7 @@ public class VisualIdentityInfoProxy<TDomainObject>(IVisualIdentityInfoSource vi
 {
     private readonly VisualIdentityInfo<TDomainObject> innerInfo = visualIdentityInfoSource.GetVisualIdentityInfo<TDomainObject>();
 
-    public Type DomainObjectType => innerInfo.DomainObjectType;
+    public Type DomainObjectType => this.innerInfo.DomainObjectType;
 
-    public PropertyAccessors<TDomainObject, string> Name => innerInfo.Name;
+    public PropertyAccessors<TDomainObject, string> Name => this.innerInfo.Name;
 }

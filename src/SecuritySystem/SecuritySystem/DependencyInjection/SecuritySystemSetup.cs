@@ -190,7 +190,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
     public ISecuritySystemSetup AddUserSource<TUser>(Action<IUserSourceSetup<TUser>>? setupUserSource)
         where TUser : class
     {
-        if (!userSourceTypes.Add(typeof(TUser)))
+        if (!this.userSourceTypes.Add(typeof(TUser)))
         {
             throw new InvalidOperationException($"{nameof(UserSource<>)} for {typeof(TUser).Name} already initialized");
         }

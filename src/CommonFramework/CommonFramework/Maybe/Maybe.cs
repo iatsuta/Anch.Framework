@@ -13,19 +13,19 @@ public readonly struct Maybe<T> : IEquatable<Maybe<T>>
         this.HasValue = hasValue;
     }
 
-    public T Value => !this.HasValue ? throw new InvalidOperationException("No value present") : value;
+    public T Value => !this.HasValue ? throw new InvalidOperationException("No value present") : this.value;
 
     public static Maybe<T> Nothing => new (default!, false);
 
     public static Maybe<T> Just(T value) => new (value, true);
 
-    public override string ToString() => this.HasValue ? $"{value}" : "";
+    public override string ToString() => this.HasValue ? $"{this.value}" : "";
 
     public bool Equals(Maybe<T> other) => this.HasValue == other.HasValue && EqualityComparer<T>.Default.Equals(this.value, other.value);
 
     public override bool Equals(object? obj) => obj is Maybe<T> other && this.Equals(other);
 
-    public override int GetHashCode() => HashCode.Combine(value, HasValue);
+    public override int GetHashCode() => HashCode.Combine(this.value, this.HasValue);
 
     public static bool operator ==(Maybe<T> maybe, Maybe<T> otherMaybe) => maybe.Equals(otherMaybe);
 

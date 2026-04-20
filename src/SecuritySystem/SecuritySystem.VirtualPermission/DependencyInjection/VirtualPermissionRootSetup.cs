@@ -91,11 +91,10 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
 
     public void Initialize(ISecuritySystemSetup securitySystemSetup)
     {
-        var bindingInfo =
-            permissionBindingInit.Aggregate(new PermissionBindingInfo<TPermission, TPrincipal> { IsReadonly = true, Principal = principalAccessors },
+        var bindingInfo = this.permissionBindingInit.Aggregate(new PermissionBindingInfo<TPermission, TPrincipal> { IsReadonly = true, Principal = principalAccessors },
                 (state, f) => f(state));
 
-        var virtualBindingInfo = virtualBindingInit.Aggregate(new VirtualPermissionBindingInfo<TPermission> { Items = [..itemBindingInfoList] },
+        var virtualBindingInfo = this.virtualBindingInit.Aggregate(new VirtualPermissionBindingInfo<TPermission> { Items = [..this.itemBindingInfoList] },
             (state, f) => f(state));
 
         securitySystemSetup.AddExtensions(services =>

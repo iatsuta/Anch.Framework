@@ -43,7 +43,7 @@ public class SecurityRoleSource : ISecurityRoleSource
     {
         return this.baseIdentityCache.GetOrAdd(identity, _ =>
         {
-            if (rootIdentityConverter.TryConvert(identity) is { } convertedIdentity && this.identityDict.TryGetValue(convertedIdentity, out var securityRole))
+            if (this.rootIdentityConverter.TryConvert(identity) is { } convertedIdentity && this.identityDict.TryGetValue(convertedIdentity, out var securityRole))
             {
                 return securityRole;
             }

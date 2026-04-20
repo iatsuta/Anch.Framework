@@ -19,5 +19,5 @@ public class RawSelectOperationParser(ICacheProvider cacheProvider, IParsingExce
 
     public SelectOperation Parse(string input) =>
 
-        this.cache.GetOrAdd(input, _ => rawParser.MainParser.Parse(input, unparsedRest => errorParsingHandler.GetError(input, unparsedRest)));
+        this.cache.GetOrAdd(input, _ => this.rawParser.MainParser.Parse(input, unparsedRest => errorParsingHandler.GetError(input, unparsedRest)));
 }

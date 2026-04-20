@@ -39,7 +39,7 @@ public class SecurityIdentityConverter<TIdent>(ICultureSource? cultureSource = n
 
     public Expression<Func<TSourceIdent, TIdent>> GetConvertExpression<TSourceIdent>()
     {
-        if (identityExpr is Expression<Func<TSourceIdent, TIdent>> result)
+        if (this.identityExpr is Expression<Func<TSourceIdent, TIdent>> result)
         {
             return result;
         }

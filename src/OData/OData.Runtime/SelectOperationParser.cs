@@ -13,8 +13,7 @@ public class SelectOperationParser(ICacheProvider cacheProvider, IRawSelectOpera
     private readonly ConcurrentDictionary<Type, ICache> rootCache = [];
 
     public SelectOperation<TDomainObject> Parse<TDomainObject>(string input) =>
-
-        rootCache
+        this.rootCache
             .GetOrAddAs(typeof(TDomainObject),
                 _ => cacheProvider.GetCache<string, SelectOperation<TDomainObject>>((typeof(SelectOperationParser), typeof(TDomainObject))))
             .GetOrAdd(input, _ => selectOperationConverter.Convert<TDomainObject>(rawParser.Parse(input)));

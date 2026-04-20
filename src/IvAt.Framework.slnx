@@ -23,6 +23,9 @@
     <Project Path="CommonFramework/CommonFramework.IdentitySource.Runtime/CommonFramework.IdentitySource.Runtime.csproj" />
     <Project Path="CommonFramework/CommonFramework.IdentitySource/CommonFramework.IdentitySource.csproj" />
   </Folder>
+  <Folder Name="/CommonFramework/Testing/">
+    <Project Path="CommonFramework/CommonFramework.Testing/CommonFramework.Testing.csproj" />
+  </Folder>
   <Folder Name="/CommonFramework/VisualIdentitySource/">
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Abstractions/CommonFramework.VisualIdentitySource.Abstractions.csproj" />
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Runtime/CommonFramework.VisualIdentitySource.Runtime.csproj" />

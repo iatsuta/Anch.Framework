@@ -28,10 +28,10 @@ public class ManyContextFilterBuilder<TDomainObject, TPermission, TSecurityConte
         var allowsUnrestrictedAccess = securityContextRestriction?.Required != true;
 
         var unrestrictedFilter = allowsUnrestrictedAccess
-            ? permissionRestrictionSource.GetUnrestrictedFilter()
+            ? this.permissionRestrictionSource.GetUnrestrictedFilter()
             : _ => false;
 
-        var getIdents = permissionRestrictionSource.GetIdentsExpr();
+        var getIdents = this.permissionRestrictionSource.GetIdentsExpr();
 
         var expander = hierarchicalObjectExpanderFactory.Create<TSecurityContextIdent>(typeof(TSecurityContext));
 

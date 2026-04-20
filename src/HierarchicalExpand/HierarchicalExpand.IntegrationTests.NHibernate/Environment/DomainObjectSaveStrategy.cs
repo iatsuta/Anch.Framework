@@ -10,8 +10,7 @@ public class DomainObjectSaveStrategy<TDomainObject>(IServiceProxyFactory servic
 {
     private readonly IDomainObjectSaveStrategy<TDomainObject> innerService = serviceProxyFactory.Create<IDomainObjectSaveStrategy<TDomainObject>>();
 
-    public Task SaveAsync(ISession session, TDomainObject domainObject, CancellationToken cancellationToken) =>
-        innerService.SaveAsync(session, domainObject, cancellationToken);
+    public Task SaveAsync(ISession session, TDomainObject domainObject, CancellationToken cancellationToken) => this.innerService.SaveAsync(session, domainObject, cancellationToken);
 }
 
 public class DomainObjectSaveStrategy<TDomainObject, TIdent>(IIdentityInfo<TDomainObject, TIdent> identityInfo) : IDomainObjectSaveStrategy<TDomainObject>

@@ -51,7 +51,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
                 .Where(this.GetNameFilter(nameFilter))
                 .OrderBy(principalVisualIdentityInfo.Name.Path)
                 .Take(limit)
-                .Select(managedPrincipalHeaderConverter.ConvertExpression)
+                .Select(this.managedPrincipalHeaderConverter.ConvertExpression)
                 .Distinct()
                 .GenericAsAsyncEnumerable())
 
@@ -75,7 +75,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
         }
         else
         {
-            var header = managedPrincipalHeaderConverter.Convert(principal);
+            var header = this.managedPrincipalHeaderConverter.Convert(principal);
 
             var managedPermissions = await virtualBindingInfo
                 .Items

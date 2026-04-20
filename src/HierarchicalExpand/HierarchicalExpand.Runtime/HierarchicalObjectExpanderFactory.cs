@@ -11,6 +11,5 @@ public class HierarchicalObjectExpanderFactory(
 {
     private readonly ConcurrentDictionary<Type, IHierarchicalObjectExpander> cache = [];
 
-    public IHierarchicalObjectExpander Create(Type domainType) =>
-        cache.GetOrAdd(domainType, _ => serviceProxyFactory.Create<IHierarchicalObjectExpander>(hierarchicalObjectExpanderTypeResolver.Resolve(domainType)));
+    public IHierarchicalObjectExpander Create(Type domainType) => this.cache.GetOrAdd(domainType, _ => serviceProxyFactory.Create<IHierarchicalObjectExpander>(hierarchicalObjectExpanderTypeResolver.Resolve(domainType)));
 }

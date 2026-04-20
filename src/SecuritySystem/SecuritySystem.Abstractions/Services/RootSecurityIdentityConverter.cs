@@ -15,7 +15,7 @@ public class RootSecurityIdentityConverter(IServiceProvider serviceProvider, IEn
     {
         var convertRequest =
 
-            from converter in converters
+            from converter in this.converters
 
             let tryConvertedIdentity = converter.TryConvert(securityIdentity)
 

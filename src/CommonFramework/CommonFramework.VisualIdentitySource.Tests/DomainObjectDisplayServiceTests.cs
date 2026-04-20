@@ -15,7 +15,7 @@ public class DomainObjectDisplayServiceTests
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
 
         var service = sp.GetRequiredService<IDomainObjectDisplayService>();
-        var testObject = new TestObject1 { Name = nameof(DomainObjectDisplayService_Format_ReturnsPropertyName_ByDefault) };
+        var testObject = new TestObject1 { Name = nameof(this.DomainObjectDisplayService_Format_ReturnsPropertyName_ByDefault) };
 
         // Act
         var result = service.Format(testObject);
@@ -35,7 +35,7 @@ public class DomainObjectDisplayServiceTests
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
 
         var service = sp.GetRequiredService<IDomainObjectDisplayService>();
-        var testObject = new TestObject2 { MyName = nameof(DomainObjectDisplayService_Format_ReturnsConfiguredPropertyName) };
+        var testObject = new TestObject2 { MyName = nameof(this.DomainObjectDisplayService_Format_ReturnsConfiguredPropertyName) };
 
         // Act
         var result = service.Format(testObject);
@@ -53,7 +53,7 @@ public class DomainObjectDisplayServiceTests
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
 
         var service = sp.GetRequiredService<IDomainObjectDisplayService>();
-        var testObject = new TestObject2 { MyName = nameof(DomainObjectDisplayService_Format_UsesCustomDisplayFunction) };
+        var testObject = new TestObject2 { MyName = nameof(this.DomainObjectDisplayService_Format_UsesCustomDisplayFunction) };
 
         // Act
         var result = service.Format(testObject);

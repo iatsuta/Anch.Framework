@@ -47,7 +47,7 @@ public class SecurityContextInfoSource : ISecurityContextInfoSource
     {
         return this.baseIdentityCache.GetOrAdd(identity, _ =>
         {
-            if (rootIdentityConverter.TryConvert(identity) is { } convertedIdentity &&
+            if (this.rootIdentityConverter.TryConvert(identity) is { } convertedIdentity &&
                 this.identityDict.TryGetValue(convertedIdentity, out var securityContextInfo))
             {
                 return securityContextInfo;

@@ -32,7 +32,7 @@ public class UserCredentialManager(
 
     public async Task<SecurityIdentity> AddUserRoleAsync(ManagedPermission[] newPermissions, CancellationToken cancellationToken = default)
     {
-        var existsPrincipal = await principalSourceService.TryGetPrincipalAsync(currentUser.Name, cancellationToken);
+        var existsPrincipal = await this.principalSourceService.TryGetPrincipalAsync(currentUser.Name, cancellationToken);
 
         if (existsPrincipal == null)
         {
@@ -55,7 +55,7 @@ public class UserCredentialManager(
 
     public async Task RemovePermissionsAsync(CancellationToken cancellationToken = default)
     {
-        var principal = await principalSourceService.TryGetPrincipalAsync(currentUser.Name, cancellationToken);
+        var principal = await this.principalSourceService.TryGetPrincipalAsync(currentUser.Name, cancellationToken);
 
         if (principal is { Header.IsVirtual: false })
         {
@@ -65,6 +65,6 @@ public class UserCredentialManager(
 
     public async Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken cancellationToken = default)
     {
-        return await principalSourceService.GetPrincipalAsync(currentUser.Name, cancellationToken);
+        return await this.principalSourceService.GetPrincipalAsync(currentUser.Name, cancellationToken);
     }
 }

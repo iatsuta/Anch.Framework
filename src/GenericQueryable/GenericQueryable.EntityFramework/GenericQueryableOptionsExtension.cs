@@ -26,7 +26,7 @@ public class GenericQueryableOptionsExtension : IDbContextOptionsExtension
         {
             v.SetFetchService<EfFetchService>().SetTargetMethodExtractor<EfTargetMethodExtractor>();
 
-			setupAction?.Invoke(v);
+            this.setupAction?.Invoke(v);
         });
 
         services.ReplaceScoped<IAsyncQueryProvider, VisitedEfQueryProvider>();

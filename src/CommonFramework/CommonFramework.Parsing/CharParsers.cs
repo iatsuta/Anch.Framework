@@ -140,9 +140,9 @@ public abstract class CharParsers<TInput>(CultureInfo culture) : Parsers<TInput>
 
         select c;
 
-    public Parser<TInput, bool> TryChar(char ch) => this.Char(ch).Select(_ => true).Or(Return(false));
+    public Parser<TInput, bool> TryChar(char ch) => this.Char(ch).Select(_ => true).Or(this.Return(false));
 
-    public Parser<TInput, bool> TryString(SharedMemoryString text) => this.String(text).Select(_ => true).Or(Return(false));
+    public Parser<TInput, bool> TryString(SharedMemoryString text) => this.String(text).Select(_ => true).Or(this.Return(false));
 
     public Parser<TInput, char> CharIgnoreCase(char ch) =>
 

@@ -10,9 +10,13 @@
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
+
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonFramework.DependencyInjection\CommonFramework.DependencyInjection.csproj" />
+    <ProjectReference Include="..\CommonFramework.Testing\CommonFramework.Testing.csproj" />
     <ProjectReference Include="..\CommonFramework\CommonFramework.csproj" />
   </ItemGroup>
 

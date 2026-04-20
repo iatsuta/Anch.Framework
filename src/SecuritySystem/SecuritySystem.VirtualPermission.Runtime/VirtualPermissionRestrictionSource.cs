@@ -21,7 +21,7 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
     private readonly SecurityContextRestrictionFilterInfo<TSecurityContext>? restrictionFilterInfo = restrictionFilterInfoWrapper.Item1;
 
     public Expression<Func<TPermission, IEnumerable<TSecurityContextIdent>>> GetIdentsExpr() =>
-        virtualBindingInfo.GetRestrictionsExpr(restrictionFilterInfo?.GetPureFilter(serviceProvider), identityInfo.Id.Path);
+        virtualBindingInfo.GetRestrictionsExpr(this.restrictionFilterInfo?.GetPureFilter(serviceProvider), identityInfo.Id.Path);
 
     public Expression<Func<TPermission, bool>> GetUnrestrictedFilter() => this.GetManyUnrestrictedFilter().BuildAnd();
 
@@ -51,13 +51,13 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
         {
             if (restrictionPath is Expression<Func<TPermission, TSecurityContext>> singlePath)
             {
-                if (restrictionFilterInfo == null)
+                if (this.restrictionFilterInfo == null)
                 {
                     yield return singlePath.Select(filterExpr);
                 }
                 else
                 {
-                    var securityContextFilter = restrictionFilterInfo.GetPureFilter(serviceProvider)
+                    var securityContextFilter = this.restrictionFilterInfo.GetPureFilter(serviceProvider)
                         .BuildAnd(filterExpr);
 
                     yield return singlePath.Select(securityContextFilter);
@@ -67,13 +67,13 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
             {
                 yield return ExpressionEvaluateHelper.InlineEvaluate(ee =>
                 {
-                    if (restrictionFilterInfo == null)
+                    if (this.restrictionFilterInfo == null)
                     {
                         return manyPath.Select(securityContexts => securityContexts.Any(securityContext => ee.Evaluate(filterExpr, securityContext)));
                     }
                     else
                     {
-                        var securityContextFilter = restrictionFilterInfo.GetPureFilter(serviceProvider).ToEnumerableAny()
+                        var securityContextFilter = this.restrictionFilterInfo.GetPureFilter(serviceProvider).ToEnumerableAny()
                             .BuildAnd(securityContexts => securityContexts.Any(securityContext => ee.Evaluate(filterExpr, securityContext)));
 
                         return manyPath.Select(securityContextFilter);
