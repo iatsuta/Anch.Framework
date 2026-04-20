@@ -3,7 +3,7 @@
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace CommonFramework.Testing;
+namespace CommonFramework.Testing.Engine;
 
 public class CommonFrameworkDiscoverer(IXunitTestAssembly testAssembly, IServiceProvider rootServiceProvider)
     : XunitTestFrameworkDiscoverer(testAssembly)

@@ -1,4 +1,6 @@
-﻿using Xunit.v3;
+﻿using CommonFramework.Testing.Engine;
+
+using Xunit.v3;
 
 namespace CommonFramework.Testing;
 
@@ -7,11 +9,11 @@ public abstract class CommonTestFrameworkAttribute : Attribute, ITestFrameworkAt
 {
     public Type FrameworkType { get; } = typeof(CommonTestFramework);
 
-    public abstract Type InitializerType { get; }
+    public abstract Type ServiceProviderBuilderType { get; }
 }
 
-public class CommonTestFrameworkAttribute<TInitializer> : CommonTestFrameworkAttribute
-    where TInitializer : ICommonTestFrameworkInitializer
+public class CommonTestFrameworkAttribute<TServiceProviderBuilder> : CommonTestFrameworkAttribute
+    where TServiceProviderBuilder : ITestServiceProviderBuilder
 {
-    public override Type InitializerType { get; } = typeof(TInitializer);
+    public override Type ServiceProviderBuilderType { get; } = typeof(TServiceProviderBuilder);
 }

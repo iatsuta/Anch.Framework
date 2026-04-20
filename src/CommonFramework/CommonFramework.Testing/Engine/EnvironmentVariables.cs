@@ -1,4 +1,4 @@
-﻿namespace CommonFramework.Testing;
+﻿namespace CommonFramework.Testing.Engine;
 
 internal static class EnvironmentVariables
 {

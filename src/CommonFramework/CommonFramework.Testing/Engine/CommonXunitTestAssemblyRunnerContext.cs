@@ -4,7 +4,7 @@ using System.Reflection;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace CommonFramework.Testing;
+namespace CommonFramework.Testing.Engine;
 
 public class CommonXunitTestAssemblyRunnerContext(
     IXunitTestAssembly testAssembly,

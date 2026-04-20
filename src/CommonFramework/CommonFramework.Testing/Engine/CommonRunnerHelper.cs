@@ -4,7 +4,7 @@ using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace CommonFramework.Testing;
+namespace CommonFramework.Testing.Engine;
 
 public static class CommonRunnerHelper
 {

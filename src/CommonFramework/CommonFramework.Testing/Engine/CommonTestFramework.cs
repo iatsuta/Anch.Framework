@@ -5,15 +5,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Xunit.v3;
 
-namespace CommonFramework.Testing;
+namespace CommonFramework.Testing.Engine;
 
 public class CommonTestFramework : XunitTestFramework
 {
-    private readonly ConcurrentDictionary<Assembly, ICommonTestFrameworkInitializer> initializerCache = [];
+    private readonly ConcurrentDictionary<Assembly, ITestServiceProviderBuilder> initializerCache = [];
 
     private readonly ConcurrentDictionary<Assembly, IServiceProvider> rootServiceProviderCache = [];
 
-    private ICommonTestFrameworkInitializer GetInitializer(Assembly assembly)
+    private ITestServiceProviderBuilder GetServiceProviderBuilder(Assembly assembly)
     {
         return this.initializerCache.GetOrAdd(assembly, asm =>
         {
@@ -21,9 +21,9 @@ public class CommonTestFramework : XunitTestFramework
                                                ?? throw new InvalidOperationException(
                                                    $"Assembly '{asm.FullName}' must be decorated with '{typeof(CommonTestFrameworkAttribute).FullName}' attribute");
 
-            return Activator.CreateInstance(commonTestFrameworkAttribute.InitializerType) as ICommonTestFrameworkInitializer
+            return Activator.CreateInstance(commonTestFrameworkAttribute.ServiceProviderBuilderType) as ITestServiceProviderBuilder
                    ?? throw new InvalidOperationException(
-                       $"Failed to create initializer of type '{commonTestFrameworkAttribute.InitializerType.FullName}'");
+                       $"Failed to create initializer of type '{commonTestFrameworkAttribute.ServiceProviderBuilderType.FullName}'");
         });
     }
 
@@ -33,7 +33,7 @@ public class CommonTestFramework : XunitTestFramework
         {
             var services = new ServiceCollection();
 
-            return this.GetInitializer(assembly).BuildServiceProvider(services);
+            return this.GetServiceProviderBuilder(assembly).Build(services);
         });
     }
 
