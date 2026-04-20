@@ -1,19 +1,17 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using Xunit.v3;
 
 namespace CommonFramework.Testing;
 
 public class CommonTestFramework : XunitTestFramework
 {
-    private readonly ConcurrentDictionary<Assembly, IServiceProvider> cache = [];
+    private readonly ConcurrentDictionary<Assembly, IServiceProvider> rootServiceProviderCache = [];
 
     private IServiceProvider GetRootServiceProvider(Assembly assembly)
     {
-        return this.cache.GetOrAdd(assembly, asm =>
+        return this.rootServiceProviderCache.GetOrAdd(assembly, asm =>
         {
             var commonTestFrameworkAttribute = asm.GetCustomAttribute<CommonTestFrameworkAttribute>()
                                                ?? throw new InvalidOperationException(
@@ -21,13 +19,17 @@ public class CommonTestFramework : XunitTestFramework
 
             var initializer = (ICommonTestFrameworkInitializer)Activator.CreateInstance(commonTestFrameworkAttribute.InitializerType)!;
 
-            return initializer.BuildServiceProvider(new ServiceCollection());
+            return initializer.BuildServiceProvider(initializer.CreateServiceCollection());
         });
     }
 
     protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly)
     {
-        return new CommonFrameworkExecutor(new XunitTestAssembly(assembly), this.GetRootServiceProvider(assembly));
+        var rootServiceProvider = this.GetRootServiceProvider(assembly);
+
+        var rootRunner = new CommonXunitTestAssemblyRunner(new CommonTestCollectionRunner(new CommonTestClassRunner(rootServiceProvider)));
+
+        return new CommonFrameworkExecutor(new XunitTestAssembly(assembly), rootRunner);
     }
 
     protected override ITestFrameworkDiscoverer CreateDiscoverer(Assembly assembly)

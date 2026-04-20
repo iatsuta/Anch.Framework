@@ -4,5 +4,7 @@ namespace CommonFramework.Testing;
 
 public interface ICommonTestFrameworkInitializer
 {
-    IServiceProvider BuildServiceProvider(IServiceCollection services);
+    IServiceCollection CreateServiceCollection() => new ServiceCollection();
+
+    IServiceProvider BuildServiceProvider(IServiceCollection serviceCollection);
 }

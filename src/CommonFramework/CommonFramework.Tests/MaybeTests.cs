@@ -5,7 +5,7 @@ using CommonFramework.Testing;
 
 namespace CommonFramework.Tests;
 
-public class MaybeTests
+public class MaybeTests(IServiceProvider serviceProvider)
 {
     [Theory]
     [CommonMemberData(nameof(GetInjectMaybeTestCases))]

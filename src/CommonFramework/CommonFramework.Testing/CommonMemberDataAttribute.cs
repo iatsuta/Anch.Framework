@@ -15,7 +15,7 @@ namespace CommonFramework.Testing;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class CommonMemberDataAttribute(string memberName, params object?[] arguments) : MemberDataAttributeBase(memberName, arguments)
 {
-    internal IServiceProvider? ServiceProvider { get; set; }
+    internal IServiceProvider? RootServiceProvider { get; set; }
 
     private readonly ConcurrentDictionary<MethodInfo, object?> testInstanceCache = [];
 
@@ -38,7 +38,7 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
 
         this.testInstanceCache.GetOrAdd(testMethod, _ =>
         {
-            if (testMethod.IsStatic || this.ServiceProvider == null)
+            if (testMethod.IsStatic || this.RootServiceProvider == null)
             {
                 return null;
             }
@@ -46,7 +46,7 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
             {
                 var testType = testMethod.ReflectedType!;
 
-                return ActivatorUtilities.CreateInstance(this.ServiceProvider, testType);
+                return ActivatorUtilities.CreateInstance(this.RootServiceProvider, testType);
             }
         });
 
@@ -55,7 +55,7 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
         MethodInfo testMethod,
         DisposalTracker disposalTracker)
     {
-        if (this.ServiceProvider == null)
+        if (this.RootServiceProvider == null)
         {
             return base.GetData(testMethod, disposalTracker);
         }

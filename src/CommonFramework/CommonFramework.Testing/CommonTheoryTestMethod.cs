@@ -5,7 +5,7 @@ using Xunit.v3;
 
 namespace CommonFramework.Testing;
 
-public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProvider serviceProvider) : IXunitTestMethod
+public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProvider rootServiceProvider) : IXunitTestMethod
 {
     public int? MethodArity => baseMethod.MethodArity;
 
@@ -24,7 +24,7 @@ public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProvide
         {
             if (attr is CommonMemberDataAttribute commonMemberDataAttribute)
             {
-                commonMemberDataAttribute.ServiceProvider = serviceProvider;
+                commonMemberDataAttribute.RootServiceProvider = rootServiceProvider;
             }
 
             return attr;
