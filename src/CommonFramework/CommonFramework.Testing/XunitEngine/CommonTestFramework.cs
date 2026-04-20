@@ -7,11 +7,11 @@ namespace CommonFramework.Testing.XunitEngine;
 
 public class CommonTestFramework : XunitTestFramework
 {
-    private readonly ConcurrentDictionary<Assembly, ITestServiceProviderBuilder> initializerCache = [];
+    private readonly ConcurrentDictionary<Assembly, ITestServiceProviderBuilder?> initializerCache = [];
 
-    private readonly ConcurrentDictionary<Assembly, IServiceProvider> rootServiceProviderCache = [];
+    private readonly ConcurrentDictionary<Assembly, IServiceProvider?> rootServiceProviderCache = [];
 
-    private ITestServiceProviderBuilder GetServiceProviderBuilder(Assembly assembly)
+    private ITestServiceProviderBuilder? GetServiceProviderBuilder(Assembly assembly)
     {
         return this.initializerCache.GetOrAdd(assembly, asm =>
         {
@@ -19,21 +19,17 @@ public class CommonTestFramework : XunitTestFramework
                                                ?? throw new InvalidOperationException(
                                                    $"Assembly '{asm.FullName}' must be decorated with '{typeof(CommonTestFrameworkAttribute).FullName}' attribute");
 
-            return Activator.CreateInstance(commonTestFrameworkAttribute.ServiceProviderBuilderType) as ITestServiceProviderBuilder
+            return commonTestFrameworkAttribute.ServiceProviderBuilderType == null
+                ? null
+                : (Activator.CreateInstance(commonTestFrameworkAttribute.ServiceProviderBuilderType) as ITestServiceProviderBuilder
                    ?? throw new InvalidOperationException(
-                       $"Failed to create initializer of type '{commonTestFrameworkAttribute.ServiceProviderBuilderType.FullName}'");
+                       $"Failed to create initializer of type '{commonTestFrameworkAttribute.ServiceProviderBuilderType.FullName}'"));
         });
     }
 
-    private IServiceProvider GetRootServiceProvider(Assembly assembly)
-    {
-        return this.rootServiceProviderCache.GetOrAdd(assembly, _ =>
-        {
-            var services = new ServiceCollection();
+    private IServiceProvider? GetRootServiceProvider(Assembly assembly) =>
 
-            return this.GetServiceProviderBuilder(assembly).Build(services);
-        });
-    }
+        this.rootServiceProviderCache.GetOrAdd(assembly, _ => this.GetServiceProviderBuilder(assembly)?.Build(new ServiceCollection()));
 
     protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly)
     {

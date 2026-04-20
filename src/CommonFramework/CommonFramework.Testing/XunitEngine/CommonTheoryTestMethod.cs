@@ -4,7 +4,7 @@ using Xunit.v3;
 
 namespace CommonFramework.Testing.XunitEngine;
 
-public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProvider rootServiceProvider) : IXunitTestMethod
+public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProvider? rootServiceProvider) : IXunitTestMethod
 {
     public int? MethodArity => baseMethod.MethodArity;
 

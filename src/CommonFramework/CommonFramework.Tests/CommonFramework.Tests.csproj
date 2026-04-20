@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommonFramework.DependencyInjection\CommonFramework.DependencyInjection.csproj" />
     <ProjectReference Include="..\CommonFramework\CommonFramework.csproj" />
   </ItemGroup>
 

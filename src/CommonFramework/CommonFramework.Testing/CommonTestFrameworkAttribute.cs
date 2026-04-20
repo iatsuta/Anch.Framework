@@ -4,11 +4,11 @@ using Xunit.v3;
 namespace CommonFramework.Testing;
 
 [AttributeUsage(AttributeTargets.Assembly)]
-public abstract class CommonTestFrameworkAttribute : Attribute, ITestFrameworkAttribute
+public class CommonTestFrameworkAttribute : Attribute, ITestFrameworkAttribute
 {
     public Type FrameworkType { get; } = typeof(CommonTestFramework);
 
-    public abstract Type ServiceProviderBuilderType { get; }
+    public virtual Type? ServiceProviderBuilderType { get; } = null;
 }
 
 public class CommonTestFrameworkAttribute<TServiceProviderBuilder> : CommonTestFrameworkAttribute

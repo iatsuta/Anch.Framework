@@ -4,5 +4,5 @@ namespace CommonFramework.Testing;
 
 public interface ITestServiceProviderBuilder
 {
-    IServiceProvider Build(IServiceCollection serviceCollection);
+    IServiceProvider Build(IServiceCollection services);
 }

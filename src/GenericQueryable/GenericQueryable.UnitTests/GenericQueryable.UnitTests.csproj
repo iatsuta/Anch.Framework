@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommonFramework\CommonFramework.Testing\CommonFramework.Testing.csproj" />
     <ProjectReference Include="..\GenericQueryable.Abstractions\GenericQueryable.Abstractions.csproj" />
   </ItemGroup>
 

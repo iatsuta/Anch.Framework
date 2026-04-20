@@ -38,7 +38,7 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
 
         this.testInstanceCache.GetOrAdd(testMethod, _ =>
         {
-            if (testMethod.IsStatic || this.RootServiceProvider == null)
+            if (testMethod.IsStatic)
             {
                 return null;
             }
@@ -46,7 +46,14 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
             {
                 var testType = testMethod.ReflectedType!;
 
-                return ActivatorUtilities.CreateInstance(this.RootServiceProvider, testType);
+                if (this.RootServiceProvider == null)
+                {
+                    return Activator.CreateInstance(testType);
+                }
+                else
+                {
+                    return ActivatorUtilities.CreateInstance(this.RootServiceProvider, testType);
+                }
             }
         });
 

@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
+
 using Xunit.Internal;
 using Xunit.v3;
 
 namespace CommonFramework.Testing.XunitEngine;
 
-public class CommonTestClassRunner(IServiceProvider rootServiceProvider) : XunitTestClassRunner
+public class CommonTestClassRunner(IServiceProvider? rootServiceProvider) : XunitTestClassRunner
 {
     protected override ValueTask<object?> GetConstructorArgument(
         XunitTestClassRunnerContext ctxt,
@@ -12,7 +13,7 @@ public class CommonTestClassRunner(IServiceProvider rootServiceProvider) : Xunit
         int index,
         ParameterInfo parameter)
     {
-        if (parameter.ParameterType == typeof(IServiceProvider))
+        if (rootServiceProvider != null && parameter.ParameterType == typeof(IServiceProvider))
         {
             return new ValueTask<object?>(rootServiceProvider);
         }
