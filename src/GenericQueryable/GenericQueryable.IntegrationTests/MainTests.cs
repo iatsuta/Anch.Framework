@@ -1,4 +1,5 @@
 ﻿using CommonFramework.GenericRepository;
+using CommonFramework.Testing;
 
 using GenericQueryable.IntegrationTests.Domain;
 using GenericQueryable.IntegrationTests.Environment;
@@ -31,14 +32,10 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLi
         }
     }
 
-    ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
-
-    [Fact]
-    public async Task DefaultGenericQueryable_InvokeToListAsync_MethodInvoked()
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeToListAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var serviceProvider = scope.ServiceProvider;
@@ -50,33 +47,36 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLi
         // Act
         var result0 = await testSet
             .WithFetch(AppFetchRule.TestFetchRule)
-            .GenericToArrayAsync(cancellationToken);
+            .GenericToArrayAsync(ct);
 
         var result1 = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
-            .GenericToListAsync(cancellationToken);
+            .GenericToListAsync(ct);
 
         var result2 = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
-            .GenericToHashSetAsync(cancellationToken);
+            .GenericToHashSetAsync(ct);
 
         var result3 = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
-            .GenericToDictionaryAsync(v => v.Id, cancellationToken);
+            .GenericToDictionaryAsync(v => v.Id, ct);
 
         var result4 = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
-            .GenericToDictionaryAsync(v => v.Id, v => v, cancellationToken);
+            .GenericToDictionaryAsync(v => v.Id, v => v, ct);
 
         var result5 = await testSet
             //.WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
             .GenericAsAsyncEnumerable()
             .Take(100)
-            .ToArrayAsync(cancellationToken);
+            .ToArrayAsync(ct);
 
         //Assert
         result0.Should().ContainSingle(testObj => testObj.Id == this.testObjId);
     }
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+    ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
+
+    ValueTask IAsyncDisposable.DisposeAsync() => ValueTask.CompletedTask;
 }

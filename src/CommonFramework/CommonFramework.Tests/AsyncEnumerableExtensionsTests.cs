@@ -1,4 +1,6 @@
-﻿namespace CommonFramework.Tests;
+﻿using CommonFramework.Testing;
+
+namespace CommonFramework.Tests;
 
 public class AsyncEnumerableExtensionsTests
 {
@@ -17,13 +19,11 @@ public class AsyncEnumerableExtensionsTests
         await Task.CompletedTask;
     }
 
-    [Fact]
-    public async Task ToImmutableDictionary_Source_KeyValue_WithComparer()
+    [CommonFact]
+    public async Task ToImmutableDictionary_Source_KeyValue_WithComparer(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var result = await GetStrings()
-            .ToImmutableDictionaryAsync(x => x.Length, x => x, EqualityComparer<int>.Default, cancellationToken);
+            .ToImmutableDictionaryAsync(x => x.Length, x => x, EqualityComparer<int>.Default, ct);
 
         result.Should().HaveCount(3);
         result[1].Should().Be("a");
@@ -31,58 +31,48 @@ public class AsyncEnumerableExtensionsTests
         result[3].Should().Be("ccc");
     }
 
-    [Fact]
-    public async Task ToImmutableDictionary_Source_KeyValue_WithoutComparer()
+    [CommonFact]
+    public async Task ToImmutableDictionary_Source_KeyValue_WithoutComparer(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var result = await GetStrings()
-            .ToImmutableDictionaryAsync(x => x.Length, x => x, cancellationToken);
+            .ToImmutableDictionaryAsync(x => x.Length, x => x, ct);
 
         result.Should().ContainKey(1).WhoseValue.Should().Be("a");
     }
 
-    [Fact]
-    public async Task ToImmutableDictionary_Source_KeyOnly_WithoutComparer()
+    [CommonFact]
+    public async Task ToImmutableDictionary_Source_KeyOnly_WithoutComparer(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var result = await GetStrings()
-            .ToImmutableDictionaryAsync(x => x.Length, cancellationToken);
+            .ToImmutableDictionaryAsync(x => x.Length, ct);
 
         result[2].Should().Be("bb");
     }
 
-    [Fact]
-    public async Task ToImmutableDictionary_Source_KeyOnly_WithComparer()
+    [CommonFact]
+    public async Task ToImmutableDictionary_Source_KeyOnly_WithComparer(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var result = await GetStrings()
-            .ToImmutableDictionaryAsync(x => x.Length, EqualityComparer<int>.Default, cancellationToken);
+            .ToImmutableDictionaryAsync(x => x.Length, EqualityComparer<int>.Default, ct);
 
         result[3].Should().Be("ccc");
     }
 
-    [Fact]
-    public async Task ToImmutableDictionary_KeyValuePair_WithoutComparer()
+    [CommonFact]
+    public async Task ToImmutableDictionary_KeyValuePair_WithoutComparer(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var result = await GetPairs()
-            .ToImmutableDictionaryAsync(cancellationToken);
+            .ToImmutableDictionaryAsync(ct);
 
         result.Should().HaveCount(2);
         result[1].Should().Be("a");
     }
 
-    [Fact]
-    public async Task ToImmutableDictionary_KeyValuePair_WithComparer()
+    [CommonFact]
+    public async Task ToImmutableDictionary_KeyValuePair_WithComparer(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var result = await GetPairs()
-            .ToImmutableDictionaryAsync(EqualityComparer<int>.Default, cancellationToken);
+            .ToImmutableDictionaryAsync(EqualityComparer<int>.Default, ct);
 
         result[2].Should().Be("b");
     }

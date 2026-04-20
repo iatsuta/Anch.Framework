@@ -1,4 +1,6 @@
-﻿namespace CommonFramework.Tests;
+﻿using CommonFramework.Testing;
+
+namespace CommonFramework.Tests;
 
 public class ImmutableExtensionsTests
 {
@@ -11,78 +13,64 @@ public class ImmutableExtensionsTests
         }
     }
 
-    [Fact]
-    public async Task ToImmutableArrayAsync_ShouldReturnArray()
+    [CommonFact]
+    public async Task ToImmutableArrayAsync_ShouldReturnArray(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var source = GetAsyncEnumerable(1, 2, 3);
 
-        var result = await source.ToImmutableArrayAsync(cancellationToken);
+        var result = await source.ToImmutableArrayAsync(ct);
 
         result.Should().Equal(1, 2, 3);
     }
 
-    [Fact]
-    public async Task ToImmutableListAsync_ShouldReturnList()
+    [CommonFact]
+    public async Task ToImmutableListAsync_ShouldReturnList(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var source = GetAsyncEnumerable(1, 2, 3);
 
-        var result = await source.ToImmutableListAsync(cancellationToken);
+        var result = await source.ToImmutableListAsync(ct);
 
         result.Should().Equal(1, 2, 3);
     }
 
-    [Fact]
-    public async Task ToImmutableHashSetAsync_ShouldReturnSet()
+    [CommonFact]
+    public async Task ToImmutableHashSetAsync_ShouldReturnSet(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var source = GetAsyncEnumerable(1, 2, 2, 3);
 
-        var result = await source.ToImmutableHashSetAsync(cancellationToken);
+        var result = await source.ToImmutableHashSetAsync(ct);
 
         result.Should().BeEquivalentTo([1, 2, 3]);
     }
 
-    [Fact]
-    public async Task ToImmutableArrayAsync_Empty_ShouldReturnEmpty()
+    [CommonFact]
+    public async Task ToImmutableArrayAsync_Empty_ShouldReturnEmpty(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         var source = GetAsyncEnumerable();
 
-        var result = await source.ToImmutableArrayAsync(cancellationToken);
+        var result = await source.ToImmutableArrayAsync(ct);
 
         result.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task ToImmutableArrayAsync_NullSource_ShouldThrow()
+    [CommonFact]
+    public async Task ToImmutableArrayAsync_NullSource_ShouldThrow(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         IAsyncEnumerable<int> source = null!;
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await source.ToImmutableArrayAsync(cancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await source.ToImmutableArrayAsync(ct));
     }
 
-    [Fact]
-    public async Task ToImmutableListAsync_NullSource_ShouldThrow()
+    [CommonFact]
+    public async Task ToImmutableListAsync_NullSource_ShouldThrow(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         IAsyncEnumerable<int> source = null!;
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await source.ToImmutableListAsync(cancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await source.ToImmutableListAsync(ct));
     }
 
-    [Fact]
-    public async Task ToImmutableHashSetAsync_NullSource_ShouldThrow()
+    [CommonFact]
+    public async Task ToImmutableHashSetAsync_NullSource_ShouldThrow(CancellationToken ct)
     {
-        var cancellationToken = TestContext.Current.CancellationToken;
-
         IAsyncEnumerable<int> source = null!;
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await source.ToImmutableHashSetAsync(cancellationToken));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await source.ToImmutableHashSetAsync(ct));
     }
 }
