@@ -25,7 +25,7 @@ public abstract class TestEnvironment
 
             .AddScoped<TestController>()
             .AddSingleton(TimeProvider.System)
-            //.ReplaceSingleton<IDefaultCancellationTokenSource, XUnitDefaultCancellationTokenSource>()
+            .ReplaceSingleton<IDefaultCancellationTokenSource, XUnitDefaultCancellationTokenSource>()
 
             .AddSecuritySystemTesting()
 

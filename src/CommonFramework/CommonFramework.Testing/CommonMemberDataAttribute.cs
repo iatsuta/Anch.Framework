@@ -51,17 +51,17 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
         });
 
     /// <inheritdoc/>
-    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(
+    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(
         MethodInfo testMethod,
         DisposalTracker disposalTracker)
     {
         if (this.RootServiceProvider == null)
         {
-            return base.GetData(testMethod, disposalTracker);
+            return await base.GetData(testMethod, disposalTracker);
         }
 
         if (this.MemberType is null)
-            return new([]);
+            return [];
 
         var accessor = this.GetPropertyAccessor(this.MemberType)
             ?? this.GetFieldAccessor(this.MemberType)
@@ -76,27 +76,49 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
                 )
             );
 
-        var returnValue =
-            accessor(this.GetTestInstance(testMethod))
-            ?? throw new ArgumentException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    "Member '{0}' on '{1}' returned null when queried for test data", this.MemberName, this.MemberType.SafeName()
-                )
-            );
+        var testInstance = this.GetTestInstance(testMethod);
 
-        if (returnValue is IEnumerable dataItems)
+        if (testInstance is IAsyncLifetime asyncInit)
         {
-            var result = new List<ITheoryDataRow>();
-
-            foreach (var dataItem in dataItems)
-                if (dataItem is not null)
-                    result.Add(this.ConvertDataRow(dataItem));
-
-            return new(result.CastOrToReadOnlyCollection());
+            await asyncInit.InitializeAsync();
         }
 
-        return this.GetDataAsync(returnValue, this.MemberType);
+        try
+        {
+            var returnValue =
+                accessor(testInstance)
+                ?? throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "Member '{0}' on '{1}' returned null when queried for test data", this.MemberName, this.MemberType.SafeName()
+                    ));
+
+            if (returnValue is IEnumerable dataItems)
+            {
+                var result = new List<ITheoryDataRow>();
+
+                foreach (var dataItem in dataItems)
+                    if (dataItem is not null)
+                        result.Add(this.ConvertDataRow(dataItem));
+
+                return result.CastOrToReadOnlyCollection();
+            }
+
+            return await this.GetDataAsync(returnValue, this.MemberType);
+        }
+        finally
+        {
+            if (testInstance is IAsyncLifetime asyncDispose)
+            {
+                try
+                {
+                    await asyncDispose.DisposeAsync();
+                }
+                catch
+                {
+                }
+            }
+        }
     }
 
     async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetDataAsync(
@@ -153,7 +175,7 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
         }
 
         return
-            fieldInfo is not null && !fieldInfo.IsStatic
+            fieldInfo is not null
                 ? instance => fieldInfo.GetValue(instance)
                 : null;
     }
@@ -192,7 +214,7 @@ public class CommonMemberDataAttribute(string memberName, params object?[] argum
             );
         }
 
-        if (methodInfo is null || methodInfo.IsStatic)
+        if (methodInfo is null)
             return null;
 
         var completedArguments = this.Arguments ?? [];

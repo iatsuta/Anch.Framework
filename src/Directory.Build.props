@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>CS9107</NoWarn>
+    <NoWarn>CS9107, xUnit1041, xUnit1026</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -19,7 +19,6 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
             { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), DelegatedFrom = delegatedFromPermission.Identity };
 
-
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, this.CancellationToken);
 
         // Act
