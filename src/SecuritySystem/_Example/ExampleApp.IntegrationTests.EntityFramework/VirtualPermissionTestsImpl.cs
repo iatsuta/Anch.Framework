@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class VirtualPermissionTestsImpl() : VirtualPermissionTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class VirtualPermissionTestsImpl(IServiceProvider rootServiceProvider) : VirtualPermissionTests(rootServiceProvider);

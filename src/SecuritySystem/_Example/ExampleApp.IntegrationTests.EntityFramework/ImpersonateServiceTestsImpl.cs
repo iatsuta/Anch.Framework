@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class ImpersonateServiceTestsImpl() : ImpersonateServiceTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class ImpersonateServiceTestsImpl(IServiceProvider rootServiceProvider) : ImpersonateServiceTests(rootServiceProvider);

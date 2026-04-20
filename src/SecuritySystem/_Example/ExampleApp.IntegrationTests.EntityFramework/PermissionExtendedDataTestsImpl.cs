@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class PermissionExtendedDataTestsImpl() : PermissionExtendedDataTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class PermissionExtendedDataTestsImpl(IServiceProvider rootServiceProvider) : PermissionExtendedDataTests(rootServiceProvider);

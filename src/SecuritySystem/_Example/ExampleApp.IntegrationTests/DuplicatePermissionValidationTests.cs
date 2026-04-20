@@ -1,4 +1,5 @@
-﻿using ExampleApp.Application;
+﻿using CommonFramework.Testing;
+using ExampleApp.Application;
 using ExampleApp.Domain;
 
 using SecuritySystem;
@@ -8,15 +9,15 @@ namespace ExampleApp.IntegrationTests;
 
 public abstract class DuplicatePermissionValidationTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [Fact]
-    public async Task AddRoleAsync_WhenDuplicatePermissionExists_ShouldThrowValidationException()
+    [CommonFact]
+    public async Task AddRoleAsync_WhenDuplicatePermissionExists_ShouldThrowValidationException(CancellationToken ct)
     {
         // Arrange
         var principalName = "TestPrincipal";
-        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", this.CancellationToken);
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", ct);
 
         Task<SecurityIdentity> Assign() => this.AuthManager.For(principalName)
-            .AddRoleAsync(new TestPermission(ExampleSecurityRole.BuManager) { BusinessUnit = buIdentity }, this.CancellationToken);
+            .AddRoleAsync(new TestPermission(ExampleSecurityRole.BuManager) { BusinessUnit = buIdentity }, ct);
 
         await Assign();
 
@@ -30,15 +31,15 @@ public abstract class DuplicatePermissionValidationTests(IServiceProvider rootSe
     }
 
 
-    [Fact]
-    public async Task AddRoleAsync_WhenPermissionPeriodsDoNotIntersect_ShouldNotThrow()
+    [CommonFact]
+    public async Task AddRoleAsync_WhenPermissionPeriodsDoNotIntersect_ShouldNotThrow(CancellationToken ct)
     {
         // Arrange
         var principalName = "TestPrincipal";
-        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", this.CancellationToken);
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", ct);
 
         Task<SecurityIdentity> Assign(PermissionPeriod period) => this.AuthManager.For(principalName)
-            .AddRoleAsync(new TestPermission(ExampleSecurityRole.BuManager) { BusinessUnit = buIdentity, Period = period }, this.CancellationToken);
+            .AddRoleAsync(new TestPermission(ExampleSecurityRole.BuManager) { BusinessUnit = buIdentity, Period = period }, ct);
 
         await Assign(new PermissionPeriod(new DateTime(2000, 1, 1), new DateTime(2009, 1, 1)));
 

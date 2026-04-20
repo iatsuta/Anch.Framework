@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class PermissionDelegationFromTestsImpl() : PermissionDelegationFromTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class PermissionDelegationFromTestsImpl(IServiceProvider rootServiceProvider) : PermissionDelegationFromTests(rootServiceProvider);

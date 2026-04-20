@@ -1,4 +1,5 @@
-﻿using ExampleApp.Domain;
+﻿using CommonFramework.Testing;
+using ExampleApp.Domain;
 
 using SecuritySystem;
 using SecuritySystem.AvailableSecurity;
@@ -7,8 +8,8 @@ namespace ExampleApp.IntegrationTests;
 
 public abstract class ClientSecurityRuleTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [Fact]
-    public async Task GetAvailableSecurityRules_ReturnsExpectedClientSecurityRules()
+    [CommonFact]
+    public async Task GetAvailableSecurityRules_ReturnsExpectedClientSecurityRules(CancellationToken ct)
     {
         // Arrange
         var expectedResult = new DomainSecurityRule.ClientSecurityRule[]
@@ -20,7 +21,7 @@ public abstract class ClientSecurityRuleTests(IServiceProvider rootServiceProvid
         // Act
         var result = await this.GetEvaluator<IAvailableClientSecurityRuleSource>().EvaluateAsync(TestingScopeMode.Read,
             async availableClientSecurityRuleSource =>
-                await availableClientSecurityRuleSource.GetAvailableSecurityRules().ToArrayAsync(this.CancellationToken));
+                await availableClientSecurityRuleSource.GetAvailableSecurityRules().ToArrayAsync(ct));
 
         // Assert
         result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult);

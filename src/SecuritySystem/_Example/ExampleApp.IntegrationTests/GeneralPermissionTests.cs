@@ -1,5 +1,5 @@
 ﻿using CommonFramework.GenericRepository;
-
+using CommonFramework.Testing;
 using ExampleApp.Application;
 using ExampleApp.Domain;
 
@@ -15,46 +15,46 @@ namespace ExampleApp.IntegrationTests;
 
 public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [Fact]
-    public async Task SetRoleAsync_ShouldPreservePermissionIdentity()
+    [CommonFact]
+    public async Task SetRoleAsync_ShouldPreservePermissionIdentity(CancellationToken ct)
     {
         // Arrange
         var testPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
 
         // Act
-        var principalIdentity = await this.AuthManager.For("TestPrincipal").SetRoleAsync(testPermission, this.CancellationToken);
+        var principalIdentity = await this.AuthManager.For("TestPrincipal").SetRoleAsync(testPermission, ct);
 
         // Assert
-        var managedPrincipal = await this.AuthManager.For(principalIdentity).GetPrincipalAsync(this.CancellationToken);
+        var managedPrincipal = await this.AuthManager.For(principalIdentity).GetPrincipalAsync(ct);
 
         var managedPermission = managedPrincipal.Permissions.Should().ContainSingle().Subject;
 
         managedPermission.Identity.Should().Be(testPermission.Identity);
     }
 
-    [Fact]
-    public async Task AssignGeneralPermission_PermissionResolved()
+    [CommonFact]
+    public async Task AssignGeneralPermission_PermissionResolved(CancellationToken ct)
     {
         // Arrange
         var principalName = "TestPrincipal";
 
-        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", this.CancellationToken);
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", ct);
 
         var testRole = ExampleSecurityRole.BuManager;
 
         var testPermission = new TestPermission(testRole) { BusinessUnit = buIdentity };
 
-        var principalIdentity = await this.AuthManager.For(principalName).SetRoleAsync(testPermission, this.CancellationToken);
+        var principalIdentity = await this.AuthManager.For(principalName).SetRoleAsync(testPermission, ct);
         this.AuthManager.For(principalIdentity).LoginAs();
 
         // Act
         var availableSecurityRoles = await this.GetEvaluator<IAvailableSecurityRoleSource>().EvaluateAsync(TestingScopeMode.Read,
-            async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync(this.CancellationToken));
+            async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync(ct));
 
         // Assert
         availableSecurityRoles.Should().BeEquivalentTo([testRole]);
 
-        var managedPrincipal = await this.AuthManager.For(principalName).GetPrincipalAsync(this.CancellationToken);
+        var managedPrincipal = await this.AuthManager.For(principalName).GetPrincipalAsync(ct);
 
         managedPrincipal.Header.Identity.Should().Be(principalIdentity);
         managedPrincipal.Header.Name.Should().Be(principalName);
@@ -66,17 +66,17 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
         managedPermission.Restrictions.Should().BeEquivalentTo(testPermission.Restrictions);
     }
 
-    [Fact]
-    public async Task AssignGeneralPermission_WithRootBu_AllTestObjectsResolved()
+    [CommonFact]
+    public async Task AssignGeneralPermission_WithRootBu_AllTestObjectsResolved(CancellationToken ct)
     {
         // Arrange
-        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", this.CancellationToken);
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>("TestRootBu", ct);
 
         var testRole = ExampleSecurityRole.BuManager;
 
         var testPermission = new TestPermission(testRole) { BusinessUnit = buIdentity };
 
-        var principalId = await this.AuthManager.For("TestPrincipal").SetRoleAsync([testPermission, ExampleSecurityRole.DefaultRole], this.CancellationToken);
+        var principalId = await this.AuthManager.For("TestPrincipal").SetRoleAsync([testPermission, ExampleSecurityRole.DefaultRole], ct);
         this.AuthManager.For(principalId).LoginAs();
 
         // Act
@@ -92,15 +92,15 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
             var testObjectRepositoryFactory = sp.GetRequiredService<IRepositoryFactory<TestObject>>();
             var testObjectRepository = testObjectRepositoryFactory.Create(testRole);
 
-            var expectedResult = await queryableSource.GetQueryable<TestObject>().GenericToListAsync(this.CancellationToken);
+            var expectedResult = await queryableSource.GetQueryable<TestObject>().GenericToListAsync(ct);
 
-            var result = await testObjectRepository.GetQueryable().GenericToListAsync(this.CancellationToken);
+            var result = await testObjectRepository.GetQueryable().GenericToListAsync(ct);
 
             result.OrderBy(v => v.Id).Should().BeEquivalentTo(expectedResult.OrderBy(v => v.Id));
 
             foreach (var testObject in result)
             {
-                (await securityProvider.HasAccessAsync(testObject, this.CancellationToken)).Should().Be(true);
+                (await securityProvider.HasAccessAsync(testObject, ct)).Should().Be(true);
             }
         });
     }

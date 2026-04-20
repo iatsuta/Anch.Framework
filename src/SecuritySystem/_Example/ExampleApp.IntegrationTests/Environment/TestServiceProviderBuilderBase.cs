@@ -1,5 +1,6 @@
 ﻿using CommonFramework;
 using CommonFramework.DependencyInjection;
+using CommonFramework.Testing;
 
 using ExampleApp.Api.Controllers;
 using ExampleApp.Infrastructure.DependencyInjection;
@@ -11,17 +12,15 @@ using SecuritySystem.Testing.DependencyInjection;
 
 namespace ExampleApp.IntegrationTests.Environment;
 
-public abstract class TestEnvironment
+public abstract class TestServiceProviderBuilderBase : ITestServiceProviderBuilder
 {
-    public IServiceProvider RootServiceProvider => field ??= this.BuildServiceProvider();
-
-    protected IServiceProvider BuildServiceProvider()
+    public IServiceProvider Build(IServiceCollection services)
     {
         var configuration = new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
 
         return new ServiceCollection()
             .AddInfrastructure(configuration)
-            .Pipe(services => this.InitializeServices(services, configuration))
+            .Pipe(s => this.InitializeServices(s, configuration))
 
             .AddScoped<TestController>()
             .AddSingleton(TimeProvider.System)

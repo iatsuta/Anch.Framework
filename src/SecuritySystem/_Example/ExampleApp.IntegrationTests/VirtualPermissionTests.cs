@@ -1,4 +1,6 @@
-﻿using ExampleApp.Api.Controllers;
+﻿using CommonFramework.Testing;
+
+using ExampleApp.Api.Controllers;
 using ExampleApp.Domain;
 
 namespace ExampleApp.IntegrationTests;
@@ -6,8 +8,8 @@ namespace ExampleApp.IntegrationTests;
 public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
     [Theory]
-    [MemberData(nameof(Impersonate_LoadTestObjects_DataCorrected_Cases))]
-    public async Task Impersonate_LoadTestObjects_DataCorrected(string runAs, string[] expectedBuList)
+    [CommonMemberData(nameof(Impersonate_LoadTestObjects_DataCorrected_Cases))]
+    public async Task Impersonate_LoadTestObjects_DataCorrected(string runAs, string[] expectedBuList, CancellationToken ct)
     {
         // Arrange
         this.AuthManager.For(runAs).LoginAs();
@@ -18,7 +20,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
             return new
             {
                 CurrentUserLogin = testController.GetCurrentUserLogin(),
-                BuNames = (await testController.GetTestObjects(this.CancellationToken)).Select(v => v.BuName).ToList()
+                BuNames = (await testController.GetTestObjects(ct)).Select(v => v.BuName).ToList()
             };
         });
 
@@ -29,7 +31,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
         buNameList.Should().BeEquivalentTo(expectedBuList.OrderBy(v => v));
     }
 
-    public static IEnumerable<object?[]> Impersonate_LoadTestObjects_DataCorrected_Cases()
+    public IEnumerable<object?[]> Impersonate_LoadTestObjects_DataCorrected_Cases()
     {
         yield return ["TestRootUser", new[] { $"Test{nameof(BusinessUnit)}1-Child", $"Test{nameof(BusinessUnit)}2-Child" }];
         yield return ["TestEmployee1", new[] { $"Test{nameof(BusinessUnit)}1-Child" }];
@@ -37,8 +39,8 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
     }
 
     [Theory]
-    [MemberData(nameof(Impersonate_LoadBuByAncestorView_DataCorrected_Cases))]
-    public async Task Impersonate_LoadBuByAncestorView_DataCorrected(string runAs, string[] expectedBuList)
+    [CommonMemberData(nameof(Impersonate_LoadBuByAncestorView_DataCorrected_Cases))]
+    public async Task Impersonate_LoadBuByAncestorView_DataCorrected(string runAs, string[] expectedBuList, CancellationToken ct)
     {
         // Arrange
         this.AuthManager.For(runAs).LoginAs();
@@ -49,7 +51,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
             return new
             {
                 CurrentUserLogin = testController.GetCurrentUserLogin(),
-                BuNames = (await testController.GetBuList(this.CancellationToken)).Select(v => v.Name).ToList()
+                BuNames = (await testController.GetBuList(ct)).Select(v => v.Name).ToList()
             };
         });
 
@@ -60,7 +62,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
         buNameList.Should().BeEquivalentTo(expectedBuList.OrderBy(v => v));
     }
 
-    public static IEnumerable<object?[]> Impersonate_LoadBuByAncestorView_DataCorrected_Cases()
+    public IEnumerable<object?[]> Impersonate_LoadBuByAncestorView_DataCorrected_Cases()
     {
         var rootBu = "TestRootBu";
 

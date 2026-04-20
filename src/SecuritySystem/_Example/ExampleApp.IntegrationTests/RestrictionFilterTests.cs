@@ -1,4 +1,5 @@
-﻿using ExampleApp.Application;
+﻿using CommonFramework.Testing;
+using ExampleApp.Application;
 using ExampleApp.Domain;
 
 using SecuritySystem;
@@ -20,19 +21,19 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     private TypedSecurityIdentity<Guid> buWithAllowedFilter = null!;
 
 
-    public override async ValueTask InitializeAsync()
+    protected override async ValueTask InitializeAsync(CancellationToken ct)
     {
-        await base.InitializeAsync();
+        await base.InitializeAsync(ct);
 
         this.defaultBu = await this.AuthManager.SaveSecurityContextAsync<BusinessUnit, Guid>(
-            () => new BusinessUnit { Name = nameof(this.defaultBu) }, this.CancellationToken);
+            () => new BusinessUnit { Name = nameof(this.defaultBu) }, ct);
 
         this.buWithAllowedFilter = await this.AuthManager.SaveSecurityContextAsync<BusinessUnit, Guid>(
-            () => new BusinessUnit { Name = nameof(this.buWithAllowedFilter), AllowedForFilterRole = true }, this.CancellationToken);
+            () => new BusinessUnit { Name = nameof(this.buWithAllowedFilter), AllowedForFilterRole = true }, ct);
     }
 
-    [Fact]
-    public async Task CreatePermissionWithRestrictionFilter_ApplyInvalidBusinessUnit_ExceptionRaised()
+    [CommonFact]
+    public async Task CreatePermissionWithRestrictionFilter_ApplyInvalidBusinessUnit_ExceptionRaised(CancellationToken ct)
     {
         // Arrange
 
@@ -41,7 +42,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
             new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
             {
                 BusinessUnit = this.defaultBu
-            }, this.CancellationToken);
+            }, ct);
 
         // Assert
         var error = await action.Should().ThrowAsync<SecuritySystemValidationException>();
@@ -49,8 +50,8 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         error.And.Message.Should().Contain($"SecurityContext: '{this.defaultBu.Id}' denied by filter");
     }
 
-    [Fact]
-    public async Task CreatePermissionWithRestrictionFilter_ApplyCorrectBusinessUnit_ExceptionNotRaised()
+    [CommonFact]
+    public async Task CreatePermissionWithRestrictionFilter_ApplyCorrectBusinessUnit_ExceptionNotRaised(CancellationToken ct)
     {
         // Arrange
 
@@ -59,46 +60,46 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
                          new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
                          {
                              BusinessUnit = this.buWithAllowedFilter
-                         }, this.CancellationToken);
+                         }, ct);
 
         // Assert
         await action.Should().NotThrowAsync();
     }
 
 
-    [Fact]
-    public async Task CreateCustomRestrictionRule_ApplyUnrestrictedPermission_OnlyCorrectBuFounded()
+    [CommonFact]
+    public async Task CreateCustomRestrictionRule_ApplyUnrestrictedPermission_OnlyCorrectBuFounded(CancellationToken ct)
     {
         // Arrange
-        await this.AuthManager.For(this.testLogin).SetRoleAsync(this.securityRole, this.CancellationToken);
+        await this.AuthManager.For(this.testLogin).SetRoleAsync(this.securityRole, ct);
         this.AuthManager.For(this.testLogin).LoginAs();
 
         // Act
-        var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, this.CancellationToken);
+        var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
         allowedBuList.Should().BeEquivalentTo([this.buWithAllowedFilter]);
     }
 
-    [Fact]
-    public async Task CreateCustomRestrictionRule_ApplySingleCorrectBU_OnlyCorrectBuFounded()
+    [CommonFact]
+    public async Task CreateCustomRestrictionRule_ApplySingleCorrectBU_OnlyCorrectBuFounded(CancellationToken ct)
     {
         // Arrange
-        await this.AuthManager.For(this.testLogin).SetRoleAsync(new TestPermission(this.securityRole) { BusinessUnits = [this.defaultBu, this.buWithAllowedFilter] }, this.CancellationToken);
+        await this.AuthManager.For(this.testLogin).SetRoleAsync(new TestPermission(this.securityRole) { BusinessUnits = [this.defaultBu, this.buWithAllowedFilter] }, ct);
         this.AuthManager.For(this.testLogin).LoginAs();
 
         // Act
-        var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, this.CancellationToken);
+        var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
         allowedBuList.Should().BeEquivalentTo([this.buWithAllowedFilter]);
     }
 
-    //[Fact]
+    //[CommonFact]
     //public async Task CreateCustomRestrictionRule_SearchAccessorsForUnrestrictedPermission_EmployeeFounded()
     //{
     //    // Arrange
-    //    await this.AuthManager.For(this.testLogin).SetRoleAsync(this.securityRole, this.CancellationToken);
+    //    await this.AuthManager.For(this.testLogin).SetRoleAsync(this.securityRole, ct);
 
     //    // Act
     //    await using var scope = this.RootServiceProvider.CreateAsyncScope();
@@ -107,7 +108,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    var domainSecurityService = scope.ServiceProvider.GetRequiredService<IDomainSecurityService<BusinessUnit>>();
     //    var securityAccessorResolver = scope.ServiceProvider.GetRequiredService<ISecurityAccessorResolver>();
 
-    //    var bu = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Id == this.buWithAllowedFilter.Id).GenericSingleAsync(this.CancellationToken);
+    //    var bu = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Id == this.buWithAllowedFilter.Id).GenericSingleAsync(ct);
 
     //    var accessorData = domainSecurityService.GetSecurityProvider(this.restrictionRule).GetAccessorData(bu);
 
@@ -117,13 +118,13 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    accessors.Should().Contain(this.testLogin);
     //}
 
-    //[Fact]
+    //[CommonFact]
     //public async Task CreateCustomRestrictionRule_SearchAccessorsForCorrectBU_EmployeeFounded()
     //{
     //    // Arrange
     //    await this.AuthManager.For(this.testLogin)
     //        .SetRoleAsync(new TestPermissionBuilder(this.securityRole) { BusinessUnits = [this.defaultBu, this.buWithAllowedFilter] },
-    //            this.CancellationToken);
+    //            ct);
 
     //    // Act
     //    await using var scope = this.RootServiceProvider.CreateAsyncScope();
@@ -132,7 +133,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    var domainSecurityService = scope.ServiceProvider.GetRequiredService<IDomainSecurityService<BusinessUnit>>();
     //    var securityAccessorResolver = scope.ServiceProvider.GetRequiredService<ISecurityAccessorResolver>();
 
-    //    var bu = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Id == this.buWithAllowedFilter.Id).GenericSingleAsync(this.CancellationToken);
+    //    var bu = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Id == this.buWithAllowedFilter.Id).GenericSingleAsync(ct);
 
     //    var accessorData = domainSecurityService.GetSecurityProvider(this.restrictionRule).GetAccessorData(bu);
 
@@ -142,13 +143,13 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    accessors.Should().Contain(this.testLogin);
     //}
 
-    //[Fact]
+    //[CommonFact]
     //public async Task CreateCustomRestrictionRule_SearchAccessorsForIncorrectBU_EmployeeNotFounded()
     //{
     //    // Arrange
     //    await this.AuthManager.For(this.testLogin)
     //        .SetRoleAsync(new TestPermissionBuilder(this.securityRole) { BusinessUnits = [this.defaultBu, this.buWithAllowedFilter] },
-    //            this.CancellationToken);
+    //            ct);
 
     //    // Act
     //    await using var scope = this.RootServiceProvider.CreateAsyncScope();
@@ -157,7 +158,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    var domainSecurityService = scope.ServiceProvider.GetRequiredService<IDomainSecurityService<BusinessUnit>>();
     //    var securityAccessorResolver = scope.ServiceProvider.GetRequiredService<ISecurityAccessorResolver>();
 
-    //    var bu = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Id == this.defaultBu.Id).GenericSingleAsync(this.CancellationToken);
+    //    var bu = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Id == this.defaultBu.Id).GenericSingleAsync(ct);
 
     //    var accessorData = domainSecurityService.GetSecurityProvider(this.restrictionRule).GetAccessorData(bu);
 

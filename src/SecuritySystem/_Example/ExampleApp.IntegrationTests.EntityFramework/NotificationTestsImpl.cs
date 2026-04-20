@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class NotificationTestsImpl() : NotificationTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class NotificationTestsImpl(IServiceProvider rootServiceProvider) : NotificationTests(rootServiceProvider);

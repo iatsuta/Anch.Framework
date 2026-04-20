@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class ConfiguratorApiTestsImpl() : ConfiguratorApiTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class ConfiguratorApiTestsImpl(IServiceProvider rootServiceProvider) : ConfiguratorApiTests(rootServiceProvider);

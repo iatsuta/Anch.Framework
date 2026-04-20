@@ -2,4 +2,4 @@
 
 namespace ExampleApp.IntegrationTests;
 
-public class GeneralPermissionTestsImpl() : GeneralPermissionTests(TestEnvironmentImpl.Instance.RootServiceProvider);
+public class GeneralPermissionTestsImpl(IServiceProvider rootServiceProvider) : GeneralPermissionTests(rootServiceProvider);

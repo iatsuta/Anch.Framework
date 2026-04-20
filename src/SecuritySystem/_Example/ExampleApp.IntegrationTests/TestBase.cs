@@ -12,16 +12,17 @@ public abstract class TestBase(IServiceProvider rootServiceProvider) : IAsyncLif
 
     protected ITestingEvaluator<TService> GetEvaluator<TService>() => this.RootServiceProvider.GetRequiredService<ITestingEvaluator<TService>>();
 
-    protected CancellationToken CancellationToken => TestContext.Current.CancellationToken;
 
     protected RootAuthManager AuthManager => this.RootServiceProvider.GetRequiredService<RootAuthManager>();
 
-    public virtual async ValueTask InitializeAsync()
+    ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
+
+    protected virtual async ValueTask InitializeAsync(CancellationToken ct)
     {
         this.RootServiceProvider.GetRequiredService<RootImpersonateServiceState>().Reset();
 
-        await this.RootServiceProvider.GetRequiredKeyedService<IInitializer>(RootAppInitializer.Key).Initialize(this.CancellationToken);
+        await this.RootServiceProvider.GetRequiredKeyedService<IInitializer>(RootAppInitializer.Key).Initialize(ct);
     }
 
-    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
+	public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }
