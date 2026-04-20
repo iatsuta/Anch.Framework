@@ -15,7 +15,7 @@ public class MaybeTests(IServiceProvider serviceProvider)
         return Task.CompletedTask;
     }
 
-    [CommonTheory]
+    [Theory]
     [CommonMemberData(nameof(GetInjectMaybeTestCases))]
     public void InjectMaybe_Works_AsExpected(A input, string? expected, CancellationToken ct)
     {

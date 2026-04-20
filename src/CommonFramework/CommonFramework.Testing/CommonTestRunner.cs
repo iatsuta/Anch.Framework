@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
+using System.Reflection;
 using Xunit;
 using Xunit.Internal;
 using Xunit.Sdk;
@@ -10,20 +12,33 @@ public class CommonTestRunner : XunitTestRunner
 {
     public new static CommonTestRunner Instance { get; } = new();
 
+    private static readonly ConcurrentDictionary<MethodInfo, bool> IsCtCache = [];
+
+    private bool LastParameterIsCt(XunitTestRunnerContext ctxt)
+    {
+        return IsCtCache.GetOrAdd(ctxt.TestMethod, m => m.GetParameters().LastOrDefault()?.ParameterType == typeof(CancellationToken));
+    }
+
     protected override object? InvokeTestMethod(XunitTestRunnerContext ctxt, object? testClassInstance)
     {
-        if (ctxt.TestMethodArguments.LastOrDefault() is CancellationToken)
+        if (!this.LastParameterIsCt(ctxt))
         {
-            ctxt.TestMethodArguments[^1] = TestContext.Current.CancellationToken;
+            return base.InvokeTestMethod(ctxt, testClassInstance);
         }
 
-        return base.InvokeTestMethod(ctxt, testClassInstance);
+        return Guard.ArgumentNotNull(ctxt).TestMethod.Invoke(testClassInstance, [.. ctxt.TestMethodArguments, TestContext.Current.CancellationToken]);
     }
+
 
     protected override ValueTask<TimeSpan> InvokeTest(
         XunitTestRunnerContext ctxt,
         object? testClassInstance)
     {
+        if (!this.LastParameterIsCt(ctxt))
+        {
+            return base.InvokeTest(ctxt, testClassInstance);
+        }
+
         Guard.ArgumentNotNull(ctxt);
 
         if (ctxt.Test.TestCase.TestMethod is null)
@@ -46,7 +61,7 @@ public class CommonTestRunner : XunitTestRunner
                 async () =>
                 {
                     var parameterCount = ctxt.TestMethod.GetParameters().Length;
-                    var valueCount = ctxt.TestMethodArguments is null ? 0 : ctxt.TestMethodArguments.Length;
+                    var valueCount = ctxt.TestMethodArguments is null ? 0 : ctxt.TestMethodArguments.Length + 1;
                     if (parameterCount != valueCount)
                     {
                         ctxt.Aggregator.Add(
