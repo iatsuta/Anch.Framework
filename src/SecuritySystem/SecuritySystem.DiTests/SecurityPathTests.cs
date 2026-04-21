@@ -21,7 +21,7 @@ public class SecurityPathTests
     public SecurityPathTests(IServiceProvider rootServiceProvider)
     {
         this.rootServiceProvider = rootServiceProvider;
-        this.rootServiceProvider.SetTestQueryable([new BusinessUnitDirectAncestorLink { Ancestor = bu1, Child = bu1 }]);
+        this.rootServiceProvider.SetTestQueryable([new BusinessUnitDirectAncestorLink { Ancestor = this.bu1, Child = this.bu1 }]);
         this.rootServiceProvider.SetTestPermissions(new TestPermission(ExampleSecurityRole.TestRole)
             { Restrictions = { { typeof(BusinessUnit), new[] { this.bu1.Id } } } });
     }
@@ -30,7 +30,7 @@ public class SecurityPathTests
     public void TryApplyRestriction_RestrictionApplied()
     {
         //Arrange
-        var service = rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
+        var service = this.rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
 
         var buExpr = ExpressionHelper.Create((Employee employee) => employee.BusinessUnit);
         var locationExpr = ExpressionHelper.Create((Employee employee) => employee.Location);
@@ -53,7 +53,7 @@ public class SecurityPathTests
     public void TryApplyOverflowRestriction_ResultPathIsEmpty()
     {
         //Arrange
-        var service = rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
+        var service = this.rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
 
         var testSecurityPath = SecurityPath<Employee>.Create(employee => employee.BusinessUnit);
 
@@ -72,7 +72,7 @@ public class SecurityPathTests
         //Arrange
         var key = nameof(Employee.AltBusinessUnit);
 
-        var service = rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
+        var service = this.rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
 
         var baseSecurityPath = SecurityPath<Employee>.Create(employee => employee.BusinessUnit);
         var altSecurityPath = SecurityPath<Employee>.Create(employee => employee.AltBusinessUnit, key: key);
@@ -93,7 +93,7 @@ public class SecurityPathTests
         //Arrange
         var key = nameof(Employee.AltBusinessUnit);
 
-        var service = rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
+        var service = this.rootServiceProvider.GetRequiredService<ISecurityPathRestrictionService>();
 
         var baseSecurityPath = SecurityPath<Employee>.Create(employee => employee.BusinessUnit);
         var altSecurityPath = SecurityPath<Employee>.Create(employee => employee.AltBusinessUnit, key: key);
@@ -113,7 +113,7 @@ public class SecurityPathTests
     public async Task KeyedSecurityPath_WithStrictly_EmployeeExcepted(CancellationToken ct)
     {
         // Arrange
-        await using var scope = rootServiceProvider.CreateAsyncScope();
+        await using var scope = this.rootServiceProvider.CreateAsyncScope();
 
         var testSecurityPath = SecurityPath<Employee>
             .Create(employee => employee.Location)
@@ -138,7 +138,7 @@ public class SecurityPathTests
     public async Task KeyedSecurityPath_WithoutStrictly_EmployeeIncluded(CancellationToken ct)
     {
         // Arrange
-        await using var scope = rootServiceProvider.CreateAsyncScope();
+        await using var scope = this.rootServiceProvider.CreateAsyncScope();
 
         var testSecurityPath = SecurityPath<Employee>
             .Create(employee => employee.Location)

@@ -11,9 +11,7 @@ public static class ServiceProviderExtensions
     {
         var queryableSource = rootServiceProvider.GetRequiredService<TestQueryableSource>();
 
-        queryableSource.InnerSource.GetQueryable<T>()
-
-            .Returns(data.AsQueryable());
+        queryableSource.InnerSource.GetQueryable<T>().Returns(data.AsQueryable());
     }
 
     public static void SetTestPermissions(this IServiceProvider rootServiceProvider,

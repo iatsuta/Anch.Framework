@@ -10,7 +10,7 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
 
     public async ValueTask<IServiceProvider> GetAsync(CancellationToken ct)
     {
-        var result = pool.TryTake(out var serviceProvider)
+        var result = this.pool.TryTake(out var serviceProvider)
             ? serviceProvider
             : testEnvironment.BuildServiceProvider(new ServiceCollection());
 
@@ -26,9 +26,10 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
         await testEnvironment.Cleanup(serviceProvider, ct);
     }
 
-    private IServiceProvider Get() => pool.TryTake(out var serviceProvider)
+    private IServiceProvider Get() =>
+        this.pool.TryTake(out var serviceProvider)
         ? serviceProvider
         : testEnvironment.BuildServiceProvider(new ServiceCollection());
 
-    private void Release(IServiceProvider serviceProvider) => pool.Add(serviceProvider);
+    private void Release(IServiceProvider serviceProvider) => this.pool.Add(serviceProvider);
 }

@@ -35,7 +35,7 @@ public class TestEnvironmentImpl : TestEnvironment
         await dbContext.Database.EnsureDeletedAsync(cancellationToken);
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
-        foreach (var createViewCode in base.GetViews(null))
+        foreach (var createViewCode in this.GetViews(null))
         {
             await dbContext.Database.ExecuteSqlRawAsync(createViewCode, cancellationToken);
         }
