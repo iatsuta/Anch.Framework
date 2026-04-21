@@ -103,7 +103,7 @@ public abstract class DenormalizeTests(IServiceProvider rootServiceProvider) : T
         {
             return await queryableSource
                 .GetQueryable<TestHierarchicalObject>()
-                .ToAsyncEnumerable()
+                .GenericAsAsyncEnumerable()
                 .AllAsync(v => v.DeepLevel == v.GetAllElements(x => x.Parent, true).Count(), ct);
         });
     }

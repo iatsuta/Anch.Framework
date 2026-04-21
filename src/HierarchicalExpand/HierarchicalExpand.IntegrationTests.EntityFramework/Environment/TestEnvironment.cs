@@ -19,6 +19,7 @@ public class TestEnvironment : TestEnvironmentBase
         services
             .AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder
                 .UseSqlite("Data Source=test.db")
+                .UseLazyLoadingProxies()
                 .UseGenericQueryable())
             .AddScoped<AutoCommitSession>()
             .AddScoped<IGenericRepository, EfGenericRepository>()
