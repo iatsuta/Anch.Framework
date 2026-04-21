@@ -1,5 +1,6 @@
 ﻿using CommonFramework.ExpressionComparers;
 using CommonFramework.IdentitySource.DependencyInjection;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CommonFramework.IdentitySource.Tests;
@@ -51,5 +52,4 @@ public class IdentityInfoProxyTests
     {
         public required Guid MyId { get; set; }
     }
-
 }

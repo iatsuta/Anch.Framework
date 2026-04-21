@@ -74,10 +74,9 @@ public sealed class ServiceProxyBinderTests
         var serviceProxyFactory = sp.GetServiceProxyFactory();
 
         // act
-        var act = () => serviceProxyFactory.Create<IService<int>>();
+        var ex = Assert.ThrowsAny<Exception>(() => serviceProxyFactory.Create<IService<int>>());
 
         // assert
-        var ex = Assert.ThrowsAny<Exception>(act);
         Assert.Equal("Each subsequent candidate must replace the previous candidate", ex.Message);
     }
 
@@ -93,10 +92,9 @@ public sealed class ServiceProxyBinderTests
         var serviceProxyFactory = sp.GetServiceProxyFactory();
 
         // act
-        var act = () => serviceProxyFactory.Create<IService<int>>();
+        var ex = Assert.ThrowsAny<Exception>(() => serviceProxyFactory.Create<IService<int>>());
 
         // assert
-        var ex = Assert.ThrowsAny<Exception>(act);
         Assert.Equal("Each subsequent candidate must replace the previous candidate", ex.Message);
     }
 

@@ -48,10 +48,10 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var principalIdentity = await this.AuthManager.For("DelegatedFromPrincipal").SetRoleAsync(delegatedFromPermission, ct);
 
         // Act
-        var action = () => this.AuthManager.For(principalIdentity).AddRoleAsync(subPermission, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(principalIdentity).AddRoleAsync(subPermission, ct));
 
         // Assert
-        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(action);
 
         Assert.Equal("Invalid delegation target: the permission cannot be delegated to its original principal", error.Message);
     }
@@ -105,10 +105,10 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, ct);
 
         // Act
-        var action = () => this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct));
 
         // Assert
-        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(action);
 
         Assert.Equal(
             $"Invalid security context delegation: the security contexts of \"{targetPrincipalName}\" exceed those granted by \"{sourcePrincipalName}\": {invalidObjects}",
@@ -134,10 +134,10 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, ct);
 
         // Act
-        var action = () => this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct));
 
         // Assert
-        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(action);
 
         Assert.Equal(
             $"Invalid security context delegation: the security contexts of \"{targetPrincipalName}\" exceed those granted by \"{sourcePrincipalName}\": {invalidObjects}",
@@ -162,10 +162,10 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, ct);
 
         // Act
-        var action = () => this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct));
 
         // Assert
-        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(action);
 
         Assert.Equal(
             $"Invalid delegated permission role: the selected role \"{targetRole}\" is not a subset of \"{sourceRole}\"",
@@ -194,10 +194,10 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, ct);
 
         // Act
-        var action = () => this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(targetPrincipalName).SetRoleAsync(subPermission, ct));
 
         // Assert
-        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(action);
 
         Assert.Equal(expectedErrorMessage, error.Message);
     }

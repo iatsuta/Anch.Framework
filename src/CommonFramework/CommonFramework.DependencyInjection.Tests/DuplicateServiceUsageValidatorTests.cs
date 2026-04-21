@@ -18,10 +18,9 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Assert.Throws<InvalidOperationException>(() => services.Validate());
 
         // assert
-        var ex = Assert.Throws<InvalidOperationException>(act);
         Assert.Contains("has been registered many times", ex.Message);
     }
 
@@ -39,10 +38,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Record.Exception(() => services.Validate());
 
         // assert
-        act();
+        Assert.Null(ex);
     }
 
     [Fact]
@@ -59,10 +58,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator(new DuplicateServiceUsageValidator([typeof(IInnerService)]));
 
         // act
-        Action act = () => services.Validate();
+        var ex = Record.Exception(() => services.Validate());
 
         // assert
-        act();
+        Assert.Null(ex);
     }
 
 
@@ -80,10 +79,9 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Assert.Throws<InvalidOperationException>(() => services.Validate());
 
         // assert
-        var ex = Assert.Throws<InvalidOperationException>(act);
         Assert.Contains("has been registered many times", ex.Message);
     }
 
@@ -101,10 +99,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Record.Exception(() => services.Validate());
 
         // assert
-        act();
+        Assert.Null(ex);
     }
 
     private interface IInnerService

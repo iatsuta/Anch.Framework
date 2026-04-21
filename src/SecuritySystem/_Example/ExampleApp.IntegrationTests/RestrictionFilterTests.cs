@@ -38,14 +38,14 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         // Arrange
 
         // Act
-        var action = () => this.AuthManager.For(this.testLogin).SetRoleAsync(
-            new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
-            {
-                BusinessUnit = this.defaultBu
-            }, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(this.testLogin).SetRoleAsync(
+                new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
+                {
+                    BusinessUnit = this.defaultBu
+                }, ct));
 
         // Assert
-        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(action);
 
         Assert.Contains($"SecurityContext: '{this.defaultBu.Id}' denied by filter", error.Message);
     }
@@ -56,14 +56,15 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         // Arrange
 
         // Act
-        var action = () => this.AuthManager.For(this.testLogin).SetRoleAsync(
-                         new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
-                         {
-                             BusinessUnit = this.buWithAllowedFilter
-                         }, ct);
+        var ex = await Record.ExceptionAsync(async () =>
+            await this.AuthManager.For(this.testLogin).SetRoleAsync(
+                new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
+                {
+                    BusinessUnit = this.buWithAllowedFilter
+                }, ct));
 
         // Assert
-        await action();
+        Assert.Null(ex);
     }
 
 

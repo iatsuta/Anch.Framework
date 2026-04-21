@@ -33,48 +33,111 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLi
     }
 
     [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeToArrayAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet
+            .WithFetch(AppFetchRule.TestFetchRule)
+            .GenericToArrayAsync(ct);
+
+        // Assert
+        Assert.Single(result, testObj => testObj.Id == this.testObjId);
+    }
+
+    [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToListAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange
         await using var scope = rootServiceProvider.CreateAsyncScope();
-
-        var serviceProvider = scope.ServiceProvider;
-
-        var queryableSource = serviceProvider.GetRequiredService<IQueryableSource>();
-
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
         var testSet = queryableSource.GetQueryable<TestObject>();
 
         // Act
-        var result0 = await testSet
-            .WithFetch(AppFetchRule.TestFetchRule)
-            .GenericToArrayAsync(ct);
-
-        var result1 = await testSet
+        var result = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
             .GenericToListAsync(ct);
 
-        var result2 = await testSet
+        // Assert
+        Assert.Single(result, testObj => testObj.Id == this.testObjId);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeToHashSetAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
             .GenericToHashSetAsync(ct);
 
-        var result3 = await testSet
+        // Assert
+        Assert.Single(result, testObj => testObj.Id == this.testObjId);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeToDictionaryAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
             .GenericToDictionaryAsync(v => v.Id, ct);
 
-        var result4 = await testSet
+        // Assert
+        Assert.Single(result);
+        Assert.True(result.ContainsKey(this.testObjId));
+        Assert.Equal(this.testObjId, result[this.testObjId].Id);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeToDictionaryWithElementSelectorAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet
             .WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
             .GenericToDictionaryAsync(v => v.Id, v => v, ct);
 
-        var result5 = await testSet
-            //.WithFetch(r => r.Fetch(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject))
+        // Assert
+        Assert.Single(result);
+        Assert.True(result.ContainsKey(this.testObjId));
+        Assert.Equal(this.testObjId, result[this.testObjId].Id);
+    }
+
+    [CommonFact]
+    public async Task GenericAsAsyncEnumerable_Should_Execute(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet
             .GenericAsAsyncEnumerable()
             .Take(100)
             .ToArrayAsync(ct);
 
-        //Assert
-        Assert.Single(result0, testObj => testObj.Id == this.testObjId);
+        // Assert
+        Assert.Single(result, testObj => testObj.Id == this.testObjId);
     }
-
 
     ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
 
