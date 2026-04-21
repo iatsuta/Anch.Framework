@@ -1,43 +1,28 @@
 ﻿using System.Collections.Immutable;
 
 using CommonFramework;
-using CommonFramework.GenericRepository;
 using CommonFramework.Testing;
 
-using HierarchicalExpand.DependencyInjection;
 using HierarchicalExpand.Tests.Domain;
+using HierarchicalExpand.Tests.Environment;
 
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: CommonTestFramework]
-
 namespace HierarchicalExpand.Tests;
 
-public class DiTests
+public class DiTests(IServiceProvider rootServiceProvider)
 {
     [CommonFact]
     public async Task GetParents_ResultCorrect()
     {
         // Arrange
-        var queryableSource = Substitute.For<IQueryableSource>();
-        queryableSource.GetQueryable<DomainObject>().Returns(_ => AllNodes.AsQueryable());
-        queryableSource.GetQueryable<DirectAncestorLink>().Returns(_ => GetDirectAncestorLinks().AsQueryable());
-        queryableSource.GetQueryable<UnDirectAncestorLink>().Returns(_ => GetUndirectAncestorLinks().AsQueryable());
+        rootServiceProvider.SetTestQueryable(AllNodes);
+        rootServiceProvider.SetTestQueryable(GetDirectAncestorLinks());
+        rootServiceProvider.SetTestQueryable(GetUndirectAncestorLinks());
 
-        var rootSp = new ServiceCollection()
-            .AddScoped(_ => queryableSource)
-            .AddScoped(_ => Substitute.For<IGenericRepository>())
-            .AddHierarchicalExpand(s => s.AddHierarchicalInfo(
-                v => v.Parent,
-                new AncestorLinkInfo<DomainObject, DirectAncestorLink>(l => l.From, l => l.To),
-                new AncestorLinkInfo<DomainObject, UnDirectAncestorLink>(l => l.From, l => l.To)))
-            .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        await using var scope = rootSp.CreateAsyncScope();
-
-        var sp = scope.ServiceProvider;
-
-        var service = sp.GetRequiredService<IHierarchicalObjectExpanderFactory>();
+        var service = scope.ServiceProvider.GetRequiredService<IHierarchicalObjectExpanderFactory>();
 
         // Act
         var result = service.Create<int>(typeof(DomainObject)).Expand([3, 13], HierarchicalExpandType.Parents).Order();

@@ -1,41 +1,24 @@
 ﻿using System.Collections.Frozen;
 using System.Collections.Immutable;
-using CommonFramework.DependencyInjection;
-using CommonFramework.GenericRepository;
 
 using HierarchicalExpand.Denormalization;
-using HierarchicalExpand.DependencyInjection;
 using HierarchicalExpand.Tests.Domain;
-
+using HierarchicalExpand.Tests.Environment;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HierarchicalExpand.Tests;
 
-public class AncestorLinkExtractorTests
+public class AncestorLinkExtractorTests(IServiceProvider rootServiceProvider)
 {
     [Theory]
     [MemberData(nameof(GetMoveCases))]
     public async Task MoveNode_UpdatesLinksCorrectly(MoveTestCase testCase, CancellationToken ct)
     {
         // Arrange
-        var queryableSource = Substitute.For<IQueryableSource>();
+        rootServiceProvider.SetTestQueryable(testCase.Nodes.ToArray());
+        rootServiceProvider.SetTestQueryable(testCase.ExistingOldLinks.ToArray());
 
-        queryableSource.GetQueryable<DomainObject>().Returns(testCase.Nodes.ToArray().AsQueryable());
-        queryableSource.GetQueryable<DirectAncestorLink>().Returns(testCase.ExistingOldLinks.ToArray().AsQueryable());
-
-        var serviceProvider = new ServiceCollection()
-
-            .AddHierarchicalExpand(scb => scb
-                .AddHierarchicalInfo(
-                    v => v.Parent,
-                    new AncestorLinkInfo<DomainObject, DirectAncestorLink>(link => link.From, link => link.To),
-                    new AncestorLinkInfo<DomainObject, UnDirectAncestorLink>(view => view.From, view => view.To)))
-            .AddScoped(_ => queryableSource)
-            .AddValidator<DuplicateServiceUsageValidator>()
-            .Validate()
-            .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-
-        await using var scope = serviceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
         var ancestorLinkExtractor = scope.ServiceProvider.GetRequiredService<IAncestorLinkExtractor<DomainObject, DirectAncestorLink>>();
 
         // Act
