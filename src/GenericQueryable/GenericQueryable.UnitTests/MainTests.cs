@@ -6,6 +6,8 @@ namespace GenericQueryable.UnitTests;
 
 public class MainTests
 {
+    private sealed record DecimalContainer(decimal? Value);
+
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeSumAsync_MethodInvoked(CancellationToken ct)
     {
@@ -16,8 +18,22 @@ public class MainTests
         // Act
         var result = await qSource.GenericSumAsync(ct);
 
-        //Assert
-        result.Should().Be(baseSource.Sum());
+        // Assert
+        Assert.Equal(baseSource.Sum(), result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeSumWithSelectorAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { new DecimalContainer(1), new DecimalContainer(2), new DecimalContainer(3) };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericSumAsync(v => v.Value, ct);
+
+        // Assert
+        Assert.Equal(baseSource.Sum(v => v.Value), result);
     }
 
     [CommonFact]
@@ -30,8 +46,8 @@ public class MainTests
         // Act
         var result = await qSource.GenericToArrayAsync(ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource);
+        // Assert
+        Assert.Equal(baseSource, result);
     }
 
     [CommonFact]
@@ -44,8 +60,8 @@ public class MainTests
         // Act
         var result = await qSource.GenericToListAsync(ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource);
+        // Assert
+        Assert.Equal(baseSource, result);
     }
 
     [CommonFact]
@@ -58,24 +74,24 @@ public class MainTests
         // Act
         var result = await qSource.GenericToHashSetAsync(ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource);
+        // Assert
+        Assert.Equivalent(baseSource, result);
     }
 
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToHashSetWithComparerAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange
-        var baseSource = new[] { 1, 2, 3 };
+        var baseSource = new[] { "a", "b", "c" };
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToHashSetAsync(EqualityComparer<int>.Default, ct);
+        var result = await qSource.GenericToHashSetAsync(StringComparer.OrdinalIgnoreCase, ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource);
+        // Assert
+        Assert.Equivalent(baseSource, result);
+        Assert.Same(StringComparer.OrdinalIgnoreCase, result.Comparer);
     }
-
 
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToDictionaryAsync_MethodInvoked(CancellationToken ct)
@@ -87,22 +103,23 @@ public class MainTests
         // Act
         var result = await qSource.GenericToDictionaryAsync(v => v, ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
+        // Assert
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
     }
 
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToDictionaryWithComparerAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange
-        var baseSource = new[] { 1, 2, 3 };
+        var baseSource = new[] { "a", "b", "c" };
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToDictionaryAsync(v => v, EqualityComparer<int>.Default, ct);
+        var result = await qSource.GenericToDictionaryAsync(v => v, StringComparer.OrdinalIgnoreCase, ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
+        // Assert
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
+        Assert.Same(StringComparer.OrdinalIgnoreCase, result.Comparer);
     }
 
     [CommonFact]
@@ -115,22 +132,23 @@ public class MainTests
         // Act
         var result = await qSource.GenericToDictionaryAsync(v => v, v => v, ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
+        // Assert
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
     }
 
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToDictionaryWithElementSelectorAndComparerAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange
-        var baseSource = new[] { 1, 2, 3 };
+        var baseSource = new[] { "a", "b", "c" };
         var qSource = baseSource.AsQueryable();
 
         // Act
-        var result = await qSource.GenericToDictionaryAsync(v => v, v => v, EqualityComparer<int>.Default, ct);
+        var result = await qSource.GenericToDictionaryAsync(v => v, v => v, StringComparer.OrdinalIgnoreCase, ct);
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource.ToDictionary(v => v));
+        // Assert
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
+        Assert.Same(StringComparer.OrdinalIgnoreCase, result.Comparer);
     }
 
     [CommonFact]
@@ -143,12 +161,54 @@ public class MainTests
         // Act
         var result = qSource.ToList();
 
-        //Assert
-        result.Should().BeEquivalentTo(baseSource);
+        // Assert
+        Assert.Equal(baseSource, result);
     }
 
     [CommonFact]
-    public async Task DefaultGenericQueryable_InvokeSingleOrDefaultAsync_CollisionResolved(CancellationToken ct)
+    public async Task DefaultGenericQueryable_InvokeSingleAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = 1;
+        var qSource = new[] { baseSource }.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericSingleAsync(ct);
+
+        // Assert
+        Assert.Equal(baseSource, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeSingleAsyncWithFilter_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = 2;
+        var qSource = new[] { 1, baseSource, 3 }.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericSingleAsync(v => v == baseSource, ct);
+
+        // Assert
+        Assert.Equal(baseSource, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeSingleOrDefaultAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = 1;
+        var qSource = new[] { baseSource }.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericSingleOrDefaultAsync(ct);
+
+        // Assert
+        Assert.Equal(baseSource, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeSingleOrDefaultAsyncWithFilter_MethodInvoked(CancellationToken ct)
     {
         // Arrange
         var baseSource = 1;
@@ -157,8 +217,120 @@ public class MainTests
         // Act
         var result = await qSource.GenericSingleOrDefaultAsync(_ => true, ct);
 
-        //Assert
-        result.Should().Be(baseSource);
+        // Assert
+        Assert.Equal(baseSource, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeFirstAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericFirstAsync(ct);
+
+        // Assert
+        Assert.Equal(baseSource.First(), result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeFirstOrDefaultAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericFirstOrDefaultAsync(ct);
+
+        // Assert
+        Assert.Equal(baseSource.First(), result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeFirstOrDefaultAsyncWithFilter_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericFirstOrDefaultAsync(v => v > 1, ct);
+
+        // Assert
+        Assert.Equal(2, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeCountAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericCountAsync(ct);
+
+        // Assert
+        Assert.Equal(baseSource.Length, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeAllAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericAllAsync(v => v > 0, ct);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeAnyAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericAnyAsync(ct);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeAnyAsyncWithFilter_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericAnyAsync(v => v == 2, ct);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeContainsAsync_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.GenericContainsAsync(2, ct);
+
+        // Assert
+        Assert.True(result);
     }
 
     [CommonFact]
@@ -171,8 +343,36 @@ public class MainTests
         // Act
         var result = await qSource.GenericAsAsyncEnumerable().SingleAsync(ct);
 
-        //Assert
-        result.Should().Be(baseSource);
+        // Assert
+        Assert.Equal(baseSource, result);
+    }
+
+    [CommonFact]
+    public async Task DefaultGenericQueryable_InvokeExecuteWithExpression_MethodInvoked(CancellationToken ct)
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = await qSource.Execute(() => qSource.GenericCountAsync(ct));
+
+        // Assert
+        Assert.Equal(baseSource.Length, result);
+    }
+
+    [CommonFact]
+    public void DefaultGenericQueryable_InvokeExecuteWithExecutor_MethodInvoked()
+    {
+        // Arrange
+        var baseSource = new[] { 1, 2, 3 };
+        var qSource = baseSource.AsQueryable();
+
+        // Act
+        var result = qSource.Execute(_ => qSource.Count());
+
+        // Assert
+        Assert.Equal(baseSource.Length, result);
     }
 
     [CommonFact]
@@ -186,7 +386,7 @@ public class MainTests
         var result = await qSource.WithFetch(nameof(string.Length))
             .GenericSingleOrDefaultAsync(_ => true, ct);
 
-        //Assert
-        result.Should().Be(baseSource);
+        // Assert
+        Assert.Equal(baseSource, result);
     }
 }

@@ -23,7 +23,7 @@ public class VisualIdentityInfoProxyTests
         var visualIdentityInfo = sp.GetRequiredService<IVisualIdentityInfo<TestObject1>>();
 
         //Assert
-        visualIdentityInfo.Name.Path.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, visualIdentityInfo.Name.Path, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class VisualIdentityInfoProxyTests
         var visualIdentityInfo = sp.GetRequiredService<IVisualIdentityInfo<TestObject2>>();
 
         //Assert
-        visualIdentityInfo.Name.Path.Should().Be(nameLambda, ExpressionComparer.Default);
+        Assert.Equal(nameLambda, visualIdentityInfo.Name.Path, ExpressionComparer.Default);
     }
 
     public class TestObject1

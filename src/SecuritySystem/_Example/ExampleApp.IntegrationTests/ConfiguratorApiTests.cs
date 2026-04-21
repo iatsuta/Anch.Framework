@@ -25,7 +25,7 @@ public abstract class ConfiguratorApiTests(IServiceProvider rootServiceProvider)
                 async service => await service.GetLinkedPrincipalsAsync([securityRole]).ToListAsync(ct));
 
         // Assert
-        principalNames.OrderBy(v => v).Should().BeEquivalentTo(expectedResults);
+        Assert.Equivalent(expectedResults, principalNames.OrderBy(v => v));
     }
 
     [CommonFact]
@@ -42,6 +42,6 @@ public abstract class ConfiguratorApiTests(IServiceProvider rootServiceProvider)
         });
 
         // Assert
-        result.Should().BeEquivalentTo(this.AuthManager.RootUserName);
+        Assert.Equivalent(new[] { this.AuthManager.RootUserName }, result);
     }
 }

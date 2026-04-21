@@ -105,8 +105,8 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter, employeeFilter], ct);
 
         // Assert
-        result.Length.Should().Be(1);
-        result.Single().Should().Be(this.searchNotificationEmployeeLogin1);
+        Assert.Single(result);
+        Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
     [CommonFact]
@@ -139,7 +139,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(0);
+        Assert.Empty(result);
     }
 
     [CommonFact]
@@ -180,7 +180,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter, employeeChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(0);
+        Assert.Empty(result);
     }
 
     [CommonFact]
@@ -222,7 +222,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter, employeeChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(1);
+        Assert.Single(result);
     }
 
     [CommonFact]
@@ -262,8 +262,8 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(1);
-        result.Single().Should().Be(this.searchNotificationEmployeeLogin1);
+        Assert.Single(result);
+        Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
     [CommonFact]
@@ -304,8 +304,8 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(1);
-        result.Single().Should().Be(this.searchNotificationEmployeeLogin1);
+        Assert.Single(result);
+        Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
     [CommonFact]
@@ -345,8 +345,8 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(1);
-        result.Single().Should().Be(this.searchNotificationEmployeeLogin1);
+        Assert.Single(result);
+        Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
     [Theory]
@@ -389,8 +389,8 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync(swapPriority ? [mbuChildFilter, fbuChildFilter] : [fbuChildFilter, mbuChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(1);
-        result.Single().Should().Be(swapPriority ? this.searchNotificationEmployeeLogin2 : this.searchNotificationEmployeeLogin1);
+        Assert.Single(result);
+        Assert.Equal(swapPriority ? this.searchNotificationEmployeeLogin2 : this.searchNotificationEmployeeLogin1, result.Single());
     }
 
     [CommonFact]
@@ -432,9 +432,9 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var result = await this.GetNotificationPrincipalsAsync([fbuChildFilter, mbuChildFilter], ct);
 
         // Assert
-        result.Length.Should().Be(2);
-        result.Should().Contain(this.searchNotificationEmployeeLogin1);
-        result.Should().Contain(this.searchNotificationEmployeeLogin2);
+        Assert.Equal(2, result.Length);
+        Assert.Contains(this.searchNotificationEmployeeLogin1, result);
+        Assert.Contains(this.searchNotificationEmployeeLogin2, result);
     }
 
     [CommonFact]
@@ -462,7 +462,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var principalNames = await this.GetNotificationPrincipalsAsync([notificationFilterGroup], ct);
 
         // Assert
-        principalNames.Should().BeEquivalentTo(testUserName);
+        Assert.Equivalent(new[] { testUserName }, principalNames);
     }
 
     [CommonFact]
@@ -497,7 +497,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
             });
 
         // Assert
-        principalNames.Should().BeEquivalentTo(testUserName);
+        Assert.Equivalent(new[] { testUserName }, principalNames);
     }
 
     //[CommonFact]
@@ -524,7 +524,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
     //    return;
 
-    //    //result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult);
+    //    //Assert.Equivalent(expectedResult, result.OrderBy(v => v.Name));
     //}
 
     private Task<string[]> GetNotificationPrincipalsAsync(NotificationFilterGroup[] notificationFilterGroups, CancellationToken ct) =>

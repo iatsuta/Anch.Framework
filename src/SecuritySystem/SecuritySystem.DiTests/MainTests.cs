@@ -71,11 +71,11 @@ public class MainTests
         var result3 = await securityProvider.HasAccessAsync(this.employee3, ct);
 
         // Assert
-        result1.Should().BeTrue();
-        result2.Should().BeTrue();
-        result3.Should().BeFalse();
+        Assert.True(result1);
+        Assert.True(result2);
+        Assert.False(result3);
 
-        counterService.Count.Should().Be(1);
+        Assert.Equal(1, counterService.Count);
     }
 
     [CommonFact]
@@ -90,12 +90,9 @@ public class MainTests
 
         var securityProvider = employeeDomainSecurityService.GetSecurityProvider(SecurityRule.View);
 
-        // Act
-        var checkAccessAction = () =>
-            securityProvider.CheckAccessAsync(this.employee3, accessDeniedExceptionService, ct);
-
         // Assert
-        await checkAccessAction.Should().ThrowAsync<AccessDeniedException>();
+        await Assert.ThrowsAsync<AccessDeniedException>(() =>
+            securityProvider.CheckAccessAsync(this.employee3, accessDeniedExceptionService, ct));
     }
 
 

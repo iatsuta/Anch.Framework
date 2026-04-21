@@ -35,7 +35,7 @@ public class AncestorLinkExtractorTests(IServiceProvider rootServiceProvider)
                 result.Adding.OrderBy(link => link.Ancestor.Name).ThenBy(link => link.Child.Name),
                 result.Removing.OrderBy(link => link.From.Name).ThenBy(link => link.To.Name));
 
-        orderedResult.Should().Be(testCase.ExpectedResult);
+        Assert.Equal(testCase.ExpectedResult, orderedResult);
     }
 
     public record MoveTestCase(

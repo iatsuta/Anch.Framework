@@ -21,7 +21,7 @@ public class DomainObjectDisplayServiceTests
         var result = service.Format(testObject);
 
         // Assert
-        result.Should().Be(testObject.Name);
+        Assert.Equal(testObject.Name, result);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class DomainObjectDisplayServiceTests
         var result = service.Format(testObject);
 
         // Assert
-        result.Should().Be(testObject.MyName);
+        Assert.Equal(testObject.MyName, result);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class DomainObjectDisplayServiceTests
         var result = service.Format(testObject);
 
         // Assert
-        result.Should().Be(testObject.MyName);
+        Assert.Equal(testObject.MyName, result);
     }
 
     public class TestObject1

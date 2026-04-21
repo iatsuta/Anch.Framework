@@ -32,7 +32,7 @@ public sealed class ServiceProxyFactoryTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public sealed class ServiceProxyFactoryTests
         var service = sp.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public sealed class ServiceProxyFactoryTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public sealed class ServiceProxyFactoryTests
         var service = scope.ServiceProvider.GetRequiredService<IService<int>>();
 
         // assert
-        service.Should().BeOfType<Service<int>>();
+        Assert.IsType<Service<int>>(service);
     }
 
     [Fact]
@@ -100,6 +100,6 @@ public sealed class ServiceProxyFactoryTests
         var service = serviceProxyFactory.Create<IService<int>>();
 
         // assert
-        service.Should().BeOfType<Service<int, string>>();
+        Assert.IsType<Service<int, string>>(service);
     }
 }

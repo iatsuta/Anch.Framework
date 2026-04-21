@@ -46,7 +46,7 @@ public class SecurityPathTests
         var newSecurityPath = service.ApplyRestriction(testSecurityPath, restriction);
 
         //Assert
-        newSecurityPath.Should().Be(expectedNewSecurityPath);
+        Assert.Equal(expectedNewSecurityPath, newSecurityPath);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class SecurityPathTests
         var result = service.ApplyRestriction(testSecurityPath, restriction);
 
         //Assert
-        result.Should().Be(SecurityPath<Employee>.Empty);
+        Assert.Equal(SecurityPath<Employee>.Empty, result);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class SecurityPathTests
         var result = service.ApplyRestriction(testSecurityPath, restriction);
 
         //Assert
-        result.Should().Be(altSecurityPath);
+        Assert.Equal(altSecurityPath, result);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class SecurityPathTests
         var result = service.ApplyRestriction(testSecurityPath, restriction);
 
         //Assert
-        result.Should().Be(testSecurityPath);
+        Assert.Equal(testSecurityPath, result);
     }
 
     [CommonFact]
@@ -130,8 +130,8 @@ public class SecurityPathTests
         var result2 = await securityProvider.HasAccessAsync(testEmployee2, ct);
 
         //Assert
-        result1.Should().BeTrue();
-        result2.Should().BeFalse();
+        Assert.True(result1);
+        Assert.False(result2);
     }
 
     [CommonFact]
@@ -155,7 +155,7 @@ public class SecurityPathTests
         var result2 = await securityProvider.HasAccessAsync(testEmployee2, ct);
 
         //Assert
-        result1.Should().BeTrue();
-        result2.Should().BeTrue();
+        Assert.True(result1);
+        Assert.True(result2);
     }
 }

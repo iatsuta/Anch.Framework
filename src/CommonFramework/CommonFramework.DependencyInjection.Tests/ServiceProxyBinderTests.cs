@@ -23,7 +23,7 @@ public sealed class ServiceProxyBinderTests
         var service = serviceProxyFactory.Create<IService<int>>();
 
         // assert
-        service.Should().BeOfType<Service<int, string>>();
+        Assert.IsType<Service<int, string>>(service);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public sealed class ServiceProxyBinderTests
         var service = serviceProxyFactory.Create<IService<int>>();
 
         // assert
-        service.Should().BeOfType<Service<int, string>>();
+        Assert.IsType<Service<int, string>>(service);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public sealed class ServiceProxyBinderTests
         var service = serviceProxyFactory.Create<IService<int>>();
 
         // assert
-        service.Should().BeOfType<Service<int, string>>();
+        Assert.IsType<Service<int, string>>(service);
     }
 
     [Fact]
@@ -74,10 +74,10 @@ public sealed class ServiceProxyBinderTests
         var serviceProxyFactory = sp.GetServiceProxyFactory();
 
         // act
-        var act = () => serviceProxyFactory.Create<IService<int>>();
+        var ex = Assert.ThrowsAny<Exception>(() => serviceProxyFactory.Create<IService<int>>());
 
         // assert
-        act.Should().Throw().WithMessage("Each subsequent candidate must replace the previous candidate");
+        Assert.Equal("Each subsequent candidate must replace the previous candidate", ex.Message);
     }
 
     [Fact]
@@ -92,10 +92,10 @@ public sealed class ServiceProxyBinderTests
         var serviceProxyFactory = sp.GetServiceProxyFactory();
 
         // act
-        var act = () => serviceProxyFactory.Create<IService<int>>();
+        var ex = Assert.ThrowsAny<Exception>(() => serviceProxyFactory.Create<IService<int>>());
 
         // assert
-        act.Should().Throw().WithMessage("Each subsequent candidate must replace the previous candidate");
+        Assert.Equal("Each subsequent candidate must replace the previous candidate", ex.Message);
     }
 
     private class ServiceProxyBinder<T> : IServiceProxyBinder

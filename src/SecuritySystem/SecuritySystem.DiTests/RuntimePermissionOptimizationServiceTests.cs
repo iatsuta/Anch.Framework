@@ -21,9 +21,9 @@ public class RuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(1);
+        Assert.Single(result);
         var arr = (Guid[])result[0][typeof(string)];
-        arr.Should().BeEquivalentTo([g1, g2]);
+        Assert.Equivalent(new[] { g1, g2 }, arr);
     }
 
     [Fact]
@@ -37,9 +37,9 @@ public class RuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(2);
-        result.Any(d => d.ContainsKey(typeof(string))).Should().BeTrue();
-        result.Any(d => d.ContainsKey(typeof(int))).Should().BeTrue();
+        Assert.Equal(2, result.Count);
+        Assert.True(result.Any(d => d.ContainsKey(typeof(string))));
+        Assert.True(result.Any(d => d.ContainsKey(typeof(int))));
     }
 
     [Fact]
@@ -61,16 +61,16 @@ public class RuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(2);
-        result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))).Should().BeTrue();
-        result.Any(d => d.Keys.Count == 2).Should().BeTrue();
+        Assert.Equal(2, result.Count);
+        Assert.True(result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))));
+        Assert.True(result.Any(d => d.Keys.Count == 2));
     }
 
     [Fact]
     public void Optimize_EmptyInput_ReturnsEmpty()
     {
         var result = this.service.Optimize(new List<Dictionary<Type, Array>>()).ToList();
-        result.Should().BeEmpty();
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -84,9 +84,9 @@ public class RuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(1);
+        Assert.Single(result);
         var arr = (int[])result[0][typeof(int)];
-        arr.Should().BeEquivalentTo([1, 2, 3]);
+        Assert.Equivalent(new[] { 1, 2, 3 }, arr);
     }
 }
 

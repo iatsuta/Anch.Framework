@@ -19,7 +19,7 @@ public class InlineEvaluateTests
         var result = ExpressionEvaluateHelper.InlineEvaluate(Expression<Func<int, int>> (ee) => x => ee.Evaluate(testExpression, x, 1));
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class InlineEvaluateTests
 
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class InlineEvaluateTests
             stream => stream.Select(ee.Compile(testExpression)));
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     public class BusinessUnit

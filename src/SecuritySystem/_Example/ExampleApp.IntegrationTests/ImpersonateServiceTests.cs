@@ -17,6 +17,6 @@ public abstract class ImpersonateServiceTests(IServiceProvider rootServiceProvid
         var result = await this.GetEvaluator<ICurrentUser>().EvaluateAsync(TestingScopeMode.Read, user, async service => service.Name);
 
         // Assert
-        result.Should().Be(userName);
+        Assert.Equal(userName, result);
     }
 }

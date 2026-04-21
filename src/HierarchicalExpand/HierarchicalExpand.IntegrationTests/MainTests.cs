@@ -27,8 +27,8 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : TestBase
         var dict = hierarchicalObjectExpander.ExpandWithParents([rootBuId], HierarchicalExpandType.Parents);
 
         // Assert
-        dict.Count.Should().Be(1);
-        dict.Should().BeEquivalentTo(new Dictionary<Guid, Guid> { { rootBuId, Guid.Empty } });
+        Assert.Equal(1, dict.Count);
+        Assert.Equivalent(new Dictionary<Guid, Guid> { { rootBuId, Guid.Empty } }, dict);
     }
 
     [CommonFact]
@@ -50,7 +50,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : TestBase
         var result = hierarchicalObjectExpander.Expand([rootBuId], HierarchicalExpandType.Children).ToList();
 
         // Assert
-        result.OrderBy(v => v).Should().BeEquivalentTo(expectedBuIdents);
+        Assert.Equivalent(expectedBuIdents, result.OrderBy(v => v));
     }
 
     [CommonFact]
@@ -75,7 +75,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : TestBase
         var result = hierarchicalObjectExpander.Expand([middleBuId], HierarchicalExpandType.All).ToList();
 
         // Assert
-        result.OrderBy(v => v).Should().BeEquivalentTo(expectedBuIdents);
+        Assert.Equivalent(expectedBuIdents, result.OrderBy(v => v));
     }
 
     [CommonFact]
@@ -90,6 +90,6 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : TestBase
         var result = await ancestorLinkExtractor.GetSyncAllResult(ct);
 
         // Assert
-        result.Should().Be(SyncResult<BusinessUnit, BusinessUnitDirectAncestorLink>.Empty);
+        Assert.Equal(SyncResult<BusinessUnit, BusinessUnitDirectAncestorLink>.Empty, result);
     }
 }

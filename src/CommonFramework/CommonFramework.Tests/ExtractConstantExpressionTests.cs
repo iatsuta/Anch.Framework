@@ -30,7 +30,7 @@ public class ExtractConstantExpressionTests
         var result = expr.Body.GetConstantValue<int>();
 
         // Assert
-        result.Should().Be(Maybe.Return(val));
+        Assert.Equal(Maybe.Return(val), result);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class ExtractConstantExpressionTests
         var result = expr.Body.GetConstantValue<int>();
 
         // Assert
-        result.Should().Be(Maybe.Return(val.InnerVal));
+        Assert.Equal(Maybe.Return(val.InnerVal), result);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class ExtractConstantExpressionTests
         var result = expr.Body.GetConstantValue<int>();
 
         // Assert
-        result.Should().Be(Maybe.Return(StaticValue1.Item1));
+        Assert.Equal(Maybe.Return(StaticValue1.Item1), result);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class ExtractConstantExpressionTests
         var result = expr.Body.GetConstantValue<string>();
 
         // Assert
-        result.Should().Be(Maybe.Return(val));
+        Assert.Equal(Maybe.Return(val), result);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class ExtractConstantExpressionTests
         var result = expr.Body.GetConstantValue<int?>();
 
         // Assert
-        result.Should().Be(Maybe.Return(InnerClass1.InnerClass2.Value));
+        Assert.Equal(Maybe.Return(InnerClass1.InnerClass2.Value), result);
     }
 
     [Fact]
@@ -99,6 +99,6 @@ public class ExtractConstantExpressionTests
         var result = expr.Body.GetConstantValue<int>();
 
         // Assert
-        result.Should().Be(Maybe<int>.Nothing);
+        Assert.Equal(Maybe<int>.Nothing, result);
     }
 }

@@ -21,7 +21,7 @@ public class AccessDeniedExceptionServiceTests(IServiceProvider rootServiceProvi
             AccessResult.AccessDeniedResult.Create(employee));
 
         // Assert
-        result.Message.Should().Be($"You have no permissions to create object with type = '{nameof(Employee)}'");
+        Assert.Equal($"You have no permissions to create object with type = '{nameof(Employee)}'", result.Message);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class AccessDeniedExceptionServiceTests(IServiceProvider rootServiceProvi
             AccessResult.AccessDeniedResult.Create(employee));
 
         // Assert
-        result.Message.Should().Be($"You have no permissions to access object with type = '{nameof(Employee)}' (id = '{employee.Id}')");
+        Assert.Equal($"You have no permissions to access object with type = '{nameof(Employee)}' (id = '{employee.Id}')", result.Message);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class AccessDeniedExceptionServiceTests(IServiceProvider rootServiceProvi
             AccessResult.AccessDeniedResult.Create(employee, securityRule));
 
         // Assert
-        result.Message.Should().Be($"You have no permissions to create object with type = '{nameof(Employee)}' (securityRule = '{securityRule.Name}')");
+        Assert.Equal($"You have no permissions to create object with type = '{nameof(Employee)}' (securityRule = '{securityRule.Name}')", result.Message);
     }
 
     [Fact]
@@ -68,6 +68,6 @@ public class AccessDeniedExceptionServiceTests(IServiceProvider rootServiceProvi
             AccessResult.AccessDeniedResult.Create(employee, securityRule));
 
         // Assert
-        result.Message.Should().Be($"You have no permissions to access object with type = '{nameof(Employee)}' (id = '{employee.Id}', securityRule = '{securityRule.Name}')");
+        Assert.Equal($"You have no permissions to access object with type = '{nameof(Employee)}' (id = '{employee.Id}', securityRule = '{securityRule.Name}')", result.Message);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CommonFramework.ExpressionComparers;
 using CommonFramework.IdentitySource.DependencyInjection;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CommonFramework.IdentitySource.Tests;
@@ -22,7 +23,7 @@ public class IdentityInfoProxyTests
         var identityInfo = sp.GetRequiredService<IIdentityInfo<TestObject1, int>>();
 
         //Assert
-        identityInfo.Id.Path.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, identityInfo.Id.Path, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -39,7 +40,7 @@ public class IdentityInfoProxyTests
         var identityInfo = sp.GetRequiredService<IIdentityInfo<TestObject2, Guid>>();
 
         //Assert
-        identityInfo.Id.Path.Should().Be(idLambda, ExpressionComparer.Default);
+        Assert.Equal(idLambda, identityInfo.Id.Path, ExpressionComparer.Default);
     }
 
     public class TestObject1
@@ -51,5 +52,4 @@ public class IdentityInfoProxyTests
     {
         public required Guid MyId { get; set; }
     }
-
 }

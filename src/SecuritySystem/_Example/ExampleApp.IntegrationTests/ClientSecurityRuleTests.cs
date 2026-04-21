@@ -24,6 +24,6 @@ public abstract class ClientSecurityRuleTests(IServiceProvider rootServiceProvid
                 await availableClientSecurityRuleSource.GetAvailableSecurityRules().ToArrayAsync(ct));
 
         // Assert
-        result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult);
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v.Name));
     }
 }

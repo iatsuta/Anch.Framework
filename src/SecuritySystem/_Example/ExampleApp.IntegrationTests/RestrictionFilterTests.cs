@@ -38,16 +38,16 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         // Arrange
 
         // Act
-        var action = () => this.AuthManager.For(this.testLogin).SetRoleAsync(
-            new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
-            {
-                BusinessUnit = this.defaultBu
-            }, ct);
+        var error = await Assert.ThrowsAsync<SecuritySystemValidationException>(async () =>
+            await this.AuthManager.For(this.testLogin).SetRoleAsync(
+                new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
+                {
+                    BusinessUnit = this.defaultBu
+                }, ct));
 
         // Assert
-        var error = await action.Should().ThrowAsync<SecuritySystemValidationException>();
 
-        error.And.Message.Should().Contain($"SecurityContext: '{this.defaultBu.Id}' denied by filter");
+        Assert.Contains($"SecurityContext: '{this.defaultBu.Id}' denied by filter", error.Message);
     }
 
     [CommonFact]
@@ -56,14 +56,15 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         // Arrange
 
         // Act
-        var action = () => this.AuthManager.For(this.testLogin).SetRoleAsync(
-                         new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
-                         {
-                             BusinessUnit = this.buWithAllowedFilter
-                         }, ct);
+        var ex = await Record.ExceptionAsync(async () =>
+            await this.AuthManager.For(this.testLogin).SetRoleAsync(
+                new TestPermission(ExampleSecurityRole.WithRestrictionFilterRole)
+                {
+                    BusinessUnit = this.buWithAllowedFilter
+                }, ct));
 
         // Assert
-        await action.Should().NotThrowAsync();
+        Assert.Null(ex);
     }
 
 
@@ -78,7 +79,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
-        allowedBuList.Should().BeEquivalentTo([this.buWithAllowedFilter]);
+        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
     }
 
     [CommonFact]
@@ -92,7 +93,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
-        allowedBuList.Should().BeEquivalentTo([this.buWithAllowedFilter]);
+        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
     }
 
     //[CommonFact]
@@ -115,7 +116,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    var accessors = securityAccessorResolver.Resolve(accessorData).ToList();
 
     //    // Assert
-    //    accessors.Should().Contain(this.testLogin);
+    //    Assert.Contains(this.testLogin, accessors);
     //}
 
     //[CommonFact]
@@ -140,7 +141,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    var accessors = securityAccessorResolver.Resolve(accessorData).ToList();
 
     //    // Assert
-    //    accessors.Should().Contain(this.testLogin);
+    //    Assert.Contains(this.testLogin, accessors);
     //}
 
     //[CommonFact]
@@ -165,6 +166,6 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    var accessors = securityAccessorResolver.Resolve(accessorData).ToList();
 
     //    // Assert
-    //    accessors.Should().NotContainInConsecutiveOrder(this.testLogin);
+    //    Assert.DoesNotContain(this.testLogin, accessors);
     //}
 }

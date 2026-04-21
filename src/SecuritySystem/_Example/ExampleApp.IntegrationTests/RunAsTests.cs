@@ -31,8 +31,8 @@ public abstract class RunAsManagerTests(IServiceProvider rootServiceProvider) : 
         var currentUserId = await rootServiceProvider.GetRequiredService<ITestingEvaluator<ICurrentUserSource<Principal>>>()
             .EvaluateAsync(TestingScopeMode.Read, async c => c.CurrentUser.Id);
 
-        currentUserName.Should().Be(runAsUserName);
-        currentUserId.Should().Be(runAsUserId);
+        Assert.Equal(runAsUserName, currentUserName);
+        Assert.Equal(runAsUserId, currentUserId);
     }
 
 
@@ -60,7 +60,7 @@ public abstract class RunAsManagerTests(IServiceProvider rootServiceProvider) : 
         var currentUserId = await rootServiceProvider.GetRequiredService<ITestingEvaluator<ICurrentUserSource<Principal>>>()
             .EvaluateAsync(TestingScopeMode.Read, async c => c.CurrentUser.Id);
 
-        currentUserName.Should().Be(runAsUserName);
-        currentUserId.Should().Be(runAsUserId);
+        Assert.Equal(runAsUserName, currentUserName);
+        Assert.Equal(runAsUserId, currentUserId);
     }
 }

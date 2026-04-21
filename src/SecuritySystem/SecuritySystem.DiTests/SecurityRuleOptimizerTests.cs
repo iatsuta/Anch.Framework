@@ -17,7 +17,7 @@ public class SecurityRuleOptimizerTests(IServiceProvider rootServiceProvider)
         var optimizedSecurityPath = service.Optimize(securityRule);
 
         //Assert
-        optimizedSecurityPath.Should().Be(expectedOptimizedSecurityRule);
+        Assert.Equal(expectedOptimizedSecurityRule, optimizedSecurityPath);
     }
 
     public static IEnumerable<object[]> OptimizeSecurityRule_RuleOptimized_Data() =>

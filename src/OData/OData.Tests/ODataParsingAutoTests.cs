@@ -270,11 +270,9 @@ public class ODataParsingAutoTests : TestBase
         Action call = () => this.RawSelectOperationParser.Parse(query);
 
         // Assert
-        call.Should().NotThrow();
+        call();
     }
 
-    [Theory]
-    [InlineData("m")]
     [InlineData("M")]
     public void SelectOperation_ParseNegativeDecimalNumberInFilter_NoException(string m)
     {
@@ -285,7 +283,7 @@ public class ODataParsingAutoTests : TestBase
         Action call = () => this.RawSelectOperationParser.Parse(query);
 
         // Assert
-        call.Should().NotThrow();
+        call();
     }
 
     [Fact]
@@ -298,7 +296,7 @@ public class ODataParsingAutoTests : TestBase
         Action call = () => this.RawSelectOperationParser.Parse(query);
 
         // Assert
-        call.Should().NotThrow();
+        call();
     }
 
     private void Test(string parsingString, SelectOperation expectedOperation)

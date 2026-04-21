@@ -18,11 +18,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Assert.Throws<InvalidOperationException>(() => services.Validate());
 
         // assert
-        act.Should().Throw<InvalidOperationException>()
-            .Where(ex => ex.Message.Contains("has been registered many times"));
+        Assert.Contains("has been registered many times", ex.Message);
     }
 
     [Fact]
@@ -39,10 +38,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Record.Exception(() => services.Validate());
 
         // assert
-        act.Should().NotThrow();
+        Assert.Null(ex);
     }
 
     [Fact]
@@ -59,10 +58,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator(new DuplicateServiceUsageValidator([typeof(IInnerService)]));
 
         // act
-        Action act = () => services.Validate();
+        var ex = Record.Exception(() => services.Validate());
 
         // assert
-        act.Should().NotThrow();
+        Assert.Null(ex);
     }
 
 
@@ -80,11 +79,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Assert.Throws<InvalidOperationException>(() => services.Validate());
 
         // assert
-        act.Should().Throw<InvalidOperationException>()
-            .Where(ex => ex.Message.Contains("has been registered many times"));
+        Assert.Contains("has been registered many times", ex.Message);
     }
 
     [Fact]
@@ -101,10 +99,10 @@ public class DuplicateServiceUsageValidatorTests
         services.AddValidator<DuplicateServiceUsageValidator>();
 
         // act
-        Action act = () => services.Validate();
+        var ex = Record.Exception(() => services.Validate());
 
         // assert
-        act.Should().NotThrow();
+        Assert.Null(ex);
     }
 
     private interface IInnerService

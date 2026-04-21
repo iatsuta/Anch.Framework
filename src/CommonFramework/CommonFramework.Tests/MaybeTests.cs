@@ -19,7 +19,7 @@ public class MaybeTests
         var result = func(input);
 
         // assert
-        result.Should().Be(expected);
+        Assert.Equal(expected, result);
     }
 
     public static IEnumerable<object?[]> GetInjectMaybeTestCases()

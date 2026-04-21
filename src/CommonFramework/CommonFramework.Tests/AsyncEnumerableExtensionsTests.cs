@@ -25,10 +25,10 @@ public class AsyncEnumerableExtensionsTests
         var result = await GetStrings()
             .ToImmutableDictionaryAsync(x => x.Length, x => x, EqualityComparer<int>.Default, ct);
 
-        result.Should().HaveCount(3);
-        result[1].Should().Be("a");
-        result[2].Should().Be("bb");
-        result[3].Should().Be("ccc");
+        Assert.Equal(3, result.Count);
+        Assert.Equal("a", result[1]);
+        Assert.Equal("bb", result[2]);
+        Assert.Equal("ccc", result[3]);
     }
 
     [CommonFact]
@@ -37,7 +37,8 @@ public class AsyncEnumerableExtensionsTests
         var result = await GetStrings()
             .ToImmutableDictionaryAsync(x => x.Length, x => x, ct);
 
-        result.Should().ContainKey(1).WhoseValue.Should().Be("a");
+        Assert.True(result.ContainsKey(1));
+        Assert.Equal("a", result[1]);
     }
 
     [CommonFact]
@@ -46,7 +47,7 @@ public class AsyncEnumerableExtensionsTests
         var result = await GetStrings()
             .ToImmutableDictionaryAsync(x => x.Length, ct);
 
-        result[2].Should().Be("bb");
+        Assert.Equal("bb", result[2]);
     }
 
     [CommonFact]
@@ -55,7 +56,7 @@ public class AsyncEnumerableExtensionsTests
         var result = await GetStrings()
             .ToImmutableDictionaryAsync(x => x.Length, EqualityComparer<int>.Default, ct);
 
-        result[3].Should().Be("ccc");
+        Assert.Equal("ccc", result[3]);
     }
 
     [CommonFact]
@@ -64,8 +65,8 @@ public class AsyncEnumerableExtensionsTests
         var result = await GetPairs()
             .ToImmutableDictionaryAsync(ct);
 
-        result.Should().HaveCount(2);
-        result[1].Should().Be("a");
+        Assert.Equal(2, result.Count);
+        Assert.Equal("a", result[1]);
     }
 
     [CommonFact]
@@ -74,6 +75,6 @@ public class AsyncEnumerableExtensionsTests
         var result = await GetPairs()
             .ToImmutableDictionaryAsync(EqualityComparer<int>.Default, ct);
 
-        result[2].Should().Be("b");
+        Assert.Equal("b", result[2]);
     }
 }

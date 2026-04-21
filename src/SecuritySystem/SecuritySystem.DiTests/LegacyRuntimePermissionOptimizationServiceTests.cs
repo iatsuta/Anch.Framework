@@ -18,12 +18,13 @@ public class LegacyRuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(1);
+        Assert.Single(result);
         var array = (Guid[])result[0][typeof(string)];
-        array.Should().BeEquivalentTo([
+        Assert.Equivalent(new[]
+        {
             Guid.Parse("11111111-1111-1111-1111-111111111111"),
             Guid.Parse("22222222-2222-2222-2222-222222222222")
-        ]);
+        }, array);
     }
 
     [Fact]
@@ -37,9 +38,9 @@ public class LegacyRuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(2);
-        result.Any(d => d.ContainsKey(typeof(string))).Should().BeTrue();
-        result.Any(d => d.ContainsKey(typeof(int))).Should().BeTrue();
+        Assert.Equal(2, result.Count);
+        Assert.True(result.Any(d => d.ContainsKey(typeof(string))));
+        Assert.True(result.Any(d => d.ContainsKey(typeof(int))));
     }
 
     [Fact]
@@ -61,15 +62,15 @@ public class LegacyRuntimePermissionOptimizationServiceTests
 
         var result = this.service.Optimize(permissions).ToList();
 
-        result.Should().HaveCount(2);
-        result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))).Should().BeTrue();
-        result.Any(d => d.Keys.Count == 2).Should().BeTrue();
+        Assert.Equal(2, result.Count);
+        Assert.True(result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))));
+        Assert.True(result.Any(d => d.Keys.Count == 2));
     }
 
     [Fact]
     public void Optimize_NoPermissions_ReturnsEmpty()
     {
         var result = this.service.Optimize(new List<Dictionary<Type, Array>>()).ToList();
-        result.Should().BeEmpty();
+        Assert.Empty(result);
     }
 }

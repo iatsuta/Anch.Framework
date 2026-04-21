@@ -20,7 +20,7 @@ public class ImmutableExtensionsTests
 
         var result = await source.ToImmutableArrayAsync(ct);
 
-        result.Should().Equal(1, 2, 3);
+        Assert.Equal([1, 2, 3], result);
     }
 
     [CommonFact]
@@ -30,7 +30,7 @@ public class ImmutableExtensionsTests
 
         var result = await source.ToImmutableListAsync(ct);
 
-        result.Should().Equal(1, 2, 3);
+        Assert.Equal([1, 2, 3], result);
     }
 
     [CommonFact]
@@ -40,7 +40,7 @@ public class ImmutableExtensionsTests
 
         var result = await source.ToImmutableHashSetAsync(ct);
 
-        result.Should().BeEquivalentTo([1, 2, 3]);
+        Assert.Equivalent(new[] { 1, 2, 3 }, result);
     }
 
     [CommonFact]
@@ -50,7 +50,7 @@ public class ImmutableExtensionsTests
 
         var result = await source.ToImmutableArrayAsync(ct);
 
-        result.Should().BeEmpty();
+        Assert.Empty(result);
     }
 
     [CommonFact]

@@ -24,7 +24,7 @@ public abstract class DomainSecurityRuleCredentialTests(IServiceProvider rootSer
                 await rep.Create(securityRule).GetQueryable().GenericToListAsync(ct));
 
         // Assert
-        realExpectedUsers.OrderBy(v => v).Should().BeEquivalentTo(employees.Select(e => e.Login));
+        Assert.Equivalent(realExpectedUsers.OrderBy(v => v), employees.Select(e => e.Login));
     }
 
     public IEnumerable<object?[]> GetEmployees_ReturnsExpectedUsers_Cases()

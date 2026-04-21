@@ -25,7 +25,7 @@ public class VisualIdentityInfoSourceTests
         var result = service.GetVisualIdentityInfo<TestObject1>();
 
         //Assert
-        result.Name.Path.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result.Name.Path, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class VisualIdentityInfoSourceTests
         var result = service.GetVisualIdentityInfo<TestObject2>();
 
         //Assert
-        result.Should().Be(expectedResult);
+        Assert.Equal(expectedResult, result);
     }
 
     public class TestObject1

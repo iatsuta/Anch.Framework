@@ -16,16 +16,16 @@ public class LambdaExpressionPathTests
         var path2 = new LambdaExpressionPath(array2);
 
         // Act & Assert
-        path1.Should().BeEquivalentTo(path2, "two different instances with identical expressions should be structurally equal");
+        Assert.Equivalent(path2, path1);
 
         // Check Equals
-        path1.Equals(path2).Should().BeTrue();
+        Assert.True(path1.Equals(path2));
 
         // Check reference equality (should be different objects)
-        ReferenceEquals(path1, path2).Should().BeFalse();
+        Assert.False(ReferenceEquals(path1, path2));
 
         // Check hash code
-        path1.GetHashCode().Should().Be(path2.GetHashCode(), "structurally equal paths must have identical hash codes");
+        Assert.Equal(path2.GetHashCode(), path1.GetHashCode());
     }
 
     [Fact]
@@ -38,14 +38,14 @@ public class LambdaExpressionPathTests
         var parsedPath = LambdaExpressionPath.Create(typeof(ObjA), path.Split('.'));
 
         // assert
-        parsedPath.Properties.Select(expr => expr.GetProperty())
-            .Should()
-            .BeEquivalentTo(
-            [
+        Assert.Equivalent(
+            new[]
+            {
                 typeof(ObjA).GetRequiredProperty(nameof(ObjA.Items), BindingFlags.Public | BindingFlags.Instance),
                 typeof(ObjB).GetRequiredProperty(nameof(ObjB.SubItem), BindingFlags.Public | BindingFlags.Instance),
                 typeof(ObjC).GetRequiredProperty(nameof(ObjC.Value), BindingFlags.Public | BindingFlags.Instance)
-            ]);
+            },
+            parsedPath.Properties.Select(expr => expr.GetProperty()));
     }
 
     public record ObjA(IEnumerable<ObjB> Items);

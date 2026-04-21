@@ -34,8 +34,8 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<Service>();
 
         // assert
-        source.Should().Be(expectedSource);
-        service.Should().Be(expectedSource.Service);
+        Assert.Equal(expectedSource, source);
+        Assert.Equal(expectedSource.Service, service);
     }
 
     [Fact]
@@ -60,8 +60,8 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        implementation.Should().BeSameAs(expectedService);
-        service.Should().BeSameAs(expectedService);
+        Assert.Same(expectedService, implementation);
+        Assert.Same(expectedService, service);
     }
 
     [Fact]
@@ -86,8 +86,8 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        implementation.Should().BeSameAs(expectedService);
-        service.Should().BeSameAs(expectedService);
+        Assert.Same(expectedService, implementation);
+        Assert.Same(expectedService, service);
     }
 
     [Fact]
@@ -110,8 +110,8 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<Service>();
 
         // assert
-        source.Should().Be(expectedSource);
-        service.Should().Be(expectedSource.Service);
+        Assert.Equal(expectedSource, source);
+        Assert.Equal(expectedSource.Service, service);
     }
 
     [Fact]
@@ -134,8 +134,8 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        implementation.Should().BeSameAs(expectedService);
-        service.Should().BeSameAs(expectedService);
+        Assert.Same(expectedService, implementation);
+        Assert.Same(expectedService, service);
     }
 
     [Fact]
@@ -158,8 +158,8 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        implementation.Should().BeSameAs(expectedService);
-        service.Should().BeSameAs(expectedService);
+        Assert.Same(expectedService, implementation);
+        Assert.Same(expectedService, service);
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<Service>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -212,7 +212,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -237,7 +237,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -264,7 +264,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<Service>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -288,7 +288,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -312,7 +312,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -333,7 +333,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 
     [Fact]
@@ -353,7 +353,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = scope.ServiceProvider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 
     [Fact]
@@ -376,7 +376,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeSameAs(replacementService);
+        Assert.Same(replacementService, service);
     }
 
     [Fact]
@@ -396,7 +396,7 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 
     [Fact]
@@ -416,6 +416,6 @@ public sealed class ServiceCollectionExtensionsTests
         var service = provider.GetRequiredService<IService>();
 
         // assert
-        service.Should().BeOfType<Service>();
+        Assert.IsType<Service>(service);
     }
 }

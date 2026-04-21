@@ -17,8 +17,8 @@ public class DeepEqualsCollectionTests
         var col2 = new DeepEqualsCollection<string>(array2);
 
         // Act & Assert
-        col1.Equals(col2).Should().BeTrue("different instances with same elements should be equal");
-        (col1 == col2).Should().BeTrue();
+        Assert.True(col1.Equals(col2));
+        Assert.True(col1 == col2);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class DeepEqualsCollectionTests
         var hash2 = col2.GetHashCode();
 
         // Assert
-        hash1.Should().Be(hash2, "structurally equal collections should have identical hash codes");
+        Assert.Equal(hash2, hash1);
     }
 
     [Fact]
@@ -52,6 +52,6 @@ public class DeepEqualsCollectionTests
         // Act;
 
         // Assert
-        col1.Should().BeEquivalentTo(col2);
+        Assert.Equivalent(col2, col1);
     }
 }

@@ -24,7 +24,7 @@ public class ExpressionTests
         var result = expr.OverrideInput((C c) => c.B);
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class ExpressionTests
         var result = expr.UnCurrying();
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class ExpressionTests
         var result = expr.Not();
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class ExpressionTests
         var result = expr.ToEnumerableAny("source");
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 
     [Fact]
@@ -84,6 +84,6 @@ public class ExpressionTests
         var result = expr.ToCollectionFilter("source");
 
         // Assert
-        result.Should().Be(expectedResult, ExpressionComparer.Default);
+        Assert.Equal(expectedResult, result, ExpressionComparer.Default);
     }
 }

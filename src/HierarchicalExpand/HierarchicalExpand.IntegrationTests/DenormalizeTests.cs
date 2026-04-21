@@ -28,11 +28,11 @@ public abstract class DenormalizeTests(IServiceProvider rootServiceProvider) : T
         var afterSyncState = await this.GetSyncState(ct);
         var afterDeepLevelCorrected = await this.DeepLevelCorrected(ct);
 
-        beforeSyncState.Adding.Count.Should().Be(7108);
-        afterSyncState.Should().Be(SyncResult<TestHierarchicalObject, TestHierarchicalObjectDirectAncestorLink>.Empty);
+        Assert.Equal(7108, beforeSyncState.Adding.Count);
+        Assert.Equal(SyncResult<TestHierarchicalObject, TestHierarchicalObjectDirectAncestorLink>.Empty, afterSyncState);
 
-        beforeDeepLevelCorrected.Should().BeFalse();
-        afterDeepLevelCorrected.Should().BeTrue();
+        Assert.False(beforeDeepLevelCorrected);
+        Assert.True(afterDeepLevelCorrected);
     }
 
     [CommonFact]
@@ -53,11 +53,11 @@ public abstract class DenormalizeTests(IServiceProvider rootServiceProvider) : T
         var afterSyncState = await this.GetSyncState(ct);
         var afterDeepLevelCorrected = await this.DeepLevelCorrected(ct);
 
-        beforeSyncState.Adding.Count.Should().Be(364);
-        afterSyncState.Should().Be(SyncResult<TestHierarchicalObject, TestHierarchicalObjectDirectAncestorLink>.Empty);
+        Assert.Equal(364, beforeSyncState.Adding.Count);
+        Assert.Equal(SyncResult<TestHierarchicalObject, TestHierarchicalObjectDirectAncestorLink>.Empty, afterSyncState);
 
-        beforeDeepLevelCorrected.Should().BeFalse();
-        afterDeepLevelCorrected.Should().BeTrue();
+        Assert.False(beforeDeepLevelCorrected);
+        Assert.True(afterDeepLevelCorrected);
     }
 
     private Task InitTree(CancellationToken ct) =>

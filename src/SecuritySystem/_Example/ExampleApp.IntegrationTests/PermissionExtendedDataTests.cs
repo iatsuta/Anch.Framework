@@ -22,9 +22,10 @@ public abstract class PermissionExtendedDataTests(IServiceProvider rootServicePr
         // Assert
         var managedPrincipal = await this.AuthManager.For(principalIdentity).GetPrincipalAsync(ct);
 
-        var managedPermission = managedPrincipal.Permissions.Should().ContainSingle().Subject;
+        var managedPermission = Assert.Single(managedPrincipal.Permissions);
 
-        managedPermission.ExtendedData.GetValueOrDefault(TestPermissionExtensions.ExtendedKey)
-            .Should().Be(extendedValue);
+        Assert.Equal(
+            extendedValue,
+            managedPermission.ExtendedData.GetValueOrDefault(TestPermissionExtensions.ExtendedKey));
     }
 }

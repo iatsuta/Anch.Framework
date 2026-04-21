@@ -28,7 +28,7 @@ public class DiTests(IServiceProvider rootServiceProvider)
         var result = service.Create<int>(typeof(DomainObject)).Expand([3, 13], HierarchicalExpandType.Parents).Order();
 
         // Assert
-        result.Should().BeEquivalentTo([0, 1, 2, 3, 12, 13]);
+        Assert.Equivalent(new[] { 0, 1, 2, 3, 12, 13 }, result);
     }
 
     private static IEnumerable<DirectAncestorLink> GetDirectAncestorLinks()

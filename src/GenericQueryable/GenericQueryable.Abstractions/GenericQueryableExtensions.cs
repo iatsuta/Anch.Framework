@@ -30,7 +30,7 @@ public static class GenericQueryableExtensions
 			IEqualityComparer<TKey>? comparer,
 			CancellationToken cancellationToken = default)
 			where TKey : notnull =>
-			source.GenericToDictionaryAsync(keySelector, v => v, cancellationToken);
+            source.GenericToDictionaryAsync(keySelector, v => v, comparer, cancellationToken);
 
 		public Task<Dictionary<TKey, TElement>> GenericToDictionaryAsync<TKey, TElement>(Func<TSource, TKey> keySelector,
 			Func<TSource, TElement> elementSelector,

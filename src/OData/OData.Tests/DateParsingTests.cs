@@ -40,7 +40,7 @@ public class DateParsingTests : TestBase
         var res = this.ParseAndProcess(query);
 
         // Arrange
-        res.Id.Should().Be(4);
+        Assert.Equal(4, res.Id);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class DateParsingTests : TestBase
         var res = this.ParseAndProcess(query);
 
         // Arrange
-        res.Id.Should().Be(4);
+        Assert.Equal(4, res.Id);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class DateParsingTests : TestBase
         var res = this.ParseAndProcess(query);
 
         // Arrange
-        res.Id.Should().Be(1);
+        Assert.Equal(1, res.Id);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class DateParsingTests : TestBase
         var res = Assert.Throws<InvalidOperationException>(() => this.ParseAndProcess(query));
 
         // Arrange
-        res.Message.Should().Be("Sequence contains no elements");
+        Assert.Equal("Sequence contains no elements", res.Message);
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class DateParsingTests : TestBase
         var res = this.ParseAndProcess(query);
 
         // Arrange
-        res.Id.Should().Be(3);
+        Assert.Equal(3, res.Id);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class DateParsingTests : TestBase
         var res = this.ParseAndProcess(query);
 
         // Arrange
-        res.Id.Should().Be(1);
+        Assert.Equal(1, res.Id);
     }
 
     private TestClass ParseAndProcess(string query)

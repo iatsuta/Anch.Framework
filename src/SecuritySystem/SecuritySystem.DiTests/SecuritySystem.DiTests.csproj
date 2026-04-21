@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NSubstitute" />
@@ -22,7 +21,6 @@
   <ItemGroup>
     <Using Include="Xunit" />
     <Using Include="NSubstitute" />
-    <Using Include="FluentAssertions" />
   </ItemGroup>
 
 </Project>

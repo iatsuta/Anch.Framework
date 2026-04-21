@@ -28,9 +28,9 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
         // Assert
         var managedPrincipal = await this.AuthManager.For(principalIdentity).GetPrincipalAsync(ct);
 
-        var managedPermission = managedPrincipal.Permissions.Should().ContainSingle().Subject;
+        var managedPermission = Assert.Single(managedPrincipal.Permissions);
 
-        managedPermission.Identity.Should().Be(testPermission.Identity);
+        Assert.Equal(testPermission.Identity, managedPermission.Identity);
     }
 
     [CommonFact]
@@ -53,18 +53,18 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
             async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync(ct));
 
         // Assert
-        availableSecurityRoles.Should().BeEquivalentTo([testRole]);
+        Assert.Equivalent(new[] { testRole }, availableSecurityRoles);
 
         var managedPrincipal = await this.AuthManager.For(principalName).GetPrincipalAsync(ct);
 
-        managedPrincipal.Header.Identity.Should().Be(principalIdentity);
-        managedPrincipal.Header.Name.Should().Be(principalName);
-        managedPrincipal.Header.IsVirtual.Should().Be(false);
+        Assert.Equal(principalIdentity, managedPrincipal.Header.Identity);
+        Assert.Equal(principalName, managedPrincipal.Header.Name);
+        Assert.False(managedPrincipal.Header.IsVirtual);
 
-        var managedPermission = managedPrincipal.Permissions.Should().ContainSingle().Subject;
+        var managedPermission = Assert.Single(managedPrincipal.Permissions);
 
-        managedPermission.IsVirtual.Should().Be(false);
-        managedPermission.Restrictions.Should().BeEquivalentTo(testPermission.Restrictions);
+        Assert.False(managedPermission.IsVirtual);
+        Assert.Equivalent(testPermission.Restrictions, managedPermission.Restrictions);
     }
 
     [CommonFact]
@@ -97,11 +97,11 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
 
             var result = await testObjectRepository.GetQueryable().GenericToListAsync(ct);
 
-            result.OrderBy(v => v.Id).Should().BeEquivalentTo(expectedResult.OrderBy(v => v.Id));
+            Assert.Equivalent(expectedResult.OrderBy(v => v.Id), result.OrderBy(v => v.Id));
 
             foreach (var testObject in result)
             {
-                (await securityProvider.HasAccessAsync(testObject, ct)).Should().Be(true);
+                Assert.True(await securityProvider.HasAccessAsync(testObject, ct));
             }
         });
     }
