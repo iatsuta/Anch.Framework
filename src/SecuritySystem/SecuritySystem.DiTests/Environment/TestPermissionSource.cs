@@ -1,11 +1,9 @@
 ﻿using System.Collections.Immutable;
-
-using SecuritySystem.DiTests.Services;
 using SecuritySystem.ExternalSystem;
 
 namespace SecuritySystem.DiTests.Environment;
 
-public class TestPermissionSource(TestPermissions data, DomainSecurityRule.ExpandedRoleGroupSecurityRule securityRule) : IPermissionSource
+public class TestPermissionSource(TestPermissionStorge storge, DomainSecurityRule.ExpandedRoleGroupSecurityRule securityRule) : IPermissionSource
 {
     public ValueTask<bool> HasAccessAsync(CancellationToken cancellationToken)
     {
@@ -18,10 +16,10 @@ public class TestPermissionSource(TestPermissions data, DomainSecurityRule.Expan
 
         return
 
-            from permission in data.Permissions.ToAsyncEnumerable()
+            from permission in storge.Permissions.ToAsyncEnumerable()
 
-            where roles.Contains(permission.SecurityRole)
+            where roles.Contains(permission.SecurityRole!)
 
-            select permission.Restrictions.ChangeValue(Array (idents) => idents.ToArray());
+            select permission.Restrictions;
     }
 }

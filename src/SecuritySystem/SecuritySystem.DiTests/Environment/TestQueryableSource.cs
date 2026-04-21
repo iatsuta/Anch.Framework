@@ -4,16 +4,16 @@ namespace SecuritySystem.DiTests.Environment;
 
 public class TestQueryableSource : IQueryableSource
 {
-    public IQueryableSource BaseQueryableSource { get; set; } = Substitute.For<IQueryableSource>();
+    public IQueryableSource InnerSource { get; private set; } = Substitute.For<IQueryableSource>();
 
     public void Reset()
     {
-        this.BaseQueryableSource = Substitute.For<IQueryableSource>();
+        this.InnerSource = Substitute.For<IQueryableSource>();
     }
 
     public IQueryable<TDomainObject> GetQueryable<TDomainObject>()
         where TDomainObject : class
     {
-        return this.BaseQueryableSource.GetQueryable<TDomainObject>();
+        return this.InnerSource.GetQueryable<TDomainObject>();
     }
 }

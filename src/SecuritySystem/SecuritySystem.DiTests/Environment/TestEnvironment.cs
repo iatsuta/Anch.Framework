@@ -18,9 +18,13 @@ namespace SecuritySystem.DiTests.Environment;
 
 public class TestEnvironment : ITestEnvironment
 {
-    public void Reset(IServiceProvider serviceProvider)
+    public ValueTask Initialize(IServiceProvider serviceProvider, CancellationToken ct)
     {
         serviceProvider.GetRequiredService<TestQueryableSource>().Reset();
+        serviceProvider.GetRequiredService<TestPermissionStorge>().Reset();
+        serviceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>().Count = 0;
+
+        return ValueTask.CompletedTask;
     }
 
     public IServiceProvider BuildServiceProvider(IServiceCollection services) =>
@@ -32,7 +36,7 @@ public class TestEnvironment : ITestEnvironment
                     .SetGenericRepository<TestGenericRepository>()
                     .SetDefaultCancellationTokenSource<XUnitDefaultCancellationTokenSource>()
 
-                    .AddPermissionSystem<ExamplePermissionSystemFactory>()
+                    .AddPermissionSystem<TestPermissionSystemFactory>()
 
                     .AddDomainSecurity<Employee>(b => b.SetView(ExampleSecurityOperation.EmployeeView)
                         .SetEdit(ExampleSecurityOperation.EmployeeEdit)
@@ -81,9 +85,8 @@ public class TestEnvironment : ITestEnvironment
             .AddSingleton(typeof(TestCheckboxConditionFactory<>))
 
             .AddSingleton<TestQueryableSource>()
+            .AddSingleton<TestPermissionStorge>()
             .AddSingleton<BusinessUnitAncestorLinkSourceExecuteCounter>()
-
-            .AddSingleton(_ => new TestPermissions(this.GetPermissions().ToList()))
 
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()

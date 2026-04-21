@@ -29,7 +29,7 @@ public class AccessDeniedExceptionServiceTests(IServiceProvider rootServiceProvi
     {
         // Arrange
         var service = rootServiceProvider.GetRequiredService<IAccessDeniedExceptionService>();
-        var employee = new Employee() { Id = Guid.NewGuid() };
+        var employee = new Employee { Id = Guid.NewGuid() };
 
         // Act
         var result = service.GetAccessDeniedException(
@@ -60,7 +60,7 @@ public class AccessDeniedExceptionServiceTests(IServiceProvider rootServiceProvi
     {
         // Arrange
         var service = rootServiceProvider.GetRequiredService<IAccessDeniedExceptionService>();
-        var employee = new Employee() { Id = Guid.NewGuid() };
+        var employee = new Employee { Id = Guid.NewGuid() };
         var securityRule = ExampleSecurityOperation.EmployeeView;
 
         // Act

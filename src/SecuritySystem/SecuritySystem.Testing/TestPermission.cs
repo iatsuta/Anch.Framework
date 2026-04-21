@@ -20,7 +20,7 @@ public class TestPermission
 
     public PermissionPeriod Period { get; set; } = PermissionPeriod.Eternity;
 
-    public Dictionary<Type, Array> Restrictions { get; } = [];
+    public Dictionary<Type, Array> Restrictions { get; set; } = [];
 
     public Dictionary<string, object> ExtendedData { get; set; } = [];
 
@@ -84,7 +84,6 @@ public class TestPermission
     {
         Identity = this.Identity,
         ForceApplyIdentity = true,
-
         SecurityRole = this.SecurityRole ?? throw new InvalidOperationException($"{nameof(this.SecurityRole)} not initialized"),
         Period = this.Period,
         IsVirtual = false,
@@ -94,5 +93,6 @@ public class TestPermission
         ExtendedData = this.ExtendedData.ToImmutableDictionary()
     };
 
-    public static implicit operator ManagedPermission(TestPermission testPermissionBuilder) => testPermissionBuilder.ToManagedPermission();
+    public static implicit operator ManagedPermission(TestPermission testPermissionBuilder) =>
+        testPermissionBuilder.ToManagedPermission();
 }

@@ -1,9 +1,4 @@
-﻿using System.Collections.Frozen;
-using System.Collections.Immutable;
-
-using CommonFramework;
-using CommonFramework.DependencyInjection;
-using CommonFramework.GenericRepository;
+﻿using CommonFramework;
 using CommonFramework.Testing;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +8,7 @@ using SecuritySystem.DiTests.Environment;
 using SecuritySystem.DiTests.Rules;
 using SecuritySystem.DiTests.Services;
 using SecuritySystem.Services;
+using SecuritySystem.Testing;
 
 namespace SecuritySystem.DiTests;
 
@@ -22,9 +18,26 @@ public class SecurityPathTests
 
     private readonly BusinessUnit bu1 = new() { Id = Guid.NewGuid() };
 
-    public SecurityPathTests()
+    public SecurityPathTests(IServiceProvider rootServiceProvider)
     {
-        this.rootServiceProvider = new CustomTestServiceProviderBuilder(this.bu1).BuildServiceProvider(new ServiceCollection());
+        this.rootServiceProvider = rootServiceProvider;
+
+
+        var queryableSource = this.rootServiceProvider.GetRequiredService<TestQueryableSource>();
+
+        queryableSource.InnerSource.GetQueryable<BusinessUnitDirectAncestorLink>()
+            .Returns(new[] { new BusinessUnitDirectAncestorLink { Ancestor = bu1, Child = bu1 } }.AsQueryable());
+
+
+        var permissionStorge = this.rootServiceProvider.GetRequiredService<TestPermissionStorge>();
+
+        permissionStorge.Permissions =
+        [
+            new TestPermission(ExampleSecurityRole.TestRole)
+            {
+                Restrictions = { { typeof(BusinessUnit), new[] { this.bu1.Id } } }
+            }
+        ];
     }
 
     [Fact]
@@ -158,35 +171,5 @@ public class SecurityPathTests
         //Assert
         result1.Should().BeTrue();
         result2.Should().BeTrue();
-    }
-
-    private class CustomTestServiceProviderBuilder(BusinessUnit bu1) : TestEnvironment
-    {
-        protected override IServiceCollection CreateServices(IServiceCollection serviceCollection) =>
-
-            base.CreateServices(serviceCollection)
-                .ReplaceScopedFrom<IQueryableSource, IServiceProvider>(_ => new TestQueryableSource { BaseQueryableSource = this.BuildQueryableSource() });
-
-        protected override IEnumerable<TestPermission> GetPermissions()
-        {
-            yield return new TestPermission(
-                ExampleSecurityRole.TestKeyedRole,
-                new Dictionary<Type, ImmutableArray<Guid>> { { typeof(BusinessUnit), [bu1.Id] } }.ToFrozenDictionary());
-        }
-
-        private IQueryableSource BuildQueryableSource()
-        {
-            var queryableSource = Substitute.For<IQueryableSource>();
-
-            queryableSource.GetQueryable<BusinessUnitDirectAncestorLink>()
-                .Returns(this.GetBusinessUnitAncestorLinkSource().AsQueryable());
-
-            return queryableSource;
-        }
-
-        private IEnumerable<BusinessUnitDirectAncestorLink> GetBusinessUnitAncestorLinkSource()
-        {
-            yield return new BusinessUnitDirectAncestorLink { Ancestor = bu1, Child = bu1 };
-        }
     }
 }

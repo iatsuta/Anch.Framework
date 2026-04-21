@@ -23,10 +23,10 @@ public class ExampleDataInitializer([FromKeyedServices(ICurrentUser.RawKey)]ICur
             await genericRepository.SaveAsync(currentEmployeeAdminVirtualPermission, cancellationToken);
         }
 
-        var testRootBu = new BusinessUnit() { Name = "TestRootBu" };
+        var testRootBu = new BusinessUnit { Name = "TestRootBu" };
         await genericRepository.SaveAsync(testRootBu, cancellationToken);
 
-        var testRootMu = new ManagementUnit() { Name = "TestRootMu" };
+        var testRootMu = new ManagementUnit { Name = "TestRootMu" };
         await genericRepository.SaveAsync(testRootMu, cancellationToken);
 
         foreach (var index in Enumerable.Range(1, 2))

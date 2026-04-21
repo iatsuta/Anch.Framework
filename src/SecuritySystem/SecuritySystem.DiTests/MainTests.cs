@@ -1,6 +1,4 @@
-﻿using CommonFramework.DependencyInjection;
-using CommonFramework.GenericRepository;
-using CommonFramework.Testing;
+﻿using CommonFramework.Testing;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,12 +6,10 @@ using SecuritySystem.AccessDenied;
 using SecuritySystem.DiTests.DomainObjects;
 using SecuritySystem.DiTests.Environment;
 using SecuritySystem.DiTests.Rules;
-using SecuritySystem.DiTests.Services;
 using SecuritySystem.DomainServices;
 using SecuritySystem.Providers;
 
-using System.Collections.Frozen;
-using System.Collections.Immutable;
+using SecuritySystem.Testing;
 
 namespace SecuritySystem.DiTests;
 
@@ -41,24 +37,33 @@ public class MainTests
         this.rootServiceProvider = rootServiceProvider;
 
         this.bu1 = new() { Id = Guid.NewGuid() };
-        this.bu2 = new BusinessUnit() { Id = Guid.NewGuid(), Parent = this.bu1 };
-        this.bu3 = new BusinessUnit() { Id = Guid.NewGuid() };
+        this.bu2 = new BusinessUnit { Id = Guid.NewGuid(), Parent = this.bu1 };
+        this.bu3 = new BusinessUnit { Id = Guid.NewGuid() };
 
-        this.employee1 = new Employee() { Id = Guid.NewGuid(), BusinessUnit = this.bu1 };
-        this.employee2 = new Employee() { Id = Guid.NewGuid(), BusinessUnit = this.bu2 };
-        this.employee3 = new Employee() { Id = Guid.NewGuid(), BusinessUnit = this.bu3 };
-        this.employee4 = new Employee() { Id = Guid.NewGuid() };
+        this.employee1 = new Employee { Id = Guid.NewGuid(), BusinessUnit = this.bu1 };
+        this.employee2 = new Employee { Id = Guid.NewGuid(), BusinessUnit = this.bu2 };
+        this.employee3 = new Employee { Id = Guid.NewGuid(), BusinessUnit = this.bu3 };
+        this.employee4 = new Employee { Id = Guid.NewGuid() };
 
 
         var queryableSource = this.rootServiceProvider.GetRequiredService<TestQueryableSource>();
 
-        queryableSource.GetQueryable<BusinessUnitDirectAncestorLink>()
-            .Returns(this.GetBusinessUnitAncestorLinkSource(serviceProvider).AsQueryable());
+        queryableSource.InnerSource.GetQueryable<BusinessUnitDirectAncestorLink>()
+            .Returns(this.GetBusinessUnitAncestorLinkSource().AsQueryable());
 
-        queryableSource.GetQueryable<Employee>()
+        queryableSource.InnerSource.GetQueryable<Employee>()
             .Returns(new[] { this.employee1, this.employee2, this.employee3, this.employee4 }.AsQueryable());
 
-        return queryableSource;
+
+        var permissionStorge = this.rootServiceProvider.GetRequiredService<TestPermissionStorge>();
+
+        permissionStorge.Permissions =
+        [
+            new TestPermission(ExampleSecurityRole.TestRole)
+            {
+                Restrictions = { { typeof(BusinessUnit), new[] { this.bu1.Id } } }
+            }
+        ];
     }
 
 
@@ -68,7 +73,8 @@ public class MainTests
         // Arrange
         await using var scope = this.rootServiceProvider.CreateAsyncScope();
 
-        var employeeDomainSecurityService = scope.ServiceProvider.GetRequiredService<IDomainSecurityService<Employee>>();
+        var employeeDomainSecurityService =
+            scope.ServiceProvider.GetRequiredService<IDomainSecurityService<Employee>>();
         var counterService = scope.ServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
         var securityProvider = employeeDomainSecurityService.GetSecurityProvider(SecurityRule.View);
 
@@ -91,13 +97,15 @@ public class MainTests
         // Arrange
         await using var scope = this.rootServiceProvider.CreateAsyncScope();
 
-        var employeeDomainSecurityService = scope.ServiceProvider.GetRequiredService<IDomainSecurityService<Employee>>();
+        var employeeDomainSecurityService =
+            scope.ServiceProvider.GetRequiredService<IDomainSecurityService<Employee>>();
         var accessDeniedExceptionService = scope.ServiceProvider.GetRequiredService<IAccessDeniedExceptionService>();
 
         var securityProvider = employeeDomainSecurityService.GetSecurityProvider(SecurityRule.View);
 
         // Act
-        var checkAccessAction = () => securityProvider.CheckAccessAsync(this.employee3, accessDeniedExceptionService, ct);
+        var checkAccessAction = () =>
+            securityProvider.CheckAccessAsync(this.employee3, accessDeniedExceptionService, ct);
 
         // Assert
         await checkAccessAction.Should().ThrowAsync<AccessDeniedException>();
@@ -114,13 +122,5 @@ public class MainTests
         yield return new BusinessUnitDirectAncestorLink { Ancestor = this.bu3, Child = this.bu3 };
 
         yield return new BusinessUnitDirectAncestorLink { Ancestor = this.bu1, Child = this.bu2 };
-    }
-
-
-    private  IEnumerable<TestPermission> GetPermissions()
-    {
-        yield return new TestPermission(
-            ExampleSecurityRole.TestRole,
-            new Dictionary<Type, ImmutableArray<Guid>> { { typeof(BusinessUnit), [this.bu1.Id] } }.ToFrozenDictionary());
     }
 }

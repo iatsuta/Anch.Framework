@@ -18,7 +18,7 @@ public class CommonTestClassRunner(IServiceProviderPool? rootServiceProvider) : 
     {
         if (rootServiceProvider != null && parameter.ParameterType == typeof(IServiceProvider))
         {
-            return this.serviceProviderCache.GetOrAdd(ctxt, async _ => await rootServiceProvider.GetAsync(ctxt.CancellationTokenSource.Token));
+            return await this.serviceProviderCache.GetOrAdd(ctxt, async _ => await rootServiceProvider.GetAsync(ctxt.CancellationTokenSource.Token));
         }
         else
         {
