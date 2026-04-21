@@ -1,17 +1,21 @@
 ﻿using System.Collections.Immutable;
+
 using CommonFramework;
 using CommonFramework.GenericRepository;
+using CommonFramework.Testing;
 
 using HierarchicalExpand.DependencyInjection;
 using HierarchicalExpand.Tests.Domain;
 
 using Microsoft.Extensions.DependencyInjection;
 
+[assembly: CommonTestFramework]
+
 namespace HierarchicalExpand.Tests;
 
 public class DiTests
 {
-    [Fact]
+    [CommonFact]
     public async Task GetParents_ResultCorrect()
     {
         // Arrange

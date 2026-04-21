@@ -15,10 +15,9 @@ public class AncestorLinkExtractorTests
 {
     [Theory]
     [MemberData(nameof(GetMoveCases))]
-    public async Task MoveNode_UpdatesLinksCorrectly(MoveTestCase testCase)
+    public async Task MoveNode_UpdatesLinksCorrectly(MoveTestCase testCase, CancellationToken ct)
     {
         // Arrange
-        var ct = TestContext.Current.CancellationToken;
         var queryableSource = Substitute.For<IQueryableSource>();
 
         queryableSource.GetQueryable<DomainObject>().Returns(testCase.Nodes.ToArray().AsQueryable());

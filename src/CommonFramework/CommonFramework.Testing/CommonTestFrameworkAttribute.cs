@@ -8,11 +8,11 @@ public class CommonTestFrameworkAttribute : Attribute, ITestFrameworkAttribute
 {
     public Type FrameworkType { get; } = typeof(CommonTestFramework);
 
-    public virtual Type? ServiceProviderBuilderType { get; } = null;
+    public virtual Type? TestEnvironmentType { get; } = null;
 }
 
-public class CommonTestFrameworkAttribute<TServiceProviderBuilder> : CommonTestFrameworkAttribute
-    where TServiceProviderBuilder : ITestServiceProviderBuilder
+public class CommonTestFrameworkAttribute<TTestEnvironment> : CommonTestFrameworkAttribute
+    where TTestEnvironment : ITestEnvironment
 {
-    public override Type ServiceProviderBuilderType { get; } = typeof(TServiceProviderBuilder);
+    public override Type TestEnvironmentType { get; } = typeof(TTestEnvironment);
 }

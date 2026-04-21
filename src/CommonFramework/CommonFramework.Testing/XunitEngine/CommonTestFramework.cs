@@ -1,17 +1,19 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using Xunit.v3;
 
 namespace CommonFramework.Testing.XunitEngine;
 
 public class CommonTestFramework : XunitTestFramework
 {
-    private readonly ConcurrentDictionary<Assembly, ITestServiceProviderBuilder?> initializerCache = [];
+    private readonly ConcurrentDictionary<Assembly, ITestEnvironment?> initializerCache = [];
 
     private readonly ConcurrentDictionary<Assembly, IServiceProvider?> rootServiceProviderCache = [];
 
-    private ITestServiceProviderBuilder? GetServiceProviderBuilder(Assembly assembly)
+    private ITestEnvironment? GetServiceProviderBuilder(Assembly assembly)
     {
         return this.initializerCache.GetOrAdd(assembly, asm =>
         {
@@ -19,11 +21,11 @@ public class CommonTestFramework : XunitTestFramework
                                                ?? throw new InvalidOperationException(
                                                    $"Assembly '{asm.FullName}' must be decorated with '{typeof(CommonTestFrameworkAttribute).FullName}' attribute");
 
-            return commonTestFrameworkAttribute.ServiceProviderBuilderType == null
+            return commonTestFrameworkAttribute.TestEnvironmentType == null
                 ? null
-                : (Activator.CreateInstance(commonTestFrameworkAttribute.ServiceProviderBuilderType) as ITestServiceProviderBuilder
+                : (Activator.CreateInstance(commonTestFrameworkAttribute.TestEnvironmentType) as ITestEnvironment
                    ?? throw new InvalidOperationException(
-                       $"Failed to create initializer of type '{commonTestFrameworkAttribute.ServiceProviderBuilderType.FullName}'"));
+                       $"Failed to create initializer of type '{commonTestFrameworkAttribute.TestEnvironmentType.FullName}'"));
         });
     }
 

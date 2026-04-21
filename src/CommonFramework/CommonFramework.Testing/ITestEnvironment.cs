@@ -2,7 +2,9 @@
 
 namespace CommonFramework.Testing;
 
-public interface ITestServiceProviderBuilder
+public interface ITestEnvironment
 {
+    void Reset(IServiceProvider serviceProvider);
+
     IServiceProvider Build(IServiceCollection services);
 }

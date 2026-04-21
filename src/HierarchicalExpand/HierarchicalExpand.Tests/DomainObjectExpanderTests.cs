@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
+
 using CommonFramework.GenericRepository;
+using CommonFramework.Testing;
 
 using HierarchicalExpand.Tests.Domain;
 
@@ -7,31 +9,26 @@ namespace HierarchicalExpand.Tests;
 
 public class DomainObjectExpanderTests
 {
-	[Theory]
-	[MemberData(nameof(GetTraversalCases))]
-	public async Task HierarchyTraversal_ShouldReturnExpected(
-		IEnumerable<DomainObject> startNodes,
-		IEnumerable<DomainObject> expectedResult,
-		bool expandUp)
-	{
-		// Arrange
-		var ct = TestContext.Current.CancellationToken;
+    [Theory]
+    [CommonMemberData(nameof(GetTraversalCases))]
+    public async Task HierarchyTraversal_ShouldReturnExpected(
+        IEnumerable<DomainObject> startNodes,
+        IEnumerable<DomainObject> expectedResult,
+        bool expandUp,
+        CancellationToken ct)
+    {
+        // Arrange
+        var queryableSource = Substitute.For<IQueryableSource>();
+        queryableSource.GetQueryable<DomainObject>().Returns(_ => AllNodes.AsQueryable());
 
-		var queryableSource = Substitute.For<IQueryableSource>();
-		queryableSource.GetQueryable<DomainObject>().Returns(_ => AllNodes.AsQueryable());
+        var expander = new DomainObjectExpander<DomainObject>(new HierarchicalInfo<DomainObject>(x => x.Parent), queryableSource);
 
-		var expander = new DomainObjectExpander<DomainObject>(
-			new HierarchicalInfo<DomainObject>(x => x.Parent),
-			queryableSource);
+        // Act
+        var result = expandUp ? await expander.GetAllParents(startNodes, ct) : await expander.GetAllChildren(startNodes, ct);
 
-		// Act
-		var result = expandUp
-			? await expander.GetAllParents(startNodes, ct)
-			: await expander.GetAllChildren(startNodes, ct);
-
-		// Assert
-		result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult.OrderBy(v => v.Name));
-	}
+        // Assert
+        result.OrderBy(v => v.Name).Should().BeEquivalentTo(expectedResult.OrderBy(v => v.Name));
+    }
 
     /*
         Tree (depth = 6, branched):
