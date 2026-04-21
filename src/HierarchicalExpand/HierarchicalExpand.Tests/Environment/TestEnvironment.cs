@@ -14,13 +14,6 @@ namespace HierarchicalExpand.Tests.Environment;
 
 public class TestEnvironment : ITestEnvironment
 {
-    public ValueTask Initialize(IServiceProvider serviceProvider, CancellationToken ct)
-    {
-        serviceProvider.GetRequiredService<TestQueryableSource>().Reset();
-
-        return ValueTask.CompletedTask;
-    }
-
     public IServiceProvider BuildServiceProvider(IServiceCollection services) =>
 
         services
@@ -36,4 +29,11 @@ public class TestEnvironment : ITestEnvironment
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+
+    public ValueTask Cleanup(IServiceProvider serviceProvider, CancellationToken ct)
+    {
+        serviceProvider.GetRequiredService<TestQueryableSource>().Reset();
+
+        return ValueTask.CompletedTask;
+    }
 }

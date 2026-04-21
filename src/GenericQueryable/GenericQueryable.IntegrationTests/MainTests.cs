@@ -17,7 +17,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLi
         {
             await using var scope = rootServiceProvider.CreateAsyncScope();
 
-            await scope.ServiceProvider.GetRequiredService<IDbSchemeInitializer>().Initialize(ct);
+            await scope.ServiceProvider.GetRequiredService<IDbSchemaInitializer>().Initialize(ct);
         }
 
         {

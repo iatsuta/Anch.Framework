@@ -4,20 +4,27 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HierarchicalExpand.IntegrationTests;
 
-public abstract class TestBase(TestEnvironment testEnvironment) : IAsyncLifetime
+public abstract class TestBase(IServiceProvider rootServiceProvider) : IAsyncLifetime
 {
-    protected IServiceProvider RootServiceProvider => testEnvironment.RootServiceProvider;
+    protected ScopeEvaluator ScopeEvaluator => field ??= rootServiceProvider.GetRequiredService<ScopeEvaluator>();
 
-    protected ScopeEvaluator ScopeEvaluator => this.RootServiceProvider.GetRequiredService<ScopeEvaluator>();
-
-    public virtual async ValueTask InitializeAsync()
+    protected virtual async ValueTask InitializeAsync(CancellationToken ct)
     {
-        await testEnvironment.InitializeDatabase();
+        {
+            await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        var cancellationToken = TestContext.Current.CancellationToken;
+            await scope.ServiceProvider.GetRequiredService<IDbSchemaInitializer>().Initialize(ct);
+        }
 
-        await this.RootServiceProvider.GetRequiredService<TestDataInitializer>().Initialize(cancellationToken);
+        {
+            await using var scope = rootServiceProvider.CreateAsyncScope();
+
+            await scope.ServiceProvider.GetRequiredService<TestDataInitializer>().Initialize(ct);
+        }
     }
 
-    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
+    ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
+
+    ValueTask IAsyncDisposable.DisposeAsync() => ValueTask.CompletedTask;
 }

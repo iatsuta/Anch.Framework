@@ -2,7 +2,7 @@
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class DbSchemeInitializer(global::NHibernate.Cfg.Configuration nhibConfiguration) : IDbSchemeInitializer
+public class DbSchemaInitializer(global::NHibernate.Cfg.Configuration nhibConfiguration) : IDbSchemaInitializer
 {
     private readonly string dbName = "TestSystem.sqlite";
 

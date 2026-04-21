@@ -1,6 +1,4 @@
-﻿using HierarchicalExpand.IntegrationTests.Environment;
-
-namespace HierarchicalExpand.IntegrationTests
+﻿namespace HierarchicalExpand.IntegrationTests
 {
-    public class DenormalizeTestsImpl() : DenormalizeTests(TestEnvironmentImpl.Instance);
+    public class DenormalizeTestsImpl(IServiceProvider rootServiceProvider) : DenormalizeTests(rootServiceProvider);
 }

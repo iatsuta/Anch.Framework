@@ -8,17 +8,17 @@ namespace HierarchicalExpand.IntegrationTests.Environment;
 
 public class TestDataInitializer(ScopeEvaluator scopeEvaluator) : IInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         await scopeEvaluator.EvaluateAsync<IGenericRepository>(async genericRepository =>
         {
             foreach (var bu in GetTestBusinessUnits())
             {
-                await genericRepository.SaveAsync(bu, cancellationToken);
+                await genericRepository.SaveAsync(bu, ct);
             }
         });
 
-        await scopeEvaluator.EvaluateAsync<IAncestorDenormalizer>(ancestorDenormalizer => ancestorDenormalizer.Initialize(cancellationToken));
+        await scopeEvaluator.EvaluateAsync<IAncestorDenormalizer>(ancestorDenormalizer => ancestorDenormalizer.Initialize(ct));
     }
 
     private static IEnumerable<BusinessUnit> GetTestBusinessUnits()

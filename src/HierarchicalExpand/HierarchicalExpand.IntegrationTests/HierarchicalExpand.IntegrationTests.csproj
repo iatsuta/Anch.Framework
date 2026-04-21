@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CommonFramework\CommonFramework.GenericRepository\CommonFramework.GenericRepository.csproj" />
+    <ProjectReference Include="..\..\CommonFramework\CommonFramework.Testing\CommonFramework.Testing.csproj" />
     <ProjectReference Include="..\HierarchicalExpand\HierarchicalExpand.csproj" />
   </ItemGroup>
 

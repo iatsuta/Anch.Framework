@@ -28,7 +28,7 @@ public class TestEnvironment : TestEnvironmentBase
             .AddScoped<IGenericRepository, EfGenericRepository>()
             .AddScoped<IQueryableSource, EfQueryableSource>()
 
-            .AddScoped<IDbSchemeInitializer, DbSchemeInitializer>()
+            .AddScoped<IDbSchemaInitializer, DbSchemaInitializer>()
 
             .Pipe(base.BuildServiceProvider);
 }

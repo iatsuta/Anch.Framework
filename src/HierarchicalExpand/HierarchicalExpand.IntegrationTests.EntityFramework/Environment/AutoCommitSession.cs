@@ -12,7 +12,7 @@ public sealed class AutoCommitSession : IAsyncDisposable, IDisposable
 
     private bool closed;
 
-    public AutoCommitSession(TestDbContext nativeSession)
+    public AutoCommitSession(AppDbContext nativeSession)
     {
         this.NativeSession = nativeSession;
         this.efTransaction = (RelationalTransaction)this.NativeSession.Database.BeginTransaction();

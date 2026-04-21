@@ -2,4 +2,4 @@
 
 namespace ExampleApp.Infrastructure.Services;
 
-public interface IDbSchemeInitializer : IInitializer;
+public interface IDbSchemaInitializer : IInitializer;

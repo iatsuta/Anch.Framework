@@ -1,20 +1,24 @@
 ﻿using CommonFramework;
 using CommonFramework.DependencyInjection;
+using CommonFramework.Testing;
 
 using HierarchicalExpand.DependencyInjection;
 using HierarchicalExpand.IntegrationTests.Domain;
+using HierarchicalExpand.IntegrationTests.Environment.UndirectView;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HierarchicalExpand.IntegrationTests.Environment;
 
-public abstract class TestEnvironment
+public abstract class TestEnvironmentBase : ITestEnvironment
 {
-    public IServiceProvider RootServiceProvider => field ??= this.BuildServiceProvider();
-
-    protected IServiceProvider BuildServiceProvider()
+    public IServiceProvider BuildServiceProvider(IServiceCollection services)
     {
-        return new ServiceCollection()
+        return services
+
             .Pipe(this.InitializeServices)
+
+            .AddSingleton<IUndirectedAncestorViewScriptGenerator, UndirectedAncestorViewScriptGenerator>()
+            .AddSingleton<IViewCreationScriptProvider, UndirectedAncestorViewScriptProvider>()
 
             .AddHierarchicalExpand(scb => scb
                 .AddHierarchicalInfo(
@@ -22,6 +26,7 @@ public abstract class TestEnvironment
                     new AncestorLinkInfo<BusinessUnit, BusinessUnitDirectAncestorLink>(link => link.Ancestor, link => link.Child),
                     new AncestorLinkInfo<BusinessUnit, BusinessUnitUndirectAncestorLink>(view => view.Source, view => view.Target),
                     v => v.DeepLevel)
+
                 .AddHierarchicalInfo(
                     v => v.Parent,
                     new AncestorLinkInfo<TestHierarchicalObject, TestHierarchicalObjectDirectAncestorLink>(link => link.Ancestor, link => link.Child),
@@ -37,38 +42,4 @@ public abstract class TestEnvironment
 
     protected abstract IServiceCollection InitializeServices(IServiceCollection services);
 
-    public abstract Task InitializeDatabase();
-
-    protected IEnumerable<string> GetViews(string? schema)
-    {
-        yield return GetUndirectAncestorLinkTypeView(
-            typeof(BusinessUnitUndirectAncestorLink),
-            typeof(BusinessUnitDirectAncestorLink), schema);
-
-        yield return GetUndirectAncestorLinkTypeView(
-            typeof(TestHierarchicalObjectUndirectAncestorLink),
-            typeof(TestHierarchicalObjectDirectAncestorLink),
-            schema);
-    }
-
-    private static string GetUndirectAncestorLinkTypeView(Type undirectAncestorLinkType, Type directAncestorLinkType, string? schema)
-    {
-        var schemaPrefix = schema == null ? "" : $"{schema}_";
-
-        return @$"
-CREATE VIEW {schemaPrefix}{undirectAncestorLinkType.Name}
-AS
-    SELECT ancestorId as sourceId, childId as targetId, Id AS Id
-    FROM {schemaPrefix}{directAncestorLinkType.Name}
-UNION
-    SELECT
-         childId as sourceId, ancestorId as targetId, lower(
-        substr(hex(Id), 17, 16) || '-' ||
-        substr(hex(Id), 13, 4) || '-' ||
-        substr(hex(Id), 9, 4) || '-' ||
-        substr(hex(Id), 5, 4) || '-' ||
-        substr(hex(Id), 1, 4) || substr(hex(Id), 21, 12)
-    ) as Id
-    FROM {schemaPrefix}{directAncestorLinkType.Name}";
-    }
 }

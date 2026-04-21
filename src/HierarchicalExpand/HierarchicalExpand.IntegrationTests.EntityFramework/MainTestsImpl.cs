@@ -1,6 +1,4 @@
-﻿using HierarchicalExpand.IntegrationTests.Environment;
-
-namespace HierarchicalExpand.IntegrationTests
+﻿namespace HierarchicalExpand.IntegrationTests
 {
-    public class MainTestsImpl() : MainTests(TestEnvironmentImpl.Instance);
+    public class MainTestsImpl(IServiceProvider rootServiceProvider) : MainTests(rootServiceProvider);
 }

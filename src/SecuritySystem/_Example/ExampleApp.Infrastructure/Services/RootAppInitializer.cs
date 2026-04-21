@@ -13,7 +13,7 @@ public class RootAppInitializer(IServiceProvider rootServiceProvider) : IInitial
 
     public async Task Initialize(CancellationToken cancellationToken)
     {
-        await this.Initialize<IDbSchemeInitializer>(cancellationToken);
+        await this.Initialize<IDbSchemaInitializer>(cancellationToken);
 
         await this.Initialize<ISecurityContextInitializer>(cancellationToken);
         await this.Initialize<ISecurityRoleInitializer>(cancellationToken);

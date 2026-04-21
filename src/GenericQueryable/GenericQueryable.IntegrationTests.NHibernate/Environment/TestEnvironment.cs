@@ -34,7 +34,7 @@ public class TestEnvironment : TestEnvironmentBase
             .AddScoped<IGenericRepository, NHibGenericRepository>()
             .AddScoped<IQueryableSource, NHibQueryableSource>()
 
-            .AddScoped<IDbSchemeInitializer, DbSchemeInitializer>()
+            .AddScoped<IDbSchemaInitializer, DbSchemaInitializer>()
 
             .AddNHibernateGenericQueryable(SetupGenericQueryable)
 

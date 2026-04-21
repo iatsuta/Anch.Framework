@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HierarchicalExpand.IntegrationTests.Environment;
 
-public class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     private const string DefaultIdPostfix = "Id";
 

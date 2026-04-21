@@ -1,30 +1,27 @@
 ﻿using CommonFramework.GenericRepository;
-
+using CommonFramework.Testing;
 using GenericQueryable;
 
 using HierarchicalExpand.Denormalization;
 using HierarchicalExpand.IntegrationTests.Domain;
-using HierarchicalExpand.IntegrationTests.Environment;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HierarchicalExpand.IntegrationTests;
 
-public abstract class MainTests(TestEnvironment testEnvironment) : TestBase(testEnvironment)
+public abstract class MainTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [Fact]
-    public async Task InvokeExpandWithParents_ForRootBu_DataCorrected()
+    [CommonFact]
+    public async Task InvokeExpandWithParents_ForRootBu_DataCorrected(CancellationToken ct)
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        await using var scope = this.RootServiceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
         var hierarchicalObjectExpanderFactory = scope.ServiceProvider.GetRequiredService<IHierarchicalObjectExpanderFactory>();
         var hierarchicalObjectExpander = hierarchicalObjectExpanderFactory.Create<Guid>(typeof(BusinessUnit));
 
         var rootBuId = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Parent == null).Select(bu => bu.Id)
-            .GenericSingleAsync(cancellationToken);
+            .GenericSingleAsync(ct);
 
         // Act
         var dict = hierarchicalObjectExpander.ExpandWithParents([rootBuId], HierarchicalExpandType.Parents);
@@ -34,21 +31,20 @@ public abstract class MainTests(TestEnvironment testEnvironment) : TestBase(test
         dict.Should().BeEquivalentTo(new Dictionary<Guid, Guid> { { rootBuId, Guid.Empty } });
     }
 
-    [Fact]
-    public async Task InvokeChildrenExpand_ForRootBu_DataCorrected()
+    [CommonFact]
+    public async Task InvokeChildrenExpand_ForRootBu_DataCorrected(CancellationToken ct)
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        await using var scope = this.RootServiceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
         var hierarchicalObjectExpanderFactory = scope.ServiceProvider.GetRequiredService<IHierarchicalObjectExpanderFactory>();
         var hierarchicalObjectExpander = hierarchicalObjectExpanderFactory.Create<Guid>(typeof(BusinessUnit));
 
         var rootBuId = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Parent == null).Select(bu => bu.Id)
-            .GenericSingleAsync(cancellationToken);
+            .GenericSingleAsync(ct);
 
-        var expectedBuIdents = await queryableSource.GetQueryable<BusinessUnit>().Select(bu => bu.Id).OrderBy(v => v).GenericToListAsync(cancellationToken);
+        var expectedBuIdents = await queryableSource.GetQueryable<BusinessUnit>().Select(bu => bu.Id).OrderBy(v => v).GenericToListAsync(ct);
 
         // Act
         var result = hierarchicalObjectExpander.Expand([rootBuId], HierarchicalExpandType.Children).ToList();
@@ -57,19 +53,18 @@ public abstract class MainTests(TestEnvironment testEnvironment) : TestBase(test
         result.OrderBy(v => v).Should().BeEquivalentTo(expectedBuIdents);
     }
 
-    [Fact]
-    public async Task InvokeAllExpand_ForMiddleBu_DataCorrected()
+    [CommonFact]
+    public async Task InvokeAllExpand_ForMiddleBu_DataCorrected(CancellationToken ct)
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        await using var scope = this.RootServiceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
         var hierarchicalObjectExpanderFactory = scope.ServiceProvider.GetRequiredService<IHierarchicalObjectExpanderFactory>();
         var hierarchicalObjectExpander = hierarchicalObjectExpanderFactory.Create<Guid>(typeof(BusinessUnit));
 
         var middleBuId = await queryableSource.GetQueryable<BusinessUnit>().Where(bu => bu.Parent != null && bu.Parent.Parent == null).Select(bu => bu.Id)
-            .GenericFirstAsync(cancellationToken);
+            .GenericFirstAsync(ct);
 
         var parentsIdents = hierarchicalObjectExpander.Expand([middleBuId], HierarchicalExpandType.Parents).ToList();
         var childrenIdents = hierarchicalObjectExpander.Expand([middleBuId], HierarchicalExpandType.Children).ToList();
@@ -83,17 +78,16 @@ public abstract class MainTests(TestEnvironment testEnvironment) : TestBase(test
         result.OrderBy(v => v).Should().BeEquivalentTo(expectedBuIdents);
     }
 
-    [Fact]
-    public async Task GetSyncAllResult_ReturnsEmpty_WhenNoChangesDetected()
+    [CommonFact]
+    public async Task GetSyncAllResult_ReturnsEmpty_WhenNoChangesDetected(CancellationToken ct)
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        await using var scope = this.RootServiceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var ancestorLinkExtractor = scope.ServiceProvider.GetRequiredService<IAncestorLinkExtractor<BusinessUnit, BusinessUnitDirectAncestorLink>>();
 
         // Act
-        var result = await ancestorLinkExtractor.GetSyncAllResult(cancellationToken);
+        var result = await ancestorLinkExtractor.GetSyncAllResult(ct);
 
         // Assert
         result.Should().Be(SyncResult<BusinessUnit, BusinessUnitDirectAncestorLink>.Empty);

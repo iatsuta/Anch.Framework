@@ -1,5 +1,6 @@
 ﻿using CommonFramework.DependencyInjection;
 
+using ExampleApp.Infrastructure.DependencyInjection.UndirectView;
 using ExampleApp.Infrastructure.Services;
 
 using GenericQueryable.NHibernate;
@@ -26,7 +27,7 @@ public static class ServiceCollectionExtensions
 
                 .AddScoped(typeof(IDal<>), typeof(NHibDal<>))
                 .AddScoped<AutoCommitSession>()
-                .AddScoped<IDbSchemeInitializer, DbSchemeInitializer>()
+                .AddScoped<IDbSchemaInitializer, DbSchemaInitializer>()
 
                 .AddSingleton<INHibExpressionVisitorSource, NHibExpressionVisitorSource>()
 
