@@ -22,7 +22,7 @@ public class SecurityPathTests
     {
         this.rootServiceProvider = rootServiceProvider;
         this.rootServiceProvider.SetTestQueryable([new BusinessUnitDirectAncestorLink { Ancestor = this.bu1, Child = this.bu1 }]);
-        this.rootServiceProvider.SetTestPermissions(new TestPermission(ExampleSecurityRole.TestRole)
+        this.rootServiceProvider.SetTestPermissions(new TestPermission(ExampleSecurityRole.TestKeyedRole)
             { Restrictions = { { typeof(BusinessUnit), new[] { this.bu1.Id } } } });
     }
 
