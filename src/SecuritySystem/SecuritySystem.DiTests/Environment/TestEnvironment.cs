@@ -37,8 +37,10 @@ public class TestEnvironment : ITestEnvironment
                             .NewGuid(),
                         scb => scb.SetHierarchicalInfo(
                             bu => bu.Parent,
-                            new AncestorLinkInfo<BusinessUnit, BusinessUnitDirectAncestorLink>(bu => bu.Ancestor, bu => bu.Child),
-                            new AncestorLinkInfo<BusinessUnit, BusinessUnitUndirectAncestorLink>(bu => bu.Source, bu => bu.Target)))
+                            new AncestorLinkInfo<BusinessUnit, BusinessUnitDirectAncestorLink>(bu => bu.Ancestor,
+                                bu => bu.Child),
+                            new AncestorLinkInfo<BusinessUnit, BusinessUnitUndirectAncestorLink>(bu => bu.Source,
+                                bu => bu.Target)))
 
                     .AddSecurityContext<Location>(Guid.NewGuid())
 
@@ -60,11 +62,15 @@ public class TestEnvironment : ITestEnvironment
 
                     .AddSecurityRole(
                         ExampleSecurityRole.TestRole4,
-                        new SecurityRoleInfo(Guid.NewGuid()) { Operations = [ExampleSecurityOperation.BusinessUnitView] })
+                        new SecurityRoleInfo(Guid.NewGuid())
+                            { Operations = [ExampleSecurityOperation.BusinessUnitView] })
 
                     .AddSecurityRole(
                         ExampleSecurityRole.TestKeyedRole,
-                        new SecurityRoleInfo(Guid.NewGuid()) { Restriction = SecurityPathRestriction.Create<Location>().Add<BusinessUnit>(key: "testKey") })
+                        new SecurityRoleInfo(Guid.NewGuid())
+                        {
+                            Restriction = SecurityPathRestriction.Create<Location>().Add<BusinessUnit>(key: "testKey")
+                        })
 
                     .AddSecurityRole(SecurityRole.Administrator, new SecurityRoleInfo(Guid.NewGuid()))
 
@@ -79,17 +85,14 @@ public class TestEnvironment : ITestEnvironment
             .AddSingleton<TestPermissionStorge>()
             .AddSingleton<BusinessUnitAncestorLinkSourceExecuteCounter>()
 
+            .AddEnvironmentHook(EnvironmentHookType.Before, sp =>
+            {
+                sp.GetRequiredService<TestQueryableSource>().Reset();
+                sp.GetRequiredService<TestPermissionStorge>().Reset();
+                sp.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>().Count = 0;
+            })
+
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-
-
-    public ValueTask Cleanup(IServiceProvider serviceProvider, CancellationToken ct)
-    {
-        serviceProvider.GetRequiredService<TestQueryableSource>().Reset();
-        serviceProvider.GetRequiredService<TestPermissionStorge>().Reset();
-        serviceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>().Count = 0;
-
-        return ValueTask.CompletedTask;
-    }
 }

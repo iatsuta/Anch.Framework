@@ -26,14 +26,10 @@ public class TestEnvironment : ITestEnvironment
                     v => v.Parent,
                     new AncestorLinkInfo<DomainObject, DirectAncestorLink>(link => link.From, link => link.To),
                     new AncestorLinkInfo<DomainObject, UnDirectAncestorLink>(view => view.From, view => view.To)))
+
+            .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<TestQueryableSource>().Reset())
+
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
-
-    public ValueTask Cleanup(IServiceProvider serviceProvider, CancellationToken ct)
-    {
-        serviceProvider.GetRequiredService<TestQueryableSource>().Reset();
-
-        return ValueTask.CompletedTask;
-    }
 }

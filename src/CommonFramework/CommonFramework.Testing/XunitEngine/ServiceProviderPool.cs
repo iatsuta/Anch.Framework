@@ -12,22 +12,28 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
     {
         var serviceProvider = this.Get();
 
-        await testEnvironment.Initialize(serviceProvider, ct);
+        foreach (var hook in serviceProvider.GetKeyedServices<ITestEnvironmentHook>(EnvironmentHookType.Before))
+        {
+            await hook.Process(ct);
+        }
 
         return serviceProvider;
     }
 
     public async ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct)
     {
-        this.Release(serviceProvider);
+        foreach (var hook in serviceProvider.GetKeyedServices<ITestEnvironmentHook>(EnvironmentHookType.After).Reverse())
+        {
+            await hook.Process(ct);
+        }
 
-        await testEnvironment.Cleanup(serviceProvider, ct);
+        this.Release(serviceProvider);
     }
 
     private IServiceProvider Get() =>
         this.pool.TryTake(out var serviceProvider)
-        ? serviceProvider
-        : testEnvironment.BuildServiceProvider(new ServiceCollection());
+            ? serviceProvider
+            : testEnvironment.BuildServiceProvider(new ServiceCollection());
 
     private void Release(IServiceProvider serviceProvider) => this.pool.Add(serviceProvider);
 }

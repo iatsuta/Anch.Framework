@@ -24,6 +24,8 @@
     <Project Path="CommonFramework/CommonFramework.IdentitySource/CommonFramework.IdentitySource.csproj" />
   </Folder>
   <Folder Name="/CommonFramework/Testing/">
+    <Project Path="CommonFramework/CommonFramework.Testing.Database.Sqlite/CommonFramework.Testing.Database.Sqlite.csproj" />
+    <Project Path="CommonFramework/CommonFramework.Testing.Database/CommonFramework.Testing.Database.csproj" />
     <Project Path="CommonFramework/CommonFramework.Testing/CommonFramework.Testing.csproj" />
   </Folder>
   <Folder Name="/CommonFramework/VisualIdentitySource/">

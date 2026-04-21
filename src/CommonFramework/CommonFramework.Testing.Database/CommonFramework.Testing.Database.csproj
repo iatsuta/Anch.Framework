@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>IvAt.CommonFramework.Testing.Database</PackageId>
+  </PropertyGroup>
+
+</Project>
