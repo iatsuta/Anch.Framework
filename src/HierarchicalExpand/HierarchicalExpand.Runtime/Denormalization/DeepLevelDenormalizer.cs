@@ -31,18 +31,14 @@ public class DeepLevelDenormalizer<TDomainObject>(
 {
     public async Task UpdateDeepLevels(IEnumerable<TDomainObject> domainObjects, CancellationToken cancellationToken)
     {
-        var updateDict = domainObjects.Select(domainObject => new
-            {
-                DomainObject = domainObject,
-                ActualLevel = domainObject.GetAllElements(hierarchicalInfo.ParentFunc, true).Count()
-            }).Where(pair => deepLevelInfo.DeepLevel.Getter(pair.DomainObject) != pair.ActualLevel)
-            .ToDictionary(pair => pair.DomainObject, pair => pair.ActualLevel);
+        var updatedDomainObjects = domainObjects.Where(domainObject =>
+            deepLevelInfo.DeepLevel.Getter(domainObject)
+            != domainObject.GetAllElements(hierarchicalInfo.ParentFunc, true).Count());
 
-        foreach (var domainObject in await domainObjectExpanderFactory
-                     .Create()
-                     .GetAllChildren(updateDict.Keys, cancellationToken))
+        foreach (var domainObject in await domainObjectExpanderFactory.Create().GetAllChildren(updatedDomainObjects, cancellationToken))
         {
-            deepLevelInfo.DeepLevel.Setter.Invoke(domainObject, updateDict[domainObject]);
+            deepLevelInfo.DeepLevel.Setter.Invoke(domainObject,
+                domainObject.GetAllElements(hierarchicalInfo.ParentFunc, true).Count());
 
             await genericRepository.SaveAsync(domainObject, cancellationToken);
         }
