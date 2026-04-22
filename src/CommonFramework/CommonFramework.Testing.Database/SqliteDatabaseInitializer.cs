@@ -1,33 +1,16 @@
-﻿using CommonFramework.Testing.XunitEngine;
-using CommonFramework.Threading;
-
-namespace CommonFramework.Testing.Database;
+﻿namespace CommonFramework.Testing.Database;
 
 public class SqliteDatabaseInitializer(
-    IServiceProviderSynchronizationContext serviceProviderSynchronizationContext,
+    ISynchronizedInitializer<SqliteDatabaseInitializer> synchronizedInitializer,
     ITestConnectionStringProvider testConnectionStringProvider,
     IDatabaseSchemaGenerator databaseSchemaGenerator) : IDatabaseSchemaInitializer
 {
-    private readonly IAsyncLocker asyncLocker =
-        serviceProviderSynchronizationContext.AsyncLockerProvider.CreateLocker(typeof(SqliteDatabaseInitializer));
+    public async Task Initialize(CancellationToken cancellationToken) =>
 
-    private bool initialized = false;
-
-    public async Task Initialize(CancellationToken cancellationToken = default)
-    {
-        if (!this.initialized)
+        await synchronizedInitializer.Run(async () =>
         {
-            using (await asyncLocker.CreateScope())
-            {
-                if (!this.initialized)
-                {
-                    var schemaConnectionString = testConnectionStringProvider.CreateWithPostfix("_Empty");
+            var schemaConnectionString = testConnectionStringProvider.CreateWithPostfix("_Empty");
 
-                    await databaseSchemaGenerator.Generate(schemaConnectionString, cancellationToken);
-                }
-            }
-
-            this.initialized = true;
-        }
-    }
+            await databaseSchemaGenerator.Generate(schemaConnectionString, cancellationToken);
+        });
 }
