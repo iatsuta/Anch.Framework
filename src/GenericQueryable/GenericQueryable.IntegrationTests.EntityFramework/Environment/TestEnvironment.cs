@@ -1,10 +1,8 @@
 ﻿using CommonFramework;
 using CommonFramework.GenericRepository;
 
-using GenericQueryable.EntityFramework;
 using GenericQueryable.IntegrationTests.Environment;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 #if DEBUG
@@ -21,9 +19,7 @@ public class TestEnvironment : TestEnvironmentBase
 
         services
 
-            .AddDbContext<TestDbContext>(optionsBuilder => optionsBuilder
-                .UseSqlite("Data Source=test.db")
-                .UseGenericQueryable(SetupGenericQueryable))
+            .AddDbContext<TestDbContext>()
 
             .AddScoped<IGenericRepository, EfGenericRepository>()
             .AddScoped<IQueryableSource, EfQueryableSource>()

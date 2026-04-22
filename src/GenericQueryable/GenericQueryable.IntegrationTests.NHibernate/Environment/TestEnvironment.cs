@@ -24,7 +24,8 @@ public class TestEnvironment : TestEnvironmentBase
 
         services
             .AddIdentitySource()
-            .AddSingleton(BuildConfigurationHelper.BuildConfiguration("Data Source=TestSystem.sqlite"))
+            .AddSingleton<ConfigurationSource>()
+            .AddSingletonFrom((ConfigurationSource configurationSource) => configurationSource.BuildConfiguration())
             .AddSingletonFrom((global::NHibernate.Cfg.Configuration cfg) => cfg.BuildSessionFactory())
             .AddScopedFrom((ISessionFactory sessionFactory) => sessionFactory.OpenSession())
 
@@ -36,7 +37,7 @@ public class TestEnvironment : TestEnvironmentBase
 
             .AddScoped<IDbSchemaInitializer, DbSchemaInitializer>()
 
-            .AddNHibernateGenericQueryable(SetupGenericQueryable)
+            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure)
 
             .Pipe(base.BuildServiceProvider);
 }

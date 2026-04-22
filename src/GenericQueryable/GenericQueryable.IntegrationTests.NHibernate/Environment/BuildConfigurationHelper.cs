@@ -16,9 +16,9 @@ using NHibernate.Tool.hbm2ddl;
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public static class BuildConfigurationHelper
+public class ConfigurationSource(IMainConnectionStringSource mainConnectionStringSource)
 {
-    public static Configuration BuildConfiguration(string connectionString)
+    public Configuration BuildConfiguration()
     {
         var cfg = new Configuration();
 
@@ -27,7 +27,7 @@ public static class BuildConfigurationHelper
             .Database(SQLiteConfiguration.Standard
                 .Dialect<SQLiteDialect>()
                 .Driver<SQLite20Driver>()
-                .ConnectionString(connectionString))
+                .ConnectionString(mainConnectionStringSource.ConnectionString))
             .Mappings(
                 m =>
                 {
@@ -39,8 +39,6 @@ public static class BuildConfigurationHelper
                 {
                     c.Properties.Add(global::NHibernate.Cfg.Environment.LinqToHqlGeneratorsRegistry, typeof(DefaultLinqToHqlGeneratorsRegistry).AssemblyQualifiedName);
 
-                    //c.Properties.Add(global::NHibernate.Cfg.Environment.SqlExceptionConverter, typeof(SQLStateConverter).AssemblyQualifiedName);
-
                     c.Properties.Add(global::NHibernate.Cfg.Environment.CommandTimeout, "1200");
 
                     c.Properties.Add(global::NHibernate.Cfg.Environment.SqlTypesKeepDateTime, "true");
@@ -51,11 +49,7 @@ public static class BuildConfigurationHelper
 
         cfg.SessionFactory().ParsingLinqThrough<VisitedNHibQueryProvider>();
 
-
         SchemaMetadataUpdater.QuoteTableAndColumns(cfg, Dialect.GetDialect(cfg.Properties));
-
-        var schemaExport = new SchemaExport(cfg);
-        schemaExport.Create(false, true);
 
         return cfg;
     }
