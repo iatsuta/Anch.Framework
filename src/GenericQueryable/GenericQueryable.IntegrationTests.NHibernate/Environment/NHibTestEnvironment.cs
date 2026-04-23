@@ -14,11 +14,11 @@ using NHibernate;
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 #endif
 
-[assembly:CommonFramework.Testing.CommonTestFramework<TestEnvironment>]
+[assembly:CommonFramework.Testing.CommonTestFramework<NHibTestEnvironment>]
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class TestEnvironment : TestEnvironmentBase
+public class NHibTestEnvironment : TestEnvironment
 {
     public override IServiceProvider BuildServiceProvider(IServiceCollection services) =>
 

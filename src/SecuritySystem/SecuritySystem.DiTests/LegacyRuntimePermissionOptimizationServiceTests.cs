@@ -11,9 +11,9 @@ public class LegacyRuntimePermissionOptimizationServiceTests
     {
         var permissions = new List<Dictionary<Type, Array>>
         {
-            new() { { typeof(string), new Guid[] { Guid.Parse("11111111-1111-1111-1111-111111111111") } } },
-            new() { { typeof(string), new Guid[] { Guid.Parse("22222222-2222-2222-2222-222222222222") } } },
-            new() { { typeof(string), new Guid[] { Guid.Parse("11111111-1111-1111-1111-111111111111") } } }
+            new() { { typeof(string), new[] { Guid.Parse("11111111-1111-1111-1111-111111111111") } } },
+            new() { { typeof(string), new[] { Guid.Parse("22222222-2222-2222-2222-222222222222") } } },
+            new() { { typeof(string), new[] { Guid.Parse("11111111-1111-1111-1111-111111111111") } } }
         };
 
         var result = this.service.Optimize(permissions).ToList();
@@ -32,15 +32,15 @@ public class LegacyRuntimePermissionOptimizationServiceTests
     {
         var permissions = new List<Dictionary<Type, Array>>
         {
-            new() { { typeof(string), new Guid[] { Guid.NewGuid() } } },
-            new() { { typeof(int), new Guid[] { Guid.NewGuid() } } }
+            new() { { typeof(string), new[] { Guid.NewGuid() } } },
+            new() { { typeof(int), new[] { Guid.NewGuid() } } }
         };
 
         var result = this.service.Optimize(permissions).ToList();
 
         Assert.Equal(2, result.Count);
-        Assert.True(result.Any(d => d.ContainsKey(typeof(string))));
-        Assert.True(result.Any(d => d.ContainsKey(typeof(int))));
+        Assert.Contains(result, d => d.ContainsKey(typeof(string)));
+        Assert.Contains(result, d => d.ContainsKey(typeof(int)));
     }
 
     [Fact]
@@ -51,20 +51,20 @@ public class LegacyRuntimePermissionOptimizationServiceTests
 
         var permissions = new List<Dictionary<Type, Array>>
         {
-            new() { { typeof(string), new Guid[] { guid1 } } },
-            new() { { typeof(string), new Guid[] { guid2 } } },
+            new() { { typeof(string), new[] { guid1 } } },
+            new() { { typeof(string), new[] { guid2 } } },
             new()
             {
-                { typeof(string), new Guid[] { guid1 } },
-                { typeof(int), new Guid[] { guid2 } }
+                { typeof(string), new[] { guid1 } },
+                { typeof(int), new[] { guid2 } }
             }
         };
 
         var result = this.service.Optimize(permissions).ToList();
 
         Assert.Equal(2, result.Count);
-        Assert.True(result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))));
-        Assert.True(result.Any(d => d.Keys.Count == 2));
+        Assert.Contains(result, d => d.Keys.Count == 1 && d.ContainsKey(typeof(string)));
+        Assert.Contains(result, d => d.Keys.Count == 2);
     }
 
     [Fact]

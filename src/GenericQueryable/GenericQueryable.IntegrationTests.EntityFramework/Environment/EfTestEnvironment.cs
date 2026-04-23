@@ -9,11 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 #endif
 
-[assembly: CommonFramework.Testing.CommonTestFramework<TestEnvironment>]
+[assembly: CommonFramework.Testing.CommonTestFramework<EfTestEnvironment>]
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class TestEnvironment : TestEnvironmentBase
+public class EfTestEnvironment : TestEnvironment
 {
     public override IServiceProvider BuildServiceProvider(IServiceCollection services) =>
 

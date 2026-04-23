@@ -36,7 +36,7 @@ public static class GenericProgram
             .AddInfrastructure(builder.Configuration)
             .AddConfigurator()
 
-            .AddAuthentication(NegotiateDefaults.AuthenticationSchema)
+            .AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             .AddNegotiate();
 
         init(builder);
