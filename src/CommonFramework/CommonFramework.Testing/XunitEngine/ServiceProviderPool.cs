@@ -8,6 +8,8 @@ namespace CommonFramework.Testing.XunitEngine;
 
 public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServiceProviderPool
 {
+    private int lastIndex;
+
     private readonly ConcurrentBag<IServiceProvider> pool = [];
 
     private readonly IServiceProviderSynchronizationContext serviceProviderSynchronizationLock =
@@ -45,6 +47,7 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
     private IServiceCollection CreateServiceCollection()
     {
         return new ServiceCollection()
-            .AddSingleton(this.serviceProviderSynchronizationLock);
+            .AddSingleton(this.serviceProviderSynchronizationLock)
+            .AddSingleton(new ServiceProviderIndex(Interlocked.Increment(ref this.lastIndex) - 1));
     }
 }

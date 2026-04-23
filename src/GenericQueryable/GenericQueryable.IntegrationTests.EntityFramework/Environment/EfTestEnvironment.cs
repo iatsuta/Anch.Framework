@@ -15,12 +15,11 @@ namespace GenericQueryable.IntegrationTests.Environment;
 
 public class EfTestEnvironment : TestEnvironment
 {
-    public override IServiceProvider BuildServiceProvider(IServiceCollection services) =>
+    protected override IServiceCollection AddServices(IServiceCollection services) =>
 
         services
             .AddDbContext<TestDbContext>()
             .AddScoped<IGenericRepository, EfGenericRepository>()
             .AddScoped<IQueryableSource, EfQueryableSource>()
-            .AddScoped<IDbSchemaInitializer, EfSchemaInitializer>()
-            .Pipe(base.BuildServiceProvider);
+            .AddScoped<IDbSchemaInitializer, EfSchemaInitializer>();
 }

@@ -16,3 +16,11 @@ public class FillTestDataInitializer(
             }
         });
 }
+
+public class RestoreBackupInitializer : IRestoreBackupInitializer
+{
+    public Task Initialize(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+}

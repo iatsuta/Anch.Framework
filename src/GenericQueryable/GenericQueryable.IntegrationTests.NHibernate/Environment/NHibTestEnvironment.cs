@@ -1,5 +1,4 @@
-﻿using CommonFramework;
-using CommonFramework.DependencyInjection;
+﻿using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
 using CommonFramework.IdentitySource.DependencyInjection;
 
@@ -20,10 +19,9 @@ namespace GenericQueryable.IntegrationTests.Environment;
 
 public class NHibTestEnvironment : TestEnvironment
 {
-    public override IServiceProvider BuildServiceProvider(IServiceCollection services) =>
+    protected override IServiceCollection AddServices(IServiceCollection services) =>
 
-        services
-            .AddIdentitySource()
+        services.AddIdentitySource()
             .AddSingleton<ConfigurationSource>()
             .AddSingletonFrom((ConfigurationSource configurationSource) => configurationSource.BuildConfiguration())
             .AddSingletonFrom((global::NHibernate.Cfg.Configuration cfg) => cfg.BuildSessionFactory())
@@ -37,7 +35,5 @@ public class NHibTestEnvironment : TestEnvironment
 
             .AddScoped<IDbSchemaInitializer, NHibSchemaInitializer>()
 
-            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure)
-
-            .Pipe(base.BuildServiceProvider);
+            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure);
 }
