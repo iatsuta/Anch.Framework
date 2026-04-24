@@ -7,4 +7,6 @@ public interface IDatabaseManager
     ValueTask Remove(TestDatabaseConnectionString connectionString, CancellationToken ct);
 
     ValueTask Copy(TestDatabaseConnectionString from, TestDatabaseConnectionString to, bool force, CancellationToken ct);
+
+    ValueTask Move(TestDatabaseConnectionString from, TestDatabaseConnectionString to, bool force, CancellationToken ct);
 }

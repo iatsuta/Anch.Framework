@@ -42,7 +42,7 @@ public class CachedEmptySchemaInitializer(
         {
             await emptySchemaInitializer.Initialize(cancellationToken);
 
-            await databaseManager.Copy(settings.DefaultConnectionString, connectionStringProvider.EmptySnapshot, force, cancellationToken);
+            await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.EmptySnapshot, force, cancellationToken);
         }
         catch (Exception createSchemaEx)
         {
@@ -50,7 +50,7 @@ public class CachedEmptySchemaInitializer(
             {
                 try
                 {
-                    await databaseManager.Remove(connectionStringProvider.EmptySnapshot, cancellationToken);
+                    await databaseManager.Remove(connectionStringProvider.Actual, cancellationToken);
                     await databaseManager.Remove(settings.DefaultConnectionString, cancellationToken);
                 }
                 catch (Exception cleanEx)

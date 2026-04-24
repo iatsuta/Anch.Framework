@@ -59,4 +59,44 @@ public class FileDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : IDa
 
         return ValueTask.CompletedTask;
     }
+
+    public ValueTask Move(
+        TestDatabaseConnectionString from,
+        TestDatabaseConnectionString to,
+        bool force,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var sourcePath = pathExtractor.Extract(from);
+        var destinationPath = pathExtractor.Extract(to);
+
+        if (!File.Exists(sourcePath))
+        {
+            throw new FileNotFoundException("Source database file not found.", sourcePath);
+        }
+
+        var destinationExists = File.Exists(destinationPath);
+
+        if (destinationExists)
+        {
+            if (!force)
+            {
+                throw new IOException($"Destination file already exists: {destinationPath}");
+            }
+
+            File.Delete(destinationPath);
+        }
+
+        var directory = Path.GetDirectoryName(destinationPath);
+
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        File.Move(sourcePath, destinationPath);
+
+        return ValueTask.CompletedTask;
+    }
 }
