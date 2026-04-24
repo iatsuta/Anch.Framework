@@ -15,7 +15,7 @@ public abstract class TestEnvironment : ITestEnvironment
     private readonly DatabaseInitMode databaseInitMode =
 
 #if DEBUG
-        DatabaseInitMode.ReuseSnapshot;
+        DatabaseInitMode.RebuildSnapshot;
 #else
         DatabaseInitMode.RebuildSnapshot;
 #endif

@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
 
             .AddSingleton(typeof(ISynchronizedInitializer<>), typeof(SynchronizedInitializer<>))
 
-            .AddKeyedSingleton<IInitializer, CachingSharedTestDataInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey)
+            .AddKeyedSingleton<IInitializer, CachedEmptySchemaInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey)
             .AddKeyedSingleton<IInitializer, CachingSharedTestDataInitializer>(TestDatabaseInitializer.CachedSharedTestDataKey)
 
             .AddSingleton<IDatabaseManager, FileDatabaseManager>()

@@ -1,4 +1,5 @@
 ﻿using CommonFramework.Testing.Database.ConnectionStringManagement;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CommonFramework.Testing.Database.Initializers;
@@ -15,30 +16,50 @@ public class CachingSharedTestDataInitializer(
 
         synchronizedInitializer.Run(async () =>
         {
-            if (!await databaseManager.Exists(connectionStringProvider.FilledSnapshot, cancellationToken))
+            switch (settings.InitMode)
             {
-                try
+                case DatabaseInitMode.RebuildSnapshot:
                 {
-                    await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.FilledSnapshot, false, cancellationToken);
-
-                    await sharedTestDataInitializer.Initialize(cancellationToken);
+                    await this.InternalInitialize(true, cancellationToken);
+                    break;
                 }
-                catch (Exception createSchemaEx)
+
+                case DatabaseInitMode.ReuseSnapshot:
                 {
-                    if (settings.RemoveDatabaseOnFailure)
+                    if (!await databaseManager.Exists(connectionStringProvider.FilledSnapshot, cancellationToken))
                     {
-                        try
-                        {
-                            await databaseManager.Remove(connectionStringProvider.FilledSnapshot, cancellationToken);
-                        }
-                        catch (Exception cleanEx)
-                        {
-                            throw new AggregateException(createSchemaEx, cleanEx);
-                        }
+                        await this.InternalInitialize(false, cancellationToken);
                     }
 
-                    throw;
+                    break;
                 }
             }
         });
+
+
+    private async Task InternalInitialize(bool force, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.FilledSnapshot, force, cancellationToken);
+
+            await sharedTestDataInitializer.Initialize(cancellationToken);
+        }
+        catch (Exception createSchemaEx)
+        {
+            if (settings.RemoveDatabaseOnFailure)
+            {
+                try
+                {
+                    await databaseManager.Remove(connectionStringProvider.FilledSnapshot, cancellationToken);
+                }
+                catch (Exception cleanEx)
+                {
+                    throw new AggregateException(createSchemaEx, cleanEx);
+                }
+            }
+
+            throw;
+        }
+    }
 }

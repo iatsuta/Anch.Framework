@@ -16,31 +16,50 @@ public class CachedEmptySchemaInitializer(
 
         synchronizedInitializer.Run(async () =>
         {
-            if (!await databaseManager.Exists(connectionStringProvider.EmptySnapshot, cancellationToken))
+            switch (settings.InitMode)
             {
-                try
+                case DatabaseInitMode.RebuildSnapshot:
                 {
-                    await emptySchemaInitializer.Initialize(cancellationToken);
-
-                    await databaseManager.Copy(settings.DefaultConnectionString, connectionStringProvider.EmptySnapshot, false, cancellationToken);
+                    await this.InternalInitialize(true, cancellationToken);
+                    break;
                 }
-                catch (Exception createSchemaEx)
+
+                case DatabaseInitMode.ReuseSnapshot:
                 {
-                    if (settings.RemoveDatabaseOnFailure)
+                    if (!await databaseManager.Exists(connectionStringProvider.EmptySnapshot, cancellationToken))
                     {
-                        try
-                        {
-                            await databaseManager.Remove(connectionStringProvider.EmptySnapshot, cancellationToken);
-                            await databaseManager.Remove(settings.DefaultConnectionString, cancellationToken);
-                        }
-                        catch (Exception cleanEx)
-                        {
-                            throw new AggregateException(createSchemaEx, cleanEx);
-                        }
+                        await this.InternalInitialize(false, cancellationToken);
                     }
 
-                    throw;
+                    break;
                 }
             }
         });
+
+    private async Task InternalInitialize(bool force, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await emptySchemaInitializer.Initialize(cancellationToken);
+
+            await databaseManager.Copy(settings.DefaultConnectionString, connectionStringProvider.EmptySnapshot, force, cancellationToken);
+        }
+        catch (Exception createSchemaEx)
+        {
+            if (settings.RemoveDatabaseOnFailure)
+            {
+                try
+                {
+                    await databaseManager.Remove(connectionStringProvider.EmptySnapshot, cancellationToken);
+                    await databaseManager.Remove(settings.DefaultConnectionString, cancellationToken);
+                }
+                catch (Exception cleanEx)
+                {
+                    throw new AggregateException(createSchemaEx, cleanEx);
+                }
+            }
+
+            throw;
+        }
+    }
 }
