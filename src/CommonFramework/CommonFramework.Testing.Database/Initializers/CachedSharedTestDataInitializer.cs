@@ -45,7 +45,7 @@ public class CachedSharedTestDataInitializer(
 
             await sharedTestDataInitializer.Initialize(cancellationToken);
 
-            await databaseManager.Copy(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, force, cancellationToken);
+            await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, force, cancellationToken);
         }
         catch (Exception createSchemaEx)
         {
