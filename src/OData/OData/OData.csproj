@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CommonFramework\CommonFramework.Caching\CommonFramework.Caching.csproj" />
-    <ProjectReference Include="..\..\CommonFramework\CommonFramework.DependencyInjection\CommonFramework.DependencyInjection.csproj" />
-
     <ProjectReference Include="..\OData.Runtime\OData.Runtime.csproj" />
   </ItemGroup>
 

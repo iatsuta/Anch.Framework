@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CommonFramework\CommonFramework.IdentitySource\CommonFramework.IdentitySource.csproj" />
     <ProjectReference Include="..\..\GenericQueryable\GenericQueryable.NHibernate\GenericQueryable.NHibernate.csproj" />
     <ProjectReference Include="..\HierarchicalExpand.IntegrationTests\HierarchicalExpand.IntegrationTests.csproj" />
   </ItemGroup>

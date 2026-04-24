@@ -10,7 +10,6 @@
     <ProjectReference Include="..\..\CommonFramework\CommonFramework.IdentitySource.Abstractions\CommonFramework.IdentitySource.Abstractions.csproj" />
     <ProjectReference Include="..\..\CommonFramework\CommonFramework.RelativePath\CommonFramework.RelativePath.csproj" />
     <ProjectReference Include="..\..\CommonFramework\CommonFramework.VisualIdentitySource.Abstractions\CommonFramework.VisualIdentitySource.Abstractions.csproj" />
-    <ProjectReference Include="..\..\GenericQueryable\GenericQueryable.Abstractions\GenericQueryable.Abstractions.csproj" />
     <ProjectReference Include="..\SecuritySystem.Abstractions\SecuritySystem.Abstractions.csproj" />
   </ItemGroup>
 

@@ -8,7 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HierarchicalExpand.Domain\HierarchicalExpand.Domain.csproj" />
 
-    <ProjectReference Include="..\..\CommonFramework\CommonFramework\CommonFramework.csproj" />
   </ItemGroup>
 
 </Project>
