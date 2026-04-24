@@ -2,4 +2,4 @@
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public interface IDbSchemaInitializer : IInitializer;
+public interface IEmptySchemaInitializer : IInitializer;

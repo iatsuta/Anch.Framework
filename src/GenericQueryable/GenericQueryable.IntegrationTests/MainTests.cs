@@ -10,7 +10,7 @@ namespace GenericQueryable.IntegrationTests;
 
 public abstract class MainTests(IServiceProvider rootServiceProvider)
 {
-    private readonly Guid testObjId = rootServiceProvider.GetRequiredService<EmptyDatabaseSchemaSeeder>().TestObjId;
+    private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ISharedTestDataInitializer>().TestObjId;
 
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToArrayAsync_MethodInvoked(CancellationToken ct)

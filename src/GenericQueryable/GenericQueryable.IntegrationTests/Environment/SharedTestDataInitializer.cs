@@ -1,5 +1,4 @@
 ﻿using CommonFramework.GenericRepository;
-using CommonFramework.Testing.Database;
 
 using GenericQueryable.IntegrationTests.Domain;
 
@@ -7,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class EmptyDatabaseSchemaSeeder(IServiceProvider rootServiceProvider) : IEmptyDatabaseSchemaSeeder
+public class SharedTestDataInitializer(IServiceProvider rootServiceProvider) : ISharedTestDataInitializer
 {
-    public async Task SeedTestData(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken cancellationToken)
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
         var serviceProvider = scope.ServiceProvider;

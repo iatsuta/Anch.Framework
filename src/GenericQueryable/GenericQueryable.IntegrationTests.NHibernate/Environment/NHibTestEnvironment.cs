@@ -33,7 +33,7 @@ public class NHibTestEnvironment : TestEnvironment
             .AddScoped<IGenericRepository, NHibGenericRepository>()
             .AddScoped<IQueryableSource, NHibQueryableSource>()
 
-            .AddSingleton<IDbSchemaInitializer, NHibSchemaInitializer>()
+            .AddSingleton<IEmptySchemaInitializer, NHibEmptySchemaInitializer>()
 
             .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure);
 }

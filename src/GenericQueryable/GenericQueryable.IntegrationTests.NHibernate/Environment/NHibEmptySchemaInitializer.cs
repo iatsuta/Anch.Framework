@@ -2,7 +2,7 @@
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class NHibSchemaInitializer(global::NHibernate.Cfg.Configuration nhibConfiguration) : IDbSchemaInitializer
+public class NHibEmptySchemaInitializer(global::NHibernate.Cfg.Configuration nhibConfiguration) : IEmptySchemaInitializer
 {
     public async Task Initialize(CancellationToken cancellationToken)
     {

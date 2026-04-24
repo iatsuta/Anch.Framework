@@ -3,6 +3,7 @@ using CommonFramework.DependencyInjection;
 using CommonFramework.Testing;
 using CommonFramework.Testing.Database;
 using CommonFramework.Testing.Database.ConnectionStringManagement;
+using CommonFramework.Testing.Database.Initializers;
 using CommonFramework.Testing.Database.Sqlite;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -29,16 +30,13 @@ public abstract class TestEnvironment : ITestEnvironment
 
             .Pipe(this.AddServices)
 
-            .AddSingleton(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Mode=ReadWrite;") })
-            .AddSingleton<IDatabaseSchemaCreator, DatabaseSchemaCreator>()
-            .AddSingleton<EmptyDatabaseSchemaSeeder>()
-            .AddSingletonFrom<IEmptyDatabaseSchemaSeeder, EmptyDatabaseSchemaSeeder>()
-
+            .AddSingletonFrom<ISharedTestDataInitializer, SharedTestDataInitializer>()
 
             .ReplaceSingletonFrom<IMainConnectionStringSource, ITestConnectionStringProvider>(provider => new MainConnectionStringSource(provider.Actual.Value))
+            .AddSingleton(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Mode=ReadWrite;") })
 
-            //IDatabaseSchemaCreator
-
+            .AddKeyedSingleton<IInitializer>(TestDatabaseInitializer.EmptySchemaKey, (sp, _) => sp.GetRequiredService<IEmptySchemaInitializer>())
+            .AddKeyedSingleton<IInitializer>(TestDatabaseInitializer.SharedTestDataKey, (sp, _) => sp.GetRequiredService<ISharedTestDataInitializer>())
             .AddSqliteTesting()
 
             .AddValidator<DuplicateServiceUsageValidator>()

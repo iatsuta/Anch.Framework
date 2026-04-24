@@ -2,7 +2,7 @@
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class EfSchemaInitializer(IServiceProvider rootServiceProvider) : IDbSchemaInitializer
+public class EfEmptySchemaInitializer(IServiceProvider rootServiceProvider) : IEmptySchemaInitializer
 {
     public async Task Initialize(CancellationToken cancellationToken)
     {
