@@ -14,7 +14,7 @@ public class ConditionSecurityProvider<TDomainObject>(Expression<Func<TDomainObj
         return queryable.Where(securityFilter);
     }
 
-    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
+    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
 
-        this.expressionEvaluator.Evaluate(securityFilter, domainObject);
+        new(this.expressionEvaluator.Evaluate(securityFilter, domainObject));
 }

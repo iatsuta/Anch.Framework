@@ -7,25 +7,32 @@
   </Folder>
 
   <Folder Name="/CommonFramework/">
+    <Project Path="CommonFramework/CommonFramework.Threading/CommonFramework.Threading.csproj" />
     <Project Path="CommonFramework/CommonFramework/CommonFramework.csproj" /> 
     <Project Path="CommonFramework/CommonFramework.DependencyInjection/CommonFramework.DependencyInjection.csproj" />
     <Project Path="CommonFramework/CommonFramework.GenericRepository/CommonFramework.GenericRepository.csproj" />
     <Project Path="CommonFramework/CommonFramework.Parsing/CommonFramework.Parsing.csproj" />
     <Project Path="CommonFramework/CommonFramework.RelativePath/CommonFramework.RelativePath.csproj" />
   </Folder>
+  
   <Folder Name="/CommonFramework/Caching/">
     <Project Path="CommonFramework/CommonFramework.Caching.Abstractions/CommonFramework.Caching.Abstractions.csproj" />
     <Project Path="CommonFramework/CommonFramework.Caching.Runtime/CommonFramework.Caching.Runtime.csproj" />
     <Project Path="CommonFramework/CommonFramework.Caching/CommonFramework.Caching.csproj" />
   </Folder>
+  
   <Folder Name="/CommonFramework/IdentitySource/">
     <Project Path="CommonFramework/CommonFramework.IdentitySource.Abstractions/CommonFramework.IdentitySource.Abstractions.csproj" />
     <Project Path="CommonFramework/CommonFramework.IdentitySource.Runtime/CommonFramework.IdentitySource.Runtime.csproj" />
     <Project Path="CommonFramework/CommonFramework.IdentitySource/CommonFramework.IdentitySource.csproj" />
   </Folder>
+  
   <Folder Name="/CommonFramework/Testing/">
+    <Project Path="CommonFramework/CommonFramework.Testing.Database.Sqlite/CommonFramework.Testing.Database.Sqlite.csproj" />
+    <Project Path="CommonFramework/CommonFramework.Testing.Database/CommonFramework.Testing.Database.csproj" />
     <Project Path="CommonFramework/CommonFramework.Testing/CommonFramework.Testing.csproj" />
   </Folder>
+  
   <Folder Name="/CommonFramework/VisualIdentitySource/">
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Abstractions/CommonFramework.VisualIdentitySource.Abstractions.csproj" />
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Runtime/CommonFramework.VisualIdentitySource.Runtime.csproj" />
@@ -67,6 +74,7 @@
     <Project Path="HierarchicalExpand/HierarchicalExpand.IntegrationTests/HierarchicalExpand.IntegrationTests.csproj" />
     <Project Path="HierarchicalExpand/HierarchicalExpand.Tests/HierarchicalExpand.Tests.csproj" />
   </Folder>
+  
   <Folder Name="/OData/">
     <Project Path="OData/OData.Abstractions/OData.Abstractions.csproj" />
     <Project Path="OData/OData.Domain/OData.Domain.csproj" />

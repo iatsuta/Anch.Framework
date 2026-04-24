@@ -19,7 +19,7 @@ public class SecurityRoleTests(IServiceProvider rootServiceProvider)
         var adminRole = securityRoleSource.GetSecurityRole(SecurityRole.Administrator);
 
         // Assert
-        Assert.False(adminRole.Information.Children.Contains(SecurityRole.SystemIntegration));
+        Assert.DoesNotContain(SecurityRole.SystemIntegration, adminRole.Information.Children);
     }
 
     [Fact]

@@ -8,29 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GenericQueryable.IntegrationTests;
 
-public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLifetime
+public abstract class MainTests(IServiceProvider rootServiceProvider)
 {
-    private readonly Guid testObjId = Guid.NewGuid();
-
-    protected virtual async ValueTask InitializeAsync(CancellationToken ct)
-    {
-        {
-            await using var scope = rootServiceProvider.CreateAsyncScope();
-
-            await scope.ServiceProvider.GetRequiredService<IDbSchemaInitializer>().Initialize(ct);
-        }
-
-        {
-            await using var scope = rootServiceProvider.CreateAsyncScope();
-            var serviceProvider = scope.ServiceProvider;
-            var genericRepository = serviceProvider.GetRequiredService<IGenericRepository>();
-
-            var fetchObj = new FetchObject();
-
-            await genericRepository.SaveAsync(fetchObj, ct);
-            await genericRepository.SaveAsync(new TestObject { Id = this.testObjId, FetchObject = fetchObj }, ct);
-        }
-    }
+    private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ISharedTestDataInitializer>().TestObjId;
 
     [CommonFact]
     public async Task DefaultGenericQueryable_InvokeToArrayAsync_MethodInvoked(CancellationToken ct)
@@ -138,8 +118,4 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : IAsyncLi
         // Assert
         Assert.Single(result, testObj => testObj.Id == this.testObjId);
     }
-
-    ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
-
-    ValueTask IAsyncDisposable.DisposeAsync() => ValueTask.CompletedTask;
 }

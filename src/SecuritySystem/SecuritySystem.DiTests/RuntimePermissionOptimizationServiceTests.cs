@@ -38,8 +38,8 @@ public class RuntimePermissionOptimizationServiceTests
         var result = this.service.Optimize(permissions).ToList();
 
         Assert.Equal(2, result.Count);
-        Assert.True(result.Any(d => d.ContainsKey(typeof(string))));
-        Assert.True(result.Any(d => d.ContainsKey(typeof(int))));
+        Assert.Contains(result, d => d.ContainsKey(typeof(string)));
+        Assert.Contains(result, d => d.ContainsKey(typeof(int)));
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class RuntimePermissionOptimizationServiceTests
         var result = this.service.Optimize(permissions).ToList();
 
         Assert.Equal(2, result.Count);
-        Assert.True(result.Any(d => d.Keys.Count == 1 && d.ContainsKey(typeof(string))));
-        Assert.True(result.Any(d => d.Keys.Count == 2));
+        Assert.Contains(result, d => d.Keys.Count == 1 && d.ContainsKey(typeof(string)));
+        Assert.Contains(result, d => d.Keys.Count == 2);
     }
 
     [Fact]

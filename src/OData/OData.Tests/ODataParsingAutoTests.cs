@@ -273,6 +273,7 @@ public class ODataParsingAutoTests : TestBase
         call();
     }
 
+    [Theory]
     [InlineData("M")]
     public void SelectOperation_ParseNegativeDecimalNumberInFilter_NoException(string m)
     {

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>IvAt.CommonFramework.Testing.Database</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommonFramework.Testing\CommonFramework.Testing.csproj" />
+    <ProjectReference Include="..\CommonFramework\CommonFramework.csproj" />
+  </ItemGroup>
+
+</Project>

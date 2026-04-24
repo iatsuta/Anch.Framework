@@ -1,5 +1,4 @@
-﻿using CommonFramework;
-using CommonFramework.DependencyInjection;
+﻿using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
 using CommonFramework.IdentitySource.DependencyInjection;
 
@@ -14,17 +13,17 @@ using NHibernate;
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 #endif
 
-[assembly:CommonFramework.Testing.CommonTestFramework<TestEnvironment>]
+[assembly:CommonFramework.Testing.CommonTestFramework<NHibTestEnvironment>]
 
 namespace GenericQueryable.IntegrationTests.Environment;
 
-public class TestEnvironment : TestEnvironmentBase
+public class NHibTestEnvironment : TestEnvironment
 {
-    public override IServiceProvider BuildServiceProvider(IServiceCollection services) =>
+    protected override IServiceCollection AddServices(IServiceCollection services) =>
 
-        services
-            .AddIdentitySource()
-            .AddSingleton(BuildConfigurationHelper.BuildConfiguration("Data Source=TestSystem.sqlite"))
+        services.AddIdentitySource()
+            .AddSingleton<ConfigurationSource>()
+            .AddSingletonFrom((ConfigurationSource configurationSource) => configurationSource.BuildConfiguration())
             .AddSingletonFrom((global::NHibernate.Cfg.Configuration cfg) => cfg.BuildSessionFactory())
             .AddScopedFrom((ISessionFactory sessionFactory) => sessionFactory.OpenSession())
 
@@ -34,9 +33,7 @@ public class TestEnvironment : TestEnvironmentBase
             .AddScoped<IGenericRepository, NHibGenericRepository>()
             .AddScoped<IQueryableSource, NHibQueryableSource>()
 
-            .AddScoped<IDbSchemaInitializer, DbSchemaInitializer>()
+            .AddSingleton<IEmptySchemaInitializer, NHibEmptySchemaInitializer>()
 
-            .AddNHibernateGenericQueryable(SetupGenericQueryable)
-
-            .Pipe(base.BuildServiceProvider);
+            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure);
 }

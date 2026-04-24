@@ -9,4 +9,9 @@
     <PackageReference Include="xunit.v3.extensibility.core" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommonFramework.Threading\CommonFramework.Threading.csproj" />
+    <ProjectReference Include="..\CommonFramework\CommonFramework.csproj" />
+  </ItemGroup>
+
 </Project>

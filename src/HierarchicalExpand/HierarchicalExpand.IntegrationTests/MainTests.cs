@@ -27,7 +27,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider) : TestBase
         var dict = hierarchicalObjectExpander.ExpandWithParents([rootBuId], HierarchicalExpandType.Parents);
 
         // Assert
-        Assert.Equal(1, dict.Count);
+        Assert.Single(dict);
         Assert.Equivalent(new Dictionary<Guid, Guid> { { rootBuId, Guid.Empty } }, dict);
     }
 

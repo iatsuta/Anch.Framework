@@ -7,4 +7,5 @@ indent_style = space
 indent_size = 2
 
 [*.cs]
+max_line_length = 160
 dotnet_diagnostic.SA1101.severity = error

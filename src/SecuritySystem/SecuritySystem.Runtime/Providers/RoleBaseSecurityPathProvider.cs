@@ -53,8 +53,7 @@ public class RoleBaseSecurityPathProvider<TDomainObject>(
         return new SecurityAccessorData.FixedSecurityAccessorData(accessors);
     }
 
-    private async ValueTask<SecurityFilterInfo<TDomainObject>> GetOrCreateSecurityFilterInfo(CancellationToken cancellationToken)
-    {
-        return this.securityFilterCache ??= await securityFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
-    }
+    private async ValueTask<SecurityFilterInfo<TDomainObject>> GetOrCreateSecurityFilterInfo(CancellationToken cancellationToken) =>
+
+        this.securityFilterCache ??= await securityFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
 }
