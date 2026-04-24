@@ -2,8 +2,7 @@
 using CommonFramework.DependencyInjection;
 using CommonFramework.Testing;
 using CommonFramework.Testing.Database;
-using CommonFramework.Testing.Database.ConnectionStringManagement;
-using CommonFramework.Testing.Database.Initializers;
+using CommonFramework.Testing.Database.DependencyInjection;
 using CommonFramework.Testing.Database.Sqlite;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -32,12 +31,12 @@ public abstract class TestEnvironment : ITestEnvironment
 
             .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
 
-            .ReplaceSingletonFrom<IMainConnectionStringSource, ITestConnectionStringProvider>(provider => new MainConnectionStringSource(provider.Actual.Value))
-            .AddSingleton(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Pooling=False") })
-
-            .AddKeyedSingleton<IInitializer>(TestDatabaseInitializer.EmptySchemaKey, (sp, _) => sp.GetRequiredService<IEmptySchemaInitializer>())
-            .AddKeyedSingleton<IInitializer>(TestDatabaseInitializer.SharedTestDataKey, (sp, _) => sp.GetRequiredService<ISharedTestDataInitializer>())
-            .AddSqliteTesting()
+            .AddDatabaseTesting(dts => dts
+                .SetProvider<SqliteDatabaseTestingProvider>()
+                .SetEmptySchemaInitializer<IEmptySchemaInitializer>()
+                .SetSharedTestDataInitializer<ISharedTestDataInitializer>()
+                .SetSettings(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Pooling=False") })
+                .RebindActualConnection<IMainConnectionStringSource>(connectionString => new MainConnectionStringSource(connectionString.Value)))
 
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()

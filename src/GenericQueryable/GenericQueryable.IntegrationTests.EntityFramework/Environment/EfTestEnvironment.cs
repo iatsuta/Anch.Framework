@@ -5,7 +5,7 @@ using GenericQueryable.IntegrationTests.Environment;
 using Microsoft.Extensions.DependencyInjection;
 
 #if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(DisableTestParallelization = false)]
 #endif
 
 [assembly: CommonFramework.Testing.CommonTestFramework<EfTestEnvironment>]
