@@ -20,5 +20,6 @@ public class EfTestEnvironment : TestEnvironment
             .AddDbContext<TestDbContext>()
             .AddScoped<IGenericRepository, EfGenericRepository>()
             .AddScoped<IQueryableSource, EfQueryableSource>()
-            .AddScoped<IEmptySchemaInitializer, EfEmptySchemaInitializer>();
+
+            .AddSingleton<IEmptySchemaInitializer, EfEmptySchemaInitializer>();
 }

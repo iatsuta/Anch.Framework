@@ -30,7 +30,7 @@ public abstract class TestEnvironment : ITestEnvironment
 
             .Pipe(this.AddServices)
 
-            .AddSingletonFrom<ISharedTestDataInitializer, SharedTestDataInitializer>()
+            .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
 
             .ReplaceSingletonFrom<IMainConnectionStringSource, ITestConnectionStringProvider>(provider => new MainConnectionStringSource(provider.Actual.Value))
             .AddSingleton(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Mode=ReadWrite;") })
