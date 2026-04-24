@@ -12,5 +12,7 @@ public class EfEmptySchemaInitializer(IServiceProvider rootServiceProvider) : IE
 
         await dbContext.Database.EnsureDeletedAsync(cancellationToken);
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

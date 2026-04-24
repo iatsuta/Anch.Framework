@@ -33,7 +33,7 @@ public abstract class TestEnvironment : ITestEnvironment
             .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
 
             .ReplaceSingletonFrom<IMainConnectionStringSource, ITestConnectionStringProvider>(provider => new MainConnectionStringSource(provider.Actual.Value))
-            .AddSingleton(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db") })
+            .AddSingleton(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Pooling=False") })
 
             .AddKeyedSingleton<IInitializer>(TestDatabaseInitializer.EmptySchemaKey, (sp, _) => sp.GetRequiredService<IEmptySchemaInitializer>())
             .AddKeyedSingleton<IInitializer>(TestDatabaseInitializer.SharedTestDataKey, (sp, _) => sp.GetRequiredService<ISharedTestDataInitializer>())

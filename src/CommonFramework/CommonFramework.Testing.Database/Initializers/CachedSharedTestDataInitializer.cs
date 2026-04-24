@@ -41,9 +41,11 @@ public class CachedSharedTestDataInitializer(
     {
         try
         {
-            await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.FilledSnapshot, force, cancellationToken);
+            await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.Actual, force, cancellationToken);
 
             await sharedTestDataInitializer.Initialize(cancellationToken);
+
+            await databaseManager.Copy(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, force, cancellationToken);
         }
         catch (Exception createSchemaEx)
         {
@@ -51,6 +53,7 @@ public class CachedSharedTestDataInitializer(
             {
                 try
                 {
+                    await databaseManager.Remove(connectionStringProvider.Actual, cancellationToken);
                     await databaseManager.Remove(connectionStringProvider.FilledSnapshot, cancellationToken);
                 }
                 catch (Exception cleanEx)
