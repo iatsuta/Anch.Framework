@@ -4,16 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 #if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(DisableTestParallelization = false)]
 #endif
 
-[assembly: CommonFramework.Testing.CommonTestFramework<ExampleApp.IntegrationTests.Environment.TestEnvironment>]
+[assembly: CommonFramework.Testing.CommonTestFramework<ExampleApp.IntegrationTests.Environment.EfTestEnvironment>]
 
 namespace ExampleApp.IntegrationTests.Environment;
 
-public class TestEnvironment : TestEnvironmentBase
+public class EfTestEnvironment : TestEnvironment
 {
     protected override IServiceCollection InitializeServices(IServiceCollection services, IConfiguration configuration) =>
-        services.AddNHibernateInfrastructure(configuration)
-            .AddSingleton(configuration);
+        services.AddEntityFrameworkInfrastructure(configuration);
 }

@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HierarchicalExpand.IntegrationTests.Environment;
 
-public abstract class TestEnvironmentBase : ITestEnvironment
+public abstract class TestEnvironment : ITestEnvironment
 {
     private readonly DatabaseInitMode databaseInitMode =
 

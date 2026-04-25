@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
 
 #if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(DisableTestParallelization = false)]
 #endif
 
 [assembly:CommonFramework.Testing.CommonTestFramework<NHibTestEnvironment>]

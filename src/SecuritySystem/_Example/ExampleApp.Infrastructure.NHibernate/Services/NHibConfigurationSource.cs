@@ -1,5 +1,4 @@
 ﻿using ExampleApp.Infrastructure.Mapping;
-
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
@@ -15,11 +14,11 @@ using NHibernate.Driver;
 using NHibernate.Linq.Functions;
 using NHibernate.Tool.hbm2ddl;
 
-namespace ExampleApp.Infrastructure.DependencyInjection;
+namespace ExampleApp.Infrastructure.Services;
 
-public static class BuildConfigurationHelper
+public class NHibConfigurationSource(IMainConnectionStringSource mainConnectionStringSource)
 {
-    public static Configuration BuildConfiguration(string connectionString)
+    public Configuration BuildConfiguration()
     {
         var cfg = new Configuration();
 
@@ -28,7 +27,7 @@ public static class BuildConfigurationHelper
             .Database(SQLiteConfiguration.Standard
                 .Dialect<SQLiteDialect>()
                 .Driver<SQLite20Driver>()
-                .ConnectionString(connectionString))
+                .ConnectionString(mainConnectionStringSource.ConnectionString))
             .Mappings(
                 m =>
                 {

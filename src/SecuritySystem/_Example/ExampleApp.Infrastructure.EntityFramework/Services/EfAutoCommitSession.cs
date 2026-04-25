@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ExampleApp.Infrastructure.Services;
 
-public sealed class AutoCommitSession : IAsyncDisposable, IDisposable
+public sealed class EfAutoCommitSession : IAsyncDisposable, IDisposable
 {
     private readonly RelationalTransaction efTransaction;
 
     private bool closed;
 
-    public AutoCommitSession(AppDbContext nativeSession)
+    public EfAutoCommitSession(AppDbContext nativeSession)
     {
         this.NativeSession = nativeSession;
 

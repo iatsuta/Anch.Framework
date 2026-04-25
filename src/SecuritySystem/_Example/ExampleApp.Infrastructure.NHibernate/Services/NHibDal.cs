@@ -4,7 +4,7 @@ using GenericQueryable.Services;
 namespace ExampleApp.Infrastructure.Services;
 
 public class NHibDal<TDomainObject>(
-    AutoCommitSession session,
+    NHibAutoCommitSession session,
     IDomainObjectSaveStrategy<TDomainObject> saveStrategy,
     IGenericQueryableExecutor genericQueryableExecutor,
     INHibExpressionVisitorSource? nhibExpressionVisitorSource = null) : IDal<TDomainObject>

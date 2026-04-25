@@ -4,13 +4,13 @@ using NHibernate;
 
 namespace ExampleApp.Infrastructure.Services;
 
-public sealed class AutoCommitSession : IAsyncDisposable, IDisposable
+public sealed class NHibAutoCommitSession : IAsyncDisposable, IDisposable
 {
     private readonly ITransaction nhibTransaction;
 
     private bool closed;
 
-    public AutoCommitSession(ISessionFactory sessionFactory)
+    public NHibAutoCommitSession(ISessionFactory sessionFactory)
     {
         this.NativeSession = sessionFactory.OpenSession();
         this.NativeSession.FlushMode = FlushMode.Manual;

@@ -9,14 +9,14 @@ using HierarchicalExpand.IntegrationTests.Environment.UndirectView;
 using Microsoft.Extensions.DependencyInjection;
 
 #if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(DisableTestParallelization = false)]
 #endif
 
 [assembly: CommonFramework.Testing.CommonTestFramework<HierarchicalExpand.IntegrationTests.Environment.NHibTestEnvironment>]
 
 namespace HierarchicalExpand.IntegrationTests.Environment;
 
-public class NHibTestEnvironment : TestEnvironmentBase
+public class NHibTestEnvironment : TestEnvironment
 {
     protected override IServiceCollection InitializeServices(IServiceCollection services)
     {
