@@ -47,7 +47,7 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
         }
         else
         {
-            databaseTestingProvider.AddServices(services);
+            this.databaseTestingProvider.AddServices(services);
         }
     }
 

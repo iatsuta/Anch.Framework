@@ -69,7 +69,7 @@ public class CommonTestClassRunner : XunitTestClassRunnerBase<CommonTestClassRun
         }
     }
     public async ValueTask<RunSummary> Run(
-        IXunitTestCollection testCollection,
+        IXunitTestClass testClass,
         IReadOnlyCollection<IXunitTestCase> testCases,
         ExplicitOption explicitOption,
         IMessageBus messageBus,
@@ -79,7 +79,7 @@ public class CommonTestClassRunner : XunitTestClassRunnerBase<CommonTestClassRun
         FixtureMappingManager assemblyFixtureMappings,
         IServiceProvider? serviceProvider)
     {
-        Guard.ArgumentNotNull(testCollection);
+        Guard.ArgumentNotNull(testClass);
         Guard.ArgumentNotNull(testCases);
         Guard.ArgumentNotNull(messageBus);
         Guard.ArgumentNotNull(testCaseOrderer);
@@ -87,7 +87,7 @@ public class CommonTestClassRunner : XunitTestClassRunnerBase<CommonTestClassRun
         Guard.ArgumentNotNull(assemblyFixtureMappings);
 
         await using var ctxt = new CommonTestClassRunnerContext(
-            testCollection,
+            testClass,
             testCases,
             explicitOption,
             messageBus,
@@ -99,6 +99,6 @@ public class CommonTestClassRunner : XunitTestClassRunnerBase<CommonTestClassRun
 
         await ctxt.InitializeAsync();
 
-        return await Run(ctxt);
+        return await this.Run(ctxt);
     }
 }
