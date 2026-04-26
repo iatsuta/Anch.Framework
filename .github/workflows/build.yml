@@ -11,8 +11,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+
       - run: git config --global core.autocrlf true
+
+      - name: Set up node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
+
+      - name: Build UI
+        working-directory: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
+        run: |
+          npm ci
+          npm run ng build
+
       - uses: actions/checkout@v5
 
       - name: Setup .NET
