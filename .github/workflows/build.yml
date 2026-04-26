@@ -52,7 +52,7 @@ jobs:
 
       - name: CommonFramework IdentitySource unit tests
         run: |
-          dotnet test src/IdentitySourc/Anch.IdentitySource.Tests --no-build --verbosity normal -c Release
+          dotnet test src/IdentitySource/Anch.IdentitySource.Tests --no-build --verbosity normal -c Release
 
       - name: CommonFramework VisualIdentitySource unit tests
         run: |
