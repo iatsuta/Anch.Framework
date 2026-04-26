@@ -1,0 +1,21 @@
+﻿using Anch.Core;
+
+namespace Anch.HierarchicalExpand.Denormalization;
+
+public record SyncResult<TDomainObject, TDirectAncestorLink>(
+    DeepEqualsCollection<AncestorLinkData<TDomainObject>> Adding,
+    DeepEqualsCollection<TDirectAncestorLink> Removing)
+{
+    public SyncResult(IEnumerable<AncestorLinkData<TDomainObject>> adding,
+        IEnumerable<TDirectAncestorLink> removing) :
+        this(DeepEqualsCollection.Create(adding), DeepEqualsCollection.Create(removing))
+    {
+    }
+
+    public SyncResult<TDomainObject, TDirectAncestorLink> Union(SyncResult<TDomainObject, TDirectAncestorLink> other)
+    {
+        return new SyncResult<TDomainObject, TDirectAncestorLink>(this.Adding.Union(other.Adding).ToArray(), this.Removing.Union(other.Removing).ToArray());
+    }
+
+    public static SyncResult<TDomainObject, TDirectAncestorLink> Empty { get; } = new([], []);
+}

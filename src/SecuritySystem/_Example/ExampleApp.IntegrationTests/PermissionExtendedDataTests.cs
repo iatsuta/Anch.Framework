@@ -1,10 +1,11 @@
-﻿using ExampleApp.Application;
+﻿using Anch.SecuritySystem.Testing;
+using ExampleApp.Application;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class PermissionExtendedDataTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_WithExtendedValue_ShouldPersistExtendedData(CancellationToken ct)
     {
         // Arrange

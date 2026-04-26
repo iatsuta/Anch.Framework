@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.SecuritySystem.GeneralPermission.Abstractions</PackageId>
+    <RootNamespace>Anch.SecuritySystem.GeneralPermission</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.SecuritySystem.Abstractions\Anch.SecuritySystem.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,31 @@
+﻿using System.Linq.Expressions;
+using System.Reflection;
+
+namespace Anch.GenericQueryable.Services;
+
+public class MethodRedirector(ITargetMethodExtractor targetMethodExtractor) : IMethodRedirector
+{
+	public Expression<Func<TResult>>? TryRedirect<TResult>(Expression<Func<TResult>> callExpression)
+	{
+		if (callExpression.Body is MethodCallExpression methodCallExpression)
+		{
+			var targetMethod = targetMethodExtractor.TryGetTargetMethod(methodCallExpression.Method);
+
+			if (targetMethod != null)
+			{
+				var args = methodCallExpression.Arguments.Take(targetMethod.GetParameters().Length);
+
+				var newCallExpression = this.CreateCallExpression(targetMethod, args);
+
+				return Expression.Lambda<Func<TResult>>(newCallExpression);
+			}
+		}
+
+		return null;
+	}
+
+	protected virtual Expression CreateCallExpression(MethodInfo targetMethod, IEnumerable<Expression> args)
+	{
+		return Expression.Call(targetMethod, args);
+	}
+}

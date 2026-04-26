@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Caching.Abstractions</PackageId>
+    <RootNamespace>Anch.Caching</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -1,9 +1,7 @@
-﻿using CommonFramework;
-using HierarchicalExpand.Denormalization;
-
+﻿using Anch.Core;
+using Anch.HierarchicalExpand.Denormalization;
+using Anch.SecuritySystem.GeneralPermission.Initialize;
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem.GeneralPermission.Initialize;
 
 namespace ExampleApp.Infrastructure.Services;
 

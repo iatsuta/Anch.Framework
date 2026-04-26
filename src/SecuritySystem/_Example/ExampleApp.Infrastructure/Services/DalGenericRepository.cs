@@ -1,5 +1,4 @@
-﻿using CommonFramework.GenericRepository;
-
+﻿using Anch.GenericRepository;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.Infrastructure.Services;

@@ -1,0 +1,3 @@
+﻿namespace Anch.SecuritySystem.DependencyInjection;
+
+public record PreInitializerFullSecurityRole(FullSecurityRole FullSecurityRole);

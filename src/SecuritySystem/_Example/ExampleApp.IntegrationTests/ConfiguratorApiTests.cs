@@ -1,11 +1,12 @@
-﻿using SecuritySystem;
-using SecuritySystem.ExternalSystem.Management;
+﻿using Anch.SecuritySystem;
+using Anch.SecuritySystem.ExternalSystem.Management;
+using Anch.SecuritySystem.Testing;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class ConfiguratorApiTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task GetLinkedPrincipalsAsync_ReturnsAllPrincipalsLinkedToRole(CancellationToken ct)
     {
         // Arrange
@@ -27,7 +28,7 @@ public abstract class ConfiguratorApiTests(IServiceProvider rootServiceProvider)
         Assert.Equivalent(expectedResults, principalNames.OrderBy(v => v));
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipalsAsync_ReturnsRootUserForRootPrincipal(CancellationToken ct)
     {
         // Arrange

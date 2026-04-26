@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.SecuritySystem.Runtime</PackageId>
+    <RootNamespace>Anch.SecuritySystem</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Anch.GenericRepository\Anch.GenericRepository.csproj" />
+    <ProjectReference Include="..\..\IdentitySource\Anch.IdentitySource.Abstractions\Anch.IdentitySource.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Core\Anch.RelativePath\Anch.RelativePath.csproj" />
+    <ProjectReference Include="..\..\VisualIdentitySource\Anch.VisualIdentitySource.Abstractions\Anch.VisualIdentitySource.Abstractions.csproj" />
+    <ProjectReference Include="..\Anch.SecuritySystem.Abstractions\Anch.SecuritySystem.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

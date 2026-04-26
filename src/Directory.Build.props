@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <RepositoryUrl>https://github.com/iatsuta/IvAt.Framework</RepositoryUrl>
+    <RepositoryUrl>https://github.com/iatsuta/Anch.Framework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -22,10 +22,6 @@
     <EmbedAllSources>true</EmbedAllSources>
     <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\__SolutionItems\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs"/>
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\..\__RootSolutionItems\RootCommonAssemblyInfo.cs" Link="Properties\RootCommonAssemblyInfo.cs"/>

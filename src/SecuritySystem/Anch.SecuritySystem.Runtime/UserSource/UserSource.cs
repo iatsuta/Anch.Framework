@@ -1,0 +1,33 @@
+﻿using Anch.Core;
+using Anch.GenericQueryable;
+
+namespace Anch.SecuritySystem.UserSource;
+
+public class UserSource<TUser>(IUserQueryableSource<TUser> userQueryableSource, IMissedUserService<TUser> missedUserService) : IUserSource<TUser>
+    where TUser : class
+{
+    private readonly Dictionary<UserCredential, TUser?> tryGetUserCache = new();
+
+    private readonly Dictionary<UserCredential, TUser> getUserCache = new();
+
+    private IUserSource<User>? simpleCache;
+
+    public Type UserType { get; } = typeof(TUser);
+
+    public ValueTask<TUser?> TryGetUserAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    {
+        return this.tryGetUserCache.GetValueOrCreateAsync(userCredential,
+            async () => await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken));
+    }
+
+    public ValueTask<TUser> GetUserAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    {
+        return this.getUserCache.GetValueOrCreateAsync(userCredential, async () =>
+            await this.TryGetUserAsync(userCredential, cancellationToken) ?? missedUserService.GetUser(userCredential));
+    }
+
+    public IUserSource<User> ToSimple()
+    {
+        return this.simpleCache ??= new UserSource<User>(userQueryableSource.ToSimple(), missedUserService.ToSimple());
+    }
+}

@@ -1,13 +1,14 @@
-﻿using CommonFramework.GenericRepository;
+﻿using Anch.GenericRepository;
+using Anch.SecuritySystem;
+using Anch.SecuritySystem.Notification;
+using Anch.SecuritySystem.Notification.Domain;
+using Anch.SecuritySystem.Services;
+using Anch.SecuritySystem.Testing;
 using ExampleApp.Application;
 using ExampleApp.Domain;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem;
-using SecuritySystem.Notification;
-using SecuritySystem.Notification.Domain;
-using SecuritySystem.Services;
+using TestPermission = Anch.SecuritySystem.Testing.TestPermission;
 
 namespace ExampleApp.IntegrationTests;
 
@@ -60,7 +61,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 		this.rootEmployee = await this.SaveEmployee(nameof(this.rootEmployee), ct);
 	}
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_Direct_Test1_Searched(CancellationToken ct)
     {
         // Arrange
@@ -108,7 +109,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_Direct_Test2_Missed(CancellationToken ct)
     {
         // Arrange
@@ -141,7 +142,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Empty(result);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_Direct_Test3_Missed(CancellationToken ct)
     {
         // Arrange
@@ -182,7 +183,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Empty(result);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_Direct_Test4_Searched(CancellationToken ct)
     {
         // Arrange
@@ -224,7 +225,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Single(result);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_DirectOrEmpty_Test1_Searched(CancellationToken ct)
     {
         // Arrange
@@ -265,7 +266,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_DirectOrFirstParentOrEmpty_Test1_Searched(CancellationToken ct)
     {
         // Arrange
@@ -307,7 +308,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equal(this.searchNotificationEmployeeLogin1, result.Single());
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_DirectOrFirstParentOrEmpty_Test2_Searched(CancellationToken ct)
     {
         // Arrange
@@ -349,8 +350,8 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
     }
 
     [Theory]
-    [CommonInlineData(true)]
-    [CommonInlineData(false)]
+    [AnchInlineData(true)]
+    [AnchInlineData(false)]
     public async Task GetPrincipals_DirectOrFirstParentOrEmpty_Test3_Searched(bool swapPriority, CancellationToken ct)
     {
         // Arrange
@@ -392,7 +393,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equal(swapPriority ? this.searchNotificationEmployeeLogin2 : this.searchNotificationEmployeeLogin1, result.Single());
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task GetPrincipals_All_Test1_Searched(CancellationToken ct)
     {
         // Arrange
@@ -436,7 +437,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Contains(this.searchNotificationEmployeeLogin2, result);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit(CancellationToken ct)
     {
         // Arrange
@@ -464,7 +465,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equivalent(new[] { testUserName }, principalNames);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task NotificationPrincipalExtractor_ReturnsUser_ForTypedFilterGroup(CancellationToken ct)
     {
         // Arrange
@@ -499,7 +500,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equivalent(new[] { testUserName }, principalNames);
     }
 
-    //[CommonFact]
+    //[AnchFact]
     //public async Task VirtualPermissionTest()
     //{
     //    // Arrange

@@ -1,0 +1,14 @@
+﻿using System.Collections.Concurrent;
+using Anch.Core;
+
+namespace Anch.HierarchicalExpand;
+
+public class HierarchicalObjectExpanderFactory(
+    IServiceProxyFactory serviceProxyFactory,
+    IHierarchicalObjectExpanderTypeResolver hierarchicalObjectExpanderTypeResolver)
+    : IHierarchicalObjectExpanderFactory
+{
+    private readonly ConcurrentDictionary<Type, IHierarchicalObjectExpander> cache = [];
+
+    public IHierarchicalObjectExpander Create(Type domainType) => this.cache.GetOrAdd(domainType, _ => serviceProxyFactory.Create<IHierarchicalObjectExpander>(hierarchicalObjectExpanderTypeResolver.Resolve(domainType)));
+}

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.HierarchicalExpand.Domain</PackageId>
+    <RootNamespace>Anch.HierarchicalExpand</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Anch.Core\Anch.Core.csproj" />
+  </ItemGroup>
+
+</Project>

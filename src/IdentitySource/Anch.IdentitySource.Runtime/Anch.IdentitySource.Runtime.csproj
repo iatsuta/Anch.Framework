@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.IdentitySource.Runtime</PackageId>
+    <RootNamespace>Anch.IdentitySource</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.IdentitySource.Abstractions\Anch.IdentitySource.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

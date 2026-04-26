@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GenericQueryable\GenericQueryable.NHibernate\GenericQueryable.NHibernate.csproj" />
+    <ProjectReference Include="..\..\..\GenericQueryable\Anch.GenericQueryable.NHibernate\Anch.GenericQueryable.NHibernate.csproj" />
     <ProjectReference Include="..\ExampleApp.Infrastructure\ExampleApp.Infrastructure.csproj" />
   </ItemGroup>
 

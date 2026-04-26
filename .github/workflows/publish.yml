@@ -17,10 +17,10 @@ jobs:
         with:
           node-version: 18
           cache: "npm"
-          cache-dependency-path: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui/package-lock.json
+          cache-dependency-path: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui/package-lock.json
 
       - name: Build UI
-        working-directory: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
+        working-directory: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui
         run: |
           npm ci
           npm run ng build
@@ -38,11 +38,11 @@ jobs:
       - name: Build and Pack
         working-directory: ./src
         run: |
-          dotnet pack IvAt.Framework.slnx --no-restore /p:PackageVersion=${{ github.event.release.tag_name }} /p:InformationalVersion=${{ github.sha }} -c Release -o out
+          dotnet pack Anch.Framework.slnx --no-restore /p:PackageVersion=${{ github.event.release.tag_name }} /p:InformationalVersion=${{ github.sha }} -c Release -o out
 
       - name: Publish
         working-directory: ./src/out
         run: |
           dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
         env:
-          NUGET_TOKEN: ${{ secrets.NUGET_IvAt }}
+          NUGET_TOKEN: ${{ secrets.NUGET_Anch }}

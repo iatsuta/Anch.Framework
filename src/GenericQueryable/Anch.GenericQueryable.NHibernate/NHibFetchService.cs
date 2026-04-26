@@ -1,0 +1,64 @@
+﻿using System.Linq.Expressions;
+using System.Reflection;
+using Anch.Core;
+using Anch.GenericQueryable.Fetching;
+using NHibernate.Linq;
+
+namespace Anch.GenericQueryable.NHibernate;
+
+public class NHibFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchService(fetchRuleExpander)
+{
+    protected override IEnumerable<MethodInfo> GetFetchMethods<TSource>(LambdaExpressionPath fetchPath) =>
+        fetchPath.Properties.Select((prop, index) => GetFetchMethod<TSource>(prop, index == 0));
+
+    private static MethodInfo GetFetchMethod<TSource>(LambdaExpression prop, bool isFirst)
+        where TSource : class
+    {
+        var prevPropertyType = prop.Parameters.Single().Type;
+
+        var nextPropertyType = prop.Body.Type;
+
+        var nextElementType = nextPropertyType.IsGenericType ? nextPropertyType.GetInterfaceImplementationArgument(typeof(IEnumerable<>)) : null;
+
+        if (isFirst)
+        {
+            if (nextElementType != null)
+            {
+                return new Func<IQueryable<TSource>, Expression<Func<TSource, IEnumerable<Ignore>>>, INhFetchRequest<TSource, Ignore>>(EagerFetchingExtensionMethods.FetchMany)
+                    .CreateGenericMethod(typeof(TSource), nextElementType);
+            }
+            else
+            {
+                return new Func<IQueryable<TSource>, Expression<Func<TSource, Ignore>>, INhFetchRequest<TSource, Ignore>>(EagerFetchingExtensionMethods.Fetch)
+                    .CreateGenericMethod(typeof(TSource), nextPropertyType);
+            }
+        }
+        else
+        {
+            if (nextElementType != null)
+            {
+                return new Func<INhFetchRequest<TSource, Ignore>, Expression<Func<Ignore, IEnumerable<Ignore>>>, INhFetchRequest<TSource, Ignore>>(
+                        EagerFetchingExtensionMethods.ThenFetchMany)
+                    .CreateGenericMethod(typeof(TSource), prevPropertyType, nextElementType);
+            }
+            else
+            {
+                return new Func<INhFetchRequest<TSource, Ignore>, Expression<Func<Ignore, Ignore>>, INhFetchRequest<TSource, Ignore>>(
+                        EagerFetchingExtensionMethods.ThenFetch)
+                    .CreateGenericMethod(typeof(TSource), prevPropertyType, nextPropertyType);
+            }
+        }
+    }
+
+    protected override LambdaExpression GetFetchProperty(LambdaExpression prop)
+    {
+        var nextPropertyType = prop.Body.Type;
+
+        return nextPropertyType.IsGenericType
+               && nextPropertyType.GetInterfaceImplementationArgument(typeof(IEnumerable<>)) is { } nextElementType
+               && typeof(IEnumerable<>).MakeGenericType(nextElementType) is { } expectedNextPropertyType
+               && nextPropertyType != expectedNextPropertyType
+                   ? Expression.Lambda(Expression.Convert(prop.Body, expectedNextPropertyType), prop.Parameters)
+                   : prop;
+    }
+}

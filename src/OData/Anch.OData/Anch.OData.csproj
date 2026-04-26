@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.OData</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Caching\Anch.Caching\Anch.Caching.csproj" />
+    <ProjectReference Include="..\Anch.OData.Runtime\Anch.OData.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

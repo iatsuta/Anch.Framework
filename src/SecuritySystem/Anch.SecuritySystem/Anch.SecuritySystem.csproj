@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.SecuritySystem</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\VisualIdentitySource\Anch.VisualIdentitySource\Anch.VisualIdentitySource.csproj" />
+    <ProjectReference Include="..\..\HierarchicalExpand\Anch.HierarchicalExpand\Anch.HierarchicalExpand.csproj" />
+    <ProjectReference Include="..\Anch.SecuritySystem.Runtime\Anch.SecuritySystem.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

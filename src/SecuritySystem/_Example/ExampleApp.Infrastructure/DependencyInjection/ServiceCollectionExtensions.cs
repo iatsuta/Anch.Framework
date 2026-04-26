@@ -1,4 +1,11 @@
-﻿using CommonFramework;
+﻿using Anch.Core;
+using Anch.HierarchicalExpand;
+using Anch.SecuritySystem;
+using Anch.SecuritySystem.DependencyInjection;
+using Anch.SecuritySystem.UserSource;
+using Anch.SecuritySystem.VirtualPermission.DependencyInjection;
+using Anch.SecuritySystem.GeneralPermission.DependencyInjection;
+using Anch.SecuritySystem.Notification.DependencyInjection;
 
 using ExampleApp.Application;
 using ExampleApp.Domain;
@@ -6,17 +13,9 @@ using ExampleApp.Domain.Auth.Virtual;
 using ExampleApp.Infrastructure.DependencyInjection.UndirectView;
 using ExampleApp.Infrastructure.Services;
 
-using HierarchicalExpand;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using SecuritySystem;
-using SecuritySystem.DependencyInjection;
-using SecuritySystem.GeneralPermission.DependencyInjection;
-using SecuritySystem.Notification.DependencyInjection;
-using SecuritySystem.UserSource;
-using SecuritySystem.VirtualPermission.DependencyInjection;
 using AuthGeneral = ExampleApp.Domain.Auth.General;
 
 namespace ExampleApp.Infrastructure.DependencyInjection;

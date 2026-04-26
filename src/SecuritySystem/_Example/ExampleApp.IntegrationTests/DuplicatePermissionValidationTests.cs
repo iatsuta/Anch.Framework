@@ -1,14 +1,14 @@
-﻿using ExampleApp.Application;
+﻿using Anch.SecuritySystem;
+using Anch.SecuritySystem.Testing;
+using Anch.SecuritySystem.Validation;
+using ExampleApp.Application;
 using ExampleApp.Domain;
-
-using SecuritySystem;
-using SecuritySystem.Validation;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class DuplicatePermissionValidationTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task AddRoleAsync_WhenDuplicatePermissionExists_ShouldThrowValidationException(CancellationToken ct)
     {
         // Arrange
@@ -29,7 +29,7 @@ public abstract class DuplicatePermissionValidationTests(IServiceProvider rootSe
     }
 
 
-    [CommonFact]
+    [AnchFact]
     public async Task AddRoleAsync_WhenPermissionPeriodsDoNotIntersect_ShouldNotThrow(CancellationToken ct)
     {
         // Arrange

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.HierarchicalExpand</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IdentitySource\Anch.IdentitySource\Anch.IdentitySource.csproj" />
+    <ProjectReference Include="..\Anch.HierarchicalExpand.Runtime\Anch.HierarchicalExpand.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,13 +1,13 @@
-﻿using ExampleApp.Domain;
-
-using SecuritySystem;
-using SecuritySystem.AvailableSecurity;
+﻿using Anch.SecuritySystem;
+using Anch.SecuritySystem.AvailableSecurity;
+using Anch.SecuritySystem.Testing;
+using ExampleApp.Domain;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class ClientSecurityRuleTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task GetAvailableSecurityRules_ReturnsExpectedClientSecurityRules(CancellationToken ct)
     {
         // Arrange

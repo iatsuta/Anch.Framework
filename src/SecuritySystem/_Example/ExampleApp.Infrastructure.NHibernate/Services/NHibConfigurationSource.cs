@@ -1,13 +1,11 @@
-﻿using ExampleApp.Infrastructure.Mapping;
+﻿using Anch.GenericQueryable.NHibernate;
+using ExampleApp.Infrastructure.Mapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions.Instances;
-
-using GenericQueryable.NHibernate;
-
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Driver;

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.HierarchicalExpand.Runtime</PackageId>
+    <RootNamespace>Anch.HierarchicalExpand</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Anch.GenericRepository\Anch.GenericRepository.csproj" />
+    <ProjectReference Include="..\..\IdentitySource\Anch.IdentitySource.Abstractions\Anch.IdentitySource.Abstractions.csproj" />
+    <ProjectReference Include="..\..\GenericQueryable\Anch.GenericQueryable.Abstractions\Anch.GenericQueryable.Abstractions.csproj" />
+    <ProjectReference Include="..\Anch.HierarchicalExpand.Abstractions\Anch.HierarchicalExpand.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+</Project>

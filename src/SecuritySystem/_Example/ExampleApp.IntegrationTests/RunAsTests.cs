@@ -1,15 +1,16 @@
-﻿using CommonFramework.Auth;
+﻿using Anch.Core.Auth;
+using Anch.SecuritySystem.Services;
+using Anch.SecuritySystem.Testing;
+using Anch.SecuritySystem.UserSource;
 using ExampleApp.Domain.Auth.General;
 
 using Microsoft.Extensions.DependencyInjection;
-using SecuritySystem.Services;
-using SecuritySystem.UserSource;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class RunAsManagerTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task StartRunAsUser_AssignsRunAsPrincipalToCurrentUser(CancellationToken ct)
     {
         // Arrange
@@ -35,7 +36,7 @@ public abstract class RunAsManagerTests(IServiceProvider rootServiceProvider) : 
     }
 
 
-    [CommonFact]
+    [AnchFact]
     public async Task StartRunAsUser_WhenAlreadyRunningAsUser_DoesNotChangeRunAs(CancellationToken ct)
     {
         // Arrange

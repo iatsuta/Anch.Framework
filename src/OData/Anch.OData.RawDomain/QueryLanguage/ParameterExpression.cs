@@ -1,0 +1,8 @@
+﻿namespace Anch.OData.Domain.QueryLanguage;
+
+public record ParameterExpression(string Name) : Expression
+{
+    public override string ToString() => this.Name;
+
+    public static ParameterExpression Default { get; } = new("$arg");
+}

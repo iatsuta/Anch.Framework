@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.OData.Domain</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.OData.RawDomain\Anch.OData.RawDomain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <PackageId>IvAt.CommonFramework.Caching.Abstractions</PackageId>
-    <RootNamespace>CommonFramework.Caching</RootNamespace>
-  </PropertyGroup>
-
-</Project>

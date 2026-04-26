@@ -1,16 +1,15 @@
-﻿using ExampleApp.Application;
+﻿using Anch.GenericQueryable;
+using Anch.SecuritySystem;
+using Anch.SecuritySystem.Testing;
+using ExampleApp.Application;
 using ExampleApp.Domain;
-
-using GenericQueryable;
-
-using SecuritySystem;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class DomainSecurityRuleCredentialTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
     [Theory]
-    [CommonMemberData(nameof(GetEmployees_ReturnsExpectedUsers_Cases))]
+    [AnchMemberData(nameof(GetEmployees_ReturnsExpectedUsers_Cases))]
     public async Task GetEmployees_ReturnsExpectedUsers(SecurityRule securityRule, string?[] expectedUsers, CancellationToken ct)
     {
         // Arrange

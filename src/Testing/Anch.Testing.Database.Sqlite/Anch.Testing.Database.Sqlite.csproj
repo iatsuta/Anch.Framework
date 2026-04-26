@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Testing.Database.Sqlite</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Testing.Database\Anch.Testing.Database.csproj" />
+  </ItemGroup>
+
+</Project>

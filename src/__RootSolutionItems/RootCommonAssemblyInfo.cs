@@ -1,8 +1,9 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyCompany("IvAt")]
+[assembly: AssemblyCompany("Anch")]
+[assembly: AssemblyProduct("Anch.Framework")]
 
-[assembly: AssemblyVersion("3.3.4.0")]
+[assembly: AssemblyVersion("3.4.0.0")]
 [assembly: AssemblyInformationalVersion("changes at build")]
 
 #if DEBUG

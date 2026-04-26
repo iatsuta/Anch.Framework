@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.VisualIdentitySource</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DependencyInjection\Anch.DependencyInjection\Anch.DependencyInjection.csproj" />
+
+    <ProjectReference Include="..\Anch.VisualIdentitySource.Runtime\Anch.VisualIdentitySource.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

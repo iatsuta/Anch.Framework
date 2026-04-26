@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Testing.Database</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DependencyInjection\Anch.DependencyInjection\Anch.DependencyInjection.csproj" />
+
+    <ProjectReference Include="..\..\Core\Anch.Threading\Anch.Threading.csproj" />
+
+    <ProjectReference Include="..\Anch.Testing\Anch.Testing.csproj" />
+  </ItemGroup>
+
+</Project>

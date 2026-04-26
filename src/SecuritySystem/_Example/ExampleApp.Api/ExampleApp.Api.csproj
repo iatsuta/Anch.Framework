@@ -12,8 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SecuritySystem.Configurator\SecuritySystem.Configurator.csproj" />
-    <ProjectReference Include="..\ExampleApp.Infrastructure\ExampleApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Anch.SecuritySystem.Configurator\Anch.SecuritySystem.Configurator.csproj" />
     <ProjectReference Include="..\ExampleApp.Infrastructure\ExampleApp.Infrastructure.csproj" />
   </ItemGroup>
 

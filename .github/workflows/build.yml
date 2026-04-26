@@ -21,10 +21,10 @@ jobs:
         with:
           node-version: 18
           cache: "npm"
-          cache-dependency-path: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
+          cache-dependency-path: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui
 
       - name: Build UI
-        working-directory: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
+        working-directory: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui
         run: |
           npm ci
           npm run ng build
@@ -37,12 +37,12 @@ jobs:
       - name: Restore dependencies
         working-directory: ./src
         run: |
-          dotnet restore IvAt.Framework.slnx
+          dotnet restore Anch.Framework.slnx
 
       - name: Build solution
         working-directory: ./src
         run: |
-          dotnet build IvAt.Framework.slnx --no-restore --verbosity minimal -c Release
+          dotnet build Anch.Framework.slnx --no-restore --verbosity minimal -c Release
 
       - name: CommonFramework Unit tests
         working-directory: ./src/CommonFramework

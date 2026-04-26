@@ -1,11 +1,13 @@
-﻿public static class DatabaseInitModeHelper
+﻿using Anch.Testing.Database;
+
+public static class DatabaseInitModeHelper
 {
-    public static CommonFramework.Testing.Database.DatabaseInitMode DatabaseInitMode =>
+    public static DatabaseInitMode DatabaseInitMode =>
 
 #if DEBUG
-        CommonFramework.Testing.Database.DatabaseInitMode.ReuseSnapshot
+        DatabaseInitMode.ReuseSnapshot
 #else
-        CommonFramework.Testing.Database.DatabaseInitMode.RebuildSnapshot
+        DatabaseInitMode.RebuildSnapshot
 #endif
     ;
 }

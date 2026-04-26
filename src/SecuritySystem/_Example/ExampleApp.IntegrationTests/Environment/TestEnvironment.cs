@@ -1,18 +1,16 @@
-﻿using System.Diagnostics;
-using CommonFramework;
-using CommonFramework.DependencyInjection;
-using CommonFramework.Testing.Database;
-using CommonFramework.Testing.Database.DependencyInjection;
-using CommonFramework.Testing.Database.Sqlite;
-
+﻿using Anch.Core;
+using Anch.DependencyInjection;
+using Anch.SecuritySystem.Testing;
+using Anch.SecuritySystem.Testing.DependencyInjection;
+using Anch.Testing.Database;
+using Anch.Testing.Database.DependencyInjection;
+using Anch.Testing.Database.Sqlite;
 using ExampleApp.Api.Controllers;
 using ExampleApp.Infrastructure.DependencyInjection;
 using ExampleApp.Infrastructure.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem.Testing.DependencyInjection;
 
 namespace ExampleApp.IntegrationTests.Environment;
 

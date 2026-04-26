@@ -1,14 +1,14 @@
-﻿using ExampleApp.Application;
+﻿using Anch.SecuritySystem;
+using Anch.SecuritySystem.Testing;
+using Anch.SecuritySystem.Validation;
+using ExampleApp.Application;
 using ExampleApp.Domain;
-
-using SecuritySystem;
-using SecuritySystem.Validation;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class PermissionDelegationFromTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_ShouldPreserveDelegatedFromIdentity(CancellationToken ct)
     {
         // Arrange
@@ -33,7 +33,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         Assert.Equal(subPermission.DelegatedFrom, managedPermission.DelegatedFrom);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task AddRoleAsync_ShouldThrow_WhenDelegatingToOriginalPrincipal(CancellationToken ct)
     {
         // Arrange
@@ -54,7 +54,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         Assert.Equal("Invalid delegation target: the permission cannot be delegated to its original principal", error.Message);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_ShouldPreserveDelegatedFrom_WhenAssigningToChildBusinessUnit(CancellationToken ct)
     {
         // Arrange
@@ -85,7 +85,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         Assert.Equivalent(subPermission.Restrictions, managedPermission.Restrictions);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_ShouldThrow_WhenDelegationExceedsSourceBusinessUnit(CancellationToken ct)
     {
         // Arrange
@@ -113,7 +113,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
             error.Message);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_WhenTargetBusinessUnitExceedsSource_ShouldFail(CancellationToken ct)
     {
         // Arrange
@@ -142,7 +142,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
             error.Message);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_ShouldThrow_WhenDelegatedRoleIsNotSubsetOfSource(CancellationToken ct)
     {
         // Arrange
@@ -170,7 +170,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
             error.Message);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_ShouldThrow_WhenDelegatedPeriodIsNotSubsetOfSource(CancellationToken ct)
     {
         // Arrange

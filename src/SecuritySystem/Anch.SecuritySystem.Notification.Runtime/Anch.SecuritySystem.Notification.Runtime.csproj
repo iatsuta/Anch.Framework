@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.SecuritySystem.Notification.Runtime</PackageId>
+    <RootNamespace>Anch.SecuritySystem.Notification</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.SecuritySystem.Notification.Abstractions\Anch.SecuritySystem.Notification.Abstractions.csproj" />
+    <ProjectReference Include="..\Anch.SecuritySystem.Runtime\Anch.SecuritySystem.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

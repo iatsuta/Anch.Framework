@@ -1,0 +1,32 @@
+﻿using Anch.Core.ExpressionEvaluate;
+using Anch.HierarchicalExpand;
+using Anch.IdentitySource;
+using Anch.SecuritySystem.ExternalSystem;
+
+namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
+
+public class SingleContextFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>(
+    IExpressionEvaluatorStorage expressionEvaluatorStorage,
+    IPermissionSystem<TPermission> permissionSystem,
+    IHierarchicalObjectExpanderFactory hierarchicalObjectExpanderFactory,
+    SecurityPath<TDomainObject>.SingleSecurityPath<TSecurityContext> securityPath,
+    SecurityContextRestriction<TSecurityContext>? securityContextRestriction,
+    IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo)
+    : ByIdentsFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>(permissionSystem, hierarchicalObjectExpanderFactory, securityPath,
+        securityContextRestriction, identityInfo)
+    where TSecurityContext : class, ISecurityContext
+    where TSecurityContextIdent : notnull
+{
+    private readonly IExpressionEvaluator expressionEvaluator =
+        expressionEvaluatorStorage.GetForType(typeof(SingleContextFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>));
+
+    protected override IEnumerable<TSecurityContext> GetSecurityObjects(TDomainObject domainObject)
+    {
+        var securityObject = this.expressionEvaluator.Evaluate(securityPath.Expression, domainObject);
+
+        if (securityObject != null)
+        {
+            yield return securityObject;
+        }
+    }
+}

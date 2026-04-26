@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.SecuritySystem.Domain</PackageId>
+    <RootNamespace>Anch.SecuritySystem</RootNamespace>
+  </PropertyGroup>
+
+</Project>

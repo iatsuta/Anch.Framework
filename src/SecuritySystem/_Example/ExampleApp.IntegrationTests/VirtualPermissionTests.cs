@@ -1,4 +1,5 @@
-﻿using ExampleApp.Api.Controllers;
+﻿using Anch.SecuritySystem.Testing;
+using ExampleApp.Api.Controllers;
 using ExampleApp.Domain;
 
 namespace ExampleApp.IntegrationTests;
@@ -6,7 +7,7 @@ namespace ExampleApp.IntegrationTests;
 public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
     [Theory]
-    [CommonMemberData(nameof(Impersonate_LoadTestObjects_DataCorrected_Cases))]
+    [AnchMemberData(nameof(Impersonate_LoadTestObjects_DataCorrected_Cases))]
     public async Task Impersonate_LoadTestObjects_DataCorrected(string runAs, string[] expectedBuList, CancellationToken ct)
     {
         // Arrange
@@ -37,7 +38,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
     }
 
     [Theory]
-    [CommonMemberData(nameof(Impersonate_LoadBuByAncestorView_DataCorrected_Cases))]
+    [AnchMemberData(nameof(Impersonate_LoadBuByAncestorView_DataCorrected_Cases))]
     public async Task Impersonate_LoadBuByAncestorView_DataCorrected(string runAs, string[] expectedBuList, CancellationToken ct)
     {
         // Arrange

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.GenericQueryable</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DependencyInjection\Anch.DependencyInjection\Anch.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Anch.GenericQueryable.Runtime\Anch.GenericQueryable.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

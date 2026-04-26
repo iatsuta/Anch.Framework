@@ -1,9 +1,10 @@
-﻿using ExampleApp.Infrastructure.DependencyInjection;
+﻿using Anch.Testing;
+using ExampleApp.Infrastructure.DependencyInjection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: CommonFramework.Testing.CommonTestFramework<ExampleApp.IntegrationTests.Environment.NHibTestEnvironment>]
+[assembly: AnchTestFramework<ExampleApp.IntegrationTests.Environment.NHibTestEnvironment>]
 
 namespace ExampleApp.IntegrationTests.Environment;
 

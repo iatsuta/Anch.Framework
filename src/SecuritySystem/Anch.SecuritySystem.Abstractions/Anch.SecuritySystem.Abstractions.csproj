@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.SecuritySystem.Abstractions</PackageId>
+    <RootNamespace>Anch.SecuritySystem</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GenericQueryable\Anch.GenericQueryable.Abstractions\Anch.GenericQueryable.Abstractions.csproj" />
+    <ProjectReference Include="..\..\HierarchicalExpand\Anch.HierarchicalExpand.Abstractions\Anch.HierarchicalExpand.Abstractions.csproj" />
+    <ProjectReference Include="..\Anch.SecuritySystem.Rules\Anch.SecuritySystem.Rules.csproj" />
+  </ItemGroup>
+
+</Project>

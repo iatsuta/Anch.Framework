@@ -1,5 +1,5 @@
-﻿using CommonFramework.DependencyInjection;
-
+﻿using Anch.DependencyInjection;
+using Anch.SecuritySystem.Configurator;
 using ExampleApp.Infrastructure.DependencyInjection;
 
 using Microsoft.AspNetCore.Authentication.Negotiate;
@@ -10,8 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-using SecuritySystem.Configurator;
 
 namespace ExampleApp.Api;
 

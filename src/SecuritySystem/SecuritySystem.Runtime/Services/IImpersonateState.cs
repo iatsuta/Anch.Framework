@@ -1,6 +1,0 @@
-﻿namespace SecuritySystem.Services;
-
-public interface IImpersonateState
-{
-    UserCredential? CustomUserCredential { get; }
-}

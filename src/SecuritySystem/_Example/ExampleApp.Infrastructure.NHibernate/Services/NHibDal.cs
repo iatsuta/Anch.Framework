@@ -1,5 +1,5 @@
-﻿using GenericQueryable.NHibernate;
-using GenericQueryable.Services;
+﻿using Anch.GenericQueryable.NHibernate;
+using Anch.GenericQueryable.Services;
 
 namespace ExampleApp.Infrastructure.Services;
 

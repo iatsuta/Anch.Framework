@@ -1,0 +1,111 @@
+﻿using Anch.Core;
+using Anch.GenericQueryable;
+using Anch.GenericRepository;
+using Anch.IdentitySource;
+using Anch.SecuritySystem.UserSource;
+using Anch.VisualIdentitySource;
+
+namespace Anch.SecuritySystem.Services;
+
+public class PrincipalDomainService<TPrincipal>(
+    IServiceProxyFactory serviceProxyFactory,
+    IIdentityInfo<TPrincipal> identityInfo,
+    IPermissionBindingInfoSource bindingInfoSource) : IPrincipalDomainService<TPrincipal>
+{
+    private readonly Lazy<IPrincipalDomainService<TPrincipal>> lazyInnerService = new(() =>
+    {
+        var bindingInfo = bindingInfoSource.GetForPrincipal(typeof(TPrincipal)).Single();
+
+        var innerServiceType = typeof(PrincipalDomainService<,,>).MakeGenericType(
+            bindingInfo.PrincipalType,
+            bindingInfo.PermissionType,
+            identityInfo.IdentityType);
+
+        return serviceProxyFactory.Create<IPrincipalDomainService<TPrincipal>>(
+            innerServiceType,
+            bindingInfo);
+    });
+
+    private IPrincipalDomainService<TPrincipal> InnerService => this.lazyInnerService.Value;
+
+    public Task<TPrincipal> GetOrCreateAsync(string name, CancellationToken cancellationToken) =>
+        this.InnerService.GetOrCreateAsync(name, cancellationToken);
+
+    public Task RemoveAsync(TPrincipal principal, bool force, CancellationToken cancellationToken) =>
+        this.InnerService.RemoveAsync(principal, force, cancellationToken);
+}
+
+public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
+    PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
+    IQueryableSource queryableSource,
+	IGenericRepository genericRepository,
+	IEnumerable<IUserSource> userSources,
+	ISecurityIdentityConverter<TPrincipalIdent> identityConverter,
+	IIdentityInfo<TPrincipal, TPrincipalIdent> identityInfo,
+	IVisualIdentityInfo<TPrincipal> visualIdentityInfo) : IPrincipalDomainService<TPrincipal>
+	where TPrincipal : class, new()
+	where TPrincipalIdent : notnull
+	where TPermission : class
+{
+	public async Task<TPrincipal> GetOrCreateAsync(string name, CancellationToken cancellationToken)
+	{
+		var principal = await queryableSource.GetQueryable<TPrincipal>()
+			.GenericSingleOrDefaultAsync(visualIdentityInfo.Name.Path.Select(ExpressionHelper.GetEqualityWithExpr(name)), cancellationToken);
+
+		if (principal is null)
+		{
+			principal = new TPrincipal();
+
+			visualIdentityInfo.Name.Setter(principal, name);
+
+            await this.TryInitIdent(principal, cancellationToken);
+
+			await genericRepository.SaveAsync(principal, cancellationToken);
+		}
+
+		return principal;
+	}
+
+    private async Task TryInitIdent(TPrincipal principal, CancellationToken cancellationToken)
+    {
+        var ident = await this.TryExtractIdent(visualIdentityInfo.Name.Getter(principal), cancellationToken);
+
+        if (ident is not null)
+        {
+            identityInfo.Id.Setter(principal, ident);
+        }
+    }
+
+    private async Task<TPrincipalIdent?> TryExtractIdent(string name, CancellationToken cancellationToken)
+    {
+        var tryCandidates = userSources
+            .ToAsyncEnumerable()
+            .Where(userSource => userSource.UserType != typeof(TPrincipal))
+            .Select((userSource, ct) => userSource.ToSimple().TryGetUserAsync(name, ct));
+
+        var identRequest =
+
+            from tryUser in tryCandidates
+
+            where tryUser is not null
+
+            let ident = identityConverter.TryConvert(tryUser.Identity)
+
+            where ident is not null
+
+            select ident.Id;
+
+        return await identRequest.SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task RemoveAsync(TPrincipal principal, bool force, CancellationToken cancellationToken)
+	{
+		if (!force && await queryableSource.GetQueryable<TPermission>()
+			    .GenericAnyAsync(bindingInfo.Principal.Path.Select(p => p == principal), cancellationToken))
+		{
+			throw new SecuritySystemException($"Removing principal \"{visualIdentityInfo.Name.Getter(principal)}\" must be empty");
+		}
+
+		await genericRepository.RemoveAsync(principal, cancellationToken);
+	}
+}

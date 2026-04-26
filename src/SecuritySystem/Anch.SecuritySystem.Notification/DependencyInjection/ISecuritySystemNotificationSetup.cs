@@ -1,0 +1,3 @@
+﻿namespace Anch.SecuritySystem.Notification.DependencyInjection;
+
+public interface ISecuritySystemNotificationSetup;

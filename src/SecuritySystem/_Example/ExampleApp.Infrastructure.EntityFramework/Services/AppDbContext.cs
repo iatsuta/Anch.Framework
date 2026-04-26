@@ -1,9 +1,7 @@
-﻿using ExampleApp.Domain;
+﻿using Anch.GenericQueryable.EntityFramework;
+using ExampleApp.Domain;
 using ExampleApp.Domain.Auth.General;
 using ExampleApp.Domain.Auth.Virtual;
-
-using GenericQueryable.EntityFramework;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace ExampleApp.Infrastructure.Services;

@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SecuritySystem.GeneralPermission\SecuritySystem.GeneralPermission.csproj" />
-    <ProjectReference Include="..\..\SecuritySystem.Notification\SecuritySystem.Notification.csproj" />
-    <ProjectReference Include="..\..\SecuritySystem.VirtualPermission\SecuritySystem.VirtualPermission.csproj" />
+    <ProjectReference Include="..\..\Anch.SecuritySystem.GeneralPermission\Anch.SecuritySystem.GeneralPermission.csproj" />
+    <ProjectReference Include="..\..\Anch.SecuritySystem.Notification\Anch.SecuritySystem.Notification.csproj" />
+    <ProjectReference Include="..\..\Anch.SecuritySystem.VirtualPermission\Anch.SecuritySystem.VirtualPermission.csproj" />
     <ProjectReference Include="..\ExampleApp.Application\ExampleApp.Application.csproj" />
   </ItemGroup>
 

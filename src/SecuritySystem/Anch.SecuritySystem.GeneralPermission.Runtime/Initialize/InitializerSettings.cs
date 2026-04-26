@@ -1,0 +1,3 @@
+﻿namespace Anch.SecuritySystem.GeneralPermission.Initialize;
+
+public record InitializerSettings(UnexpectedSecurityElementMode UnexpectedSecurityElementMode = UnexpectedSecurityElementMode.Remove);

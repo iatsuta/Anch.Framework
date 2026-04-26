@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Caching.Runtime</PackageId>
+    <RootNamespace>Anch.Caching</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Caching.Abstractions\Anch.Caching.Abstractions.csproj" />
+
+    <ProjectReference Include="..\..\Core\Anch.Core\Anch.Core.csproj" />
+  </ItemGroup>
+
+</Project>

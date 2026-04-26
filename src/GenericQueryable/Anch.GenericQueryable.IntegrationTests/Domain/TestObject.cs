@@ -1,0 +1,15 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Anch.GenericQueryable.IntegrationTests.Domain;
+
+[Table(nameof(TestObject), Schema = "app")]
+public class TestObject
+{
+    [Key]
+    public virtual Guid Id { get; set; }
+
+    public virtual FetchObject? FetchObject { get; set; }
+
+    public virtual ICollection<DeepFetchObject> DeepFetchObjects { get; set; } = [];
+}

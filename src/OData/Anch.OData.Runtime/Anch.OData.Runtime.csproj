@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.OData.Runtime</PackageId>
+    <RootNamespace>Anch.OData</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Caching\Anch.Caching.Abstractions\Anch.Caching.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Core\Anch.Parsing\Anch.Parsing.csproj" />
+
+    <ProjectReference Include="..\Anch.OData.Abstractions\Anch.OData.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

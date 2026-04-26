@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.HierarchicalExpand.Abstractions</PackageId>
+    <RootNamespace>Anch.HierarchicalExpand</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.HierarchicalExpand.Domain\Anch.HierarchicalExpand.Domain.csproj" />
+
+  </ItemGroup>
+
+</Project>

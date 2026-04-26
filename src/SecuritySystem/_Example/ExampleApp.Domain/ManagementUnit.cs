@@ -1,6 +1,8 @@
-﻿namespace ExampleApp.Domain;
+﻿using Anch.SecuritySystem;
 
-public class ManagementUnit : SecuritySystem.ISecurityContext
+namespace ExampleApp.Domain;
+
+public class ManagementUnit : ISecurityContext
 {
     public virtual Guid Id { get; set; }
 

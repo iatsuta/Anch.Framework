@@ -1,0 +1,123 @@
+<Solution>
+
+  <Folder Name="/__RootSolutionItems/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="__RootSolutionItems/DatabaseInitModeHelper.cs" />
+    <File Path="__RootSolutionItems/RootCommonAssemblyInfo.cs" />
+    <File Path="__RootSolutionItems/XunitParallelSettings.cs" />
+  </Folder>
+
+  <Folder Name="/Core/">
+    <Project Path="Core/Anch.Core/Anch.Core.csproj" /> 
+    <Project Path="Core/Anch.Core.Tests/Anch.Core.Tests.csproj" />
+	<Project Path="Core/Anch.Threading/Anch.Threading.csproj" />
+    <Project Path="Core/Anch.GenericRepository/Anch.GenericRepository.csproj" />
+    <Project Path="Core/Anch.Parsing/Anch.Parsing.csproj" />
+    <Project Path="Core/Anch.RelativePath/Anch.RelativePath.csproj" />
+  </Folder>
+  
+  <Folder Name="/DependencyInjection/">
+    <Project Path="DependencyInjection/Anch.DependencyInjection/Anch.DependencyInjection.csproj" />
+	<Project Path="DependencyInjection/Anch.DependencyInjection.Tests/Anch.DependencyInjection.Tests.csproj" />	
+  </Folder>
+  
+  <Folder Name="/Caching/">
+    <Project Path="Caching/Anch.Caching.Abstractions/Anch.Caching.Abstractions.csproj" />
+    <Project Path="Caching/Anch.Caching.Runtime/Anch.Caching.Runtime.csproj" />
+    <Project Path="Caching/Anch.Caching/Anch.Caching.csproj" />
+  </Folder>
+  
+  <Folder Name="/IdentitySource/">
+    <Project Path="IdentitySource/Anch.IdentitySource.Abstractions/Anch.IdentitySource.Abstractions.csproj" />
+    <Project Path="IdentitySource/Anch.IdentitySource.Runtime/Anch.IdentitySource.Runtime.csproj" />
+    <Project Path="IdentitySource/Anch.IdentitySource/Anch.IdentitySource.csproj" />
+    <Project Path="IdentitySource/Anch.IdentitySource.Tests/Anch.IdentitySource.Tests.csproj" />
+  </Folder>
+  
+  <Folder Name="/Testing/">
+    <Project Path="Testing/Anch.Testing.Database.Sqlite/Anch.Testing.Database.Sqlite.csproj" />
+    <Project Path="Testing/Anch.Testing.Database/Anch.Testing.Database.csproj" />
+    <Project Path="Testing/Anch.Testing/Anch.Testing.csproj" />
+  </Folder>
+  
+  <Folder Name="/VisualIdentitySource/">
+    <Project Path="VisualIdentitySource/Anch.VisualIdentitySource.Abstractions/Anch.VisualIdentitySource.Abstractions.csproj" />
+    <Project Path="VisualIdentitySource/Anch.VisualIdentitySource.Runtime/Anch.VisualIdentitySource.Runtime.csproj" />
+    <Project Path="VisualIdentitySource/Anch.VisualIdentitySource/Anch.VisualIdentitySource.csproj" />
+    <Project Path="VisualIdentitySource/Anch.VisualIdentitySource.Tests/Anch.VisualIdentitySource.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/GenericQueryable/">  
+    <Project Path="GenericQueryable/Anch.GenericQueryable.NHibernate/Anch.GenericQueryable.NHibernate.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable.Runtime/Anch.GenericQueryable.Runtime.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable/Anch.GenericQueryable.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable.Abstractions/Anch.GenericQueryable.Abstractions.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable.EntityFramework/Anch.GenericQueryable.EntityFramework.csproj" />
+  </Folder>
+
+  <Folder Name="/GenericQueryable/_Tests/">
+    <Project Path="GenericQueryable/Anch.GenericQueryable.IntegrationTests.EntityFramework/Anch.GenericQueryable.IntegrationTests.EntityFramework.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable.IntegrationTests.NHibernate/Anch.GenericQueryable.IntegrationTests.NHibernate.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable.IntegrationTests/Anch.GenericQueryable.IntegrationTests.csproj" />
+    <Project Path="GenericQueryable/Anch.GenericQueryable.UnitTests/Anch.GenericQueryable.UnitTests.csproj" />
+  </Folder>
+
+  <Folder Name="/HierarchicalExpand/">
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand/Anch.HierarchicalExpand.csproj" />
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.Domain/Anch.HierarchicalExpand.Domain.csproj" />
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.Runtime/Anch.HierarchicalExpand.Runtime.csproj" />  
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.Abstractions/Anch.HierarchicalExpand.Abstractions.csproj" />
+  </Folder>
+
+  <Folder Name="/HierarchicalExpand/_Tests/">
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.IntegrationTests.EntityFramework/Anch.HierarchicalExpand.IntegrationTests.EntityFramework.csproj" />
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.IntegrationTests.NHibernate/Anch.HierarchicalExpand.IntegrationTests.NHibernate.csproj" />
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.IntegrationTests/Anch.HierarchicalExpand.IntegrationTests.csproj" />
+    <Project Path="HierarchicalExpand/Anch.HierarchicalExpand.Tests/Anch.HierarchicalExpand.Tests.csproj" />
+  </Folder>
+  
+  <Folder Name="/OData/">
+    <Project Path="OData/Anch.OData.Abstractions/Anch.OData.Abstractions.csproj" />
+    <Project Path="OData/Anch.OData.Domain/Anch.OData.Domain.csproj" />
+    <Project Path="OData/Anch.OData.RawDomain/Anch.OData.RawDomain.csproj" />
+    <Project Path="OData/Anch.OData.Runtime/Anch.OData.Runtime.csproj" />
+    <Project Path="OData/Anch.OData.Tests/Anch.OData.Tests.csproj" />
+    <Project Path="OData/Anch.OData/Anch.OData.csproj" />
+  </Folder>
+
+  <Folder Name="/SecuritySystem/">
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Abstractions/Anch.SecuritySystem.Abstractions.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Configurator/Anch.SecuritySystem.Configurator.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.DiTests/Anch.SecuritySystem.DiTests.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Domain/Anch.SecuritySystem.Domain.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.GeneralPermission.Abstractions/Anch.SecuritySystem.GeneralPermission.Abstractions.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.GeneralPermission.Runtime/Anch.SecuritySystem.GeneralPermission.Runtime.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.GeneralPermission/Anch.SecuritySystem.GeneralPermission.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Notification.Abstractions/Anch.SecuritySystem.Notification.Abstractions.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Notification.Domain/Anch.SecuritySystem.Notification.Domain.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Notification.Runtime/Anch.SecuritySystem.Notification.Runtime.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Notification/Anch.SecuritySystem.Notification.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Rules/Anch.SecuritySystem.Rules.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Runtime/Anch.SecuritySystem.Runtime.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.Testing/Anch.SecuritySystem.Testing.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.VirtualPermission.Runtime/Anch.SecuritySystem.VirtualPermission.Runtime.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem.VirtualPermission/Anch.SecuritySystem.VirtualPermission.csproj" />
+    <Project Path="SecuritySystem/Anch.SecuritySystem/Anch.SecuritySystem.csproj" />
+  </Folder>
+
+  <Folder Name="/SecuritySystem/_Example/">
+    <Project Path="SecuritySystem/_Example/ExampleApp.Api.EntityFramework/ExampleApp.Api.EntityFramework.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Api.NHibernate/ExampleApp.Api.NHibernate.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Api/ExampleApp.Api.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Application/ExampleApp.Application.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Domain/ExampleApp.Domain.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Infrastructure.EntityFramework/ExampleApp.Infrastructure.EntityFramework.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Infrastructure.NHibernate/ExampleApp.Infrastructure.NHibernate.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.Infrastructure/ExampleApp.Infrastructure.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.IntegrationTests.EntityFramework/ExampleApp.IntegrationTests.EntityFramework.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.IntegrationTests.NHibernate/ExampleApp.IntegrationTests.NHibernate.csproj" />
+    <Project Path="SecuritySystem/_Example/ExampleApp.IntegrationTests/ExampleApp.IntegrationTests.csproj" />
+  </Folder>
+
+</Solution>

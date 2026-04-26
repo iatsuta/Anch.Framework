@@ -1,0 +1,91 @@
+﻿using Anch.Core;
+using Anch.GenericRepository;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Anch.HierarchicalExpand.Denormalization;
+
+public class AncestorDenormalizer(IServiceProvider serviceProvider, IEnumerable<FullAncestorLinkInfo> fullAncestorLinkInfoList)
+    : IAncestorDenormalizer
+{
+    public async Task Initialize(CancellationToken cancellationToken)
+    {
+        foreach (var fullAncestorLinkInfo in fullAncestorLinkInfoList)
+        {
+            var innerInitializer =
+                (IAncestorDenormalizer)serviceProvider.GetRequiredService(
+                    typeof(IAncestorDenormalizer<>).MakeGenericType(fullAncestorLinkInfo.DomainObjectType));
+
+            await innerInitializer.Initialize(cancellationToken);
+        }
+    }
+}
+
+public class AncestorDenormalizer<TDomainObject>(IServiceProxyFactory serviceProxyFactory) : IAncestorDenormalizer<TDomainObject>
+{
+    private readonly IAncestorDenormalizer<TDomainObject> innerService =
+        serviceProxyFactory.Create<IAncestorDenormalizer<TDomainObject>>();
+
+	public Task Initialize(CancellationToken cancellationToken) =>
+		this.innerService.Initialize(cancellationToken);
+
+	public Task SyncAsync(IEnumerable<TDomainObject> updatedDomainObjectsBase, IEnumerable<TDomainObject> removedDomainObjects, CancellationToken cancellationToken) =>
+		this.innerService.SyncAsync(updatedDomainObjectsBase, removedDomainObjects, cancellationToken);
+}
+
+public class AncestorDenormalizer<TDomainObject, TDirectAncestorLink>(
+    IGenericRepository genericRepository,
+    FullAncestorLinkInfo<TDomainObject, TDirectAncestorLink> fullAncestorLinkInfo,
+    IAncestorLinkExtractor<TDomainObject, TDirectAncestorLink> ancestorLinkExtractor) : IAncestorDenormalizer<TDomainObject>
+    where TDirectAncestorLink : class, new()
+    where TDomainObject : class
+{
+    public async Task Initialize(CancellationToken cancellationToken)
+    {
+        var syncResult = await ancestorLinkExtractor.GetSyncAllResult(cancellationToken);
+
+        await this.ApplySync(syncResult, cancellationToken);
+    }
+
+    public async Task SyncAsync(
+        IEnumerable<TDomainObject> updatedDomainObjectsBase,
+        IEnumerable<TDomainObject> removedDomainObjects,
+        CancellationToken cancellationToken)
+    {
+        var syncResult = await ancestorLinkExtractor.GetSyncResult(updatedDomainObjectsBase, removedDomainObjects, cancellationToken);
+
+        await this.ApplySync(syncResult, cancellationToken);
+    }
+
+    private async Task ApplySync(SyncResult<TDomainObject, TDirectAncestorLink> syncResult, CancellationToken cancellationToken)
+    {
+        foreach (var addLink in syncResult.Adding)
+        {
+            await this.SaveAncestor(this.CreateLink(addLink.Ancestor, addLink.Child), cancellationToken);
+        }
+
+        foreach (var removeLink in syncResult.Removing)
+        {
+            await this.RemoveAncestor(removeLink, cancellationToken);
+        }
+    }
+
+    private async Task RemoveAncestor(TDirectAncestorLink domainObjectAncestorLink, CancellationToken cancellationToken)
+    {
+        await genericRepository.RemoveAsync(domainObjectAncestorLink, cancellationToken);
+    }
+
+    private async Task SaveAncestor(TDirectAncestorLink domainObjectAncestorLink, CancellationToken cancellationToken)
+    {
+        await genericRepository.SaveAsync(domainObjectAncestorLink, cancellationToken);
+    }
+
+    private TDirectAncestorLink CreateLink(TDomainObject ancestor, TDomainObject child)
+    {
+        var link = new TDirectAncestorLink();
+
+        fullAncestorLinkInfo.Directed.From.Setter(link, ancestor);
+		fullAncestorLinkInfo.Directed.To.Setter(link, child);
+
+        return link;
+    }
+}

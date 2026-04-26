@@ -1,7 +1,6 @@
-﻿using ExampleApp.Application;
-
-using SecuritySystem.AccessDenied;
-using SecuritySystem.Providers;
+﻿using Anch.SecuritySystem.AccessDenied;
+using Anch.SecuritySystem.Providers;
+using ExampleApp.Application;
 
 namespace ExampleApp.Infrastructure.Services;
 

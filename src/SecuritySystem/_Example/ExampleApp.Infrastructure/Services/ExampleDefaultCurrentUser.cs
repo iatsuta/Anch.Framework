@@ -1,5 +1,4 @@
-﻿using CommonFramework.Auth;
-
+﻿using Anch.Core.Auth;
 using Microsoft.AspNetCore.Http;
 
 namespace ExampleApp.Infrastructure.Services;

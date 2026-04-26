@@ -16,16 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CommonFramework\CommonFramework.Testing.Database.Sqlite\CommonFramework.Testing.Database.Sqlite.csproj" />
-    <ProjectReference Include="..\..\..\CommonFramework\CommonFramework.Testing\CommonFramework.Testing.csproj" />
-    <ProjectReference Include="..\..\SecuritySystem.Testing\SecuritySystem.Testing.csproj" />
+    <ProjectReference Include="..\..\..\Testing\Anch.Testing.Database.Sqlite\Anch.Testing.Database.Sqlite.csproj" />
+    <ProjectReference Include="..\..\..\Testing\Anch.Testing\Anch.Testing.csproj" />
+    <ProjectReference Include="..\..\Anch.SecuritySystem.Testing\Anch.SecuritySystem.Testing.csproj" />
     <ProjectReference Include="..\ExampleApp.Api\ExampleApp.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
-    <Using Include="CommonFramework.Testing" />
-    <Using Include="SecuritySystem.Testing" />
+    <Using Include="Anch.Testing" />
+    <Using Include="Anch.SecuritySystem.Testing" />
   </ItemGroup>
 
 </Project>

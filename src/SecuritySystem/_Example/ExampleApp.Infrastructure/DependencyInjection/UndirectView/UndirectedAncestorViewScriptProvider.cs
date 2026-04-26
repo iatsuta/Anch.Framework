@@ -1,4 +1,4 @@
-﻿using HierarchicalExpand;
+﻿using Anch.HierarchicalExpand;
 
 namespace ExampleApp.Infrastructure.DependencyInjection.UndirectView;
 

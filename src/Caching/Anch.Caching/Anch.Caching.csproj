@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Caching</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DependencyInjection\Anch.DependencyInjection\Anch.DependencyInjection.csproj" />
+
+    <ProjectReference Include="..\Anch.Caching.Runtime\Anch.Caching.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

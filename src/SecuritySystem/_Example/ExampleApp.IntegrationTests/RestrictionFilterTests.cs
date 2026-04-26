@@ -1,8 +1,8 @@
-﻿using ExampleApp.Application;
+﻿using Anch.SecuritySystem;
+using Anch.SecuritySystem.Testing;
+using Anch.SecuritySystem.Validation;
+using ExampleApp.Application;
 using ExampleApp.Domain;
-
-using SecuritySystem;
-using SecuritySystem.Validation;
 
 namespace ExampleApp.IntegrationTests;
 
@@ -31,7 +31,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
             () => new BusinessUnit { Name = nameof(this.buWithAllowedFilter), AllowedForFilterRole = true }, ct);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task CreatePermissionWithRestrictionFilter_ApplyInvalidBusinessUnit_ExceptionRaised(CancellationToken ct)
     {
         // Arrange
@@ -49,7 +49,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         Assert.Contains($"SecurityContext: '{this.defaultBu.Id}' denied by filter", error.Message);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task CreatePermissionWithRestrictionFilter_ApplyCorrectBusinessUnit_ExceptionNotRaised(CancellationToken ct)
     {
         // Arrange
@@ -67,7 +67,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     }
 
 
-    [CommonFact]
+    [AnchFact]
     public async Task CreateCustomRestrictionRule_ApplyUnrestrictedPermission_OnlyCorrectBuFounded(CancellationToken ct)
     {
         // Arrange
@@ -81,7 +81,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task CreateCustomRestrictionRule_ApplySingleCorrectBU_OnlyCorrectBuFounded(CancellationToken ct)
     {
         // Arrange
@@ -95,7 +95,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
     }
 
-    //[CommonFact]
+    //[AnchFact]
     //public async Task CreateCustomRestrictionRule_SearchAccessorsForUnrestrictedPermission_EmployeeFounded()
     //{
     //    // Arrange
@@ -118,7 +118,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    Assert.Contains(this.testLogin, accessors);
     //}
 
-    //[CommonFact]
+    //[AnchFact]
     //public async Task CreateCustomRestrictionRule_SearchAccessorsForCorrectBU_EmployeeFounded()
     //{
     //    // Arrange
@@ -143,7 +143,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
     //    Assert.Contains(this.testLogin, accessors);
     //}
 
-    //[CommonFact]
+    //[AnchFact]
     //public async Task CreateCustomRestrictionRule_SearchAccessorsForIncorrectBU_EmployeeNotFounded()
     //{
     //    // Arrange

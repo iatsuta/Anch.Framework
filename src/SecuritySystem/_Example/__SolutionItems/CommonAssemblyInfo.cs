@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 [assembly: AssemblyProduct("ExampleApp")]
-[assembly: AssemblyCompany("IvAt")]
+[assembly: AssemblyCompany("Anch")]
 
 [assembly: AssemblyInformationalVersion("changes at build")]
 

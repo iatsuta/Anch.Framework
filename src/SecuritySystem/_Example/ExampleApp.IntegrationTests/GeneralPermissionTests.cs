@@ -1,20 +1,18 @@
-﻿using CommonFramework.GenericRepository;
+﻿using Anch.GenericQueryable;
+using Anch.GenericRepository;
+using Anch.SecuritySystem;
+using Anch.SecuritySystem.AvailableSecurity;
+using Anch.SecuritySystem.DomainServices;
+using Anch.SecuritySystem.Testing;
 using ExampleApp.Application;
 using ExampleApp.Domain;
-
-using GenericQueryable;
-
 using Microsoft.Extensions.DependencyInjection;
-
-using SecuritySystem;
-using SecuritySystem.AvailableSecurity;
-using SecuritySystem.DomainServices;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task SetRoleAsync_ShouldPreservePermissionIdentity(CancellationToken ct)
     {
         // Arrange
@@ -31,7 +29,7 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
         Assert.Equal(testPermission.Identity, managedPermission.Identity);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task AssignGeneralPermission_PermissionResolved(CancellationToken ct)
     {
         // Arrange
@@ -65,7 +63,7 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
         Assert.Equivalent(testPermission.Restrictions, managedPermission.Restrictions);
     }
 
-    [CommonFact]
+    [AnchFact]
     public async Task AssignGeneralPermission_WithRootBu_AllTestObjectsResolved(CancellationToken ct)
     {
         // Arrange

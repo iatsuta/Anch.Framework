@@ -1,6 +1,8 @@
-﻿namespace ExampleApp.Domain;
+﻿using Anch.SecuritySystem;
 
-public class Location : SecuritySystem.ISecurityContext
+namespace ExampleApp.Domain;
+
+public class Location : ISecurityContext
 {
     public virtual int MyId { get; set; }
 

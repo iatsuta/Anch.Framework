@@ -1,11 +1,12 @@
-﻿using CommonFramework.Auth;
+﻿using Anch.Core.Auth;
+using Anch.SecuritySystem.Testing;
 using ExampleApp.Application;
 
 namespace ExampleApp.IntegrationTests;
 
 public abstract class ImpersonateServiceTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
-    [CommonFact]
+    [AnchFact]
     public async Task EvaluateAsync_ShouldReturnImpersonatedUserName(CancellationToken ct)
     {
         // Arrange
