@@ -38,7 +38,7 @@ jobs:
         run: |
           dotnet restore src/Anch.Framework.slnx
 
-      - name: Build solution 
+      - name: Build solution
         run: |
           dotnet build src/Anch.Framework.slnx --no-restore --verbosity minimal -c Release
 

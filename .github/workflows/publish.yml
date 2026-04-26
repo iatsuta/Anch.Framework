@@ -8,16 +8,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:    
-    
-       - uses: actions/checkout@v5
+    steps:
+
+      - uses: actions/checkout@v5
 
       - name: Set up node.js
         uses: actions/setup-node@v5
         with:
           node-version: 18
           cache: "npm"
-          cache-dependency-path: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui/package-lock.json
+          cache-dependency-path: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui
 
       - name: Build UI
         working-directory: ./src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui
@@ -31,9 +31,8 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore dependencies
-        working-directory: ./src
         run: |
-          dotnet restore
+          dotnet restore src/Anch.Framework.slnx
 
       - name: Build and Pack
         working-directory: ./src
