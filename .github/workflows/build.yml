@@ -11,81 +11,66 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - run: git config --global core.autocrlf true
       - uses: actions/checkout@v5
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      
+
       - name: Restore dependencies
         working-directory: ./src
-        run: |
-          dotnet restore IvAt.Framework.slnx
+        run: dotnet restore IvAt.Framework.slnx
 
       - name: Build solution
         working-directory: ./src
-        run: |
-          dotnet build IvAt.Framework.slnx --no-restore --verbosity minimal
-          
-      - name: CommonFramework Unit tests
-        working-directory: ./src/CommonFramework
-        run: |
-          dotnet test CommonFramework.Tests --no-build --verbosity normal
+        run: dotnet build IvAt.Framework.slnx --no-restore -c Release
 
-      - name: CommonFramework Di unit tests
-        working-directory: ./src/CommonFramework
-        run: |
-          dotnet test CommonFramework.DependencyInjection.Tests --no-build --verbosity normal
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: src/**/bin/Release
 
-      - name: CommonFramework IdentitySource unit tests
-        working-directory: ./src/CommonFramework
-        run: |
-          dotnet test CommonFramework.IdentitySource.Tests --no-build --verbosity normal
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
 
-      - name: CommonFramework VisualIdentitySource unit tests
-        working-directory: ./src/CommonFramework
-        run: |
-          dotnet test CommonFramework.VisualIdentitySource.Tests --no-build --verbosity normal
-          
-      - name: GenericQueryable Unit tests
-        run: |
-          dotnet test src/GenericQueryable/GenericQueryable.UnitTests --no-build --verbosity normal
-          
-      - name: GenericQueryable NHibernate Integration Tests
-        run: |
-          dotnet test --blame src/GenericQueryable/GenericQueryable.IntegrationTests.NHibernate --no-build --verbosity normal
-          
-      - name: GenericQueryable EntityFramework Integration Tests
-        run: |
-          dotnet test --blame src/GenericQueryable/GenericQueryable.IntegrationTests.EntityFramework --no-build --verbosity normal
-          
-      - name: HierarchicalExpand Unit tests
-        run: |
-          dotnet test src/HierarchicalExpand/HierarchicalExpand.Tests --no-build --verbosity normal
-          
-      - name: HierarchicalExpand NHibernate Integration Tests
-        run: |
-          dotnet test --blame src/HierarchicalExpand/HierarchicalExpand.IntegrationTests.NHibernate --no-build --verbosity normal
-          
-      - name: HierarchicalExpand EntityFramework Integration Tests
-        run: |
-          dotnet test --blame src/HierarchicalExpand/HierarchicalExpand.IntegrationTests.EntityFramework --no-build --verbosity normal
-          
-      - name: SecuritySystem Unit tests
-        run: |
-          dotnet test src/SecuritySystem/SecuritySystem.DiTests --no-build --verbosity normal
-          
-      - name: SecuritySystem NHibernate Integration Tests
-        run: |
-          dotnet test --blame src/SecuritySystem/_Example/ExampleApp.IntegrationTests.NHibernate --no-build --verbosity normal
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - src/CommonFramework/CommonFramework.Tests
+          - src/CommonFramework/CommonFramework.DependencyInjection.Tests
+          - src/CommonFramework/CommonFramework.IdentitySource.Tests
+          - src/CommonFramework/CommonFramework.VisualIdentitySource.Tests
+          - src/GenericQueryable/GenericQueryable.UnitTests
+          - src/GenericQueryable/GenericQueryable.IntegrationTests.NHibernate
+          - src/GenericQueryable/GenericQueryable.IntegrationTests.EntityFramework
+          - src/HierarchicalExpand/HierarchicalExpand.Tests
+          - src/HierarchicalExpand/HierarchicalExpand.IntegrationTests.NHibernate
+          - src/HierarchicalExpand/HierarchicalExpand.IntegrationTests.EntityFramework
+          - src/SecuritySystem/SecuritySystem.DiTests
+          - src/SecuritySystem/_Example/ExampleApp.IntegrationTests.NHibernate
+          - src/SecuritySystem/_Example/ExampleApp.IntegrationTests.EntityFramework
+          - src/OData/OData.Tests
 
-      - name: SecuritySystem EntityFramework Integration Tests
-        run: |
-          dotnet test --blame src/SecuritySystem/_Example/ExampleApp.IntegrationTests.EntityFramework --no-build --verbosity normal
-          
-      - name: OData Unit tests
-        run: |
-          dotnet test src/OData/OData.Tests --no-build --verbosity normal
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: src
+
+      - name: Run tests
+        working-directory: ./
+        run: dotnet test ${{ matrix.project }} --no-build -c Release --verbosity normal

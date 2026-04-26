@@ -1,6 +1,4 @@
-﻿using CommonFramework.Testing;
-
-[assembly: CommonTestFramework]
+﻿[assembly: CommonTestFramework]
 
 namespace GenericQueryable.UnitTests;
 

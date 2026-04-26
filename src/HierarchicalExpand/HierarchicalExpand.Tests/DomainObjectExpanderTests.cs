@@ -1,8 +1,6 @@
 ﻿using System.Collections.Immutable;
 
 using CommonFramework.GenericRepository;
-using CommonFramework.Testing;
-
 using HierarchicalExpand.Tests.Domain;
 
 namespace HierarchicalExpand.Tests;

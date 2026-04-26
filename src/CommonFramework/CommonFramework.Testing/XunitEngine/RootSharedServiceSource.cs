@@ -10,7 +10,7 @@ public class RootSharedServiceSource
 
     public TService GetSharedService<TService>(IServiceProvider serviceProvider, Tuple<object?>? key)
         where TService : notnull =>
-        (TService)this.cache.GetOrAdd((typeof(TService), key),
+        this.cache.GetOrAddAs((typeof(TService), key),
             _ => key == null
                 ? serviceProvider.GetRequiredService<TService>()
                 : serviceProvider.GetRequiredKeyedService<TService>(key.Item1));

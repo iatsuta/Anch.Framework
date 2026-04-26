@@ -18,10 +18,8 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
 
     public void Release(IServiceProvider serviceProvider) => this.pool.Add(serviceProvider);
 
-    private IServiceCollection CreateServiceCollection()
-    {
-        return new ServiceCollection()
+    private IServiceCollection CreateServiceCollection() =>
+        new ServiceCollection()
             .AddSingleton<ISharedServiceSource>(sp => new SharedServiceSource(this.rootSharedServiceSource, sp))
             .AddSingleton(new ServiceProviderIndex(Interlocked.Increment(ref this.lastIndex) - 1));
-    }
 }

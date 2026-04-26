@@ -1,5 +1,4 @@
-﻿using CommonFramework.Testing;
-using SecuritySystem;
+﻿using SecuritySystem;
 using SecuritySystem.ExternalSystem.Management;
 
 namespace ExampleApp.IntegrationTests;

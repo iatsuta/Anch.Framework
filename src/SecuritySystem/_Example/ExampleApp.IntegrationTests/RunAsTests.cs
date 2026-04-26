@@ -1,5 +1,4 @@
 ﻿using CommonFramework.Auth;
-using CommonFramework.Testing;
 using ExampleApp.Domain.Auth.General;
 
 using Microsoft.Extensions.DependencyInjection;

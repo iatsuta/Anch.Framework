@@ -7,7 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonFramework.DependencyInjection\CommonFramework.DependencyInjection.csproj" />
     <ProjectReference Include="..\CommonFramework.Testing\CommonFramework.Testing.csproj" />
-    <ProjectReference Include="..\CommonFramework\CommonFramework.csproj" />
+    <ProjectReference Include="..\CommonFramework.Threading\CommonFramework.Threading.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
 ﻿using CommonFramework;
 using CommonFramework.DependencyInjection;
-using CommonFramework.Testing;
 using CommonFramework.Testing.Database;
 using CommonFramework.Testing.Database.DependencyInjection;
 using CommonFramework.Testing.Database.Sqlite;
@@ -14,14 +13,6 @@ namespace HierarchicalExpand.IntegrationTests.Environment;
 
 public abstract class TestEnvironment : ITestEnvironment
 {
-    private readonly DatabaseInitMode databaseInitMode =
-
-#if DEBUG
-        DatabaseInitMode.RebuildSnapshot;
-#else
-        DatabaseInitMode.RebuildSnapshot;
-#endif
-
     public IServiceProvider BuildServiceProvider(IServiceCollection services)
     {
         return services
@@ -52,7 +43,11 @@ public abstract class TestEnvironment : ITestEnvironment
                 .SetProvider<SqliteDatabaseTestingProvider>()
                 .SetEmptySchemaInitializer<IEmptySchemaInitializer>()
                 .SetSharedTestDataInitializer<ISharedTestDataInitializer>()
-                .SetSettings(new TestDatabaseSettings { InitMode = this.databaseInitMode, DefaultConnectionString = new("Data Source=test.db;Pooling=False") })
+                .SetSettings(new TestDatabaseSettings
+                {
+                    InitMode = DatabaseInitModeHelper.DatabaseInitMode,
+                    DefaultConnectionString = new("Data Source=test.db;Pooling=False")
+                })
                 .RebindActualConnection<IMainConnectionStringSource>(connectionString => new MainConnectionStringSource(connectionString.Value)))
 
             .AddValidator<DuplicateServiceUsageValidator>()

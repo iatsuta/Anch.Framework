@@ -9,10 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NHibernate;
 
-#if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = false)]
-#endif
-
 [assembly:CommonFramework.Testing.CommonTestFramework<NHibTestEnvironment>]
 
 namespace GenericQueryable.IntegrationTests.Environment;

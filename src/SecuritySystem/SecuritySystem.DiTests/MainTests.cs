@@ -1,6 +1,4 @@
-﻿using CommonFramework.Testing;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using SecuritySystem.AccessDenied;
 using SecuritySystem.DiTests.DomainObjects;

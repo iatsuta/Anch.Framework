@@ -4,10 +4,6 @@ using GenericQueryable.IntegrationTests.Environment;
 
 using Microsoft.Extensions.DependencyInjection;
 
-#if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = false)]
-#endif
-
 [assembly: CommonFramework.Testing.CommonTestFramework<EfTestEnvironment>]
 
 namespace GenericQueryable.IntegrationTests.Environment;

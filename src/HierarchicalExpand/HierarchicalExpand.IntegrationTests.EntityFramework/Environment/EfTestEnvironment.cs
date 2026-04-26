@@ -2,10 +2,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-#if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = false)]
-#endif
-
 [assembly: CommonFramework.Testing.CommonTestFramework<HierarchicalExpand.IntegrationTests.Environment.EfTestEnvironment>]
 
 namespace HierarchicalExpand.IntegrationTests.Environment;

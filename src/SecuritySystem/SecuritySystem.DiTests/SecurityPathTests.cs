@@ -1,6 +1,4 @@
 ﻿using CommonFramework;
-using CommonFramework.Testing;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using SecuritySystem.DiTests.DomainObjects;
