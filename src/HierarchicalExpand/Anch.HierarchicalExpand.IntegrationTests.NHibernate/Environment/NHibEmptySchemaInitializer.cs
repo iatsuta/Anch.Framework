@@ -1,5 +1,7 @@
 ﻿using Anch.HierarchicalExpand.IntegrationTests.Environment.UndirectView;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using NHibernate.Tool.hbm2ddl;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;

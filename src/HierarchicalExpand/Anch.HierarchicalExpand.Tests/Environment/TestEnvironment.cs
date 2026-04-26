@@ -6,7 +6,6 @@ using Anch.HierarchicalExpand.Tests.Environment;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
-
 [assembly: AnchTestFramework<TestEnvironment>]
 
 namespace Anch.HierarchicalExpand.Tests.Environment;

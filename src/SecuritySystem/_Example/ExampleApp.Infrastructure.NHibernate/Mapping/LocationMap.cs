@@ -1,4 +1,5 @@
 ﻿using ExampleApp.Domain;
+
 using FluentNHibernate.Mapping;
 
 namespace ExampleApp.Infrastructure.Mapping;

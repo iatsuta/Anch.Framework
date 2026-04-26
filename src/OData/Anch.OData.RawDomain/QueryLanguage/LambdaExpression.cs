@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using SExpressions = System.Linq.Expressions;
+﻿using SExpressions = System.Linq.Expressions;
+using System.Collections.Immutable;
 
 namespace Anch.OData.Domain.QueryLanguage;
 

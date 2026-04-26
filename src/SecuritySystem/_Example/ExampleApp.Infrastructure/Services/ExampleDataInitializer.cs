@@ -1,6 +1,7 @@
 ﻿using Anch.Core;
 using Anch.Core.Auth;
 using Anch.GenericRepository;
+
 using ExampleApp.Domain;
 using ExampleApp.Domain.Auth.Virtual;
 

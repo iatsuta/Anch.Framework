@@ -9,7 +9,6 @@ using Anch.SecuritySystem.DiTests.Services;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
-
 [assembly: AnchTestFramework<TestEnvironment>]
 
 namespace Anch.SecuritySystem.DiTests.Environment;

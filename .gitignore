@@ -245,5 +245,5 @@ ModelManifest.xml
 # Javascript files and source maps
 *.js.map
 *.js
-/.github/copilot-instructions.md
+
 /src/.github/copilot-instructions.md

@@ -1,6 +1,6 @@
-﻿using Anch.OData.Domain.QueryLanguage.Operations;
+﻿using SExpressions = System.Linq.Expressions;
 
-using SExpressions = System.Linq.Expressions;
+using Anch.OData.Domain.QueryLanguage.Operations;
 
 namespace Anch.OData.Domain.QueryLanguage;
 

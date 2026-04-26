@@ -1,4 +1,5 @@
 ﻿using Anch.SecuritySystem.Services;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DiTests;

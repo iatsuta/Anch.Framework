@@ -2,6 +2,7 @@
 using Anch.SecuritySystem.DiTests.DomainObjects;
 using Anch.SecuritySystem.DiTests.Rules;
 using Anch.SecuritySystem.Providers;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DiTests;

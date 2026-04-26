@@ -1,10 +1,8 @@
 ﻿using Anch.GenericQueryable.IntegrationTests.Environment;
 using Anch.GenericRepository;
-using Anch.Testing;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
-
 [assembly: AnchTestFramework<EfTestEnvironment>]
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;

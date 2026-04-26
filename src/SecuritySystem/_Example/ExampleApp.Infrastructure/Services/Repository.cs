@@ -1,5 +1,6 @@
 ﻿using Anch.SecuritySystem.AccessDenied;
 using Anch.SecuritySystem.Providers;
+
 using ExampleApp.Application;
 
 namespace ExampleApp.Infrastructure.Services;

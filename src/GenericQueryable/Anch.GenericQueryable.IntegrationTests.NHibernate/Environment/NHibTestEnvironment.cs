@@ -3,12 +3,11 @@ using Anch.GenericQueryable.IntegrationTests.Environment;
 using Anch.GenericQueryable.NHibernate;
 using Anch.GenericRepository;
 using Anch.IdentitySource.DependencyInjection;
-using Anch.Testing;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
-using NHibernate;
 
+using NHibernate;
 [assembly:AnchTestFramework<NHibTestEnvironment>]
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;

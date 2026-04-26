@@ -1,5 +1,6 @@
 ﻿using Anch.Core;
 using Anch.GenericQueryable.DependencyInjection;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.NHibernate;

@@ -2,11 +2,12 @@
 using Anch.HierarchicalExpand;
 using Anch.SecuritySystem;
 using Anch.SecuritySystem.DependencyInjection;
-using Anch.SecuritySystem.UserSource;
-using Anch.SecuritySystem.VirtualPermission.DependencyInjection;
 using Anch.SecuritySystem.GeneralPermission.DependencyInjection;
 using Anch.SecuritySystem.Notification.DependencyInjection;
+using Anch.SecuritySystem.UserSource;
+using Anch.SecuritySystem.VirtualPermission.DependencyInjection;
 
+using AuthGeneral = ExampleApp.Domain.Auth.General;
 using ExampleApp.Application;
 using ExampleApp.Domain;
 using ExampleApp.Domain.Auth.Virtual;
@@ -15,8 +16,6 @@ using ExampleApp.Infrastructure.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using AuthGeneral = ExampleApp.Domain.Auth.General;
 
 namespace ExampleApp.Infrastructure.DependencyInjection;
 

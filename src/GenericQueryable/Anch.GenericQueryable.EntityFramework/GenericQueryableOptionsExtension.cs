@@ -1,5 +1,6 @@
 ﻿using Anch.DependencyInjection;
 using Anch.GenericQueryable.DependencyInjection;
+
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;

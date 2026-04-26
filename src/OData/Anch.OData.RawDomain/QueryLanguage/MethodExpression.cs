@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+
 using Anch.Core;
 
 namespace Anch.OData.Domain.QueryLanguage;

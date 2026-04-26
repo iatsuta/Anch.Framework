@@ -6,6 +6,7 @@ using Anch.HierarchicalExpand.Denormalization;
 using Anch.IdentitySource;
 using Anch.SecuritySystem.DomainServices;
 using Anch.VisualIdentitySource;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Testing;

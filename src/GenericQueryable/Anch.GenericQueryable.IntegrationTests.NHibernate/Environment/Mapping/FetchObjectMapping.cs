@@ -1,4 +1,5 @@
 ﻿using Anch.GenericQueryable.IntegrationTests.Domain;
+
 using FluentNHibernate.Mapping;
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment.Mapping;

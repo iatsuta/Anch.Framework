@@ -1,5 +1,6 @@
 ﻿using Anch.GenericQueryable.EntityFramework;
 using Anch.HierarchicalExpand.IntegrationTests.Domain;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;

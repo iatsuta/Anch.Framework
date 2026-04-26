@@ -1,6 +1,7 @@
 ﻿using Anch.Core;
 using Anch.HierarchicalExpand.Denormalization;
 using Anch.SecuritySystem.GeneralPermission.Initialize;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.Infrastructure.Services;

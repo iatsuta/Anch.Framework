@@ -4,7 +4,6 @@ using Anch.SecuritySystem.AccessDenied;
 using Anch.SecuritySystem.ExternalSystem;
 using Anch.SecuritySystem.Providers;
 using Anch.SecuritySystem.SecurityRuleInfo;
-
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 

@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Testing.DependencyInjection;
 using Anch.Testing.Database;
 using Anch.Testing.Database.DependencyInjection;
 using Anch.Testing.Database.Sqlite;
+
 using ExampleApp.Api.Controllers;
 using ExampleApp.Infrastructure.DependencyInjection;
 using ExampleApp.Infrastructure.Services;

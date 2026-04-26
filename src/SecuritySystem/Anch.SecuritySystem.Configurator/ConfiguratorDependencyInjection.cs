@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+
 using Anch.Core;
 using Anch.SecuritySystem.Configurator.Interfaces;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;

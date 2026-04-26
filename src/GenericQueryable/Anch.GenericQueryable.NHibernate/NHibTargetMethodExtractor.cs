@@ -1,4 +1,5 @@
 ﻿using Anch.GenericQueryable.Services;
+
 using NHibernate.Linq;
 
 namespace Anch.GenericQueryable.NHibernate;

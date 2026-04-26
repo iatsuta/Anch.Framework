@@ -1,8 +1,10 @@
 ﻿using System.Collections.Frozen;
 using System.Collections.Immutable;
+
 using Anch.HierarchicalExpand.Denormalization;
 using Anch.HierarchicalExpand.Tests.Domain;
 using Anch.HierarchicalExpand.Tests.Environment;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.Tests;

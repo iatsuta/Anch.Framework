@@ -1,5 +1,7 @@
 ﻿using Anch.GenericRepository;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using NHibernate;
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;
