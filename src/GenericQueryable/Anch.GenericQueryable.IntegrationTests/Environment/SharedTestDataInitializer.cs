@@ -1,5 +1,6 @@
 ﻿using Anch.GenericQueryable.IntegrationTests.Domain;
 using Anch.GenericRepository;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;

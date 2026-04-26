@@ -1,4 +1,5 @@
 ﻿using Anch.GenericQueryable.Services;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Anch.GenericQueryable.EntityFramework;

@@ -1,4 +1,5 @@
 ﻿using Anch.GenericRepository;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;

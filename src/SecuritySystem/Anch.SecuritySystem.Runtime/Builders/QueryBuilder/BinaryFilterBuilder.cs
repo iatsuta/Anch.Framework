@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+
 using Anch.HierarchicalExpand;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;

@@ -4,11 +4,9 @@ using Anch.GenericRepository;
 using Anch.HierarchicalExpand.IntegrationTests.Environment;
 using Anch.HierarchicalExpand.IntegrationTests.Environment.UndirectView;
 using Anch.IdentitySource.DependencyInjection;
-using Anch.Testing;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
-
 [assembly: AnchTestFramework<NHibTestEnvironment>]
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;

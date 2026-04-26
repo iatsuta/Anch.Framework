@@ -1,8 +1,8 @@
-﻿using Anch.Core.ExpressionComparers;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection;
+
+using Anch.Core.ExpressionComparers;
 
 namespace Anch.Core;
 

@@ -1,11 +1,9 @@
-﻿using Anch.Testing;
-using Anch.Testing.Xunit;
+﻿using Anch.Testing.Xunit;
 
 using ExampleApp.Infrastructure.DependencyInjection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 [assembly: AnchTestFramework<ExampleApp.IntegrationTests.Environment.EfTestEnvironment>]
 
 namespace ExampleApp.IntegrationTests.Environment;

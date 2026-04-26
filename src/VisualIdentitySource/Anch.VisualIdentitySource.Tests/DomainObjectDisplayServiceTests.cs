@@ -1,5 +1,6 @@
 ﻿using Anch.Core;
 using Anch.VisualIdentitySource.DependencyInjection;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.VisualIdentitySource.Tests;

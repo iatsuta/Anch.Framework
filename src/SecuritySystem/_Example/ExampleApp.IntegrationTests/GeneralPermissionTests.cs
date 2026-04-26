@@ -7,6 +7,7 @@ using Anch.Testing.Xunit;
 
 using ExampleApp.Application;
 using ExampleApp.Domain;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.IntegrationTests;

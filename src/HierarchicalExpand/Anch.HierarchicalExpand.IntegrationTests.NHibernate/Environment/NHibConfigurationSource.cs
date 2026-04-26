@@ -1,11 +1,13 @@
 ﻿using Anch.GenericQueryable.NHibernate;
 using Anch.HierarchicalExpand.IntegrationTests.Environment.Mapping;
+
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions.Instances;
+
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Driver;

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+
 using NHibernate.Linq;
 
 namespace Anch.GenericQueryable.NHibernate;

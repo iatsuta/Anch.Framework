@@ -1,5 +1,6 @@
 ﻿using Anch.DependencyInjection;
 using Anch.SecuritySystem.Configurator;
+
 using ExampleApp.Infrastructure.DependencyInjection;
 
 using Microsoft.AspNetCore.Authentication.Negotiate;

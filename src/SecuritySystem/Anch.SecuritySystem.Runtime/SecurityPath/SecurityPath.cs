@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Linq.Expressions;
+
 using Anch.Core;
 using Anch.Core.ExpressionComparers;
-
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 

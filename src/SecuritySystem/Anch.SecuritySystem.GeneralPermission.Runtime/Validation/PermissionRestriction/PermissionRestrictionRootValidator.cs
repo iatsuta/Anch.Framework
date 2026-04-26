@@ -1,4 +1,5 @@
 ﻿using Anch.SecuritySystem.Validation;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;

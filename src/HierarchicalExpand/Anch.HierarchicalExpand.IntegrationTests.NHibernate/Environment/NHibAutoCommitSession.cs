@@ -1,4 +1,5 @@
 ﻿using System.Data;
+
 using NHibernate;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;

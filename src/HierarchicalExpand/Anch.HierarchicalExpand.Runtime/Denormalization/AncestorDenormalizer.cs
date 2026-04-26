@@ -1,5 +1,6 @@
 ﻿using Anch.Core;
 using Anch.GenericRepository;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.Denormalization;

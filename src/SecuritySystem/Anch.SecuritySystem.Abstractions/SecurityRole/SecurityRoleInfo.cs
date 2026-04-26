@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
-using Anch.HierarchicalExpand;
 
+using Anch.HierarchicalExpand;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 

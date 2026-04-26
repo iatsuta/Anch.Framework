@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+
 using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;

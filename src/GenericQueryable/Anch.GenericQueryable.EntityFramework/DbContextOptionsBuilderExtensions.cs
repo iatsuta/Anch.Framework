@@ -1,4 +1,5 @@
 ﻿using Anch.GenericQueryable.DependencyInjection;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 

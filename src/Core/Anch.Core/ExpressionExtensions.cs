@@ -1,9 +1,8 @@
 ﻿using System.Collections.Concurrent;
-
-using Anch.Core.Visitor;
-
 using System.Linq.Expressions;
 using System.Reflection;
+
+using Anch.Core.Visitor;
 
 namespace Anch.Core;
 

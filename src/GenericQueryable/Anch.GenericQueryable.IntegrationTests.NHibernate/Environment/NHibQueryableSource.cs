@@ -1,6 +1,7 @@
 ﻿using Anch.GenericQueryable.NHibernate;
 using Anch.GenericQueryable.Services;
 using Anch.GenericRepository;
+
 using NHibernate;
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;

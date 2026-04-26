@@ -1,4 +1,5 @@
 ﻿using Anch.HierarchicalExpand.IntegrationTests.Domain;
+
 using FluentNHibernate.Mapping;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment.Mapping;

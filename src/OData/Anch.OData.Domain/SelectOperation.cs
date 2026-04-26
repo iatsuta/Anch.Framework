@@ -1,9 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using SExpressions = System.Linq.Expressions;
+using System.Collections.Immutable;
 
 using Anch.Core;
 using Anch.OData.Domain.QueryLanguage;
-
-using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData.Domain;
 

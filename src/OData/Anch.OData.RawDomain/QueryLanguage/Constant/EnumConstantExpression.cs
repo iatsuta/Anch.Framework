@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+
 using Anch.OData.Domain.QueryLanguage.Constant.Base;
 
 namespace Anch.OData.Domain.QueryLanguage.Constant;

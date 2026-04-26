@@ -1,5 +1,6 @@
 ﻿using Anch.DependencyInjection;
 using Anch.SecuritySystem.DependencyInjection;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Notification.DependencyInjection;

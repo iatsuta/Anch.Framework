@@ -1,7 +1,6 @@
-﻿using Anch.Core;
+﻿using System.Collections.Frozen;
 
-using System.Collections.Frozen;
-
+using Anch.Core;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 

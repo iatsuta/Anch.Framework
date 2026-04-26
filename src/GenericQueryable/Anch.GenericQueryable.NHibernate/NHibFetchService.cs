@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
+
 using Anch.Core;
 using Anch.GenericQueryable.Fetching;
+
 using NHibernate.Linq;
 
 namespace Anch.GenericQueryable.NHibernate;

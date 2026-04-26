@@ -1,4 +1,5 @@
 ﻿using Anch.SecuritySystem;
+
 using ExampleApp.Domain;
 
 namespace ExampleApp.IntegrationTests;

@@ -1,6 +1,7 @@
-﻿using System.Reflection;
+﻿using SExpressions = System.Linq.Expressions;
+using System.Reflection;
+
 using Anch.Core;
-using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData;
 

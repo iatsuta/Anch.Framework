@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ExampleApp.Infrastructure.DependencyInjection.UndirectView;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using NHibernate.Tool.hbm2ddl;
-using ExampleApp.Infrastructure.DependencyInjection.UndirectView;
 
 namespace ExampleApp.Infrastructure.Services;
 
