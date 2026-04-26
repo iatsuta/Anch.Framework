@@ -16,14 +16,12 @@ jobs:
 
       - uses: actions/checkout@v5
 
-      - run: git config --global core.autocrlf true
-
       - name: Set up node.js
         uses: actions/setup-node@v5
         with:
           node-version: 18
           cache: "npm"
-          cache-dependency-path: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui/package-lock.json
+          cache-dependency-path: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
 
       - name: Build UI
         working-directory: ./src/SecuritySystem/SecuritySystem.Configurator/configurator-ui
