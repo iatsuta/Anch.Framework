@@ -42,7 +42,7 @@ public abstract class TestEnvironment : ITestEnvironment
                 })
                 .RebindActualConnection<IMainConnectionStringSource>(connectionString => new MainConnectionStringSource(connectionString.Value)))
 
-            .AddEnvironmentHook(EnvironmentHookType.Before, sp => sp.GetRequiredService<RootImpersonateServiceState>().Reset())
+            .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<RootImpersonateServiceState>().Reset())
 
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()

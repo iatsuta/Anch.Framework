@@ -10,7 +10,7 @@ public static class ServiceProviderExtensions
             services.AddEnvironmentHook(type, async (sp, _) => action(sp));
 
         public IServiceCollection AddEnvironmentHook(EnvironmentHookType type, Func<IServiceProvider, CancellationToken, ValueTask> action) =>
-            services.AddSingleton<ITestEnvironmentHook>(sp => new AsyncTestEnvironmentHook(sp, action));
+            services.AddKeyedSingleton<ITestEnvironmentHook>(type, (sp, _) => new AsyncTestEnvironmentHook(sp, action));
     }
 
     private class AsyncTestEnvironmentHook(

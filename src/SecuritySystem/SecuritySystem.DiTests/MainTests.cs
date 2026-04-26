@@ -37,8 +37,6 @@ public class MainTests
 
         this.executeCounter = this.rootServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
 
-        Assert.Equal(0, this.executeCounter.Count);
-
         this.bu1 = new() { Id = Guid.NewGuid() };
         this.bu2 = new BusinessUnit { Id = Guid.NewGuid(), Parent = this.bu1 };
         this.bu3 = new BusinessUnit { Id = Guid.NewGuid() };

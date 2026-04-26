@@ -83,7 +83,7 @@ public class TestEnvironment : ITestEnvironment
             .AddSingleton<TestPermissionStorge>()
             .AddSingleton<BusinessUnitAncestorLinkSourceExecuteCounter>()
 
-            .AddEnvironmentHook(EnvironmentHookType.Before, sp =>
+            .AddEnvironmentHook(EnvironmentHookType.After, sp =>
             {
                 sp.GetRequiredService<TestQueryableSource>().Reset();
                 sp.GetRequiredService<TestPermissionStorge>().Reset();
