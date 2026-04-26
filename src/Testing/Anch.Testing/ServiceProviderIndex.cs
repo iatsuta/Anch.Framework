@@ -1,3 +1,3 @@
-﻿namespace Anch.Testing.XunitEngine;
+﻿namespace Anch.Testing;
 
 public record ServiceProviderIndex(int Index);

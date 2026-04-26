@@ -1,7 +1,8 @@
 ﻿using System.Collections.Concurrent;
+
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Anch.Testing.XunitEngine;
+namespace Anch.Testing;
 
 public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServiceProviderPool
 {

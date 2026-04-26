@@ -4,7 +4,7 @@ using Anch.Core;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Anch.Testing.XunitEngine;
+namespace Anch.Testing;
 
 public class RootSharedServiceSource
 {

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Testing\Anch.Testing\Anch.Testing.csproj" />
+    <ProjectReference Include="..\..\Testing\Anch.Testing.Xunit\Anch.Testing.Xunit.csproj" />
     <ProjectReference Include="..\Anch.HierarchicalExpand\Anch.HierarchicalExpand.csproj" />
   </ItemGroup>
 

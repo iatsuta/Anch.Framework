@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Testing\Anch.Testing\Anch.Testing.csproj" />
-    <ProjectReference Include="..\Anch.Core\Anch.Core.csproj" />
+    <ProjectReference Include="..\..\Testing\Anch.Testing.Xunit\Anch.Testing.Xunit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

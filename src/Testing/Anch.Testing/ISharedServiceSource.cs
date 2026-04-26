@@ -1,4 +1,4 @@
-﻿namespace Anch.Testing.XunitEngine;
+﻿namespace Anch.Testing;
 
 public interface ISharedServiceSource
 {

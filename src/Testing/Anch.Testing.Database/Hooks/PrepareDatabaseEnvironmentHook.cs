@@ -1,7 +1,6 @@
 ﻿using Anch.Core;
 using Anch.Testing.Database.ConnectionStringManagement;
 using Anch.Testing.Database.Initializers;
-using Anch.Testing.XunitEngine;
 
 namespace Anch.Testing.Database.Hooks;
 
