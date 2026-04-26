@@ -15,6 +15,8 @@ public class MainTests
 {
     private readonly IServiceProvider rootServiceProvider;
 
+    private readonly BusinessUnitAncestorLinkSourceExecuteCounter executeCounter;
+
     private readonly BusinessUnit bu1;
 
     private readonly BusinessUnit bu2;
@@ -29,11 +31,13 @@ public class MainTests
 
     private readonly Employee employee4;
 
-    private readonly BusinessUnitAncestorLinkSourceExecuteCounter executeCounter;
-
     public MainTests(IServiceProvider rootServiceProvider)
     {
         this.rootServiceProvider = rootServiceProvider;
+
+        this.executeCounter = this.rootServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
+
+        Assert.Equal(0, this.executeCounter.Count);
 
         this.bu1 = new() { Id = Guid.NewGuid() };
         this.bu2 = new BusinessUnit { Id = Guid.NewGuid(), Parent = this.bu1 };
@@ -50,14 +54,11 @@ public class MainTests
         {
             Restrictions = { { typeof(BusinessUnit), new[] { this.bu1.Id } } }
         });
-
-        this.executeCounter = this.rootServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
     }
 
     [CommonFact]
     public async Task TestEmployeesSecurity_EmployeeHasAccessCorrect(CancellationToken ct)
     {
-        Assert.Equal(0, this.executeCounter.Count);
 
         // Arrange
         await using var scope = this.rootServiceProvider.CreateAsyncScope();
