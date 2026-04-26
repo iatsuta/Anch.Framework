@@ -42,32 +42,17 @@ public class CommonTestClassRunner : XunitTestClassRunnerBase<CommonTestClassRun
 
         //await ExecutionTimer.MeasureAsync(null);
 
-        if (ctxt.ServiceProvider != null)
-        {
-            await ctxt.ServiceProvider.RunEnvironmentHooks(EnvironmentHookType.Before, ctxt.CancellationTokenSource.Token);
-        }
-
-        try
-        {
-
-            return await CommonTestMethodRunner.Instance.Run(
-                testMethod,
-                testCases,
-                ctxt.ExplicitOption,
-                ctxt.MessageBus,
-                ctxt.Aggregator.Clone(),
-                ctxt.CancellationTokenSource,
-                constructorArguments
-            );
-        }
-        finally
-        {
-            if (ctxt.ServiceProvider != null)
-            {
-                await ctxt.ServiceProvider.RunEnvironmentHooks(EnvironmentHookType.After, ctxt.CancellationTokenSource.Token);
-            }
-        }
+        return await CommonTestMethodRunner.Instance.Run(
+            testMethod,
+            testCases,
+            ctxt.ExplicitOption,
+            ctxt.MessageBus,
+            ctxt.Aggregator.Clone(),
+            ctxt.CancellationTokenSource,
+            constructorArguments,
+            ctxt.ServiceProvider);
     }
+
     public async ValueTask<RunSummary> Run(
         IXunitTestClass testClass,
         IReadOnlyCollection<IXunitTestCase> testCases,

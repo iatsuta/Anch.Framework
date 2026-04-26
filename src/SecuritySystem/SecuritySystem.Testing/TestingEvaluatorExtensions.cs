@@ -12,10 +12,8 @@ public static class TestingEvaluatorExtensions
         public Task EvaluateAsync(TestingScopeMode mode, UserCredential? userCredential, Func<TService, Task> evaluate) =>
             testingEvaluator.EvaluateAsync(mode, userCredential, evaluate.ToDefaultTask());
 
-
         public Task<TResult> EvaluateAsync<TResult>(TestingScopeMode mode, Func<TService, Task<TResult>> evaluate) =>
             testingEvaluator.EvaluateAsync(mode, null, evaluate);
-
 
         public ITestingEvaluator<TNewService> Select<TNewService>(Func<TService, TNewService> selector)
         {
@@ -31,14 +29,14 @@ public static class TestingEvaluatorExtensions
     private class ChangedTestingEvaluator<TService, TNewService>(ITestingEvaluator<TService> baseEvaluator, Func<TService, Task<TNewService>> selector)
         : ITestingEvaluator<TNewService>
     {
-        public async Task<TResult> EvaluateAsync<TResult>(TestingScopeMode mode, UserCredential? userUserCredential, Func<TNewService, Task<TResult>> evaluate)
-        {
-            return await baseEvaluator.EvaluateAsync(mode, async baseService =>
+        public async Task<TResult> EvaluateAsync<TResult>(TestingScopeMode mode, UserCredential? userUserCredential,
+            Func<TNewService, Task<TResult>> evaluate) =>
+
+            await baseEvaluator.EvaluateAsync(mode, async baseService =>
             {
                 var newService = await selector(baseService);
 
                 return await evaluate(newService);
             });
-        }
     }
 }

@@ -1,8 +1,4 @@
-﻿using CommonFramework;
-
-using ExampleApp.Infrastructure.Services;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.IntegrationTests;
 
@@ -12,12 +8,7 @@ public abstract class TestBase(IServiceProvider rootServiceProvider) : IAsyncLif
 
     protected RootAuthManager AuthManager => field ??= rootServiceProvider.GetRequiredService<RootAuthManager>();
 
-    protected virtual async ValueTask InitializeAsync(CancellationToken ct)
-    {
-        rootServiceProvider.GetRequiredService<RootImpersonateServiceState>().Reset();
-
-        await rootServiceProvider.GetRequiredKeyedService<IInitializer>(RootAppInitializer.Key).Initialize(ct);
-    }
+    protected virtual ValueTask InitializeAsync(CancellationToken ct) => ValueTask.CompletedTask;
 
     ValueTask IAsyncLifetime.InitializeAsync() => this.InitializeAsync(TestContext.Current.CancellationToken);
 

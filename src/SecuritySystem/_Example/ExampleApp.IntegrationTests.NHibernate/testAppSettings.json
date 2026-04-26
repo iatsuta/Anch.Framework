@@ -1,6 +1,5 @@
 ﻿{
-  "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DefaultConnection": "Data Source=test.db"
+    "DefaultConnection": "Data Source=test.db;Pooling=False"
   }
 }

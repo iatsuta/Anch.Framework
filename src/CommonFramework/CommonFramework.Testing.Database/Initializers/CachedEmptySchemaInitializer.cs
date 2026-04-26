@@ -20,7 +20,7 @@ public class CachedEmptySchemaInitializer(
             {
                 case DatabaseInitMode.RebuildSnapshot:
                 {
-                    await this.InternalInitialize(true, cancellationToken);
+                    await this.InternalInitialize(cancellationToken);
                     break;
                 }
 
@@ -28,7 +28,7 @@ public class CachedEmptySchemaInitializer(
                 {
                     if (!await databaseManager.Exists(connectionStringProvider.EmptySnapshot, cancellationToken))
                     {
-                        await this.InternalInitialize(false, cancellationToken);
+                        await this.InternalInitialize(cancellationToken);
                     }
 
                     break;
@@ -36,13 +36,15 @@ public class CachedEmptySchemaInitializer(
             }
         });
 
-    private async Task InternalInitialize(bool force, CancellationToken cancellationToken)
+    private async Task InternalInitialize(CancellationToken cancellationToken)
     {
         try
         {
+            await databaseManager.Remove(connectionStringProvider.Actual, cancellationToken);
+
             await emptySchemaInitializer.Initialize(cancellationToken);
 
-            await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.EmptySnapshot, force, cancellationToken);
+            await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.EmptySnapshot, true, cancellationToken);
         }
         catch (Exception createSchemaEx)
         {

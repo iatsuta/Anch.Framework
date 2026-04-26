@@ -3,14 +3,14 @@
 using Microsoft.Extensions.DependencyInjection;
 
 #if DEBUG
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(DisableTestParallelization = false)]
 #endif
 
 [assembly: CommonFramework.Testing.CommonTestFramework<HierarchicalExpand.IntegrationTests.Environment.EfTestEnvironment>]
 
 namespace HierarchicalExpand.IntegrationTests.Environment;
 
-public class EfTestEnvironment : TestEnvironmentBase
+public class EfTestEnvironment : TestEnvironment
 {
     protected override IServiceCollection InitializeServices(IServiceCollection services) =>
 

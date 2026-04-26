@@ -1,12 +1,16 @@
 ﻿using CommonFramework;
+
 using ExampleApp.Application;
 using ExampleApp.Domain;
 using ExampleApp.Domain.Auth.Virtual;
 using ExampleApp.Infrastructure.DependencyInjection.UndirectView;
 using ExampleApp.Infrastructure.Services;
+
 using HierarchicalExpand;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using SecuritySystem;
 using SecuritySystem.DependencyInjection;
 using SecuritySystem.GeneralPermission.DependencyInjection;
@@ -24,12 +28,14 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddInfrastructure(IConfiguration configuration)
         {
             return services
+                .AddSingleton(configuration)
+                .AddSingleton<IMainConnectionStringSource, ConfigurationMainConnectionStringSource>()
                 .AddSingleton<IUndirectedAncestorViewScriptGenerator, UndirectedAncestorViewScriptGenerator>()
                 .AddSingleton<IViewCreationScriptProvider, UndirectedAncestorViewScriptProvider>()
                 .AddLogging()
                 .AddHttpContextAccessor()
+                .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
                 .AddKeyedScoped<IInitializer, ExampleDataInitializer>(ExampleDataInitializer.Key)
-                .AddKeyedSingleton<IInitializer, RootAppInitializer>(RootAppInitializer.Key)
                 .AddSecuritySystem()
                 .AddRepository();
         }

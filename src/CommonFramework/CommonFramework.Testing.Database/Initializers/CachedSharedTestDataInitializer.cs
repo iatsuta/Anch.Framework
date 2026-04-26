@@ -20,7 +20,7 @@ public class CachedSharedTestDataInitializer(
             {
                 case DatabaseInitMode.RebuildSnapshot:
                 {
-                    await this.InternalInitialize(true, cancellationToken);
+                    await this.InternalInitialize(cancellationToken);
                     break;
                 }
 
@@ -28,7 +28,7 @@ public class CachedSharedTestDataInitializer(
                 {
                     if (!await databaseManager.Exists(connectionStringProvider.FilledSnapshot, cancellationToken))
                     {
-                        await this.InternalInitialize(false, cancellationToken);
+                        await this.InternalInitialize(cancellationToken);
                     }
 
                     break;
@@ -37,15 +37,15 @@ public class CachedSharedTestDataInitializer(
         });
 
 
-    private async Task InternalInitialize(bool force, CancellationToken cancellationToken)
+    private async Task InternalInitialize(CancellationToken cancellationToken)
     {
         try
         {
-            await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.Actual, force, cancellationToken);
+            await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.Actual, true, cancellationToken);
 
             await sharedTestDataInitializer.Initialize(cancellationToken);
 
-            await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, force, cancellationToken);
+            await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, true, cancellationToken);
         }
         catch (Exception createSchemaEx)
         {

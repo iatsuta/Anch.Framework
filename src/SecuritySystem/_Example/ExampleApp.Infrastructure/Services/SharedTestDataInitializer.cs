@@ -7,14 +7,10 @@ using SecuritySystem.GeneralPermission.Initialize;
 
 namespace ExampleApp.Infrastructure.Services;
 
-public class RootAppInitializer(IServiceProvider rootServiceProvider) : IInitializer
+public class SharedTestDataInitializer(IServiceProvider rootServiceProvider) : ISharedTestDataInitializer
 {
-    public const string Key = "RootApp";
-
     public async Task Initialize(CancellationToken cancellationToken)
     {
-        await this.Initialize<IEmptySchemaInitializer>(cancellationToken);
-
         await this.Initialize<ISecurityContextInitializer>(cancellationToken);
         await this.Initialize<ISecurityRoleInitializer>(cancellationToken);
 

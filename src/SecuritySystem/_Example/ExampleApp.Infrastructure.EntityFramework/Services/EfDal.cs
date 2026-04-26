@@ -2,7 +2,7 @@
 
 namespace ExampleApp.Infrastructure.Services;
 
-public class EfDal<TDomainObject>(AutoCommitSession session) : IDal<TDomainObject>
+public class EfDal<TDomainObject>(EfAutoCommitSession session) : IDal<TDomainObject>
     where TDomainObject : class
 {
     public async Task SaveAsync(TDomainObject domainObject, CancellationToken cancellationToken)

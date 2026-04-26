@@ -42,7 +42,6 @@
   <Folder Name="/CommonFramework/_Tests/">  
     <Project Path="CommonFramework/CommonFramework.DependencyInjection.Tests/CommonFramework.DependencyInjection.Tests.csproj" />
     <Project Path="CommonFramework/CommonFramework.IdentitySource.Tests/CommonFramework.IdentitySource.Tests.csproj" />
-    <Project Path="CommonFramework/CommonFramework.Testing.DiTests/CommonFramework.Testing.DiTests.csproj" />
     <Project Path="CommonFramework/CommonFramework.Tests/CommonFramework.Tests.csproj" />
     <Project Path="CommonFramework/CommonFramework.VisualIdentitySource.Tests/CommonFramework.VisualIdentitySource.Tests.csproj" />
   </Folder>

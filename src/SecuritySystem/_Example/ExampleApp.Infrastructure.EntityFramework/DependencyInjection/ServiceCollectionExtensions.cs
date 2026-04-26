@@ -1,8 +1,5 @@
 ﻿using ExampleApp.Infrastructure.Services;
 
-using GenericQueryable.EntityFramework;
-
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,13 +12,10 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddEntityFrameworkInfrastructure(IConfiguration configuration)
         {
             return services
-                .AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder
-                    .UseSqlite(configuration.GetConnectionString("DefaultConnection"))
-                    .UseLazyLoadingProxies()
-                    .UseGenericQueryable())
+                .AddDbContext<AppDbContext>()
                 .AddScoped(typeof(IDal<>), typeof(EfDal<>))
-                .AddScoped<AutoCommitSession>()
-                .AddScoped<IEmptySchemaInitializer, EmptySchemaInitializer>();
+                .AddScoped<EfAutoCommitSession>()
+                .AddSingleton<IEmptySchemaInitializer, EfEmptySchemaInitializer>();
         }
     }
 }
