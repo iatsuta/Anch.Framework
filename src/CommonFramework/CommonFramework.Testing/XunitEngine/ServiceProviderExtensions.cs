@@ -6,7 +6,9 @@ public static class ServiceProviderExtensions
 {
     public static async ValueTask RunEnvironmentHooks(this IServiceProvider serviceProvider, EnvironmentHookType hookType, CancellationToken ct)
     {
-        foreach (var hook in serviceProvider.GetKeyedServices<ITestEnvironmentHook>(hookType))
+        var services = serviceProvider.GetKeyedServices<ITestEnvironmentHook>(hookType);
+
+        foreach (var hook in hookType == EnvironmentHookType.Before ? services.Reverse() : services)
         {
             await hook.Process(ct);
         }

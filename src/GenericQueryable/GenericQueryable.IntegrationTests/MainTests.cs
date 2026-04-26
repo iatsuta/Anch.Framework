@@ -1,4 +1,5 @@
 ﻿using CommonFramework.GenericRepository;
+
 using GenericQueryable.IntegrationTests.Domain;
 using GenericQueryable.IntegrationTests.Environment;
 

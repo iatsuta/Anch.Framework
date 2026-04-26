@@ -20,5 +20,5 @@ public class SharedTestDataInitializer(IServiceProvider rootServiceProvider) : I
         await genericRepository.SaveAsync(new TestObject { Id = this.TestObjId, FetchObject = fetchObj }, cancellationToken);
     }
 
-    public Guid TestObjId { get; } = Guid.NewGuid();
+    public Guid TestObjId { get; } = new("{16129B46-C49C-40D0-A787-419501DCF223}");
 }

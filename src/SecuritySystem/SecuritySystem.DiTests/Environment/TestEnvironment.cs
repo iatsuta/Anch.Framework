@@ -1,5 +1,6 @@
 ﻿using CommonFramework.DependencyInjection;
 using CommonFramework.RelativePath.DependencyInjection;
+
 using HierarchicalExpand;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +32,7 @@ public class TestEnvironment : ITestEnvironment
                         .SetEdit(ExampleSecurityOperation.EmployeeEdit)
                         .SetPath(SecurityPath<Employee>.Create(v => v.BusinessUnit)))
 
-                    .AddSecurityContext<BusinessUnit>(Guid
-                            .NewGuid(),
+                    .AddSecurityContext<BusinessUnit>(Guid.NewGuid(),
                         scb => scb.SetHierarchicalInfo(
                             bu => bu.Parent,
                             new AncestorLinkInfo<BusinessUnit, BusinessUnitDirectAncestorLink>(bu => bu.Ancestor,
@@ -83,7 +83,7 @@ public class TestEnvironment : ITestEnvironment
             .AddSingleton<TestPermissionStorge>()
             .AddSingleton<BusinessUnitAncestorLinkSourceExecuteCounter>()
 
-            .AddEnvironmentHook(EnvironmentHookType.Before, sp =>
+            .AddEnvironmentHook(EnvironmentHookType.After, sp =>
             {
                 sp.GetRequiredService<TestQueryableSource>().Reset();
                 sp.GetRequiredService<TestPermissionStorge>().Reset();

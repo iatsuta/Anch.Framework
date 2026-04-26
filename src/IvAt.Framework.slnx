@@ -5,7 +5,7 @@
     <File Path="Directory.Packages.props" />
     <File Path="__RootSolutionItems/DatabaseInitModeHelper.cs" />
     <File Path="__RootSolutionItems/RootCommonAssemblyInfo.cs" />
-    <File Path="__RootSolutionItems/XunitParallelTestSettings.cs" />
+    <File Path="__RootSolutionItems/XunitParallelSettings.cs" />
   </Folder>
 
   <Folder Name="/CommonFramework/">
