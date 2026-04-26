@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\__RootSolutionItems\XunitParallelSettings.cs" Link="Environment\XunitParallelSettings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\ExampleApp.IntegrationTests.EntityFramework\*.cs" />
   </ItemGroup>
 

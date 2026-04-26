@@ -1,5 +1,4 @@
-﻿using CommonFramework.Testing;
-using ExampleApp.Domain;
+﻿using ExampleApp.Domain;
 
 using SecuritySystem;
 using SecuritySystem.AvailableSecurity;

@@ -1,3 +1,1 @@
-﻿using CommonFramework.Testing;
-
-[assembly: CommonTestFramework]
+﻿[assembly: CommonTestFramework]

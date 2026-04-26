@@ -1,7 +1,5 @@
 ﻿using CommonFramework.DependencyInjection;
 using CommonFramework.GenericRepository;
-using CommonFramework.Testing;
-
 using HierarchicalExpand.DependencyInjection;
 using HierarchicalExpand.Tests.Domain;
 using HierarchicalExpand.Tests.Environment;

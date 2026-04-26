@@ -1,8 +1,6 @@
 ﻿using System.Collections.Immutable;
 
 using CommonFramework;
-using CommonFramework.Testing;
-
 using HierarchicalExpand.Tests.Domain;
 using HierarchicalExpand.Tests.Environment;
 

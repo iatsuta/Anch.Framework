@@ -1,6 +1,4 @@
-﻿using CommonFramework.Testing;
-
-namespace CommonFramework.Tests;
+﻿namespace CommonFramework.Tests;
 
 public class AsyncEnumerableExtensionsTests
 {

@@ -1,6 +1,4 @@
-﻿using CommonFramework.Testing;
-
-using ExampleApp.Application;
+﻿using ExampleApp.Application;
 using ExampleApp.Domain;
 
 using GenericQueryable;

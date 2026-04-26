@@ -1,6 +1,4 @@
 ﻿using CommonFramework.GenericRepository;
-using CommonFramework.Testing;
-
 using GenericQueryable.IntegrationTests.Domain;
 using GenericQueryable.IntegrationTests.Environment;
 
