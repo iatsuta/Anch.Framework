@@ -1,4 +1,5 @@
-﻿using CommonFramework;
+﻿using System.Diagnostics;
+using CommonFramework;
 using CommonFramework.DependencyInjection;
 using CommonFramework.Testing.Database;
 using CommonFramework.Testing.Database.DependencyInjection;

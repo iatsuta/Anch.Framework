@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
+
 using Xunit.Sdk;
 using Xunit.v3;
 
 namespace CommonFramework.Testing.XunitEngine;
 
-public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProviderPool? serviceProviderPool) : IXunitTestMethod
+public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProviderPool? serviceProviderPool) : IXunitTestMethod, IXunitSerializable
 {
     public int? MethodArity => baseMethod.MethodArity;
 
@@ -68,4 +69,14 @@ public class CommonTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProvide
 
     public object?[] ResolveMethodArguments(object?[] arguments)
         => baseMethod.ResolveMethodArguments(arguments);
+
+    public void Deserialize(IXunitSerializationInfo info)
+    {
+        (baseMethod as IXunitSerializable)?.Deserialize(info);
+    }
+
+    public void Serialize(IXunitSerializationInfo info)
+    {
+        (baseMethod as IXunitSerializable)?.Serialize(info);
+    }
 }
