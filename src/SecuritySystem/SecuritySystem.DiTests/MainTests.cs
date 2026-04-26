@@ -13,6 +13,8 @@ namespace SecuritySystem.DiTests;
 
 public class MainTests
 {
+    private readonly IServiceProvider rootServiceProvider;
+
     private readonly BusinessUnit bu1;
 
     private readonly BusinessUnit bu2;
@@ -27,8 +29,7 @@ public class MainTests
 
     private readonly Employee employee4;
 
-
-    private readonly IServiceProvider rootServiceProvider;
+    private readonly BusinessUnitAncestorLinkSourceExecuteCounter executeCounter;
 
     public MainTests(IServiceProvider rootServiceProvider)
     {
@@ -49,18 +50,21 @@ public class MainTests
         {
             Restrictions = { { typeof(BusinessUnit), new[] { this.bu1.Id } } }
         });
+
+        this.executeCounter = this.rootServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
     }
 
 
     [CommonFact]
     public async Task TestEmployeesSecurity_EmployeeHasAccessCorrect(CancellationToken ct)
     {
+        Assert.Equal(0, this.executeCounter.Count);
+
         // Arrange
         await using var scope = this.rootServiceProvider.CreateAsyncScope();
 
         var employeeDomainSecurityService =
             scope.ServiceProvider.GetRequiredService<IDomainSecurityService<Employee>>();
-        var counterService = scope.ServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
         var securityProvider = employeeDomainSecurityService.GetSecurityProvider(SecurityRule.View);
 
         // Act
@@ -73,7 +77,7 @@ public class MainTests
         Assert.True(result2);
         Assert.False(result3);
 
-        Assert.Equal(1, counterService.Count);
+        Assert.Equal(1, this.executeCounter.Count);
     }
 
     [CommonFact]
@@ -96,8 +100,7 @@ public class MainTests
 
     private IEnumerable<BusinessUnitDirectAncestorLink> GetBusinessUnitAncestorLinkSource()
     {
-        var counter = this.rootServiceProvider.GetRequiredService<BusinessUnitAncestorLinkSourceExecuteCounter>();
-        counter.Count++;
+        this.executeCounter.Count++;
 
         yield return new BusinessUnitDirectAncestorLink { Ancestor = this.bu1, Child = this.bu1 };
         yield return new BusinessUnitDirectAncestorLink { Ancestor = this.bu2, Child = this.bu2 };
