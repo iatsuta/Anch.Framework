@@ -38,7 +38,7 @@
   <Folder Name="/Testing/">
     <Project Path="Testing/Anch.Testing.Database.Sqlite/Anch.Testing.Database.Sqlite.csproj" />
     <Project Path="Testing/Anch.Testing.Database/Anch.Testing.Database.csproj" />
-    <Project Path="Testing/Anch.Testing.XUnit/Anch.Testing.Xunit.csproj" />
+    <Project Path="Testing/Anch.Testing.Xunit/Anch.Testing.Xunit.csproj" />
     <Project Path="Testing/Anch.Testing/Anch.Testing.csproj" />
   </Folder>
   
