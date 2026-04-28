@@ -21,6 +21,7 @@ public abstract class TestEnvironment : ITestEnvironment
         var configuration = new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
 
         return services
+            .AddSingleton(configuration)
             .AddInfrastructure(configuration)
             .Pipe(s => this.InitializeServices(s, configuration))
 
@@ -32,14 +33,14 @@ public abstract class TestEnvironment : ITestEnvironment
 
             .AddDatabaseTesting(dts => dts
                 .SetProvider<SqliteDatabaseTestingProvider>()
-                .SetEmptySchemaInitializer<IEmptySchemaInitializer>()
-                .SetSharedTestDataInitializer<ISharedTestDataInitializer>()
+                .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
+                .SetSharedTestDataInitializer<ISharedTestDataInitializer>(register: false)
                 .SetSettings(new TestDatabaseSettings
                 {
                     InitMode = DatabaseInitModeHelper.DatabaseInitMode,
-                    DefaultConnectionString = new (configuration.GetRequiredConnectionString(ConfigurationMainConnectionStringSource.DefaultName))
+                    DefaultConnectionString = new (configuration.GetRequiredConnectionString(MainConnectionStringSource.DefaultName))
                 })
-                .RebindActualConnection<IMainConnectionStringSource>(connectionString => new MainConnectionStringSource(connectionString.Value)))
+                .RebindActualConnection<IMainConnectionStringSource>(connectionString => new ManualMainConnectionStringSource(connectionString.Value)))
 
             .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<RootImpersonateServiceState>().Reset())
 

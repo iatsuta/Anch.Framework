@@ -246,4 +246,7 @@ ModelManifest.xml
 *.js.map
 *.js
 
+*.db
+*.db-shm
+*.db-wal
 /src/.github/copilot-instructions.md

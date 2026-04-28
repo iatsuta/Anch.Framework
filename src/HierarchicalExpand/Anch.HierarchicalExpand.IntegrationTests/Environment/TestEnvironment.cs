@@ -37,12 +37,10 @@ public abstract class TestEnvironment : ITestEnvironment
                     new AncestorLinkInfo<TestHierarchicalObject, TestHierarchicalObjectUndirectAncestorLink>(view => view.Source, view => view.Target),
                     v => v.DeepLevel))
 
-            .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
-
             .AddDatabaseTesting(dts => dts
                 .SetProvider<SqliteDatabaseTestingProvider>()
-                .SetEmptySchemaInitializer<IEmptySchemaInitializer>()
-                .SetSharedTestDataInitializer<ISharedTestDataInitializer>()
+                .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
+                .SetSharedTestDataInitializer<SharedTestDataInitializer>()
                 .SetSettings(new TestDatabaseSettings
                 {
                     InitMode = DatabaseInitModeHelper.DatabaseInitMode,

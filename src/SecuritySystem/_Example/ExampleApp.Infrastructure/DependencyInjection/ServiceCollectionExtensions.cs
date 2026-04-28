@@ -26,8 +26,7 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddInfrastructure(IConfiguration configuration)
         {
             return services
-                .AddSingleton(configuration)
-                .AddSingleton<IMainConnectionStringSource, ConfigurationMainConnectionStringSource>()
+                .AddSingleton<IMainConnectionStringSource, MainConnectionStringSource>()
                 .AddSingleton<IUndirectedAncestorViewScriptGenerator, UndirectedAncestorViewScriptGenerator>()
                 .AddSingleton<IViewCreationScriptProvider, UndirectedAncestorViewScriptProvider>()
                 .AddLogging()

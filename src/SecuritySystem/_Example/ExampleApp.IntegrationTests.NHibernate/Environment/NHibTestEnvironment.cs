@@ -11,6 +11,5 @@ namespace ExampleApp.IntegrationTests.Environment;
 public class NHibTestEnvironment : TestEnvironment
 {
     protected override IServiceCollection InitializeServices(IServiceCollection services, IConfiguration configuration) =>
-        services.AddNHibernateInfrastructure(configuration)
-            .AddSingleton(configuration);
+        services.AddNHibernateInfrastructure(configuration);
 }

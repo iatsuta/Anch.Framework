@@ -6,6 +6,11 @@ public static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
+        public IServiceCollection AddEnvironmentHook<TTestEnvironmentHook>(EnvironmentHookType type)
+            where TTestEnvironmentHook : class, ITestEnvironmentHook =>
+
+            services.AddKeyedSingleton<ITestEnvironmentHook, TTestEnvironmentHook>(type);
+
         public IServiceCollection AddEnvironmentHook(EnvironmentHookType type, Action<IServiceProvider> action) =>
             services.AddEnvironmentHook(type, async (sp, _) => action(sp));
 

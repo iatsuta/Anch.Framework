@@ -2,7 +2,7 @@
   "name": "configurator-ui",
   "version": "0.0.0",
   "scripts": {
-	"build": "ng build",
+    "build": "ng build",
     "ng": "ng",
     "start": "ng serve --port 4201 --proxy-config proxy-local-back.conf.json",
     "start:dev": "ng serve --port 4202 --proxy-config proxy-dev-back.conf.json",
@@ -40,6 +40,6 @@
     "typescript": "5.4.5"
   },
   "engines": {
-    "node": "18.17.1"
+    "node": "18.19.1"
   }
 }

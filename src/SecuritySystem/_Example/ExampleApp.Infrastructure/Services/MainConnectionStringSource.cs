@@ -1,6 +1,10 @@
-﻿namespace ExampleApp.Infrastructure.Services;
+﻿using Microsoft.Extensions.Configuration;
 
-public class MainConnectionStringSource(string connectionString) : IMainConnectionStringSource
+namespace ExampleApp.Infrastructure.Services;
+
+public class MainConnectionStringSource(IConfiguration configuration) : IMainConnectionStringSource
 {
-    public string ConnectionString { get; } = connectionString;
+    public const string DefaultName = "DefaultConnection";
+
+    public string ConnectionString { get; } = configuration.GetRequiredConnectionString(DefaultName);
 }
