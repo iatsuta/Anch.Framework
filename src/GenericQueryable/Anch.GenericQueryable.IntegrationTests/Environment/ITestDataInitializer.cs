@@ -2,7 +2,7 @@
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;
 
-public interface ISharedTestDataInitializer : IInitializer
+public interface ITestDataInitializer : IInitializer
 {
     Guid TestObjId { get; }
 }

@@ -5,7 +5,7 @@ using Anch.HierarchicalExpand.IntegrationTests.Domain;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;
 
-public class SharedTestDataInitializer(ScopeEvaluator scopeEvaluator) : IInitializer
+public class TestDataInitializer(ScopeEvaluator scopeEvaluator) : IInitializer
 {
     public async Task Initialize(CancellationToken ct)
     {

@@ -11,13 +11,13 @@ public class PrepareDatabaseEnvironmentHook(
 {
     private readonly IInitializer emptySchemaInitializer = sharedServiceSource.GetSharedService<IInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey);
 
-    private readonly IInitializer sharedTestDataInitializer = sharedServiceSource.GetSharedService<IInitializer>(TestDatabaseInitializer.CachedSharedTestDataKey);
+    private readonly IInitializer testDataInitializer = sharedServiceSource.GetSharedService<IInitializer>(TestDatabaseInitializer.CachedTestDataKey);
 
     public async ValueTask Process(CancellationToken ct)
     {
         await this.emptySchemaInitializer.Initialize(ct);
 
-        await this.sharedTestDataInitializer.Initialize(ct);
+        await this.testDataInitializer.Initialize(ct);
 
         await databaseManager.Copy(connectionStringProvider.FilledSnapshot, connectionStringProvider.Actual, true, ct);
     }

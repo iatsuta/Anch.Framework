@@ -20,12 +20,12 @@ public abstract class TestEnvironment : ITestEnvironment
 
             .Pipe(this.AddServices)
 
-            .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
+            .AddSingleton<ITestDataInitializer, TestDataInitializer>()
 
             .AddDatabaseTesting(dts => dts
                 .SetProvider<SqliteDatabaseTestingProvider>()
                 .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
-                .SetSharedTestDataInitializer<ISharedTestDataInitializer>(register: false)
+                .SetTestDataInitializer<ITestDataInitializer>(register: false)
                 .SetSettings(new TestDatabaseSettings
                 {
                     InitMode = DatabaseInitModeHelper.DatabaseInitMode,

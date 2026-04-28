@@ -34,7 +34,7 @@ public abstract class TestEnvironment : ITestEnvironment
             .AddDatabaseTesting(dts => dts
                 .SetProvider<SqliteDatabaseTestingProvider>()
                 .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
-                .SetSharedTestDataInitializer<ISharedTestDataInitializer>(register: false)
+                .SetTestDataInitializer<ITestDataInitializer>(register: false)
                 .SetSettings(new TestDatabaseSettings
                 {
                     InitMode = DatabaseInitModeHelper.DatabaseInitMode,

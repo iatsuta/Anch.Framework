@@ -6,7 +6,7 @@ public static class TestDatabaseInitializer
 
     public const string CachedEmptySchemaKey = "CachedEmptySchema";
 
-    public const string SharedTestDataKey = "SharedTestData";
+    public const string TestDataKey = "TestData";
 
-    public const string CachedSharedTestDataKey = "CachedSharedTestData";
+    public const string CachedTestDataKey = "CachedTestData";
 }

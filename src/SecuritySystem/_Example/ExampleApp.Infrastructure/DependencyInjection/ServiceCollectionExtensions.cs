@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
                 .AddSingleton<IViewCreationScriptProvider, UndirectedAncestorViewScriptProvider>()
                 .AddLogging()
                 .AddHttpContextAccessor()
-                .AddSingleton<ISharedTestDataInitializer, SharedTestDataInitializer>()
+                .AddSingleton<ITestDataInitializer, TestDataInitializer>()
                 .AddKeyedScoped<IInitializer, ExampleDataInitializer>(ExampleDataInitializer.Key)
                 .AddSecuritySystem()
                 .AddRepository();

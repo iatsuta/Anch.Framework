@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;
 
-public class SharedTestDataInitializer(IServiceProvider rootServiceProvider) : ISharedTestDataInitializer
+public class TestDataInitializer(IServiceProvider rootServiceProvider) : ITestDataInitializer
 {
     public async Task Initialize(CancellationToken cancellationToken)
     {

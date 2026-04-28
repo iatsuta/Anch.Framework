@@ -8,12 +8,12 @@ namespace ExampleApp.Api.Controllers;
 [ApiController]
 public class InitController(
     IEmptySchemaInitializer emptySchemaInitializer,
-    ISharedTestDataInitializer sharedTestDataInitializer) : ControllerBase
+    ITestDataInitializer testDataInitializer) : ControllerBase
 {
     [HttpPost]
     public async Task TestInitialize(CancellationToken cancellationToken)
     {
         await emptySchemaInitializer.Initialize(cancellationToken);
-        await sharedTestDataInitializer.Initialize(cancellationToken);
+        await testDataInitializer.Initialize(cancellationToken);
     }
 }

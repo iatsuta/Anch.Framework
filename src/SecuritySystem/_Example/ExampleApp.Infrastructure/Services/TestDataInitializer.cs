@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.Infrastructure.Services;
 
-public class SharedTestDataInitializer(IServiceProvider rootServiceProvider) : ISharedTestDataInitializer
+public class TestDataInitializer(IServiceProvider rootServiceProvider) : ITestDataInitializer
 {
     public async Task Initialize(CancellationToken cancellationToken)
     {

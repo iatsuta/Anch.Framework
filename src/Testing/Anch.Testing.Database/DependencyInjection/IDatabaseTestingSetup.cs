@@ -11,8 +11,8 @@ public interface IDatabaseTestingSetup
     IDatabaseTestingSetup SetEmptySchemaInitializer<TEmptySchemaInitializer>(bool register = true)
         where TEmptySchemaInitializer : class, IInitializer;
 
-    IDatabaseTestingSetup SetSharedTestDataInitializer<TSharedTestDataInitializer>(bool register = true)
-        where TSharedTestDataInitializer : class, IInitializer;
+    IDatabaseTestingSetup SetTestDataInitializer<TTestDataInitializer>(bool register = true)
+        where TTestDataInitializer : class, IInitializer;
 
     IDatabaseTestingSetup SetSettings(TestDatabaseSettings testDatabaseSettings);
 

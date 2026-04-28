@@ -14,7 +14,7 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 
     private Action<IServiceCollection>? initEmptySchemaAction;
 
-    private Action<IServiceCollection>? initSharedTestDataAction;
+    private Action<IServiceCollection>? initTestDataAction;
 
     private Action<IServiceCollection>? initSettingsAction;
 
@@ -31,13 +31,13 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
             .AddSingleton(typeof(ISynchronizedInitializer<>), typeof(SynchronizedInitializer<>))
 
             .AddKeyedSingleton<IInitializer, CachedEmptySchemaInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey)
-            .AddKeyedSingleton<IInitializer, CachedSharedTestDataInitializer>(TestDatabaseInitializer.CachedSharedTestDataKey)
+            .AddKeyedSingleton<IInitializer, CachedTestDataInitializer>(TestDatabaseInitializer.CachedTestDataKey)
 
             .AddSingleton<IDatabaseManager, FileDatabaseManager>();
 
         (this.initEmptySchemaAction ?? throw new InvalidOperationException("Empty schema initializer is not set.")).Invoke(services);
 
-        (this.initSharedTestDataAction ?? throw new InvalidOperationException("Shared test data initializer is not set.")).Invoke(services);
+        (this.initTestDataAction ?? throw new InvalidOperationException("Shared test data initializer is not set.")).Invoke(services);
 
         (this.initSettingsAction ?? throw new InvalidOperationException("Settings initializer is not set.")).Invoke(services);
 
@@ -62,10 +62,10 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
         return this;
     }
 
-    public IDatabaseTestingSetup SetSharedTestDataInitializer<TSharedTestDataInitializer>(bool register = true)
-        where TSharedTestDataInitializer : class, IInitializer
+    public IDatabaseTestingSetup SetTestDataInitializer<TTestDataInitializer>(bool register = true)
+        where TTestDataInitializer : class, IInitializer
     {
-        this.initSharedTestDataAction = GetIntiAction<TSharedTestDataInitializer>(TestDatabaseInitializer.SharedTestDataKey, register);
+        this.initTestDataAction = GetIntiAction<TTestDataInitializer>(TestDatabaseInitializer.TestDataKey, register);
 
         return this;
     }

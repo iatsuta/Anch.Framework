@@ -9,7 +9,7 @@ namespace Anch.GenericQueryable.IntegrationTests;
 
 public abstract class MainTests(IServiceProvider rootServiceProvider)
 {
-    private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ISharedTestDataInitializer>().TestObjId;
+    private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ITestDataInitializer>().TestObjId;
 
     [AnchFact]
     public async Task DefaultGenericQueryable_InvokeToArrayAsync_MethodInvoked(CancellationToken ct)

@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Initializers;
 
-public class CachedSharedTestDataInitializer(
-    ISynchronizedInitializer<CachedSharedTestDataInitializer> synchronizedInitializer,
+public class CachedTestDataInitializer(
+    ISynchronizedInitializer<CachedTestDataInitializer> synchronizedInitializer,
     ITestConnectionStringProvider connectionStringProvider,
     IDatabaseManager databaseManager,
-    [FromKeyedServices(TestDatabaseInitializer.SharedTestDataKey)]
-    IInitializer sharedTestDataInitializer,
+    [FromKeyedServices(TestDatabaseInitializer.TestDataKey)]
+    IInitializer testDataInitializer,
     TestDatabaseSettings settings) : IInitializer
 {
     public Task Initialize(CancellationToken cancellationToken) =>
@@ -44,7 +44,7 @@ public class CachedSharedTestDataInitializer(
         {
             await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.Actual, true, cancellationToken);
 
-            await sharedTestDataInitializer.Initialize(cancellationToken);
+            await testDataInitializer.Initialize(cancellationToken);
 
             await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, true, cancellationToken);
         }
