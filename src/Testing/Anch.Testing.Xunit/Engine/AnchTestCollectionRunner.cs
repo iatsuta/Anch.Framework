@@ -21,7 +21,7 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner,
                 sendTestClassMessages: true
             );
 
-        var serviceProvider = serviceProviderPool?.Get();
+        var serviceProvider = serviceProviderPool == null ? null : await serviceProviderPool.GetAsync(ctxt.CancellationTokenSource.Token);
 
         try
         {

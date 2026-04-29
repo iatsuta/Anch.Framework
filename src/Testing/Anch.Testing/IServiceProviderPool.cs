@@ -4,5 +4,7 @@ public interface IServiceProviderPool
 {
     IServiceProvider Get();
 
+    ValueTask<IServiceProvider> GetAsync(CancellationToken ct);
+
     void Release(IServiceProvider serviceProvider);
 }

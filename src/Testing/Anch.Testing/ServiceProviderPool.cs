@@ -12,11 +12,51 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
 
     private readonly RootSharedServiceSource rootSharedServiceSource = new();
 
-    public IServiceProvider Get() => this.pool.TryTake(out var serviceProvider)
-        ? serviceProvider
-        : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
+    private readonly SemaphoreSlim? parallelSemaphoreSlim = testEnvironment.AllowParallelization ? null : new SemaphoreSlim(1, 1);
 
-    public void Release(IServiceProvider serviceProvider) => this.pool.Add(serviceProvider);
+    public IServiceProvider Get()
+    {
+        this.parallelSemaphoreSlim?.Wait();
+
+        try
+        {
+            return this.pool.TryTake(out var serviceProvider)
+                ? serviceProvider
+                : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
+        }
+        catch
+        {
+            this.parallelSemaphoreSlim?.Release();
+            throw;
+        }
+    }
+
+    public async ValueTask<IServiceProvider> GetAsync(CancellationToken ct)
+    {
+        if (this.parallelSemaphoreSlim != null)
+        {
+            await this.parallelSemaphoreSlim.WaitAsync(ct);
+        }
+
+        try
+        {
+            return this.pool.TryTake(out var serviceProvider)
+                ? serviceProvider
+                : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
+        }
+        catch
+        {
+            this.parallelSemaphoreSlim?.Release();
+            throw;
+        }
+    }
+
+    public void Release(IServiceProvider serviceProvider)
+    {
+        this.pool.Add(serviceProvider);
+
+        this.parallelSemaphoreSlim?.Release();
+    }
 
     private IServiceCollection CreateServiceCollection() =>
         new ServiceCollection()

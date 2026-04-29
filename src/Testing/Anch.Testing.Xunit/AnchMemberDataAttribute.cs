@@ -87,7 +87,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
 
         var testContext = TestContext.Current;
 
-        var serviceProvider = this.ServiceProviderPool?.Get();
+        var serviceProvider = this.ServiceProviderPool == null ? null : await this.ServiceProviderPool.GetAsync(testContext.CancellationToken);
 
         if (serviceProvider != null)
         {

@@ -46,10 +46,9 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
         (this.databaseTestingProvider ?? throw new InvalidOperationException("Database testing provider is not set.")).AddServices(services);
     }
 
-    public IDatabaseTestingSetup SetProvider<TDatabaseTestingProvider>()
-        where TDatabaseTestingProvider : IDatabaseTestingProvider, new()
+    public IDatabaseTestingSetup SetProvider(IDatabaseTestingProvider newDatabaseTestingProvider)
     {
-        this.databaseTestingProvider = new TDatabaseTestingProvider();
+        this.databaseTestingProvider = newDatabaseTestingProvider;
 
         return this;
     }
@@ -89,6 +88,13 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
     public IDatabaseTestingSetup SetSettings(TestDatabaseSettings testDatabaseSettings)
     {
         this.initSettingsAction = sc => sc.AddSingleton(testDatabaseSettings);
+
+        return this;
+    }
+
+    public IDatabaseTestingSetup SetSettings(Func<IServiceProvider, TestDatabaseSettings> testDatabaseSettingsFactory)
+    {
+        this.initSettingsAction = sc => sc.AddSingleton(testDatabaseSettingsFactory);
 
         return this;
     }

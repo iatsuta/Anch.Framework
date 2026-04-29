@@ -22,11 +22,11 @@ public abstract class TestEnvironment : ITestEnvironment
 
         return services
             .AddSingleton(configuration)
+            .AddSingleton(TimeProvider.System)
             .AddInfrastructure(configuration)
             .Pipe(s => this.InitializeServices(s, configuration))
 
             .AddScoped<TestController>()
-            .AddSingleton(TimeProvider.System)
             .ReplaceSingleton<IDefaultCancellationTokenSource, XUnitDefaultCancellationTokenSource>()
 
             .AddSecuritySystemTesting()
