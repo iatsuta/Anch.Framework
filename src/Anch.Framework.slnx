@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Workflow/">
+    <Project Path="Workflow/Anch.Workflow.Abstractions/Anch.Workflow.Abstractions.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Runtime/Anch.Workflow.Runtime.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Tests/Anch.Workflow.Tests.csproj" />
+    <Project Path="Workflow/Anch.Workflow/Anch.Workflow.csproj" />
+  </Folder>
 
   <Folder Name="/__RootSolutionItems/">
     <File Path="Directory.Build.props" />

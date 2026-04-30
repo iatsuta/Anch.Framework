@@ -1,8 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <PackageReference Include="NHibernate" Version="5.5.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SyncWorkflow\SyncWorkflow.csproj" />
-  </ItemGroup>
-</Project>
