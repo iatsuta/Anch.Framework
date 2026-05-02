@@ -1,6 +1,6 @@
 ﻿using Anch.Workflow.Domain.Runtime;
 
-namespace Anch.Workflow.Engine;
+namespace Anch.Workflow;
 
 public interface IWorkflowHost
 {
