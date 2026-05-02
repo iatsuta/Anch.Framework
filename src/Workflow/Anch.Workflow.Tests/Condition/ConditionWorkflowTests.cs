@@ -28,9 +28,9 @@ public class ConditionWorkflowTests : SingleScopeWorkflowTestBase<ConditionWorkf
         Assert.Empty(await this.Storage.GetWaitEvents(ct));
     }
 
-    protected override IServiceCollection CreateServices()
+    protected override IServiceCollection CreateServices(IServiceCollection services)
     {
-        return base.CreateServices()
+        return base.CreateServices(services)
             .AddSingleton<ConditionWorkflowService>();
     }
 }

@@ -3,6 +3,7 @@ using Anch.Workflow.DependencyInjection;
 using Anch.Workflow.Domain;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Tests._Base;
+using Anch.Workflow.Tests.StartWorkflowsWithForksApprove;
 using Anch.Workflow.Tests.Wait;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -43,9 +44,10 @@ public class StartWorkflowWorkflowTests : SingleScopeWorkflowTestBase<WaitWorkfl
         Assert.Empty(await this.Storage.GetWaitEvents(ct));
     }
 
-    protected override IServiceCollection CreateServices()
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
     {
-        return base.CreateServices()
-            .RegisterSyncWorkflowType<WaitWorkflow>();
+        base.SetupWorkflow(workflowSetup);
+
+        workflowSetup.Add<WaitWorkflow>();
     }
 }

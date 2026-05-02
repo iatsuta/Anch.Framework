@@ -2,6 +2,7 @@ using Anch.Testing.Xunit;
 using Anch.Workflow.DependencyInjection;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Tests._Base;
+using Anch.Workflow.Tests.StartWorkflowsWithForksApprove;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -141,9 +142,10 @@ public class StartWorkflowsWithTaskApproveWorkflowTests : SingleScopeWorkflowTes
         Assert.Empty(await this.Storage.GetWaitEvents(ct));
     }
 
-    protected override IServiceCollection CreateServices()
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
     {
-        return base.CreateServices()
-            .RegisterSyncWorkflowType<StartWorkflowsWithTaskApproveItemWorkflow>();
+        base.SetupWorkflow(workflowSetup);
+
+        workflowSetup.Add<StartWorkflowsWithTaskApproveItemWorkflow>();
     }
 }

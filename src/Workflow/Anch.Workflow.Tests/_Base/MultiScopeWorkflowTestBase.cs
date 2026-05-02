@@ -1,7 +1,10 @@
 using Anch.DependencyInjection;
+using Anch.Testing.Xunit;
 using Anch.Workflow.DependencyInjection;
 
 using Microsoft.Extensions.DependencyInjection;
+
+[assembly: AnchTestFramework]
 
 namespace Anch.Workflow.Tests._Base;
 
@@ -16,14 +19,16 @@ public abstract class MultiScopeWorkflowTestBase
 
     protected IServiceProvider RootServiceProvider => this.lazyRootServiceProvider.Value;
 
-    protected virtual IServiceCollection CreateServices()
+    protected virtual IServiceCollection CreateServices(IServiceCollection services) => services;
+
+    protected virtual void SetupWorkflow(IWorkflowSetup workflowSetup)
     {
-        return new ServiceCollection().RegisterSyncWorkflowBase();
     }
 
     private IServiceProvider BuildServiceProvider()
     {
-        return this.CreateServices()
+        return this.CreateServices(new ServiceCollection())
+            .AddWorkflow(this.SetupWorkflow)
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });

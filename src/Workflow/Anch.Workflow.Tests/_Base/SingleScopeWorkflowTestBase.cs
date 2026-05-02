@@ -38,11 +38,8 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
         return await this.Host.CreateExecutor(WorkflowExecutionPolicy.Full).StartWorkflow<TSource, TWorkflow>(source, cancellationToken);
     }
 
-
-    protected override IServiceCollection CreateServices()
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
     {
-        return base.CreateServices()
-
-            .RegisterSyncWorkflowType<TWorkflow>();
+        workflowSetup.Add<TWorkflow>();
     }
 }
