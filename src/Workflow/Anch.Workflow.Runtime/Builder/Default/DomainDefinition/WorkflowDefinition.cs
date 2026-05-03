@@ -307,4 +307,6 @@ public class WorkflowDefinition : IWorkflowDefinition
             ? null
             : new PropertyAccessors<TSource, long>(
                 this.VersionProperty as Expression<Func<TSource, long>> ?? throw new InvalidOperationException("Invalid version property"));
+
+    public override string ToString() => this.Identity.ToString();
 }

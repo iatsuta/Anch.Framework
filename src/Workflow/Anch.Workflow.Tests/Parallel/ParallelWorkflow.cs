@@ -15,6 +15,8 @@ public class ParallelWorkflow : BuildWorkflow<ParallelWorkflowObject>
     {
         builder
             .Then(wfObj => wfObj.Status = ParallelApproveStatus.Approving)
+            .WithName("ApprovingState")
+
             .Parallel(
 
                 approveBranch => approveBranch

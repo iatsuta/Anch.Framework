@@ -2,12 +2,7 @@
 
 namespace Anch.Workflow.Execution;
 
-public record Done(WorkflowProcessResult WorkflowProcessResult) : IExecutionResult
+public record Done() : IExecutionResult
 {
-    public Done()
-        : this(WorkflowProcessResult.Empty)
-    {
-    }
-
     public bool LeaveState { get; } = true;
 }

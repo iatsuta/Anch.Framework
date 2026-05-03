@@ -1,4 +1,6 @@
-﻿using Anch.Core;
+﻿using System.ComponentModel.Design;
+
+using Anch.Core;
 using Anch.Workflow.Domain;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
@@ -137,7 +139,19 @@ public class WorkflowMachine<TSource>(
     {
         switch (executionResult)
         {
-            case WorkflowProcessExecutionResult workflowProcessExecutionResult: return workflowProcessExecutionResult.WorkflowProcessResult;
+            case WorkflowProcessExecutionResult workflowProcessExecutionResult:
+            {
+                if (workflowProcessExecutionResult.LeaveState)
+                {
+                    return workflowProcessExecutionResult.WorkflowProcessResult +
+
+                           await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
+                }
+                else
+                {
+                    return workflowProcessExecutionResult.WorkflowProcessResult;
+                }
+            }
 
             case Wait:
                 stateInstance.Workflow.SetStatus(WorkflowStatus.WaitEvent);
