@@ -8,14 +8,13 @@ public class MemoryWorkflowRepository(
     MemoryWorkflowRootState rootState,
     IInstanceIdGenerator<WorkflowInstance> workflowInstanceIdGenerator,
     IInstanceIdGenerator<StateInstance> stateInstanceIdGenerator,
-
-    IWorkflowDefinition workflowDefinition) : IWorkflowRepository
+    WorkflowDefinitionIdentity workflowDefinitionIdentity) : IWorkflowRepository
 {
     public ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken cancellationToken)
     {
-        if (workflowInstance.Definition != workflowDefinition)
+        if (workflowInstance.Definition.Identity != workflowDefinitionIdentity)
         {
-            throw new InvalidOperationException("Wrong storage");
+            throw new InvalidOperationException("Wrong repository storage");
         }
 
         if (workflowInstance.Id == Guid.Empty)
@@ -39,13 +38,13 @@ public class MemoryWorkflowRepository(
 
     public async ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken cancellationToken)
     {
-        if (identity.Definition != null && identity.Definition != workflowDefinition.Identity)
+        if (identity.Definition != null && identity.Definition != workflowDefinitionIdentity)
         {
             return null;
         }
         else
         {
-            var actualIdentity = identity with { Definition = workflowDefinition.Identity };
+            var actualIdentity = identity with { Definition = workflowDefinitionIdentity };
 
             return rootState.WorkflowInstances.GetValueOrDefault(actualIdentity);
         }
@@ -53,13 +52,13 @@ public class MemoryWorkflowRepository(
 
     public async ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken cancellationToken)
     {
-        if (identity.Definition != null && identity.Definition != workflowDefinition.Identity)
+        if (identity.Definition != null && identity.Definition != workflowDefinitionIdentity)
         {
             return null;
         }
         else
         {
-            var actualIdentity = identity with { Definition = workflowDefinition.Identity };
+            var actualIdentity = identity with { Definition = workflowDefinitionIdentity };
 
             return rootState.StateInstances.GetValueOrDefault(actualIdentity);
         }
@@ -79,8 +78,8 @@ public class MemoryWorkflowRepository(
 
 
     public IAsyncEnumerable<WorkflowInstance> GetWorkflowInstances() =>
-         rootState.WorkflowInstances.Where(pair => pair.Key.Definition == workflowDefinition.Identity).Select(pair => pair.Value).ToAsyncEnumerable();
+         rootState.WorkflowInstances.Where(pair => pair.Key.Definition == workflowDefinitionIdentity).Select(pair => pair.Value).ToAsyncEnumerable();
 
     private IAsyncEnumerable<StateInstance> GetStateInstances() =>
-        rootState.StateInstances.Where(pair => pair.Key.Definition == workflowDefinition.Identity).Select(pair => pair.Value).ToAsyncEnumerable();
+        rootState.StateInstances.Where(pair => pair.Key.Definition == workflowDefinitionIdentity).Select(pair => pair.Value).ToAsyncEnumerable();
 }
