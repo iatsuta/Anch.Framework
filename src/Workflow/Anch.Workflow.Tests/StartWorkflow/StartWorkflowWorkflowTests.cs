@@ -32,8 +32,7 @@ public class StartWorkflowWorkflowTests : SingleScopeWorkflowTestBase<WaitWorkfl
         Assert.Equal(WorkflowStatus.WaitEvent, preWiStatus);
         Assert.Equal(WorkflowStatus.WaitEvent, preChildWfStatus);
 
-        Assert.Single(pushResult.Modified);
-        Assert.Contains(subWf, pushResult.Modified);
+        Assert.Equal([subWf, rootWi], pushResult.Modified);
 
         Assert.Equal(WorkflowStatus.Finished, rootWi.Status);
         Assert.Equal(WorkflowStatus.Finished, subWf.Status);

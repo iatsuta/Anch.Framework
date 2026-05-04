@@ -13,13 +13,6 @@ public record WorkflowProcessResult(
     {
     }
 
-    public WorkflowProcessResult PopUnprocessed(out UnprocessedStateResultBase current)
-    {
-        var tail = this.Unprocessed.Pop(out current);
-
-        return this with { Unprocessed = tail };
-    }
-
     public static WorkflowProcessResult operator +(WorkflowProcessResult result1, WorkflowProcessResult result2)
     {
         if (ReferenceEquals(result1, Empty))

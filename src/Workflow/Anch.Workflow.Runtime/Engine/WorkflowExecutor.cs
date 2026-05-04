@@ -62,13 +62,14 @@ public class WorkflowExecutor(
 
         while (!workflowProcessResult.Unprocessed.IsEmpty && !this.StopProcess(firstStepProcessed))
         {
-            var tailUnprocessed = workflowProcessResult.PopUnprocessed(out var current);
+            var modified = workflowProcessResult.Modified;
+            var tailUnprocessed = workflowProcessResult.Unprocessed.Pop(out var current);
 
             var stepResult = await this.ProcessStep(current, cancellationToken);
 
             firstStepProcessed = true;
 
-            workflowProcessResult = stepResult + tailUnprocessed;
+            workflowProcessResult = new WorkflowProcessResult(modified, []) + stepResult + new WorkflowProcessResult([], tailUnprocessed);
         }
 
         return workflowProcessResult;

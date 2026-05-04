@@ -34,6 +34,8 @@ public class ParallelWorkflowTests : SingleScopeWorkflowTestBase<ParallelWorkflo
 
         Assert.Equal(WorkflowStatus.Finished, wi.Status);
 
-        Assert.Empty(await this.RootRepository.GetWaitEvents().ToListAsync(ct));
+        var finalEvents = await this.RootRepository.GetWaitEvents().ToListAsync(ct);
+
+        Assert.Empty(finalEvents);
     }
 }
