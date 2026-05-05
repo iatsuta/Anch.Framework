@@ -15,24 +15,7 @@ public interface IStateDefinitionBuilder<TSource, TStatus> : IStateDefinition<TS
     new WorkflowDefinitionBuilder<TSource, TStatus> Workflow { get; set; }
 
     new List<TransitionDefinitionBuilder<TSource, TStatus>> Transitions { get; set; }
-
-    //IWorkflowDefinitionBuilder<TSource> IStateDefinitionBuilder<TSource>.Workflow => this.Workflow;
-
-    //IReadOnlyList<ITransitionDefinitionBuilder<TSource>> IStateDefinitionBuilder<TSource>.Transitions => this.Transitions;
 }
-
-//public interface IStateDefinitionBuilder<TSource> : IStateDefinitionBuilder, IStateDefinition<TSource>
-//    where TSource : notnull
-//{
-//    new IWorkflowDefinitionBuilder<TSource> Workflow { get; }
-
-//    new IReadOnlyList<ITransitionDefinitionBuilder<TSource>> Transitions { get; }
-
-
-//    IWorkflowDefinition<TSource> IStateDefinition<TSource>.Workflow => this.Workflow;
-
-//    IReadOnlyList<ITransitionDefinition<TSource>> IStateDefinition<TSource>.Transitions => this.Transitions;
-//}
 
 public interface IStateDefinitionBuilder : IStateDefinition
 {

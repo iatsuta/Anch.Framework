@@ -39,30 +39,26 @@ public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, T
         where TService : notnull
 
     {
-        var setStatePropertyAction = getStateProperty.GetProperty().GetSetValueAction<TState, TStateProperty>();
+        var statePropertySetter = getStateProperty.ToPropertyAccessors().Setter;
 
-        Func<IServiceProvider, TSource, TState, CancellationToken, ValueTask> setAction = async (serviceProvider, source, state, ct) =>
+        this.StateDefinitionBuilder.InputActions.Add(async (serviceProvider, source, state, ct) =>
 
-            setStatePropertyAction(state, await getSourceProperty(source, serviceProvider.GetRequiredService<TService>(), ct));
-
-        this.StateDefinitionBuilder.InputActions.Add(setAction);
+            statePropertySetter(state, await getSourceProperty(source, serviceProvider.GetRequiredService<TService>(), ct)));
 
         return this;
     }
 
     public IStateBuilder<TSource, TStatus, TState> Output<TSourceProperty, TStateProperty, TService>(
-        Expression<Func<TSource, TSourceProperty>> getSourceProperty,
+        Expression<Func<TSource, TSourceProperty>> propertyValueSelector,
         Func<TState, TService, CancellationToken, ValueTask<TStateProperty>> getStateProperty)
         where TStateProperty : TSourceProperty
         where TService : notnull
     {
-        var setSourcePropertyAction = getSourceProperty.GetProperty().GetSetValueAction<TSource, TSourceProperty>();
+        var propertyValueSetter = propertyValueSelector.ToPropertyAccessors().Setter;
 
-        Func<IServiceProvider, TState, TSource, CancellationToken, ValueTask> setAction = async (serviceProvider, state, source, ct) =>
+        this.StateDefinitionBuilder.OutputActions.Add(async (serviceProvider, state, source, ct) =>
 
-            setSourcePropertyAction(source, await getStateProperty(state, serviceProvider.GetRequiredService<TService>(), ct));
-
-        this.StateDefinitionBuilder.OutputActions.Add(setAction);
+            propertyValueSetter(source, await getStateProperty(state, serviceProvider.GetRequiredService<TService>(), ct)));
 
         return this;
     }
@@ -79,7 +75,14 @@ public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, T
     {
         this.StateDefinitionBuilder.Status = status;
 
-        return this.WithName(status.ToString() ?? throw new ArgumentOutOfRangeException(nameof(status)));
+        if (this.StateDefinitionBuilder.IsAutoName && status.ToString() is { } name)
+        {
+            return this.WithName(name);
+        }
+        else
+        {
+            return this;
+        }
     }
 
     IStateDefinitionBuilder<TSource, TStatus> IStateBuilder<TSource, TStatus>.StateDefinitionBuilder => this.StateDefinitionBuilder;
