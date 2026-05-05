@@ -129,10 +129,7 @@ public class ParallelForeachApproveWorkflowTests : SingleScopeWorkflowTestBase<P
         Assert.Empty(await this.RootRepository.GetWaitEvents().ToListAsync(ct));
     }
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
-    {
-        base.SetupWorkflow(workflowSetup);
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) =>
 
-        workflowSetup.Add<ParallelForeachApproveItemWorkflow>();
-    }
+        base.SetupWorkflow(workflowSetup.Add<ParallelForeachApproveItemWorkflow>());
 }

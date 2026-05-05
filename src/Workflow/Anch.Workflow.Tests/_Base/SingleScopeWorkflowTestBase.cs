@@ -34,13 +34,9 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
         return wfStartResult.Modified.First();
     }
 
-    protected async ValueTask<WorkflowProcessResult> StartWorkflowNative(TSource source, CancellationToken cancellationToken)
-    {
-        return await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).Start<TSource, TWorkflow>(source, cancellationToken);
-    }
+    protected async ValueTask<WorkflowProcessResult> StartWorkflowNative(TSource source, CancellationToken cancellationToken) =>
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
-    {
-        workflowSetup.Add<TWorkflow>();
-    }
+        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).Start<TSource, TWorkflow>(source, cancellationToken);
+
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) => workflowSetup.Add<TWorkflow>();
 }

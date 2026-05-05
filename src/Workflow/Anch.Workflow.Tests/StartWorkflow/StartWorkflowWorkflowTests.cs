@@ -42,10 +42,7 @@ public class StartWorkflowWorkflowTests : SingleScopeWorkflowTestBase<WaitWorkfl
         Assert.Empty(finalEvents);
     }
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
-    {
-        base.SetupWorkflow(workflowSetup);
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) =>
 
-        workflowSetup.Add<WaitWorkflow>();
-    }
+        base.SetupWorkflow(workflowSetup.Add<WaitWorkflow>());
 }

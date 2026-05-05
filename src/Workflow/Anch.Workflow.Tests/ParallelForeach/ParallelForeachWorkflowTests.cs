@@ -43,10 +43,7 @@ public class ParallelForeachWorkflowTests : SingleScopeWorkflowTestBase<Parallel
         Assert.Empty(finalEvents);
     }
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
-    {
-        base.SetupWorkflow(workflowSetup);
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) =>
 
-        workflowSetup.Add<ParallelForeachItemWorkflow>();
-    }
+        base.SetupWorkflow(workflowSetup.Add<ParallelForeachItemWorkflow>());
 }

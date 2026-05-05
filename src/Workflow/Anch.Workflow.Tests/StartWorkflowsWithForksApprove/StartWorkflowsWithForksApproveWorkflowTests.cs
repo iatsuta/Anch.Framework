@@ -131,10 +131,7 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
         Assert.Empty(await this.RootRepository.GetWaitEvents().ToListAsync(ct));
     }
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
-    {
-        base.SetupWorkflow(workflowSetup);
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) =>
 
-        workflowSetup.Add<StartWorkflowsWithForksApproveItemWorkflow>();
-    }
+        base.SetupWorkflow(workflowSetup.Add<StartWorkflowsWithForksApproveItemWorkflow>());
 }
