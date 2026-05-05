@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 
+using Anch.Core;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.States;
 
@@ -105,28 +106,28 @@ public interface IWorkflowBuilder<TSource, TStatus>
 
     IStateBuilder<TSource, TStatus, ParallelForeachState<TSource, TElement>> ParallelForeach<TElement>(
         Func<TSource, IEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), object>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
     {
         return this.ParallelForeach<TElement, IServiceProvider>(async (source, _, _) => getElements(source), setupIteratorBuilder);
     }
 
     public IStateBuilder<TSource, TStatus, ParallelForeachState<TSource, TElement>> ParallelForeach<TElement, TService>(
         Func<TSource, TService, CancellationToken, ValueTask<IEnumerable<TElement>>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), object>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
         where TService : notnull;
 
-    IStateBuilder<TSource, TStatus, ParallelState<TSource>> Parallel(params Action<IWorkflowBuilder<TSource, object>>[] setupForks);
+    IStateBuilder<TSource, TStatus, ParallelState<TSource>> Parallel(params Action<IWorkflowBuilder<TSource, Ignore>>[] setupForks);
 
     IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement>(
         Func<TSource, IEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), object>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
     {
         return this.Foreach<TElement, IServiceProvider>(async (source, _, _) => getElements(source), setupIteratorBuilder);
     }
 
     IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement, TService>(
         Func<TSource, TService, CancellationToken, ValueTask<IEnumerable<TElement>>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), object>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
         where TService : notnull;
 
 

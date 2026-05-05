@@ -147,10 +147,10 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
 
     public IStateBuilder<TSource, TStatus, ParallelForeachState<TSource, TElement>> ParallelForeach<TElement, TService>(
         Func<TSource, TService, CancellationToken, ValueTask<IEnumerable<TElement>>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), object>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
         where TService : notnull
     {
-        var iteratorWorkflow = new ActionBuildWorkflow<(TSource, TElement), object>(setupIteratorBuilder);
+        var iteratorWorkflow = new ActionBuildWorkflow<(TSource, TElement), Ignore>(setupIteratorBuilder);
 
         return this.Then<ParallelForeachState<TSource, TElement>>()
             .WithSubWorkflow([iteratorWorkflow.Definition])
@@ -159,10 +159,10 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
     }
 
     public IStateBuilder<TSource, TStatus, ParallelState<TSource>> Parallel(
-        params Action<IWorkflowBuilder<TSource, object>>[] setupForks)
+        params Action<IWorkflowBuilder<TSource, Ignore>>[] setupForks)
     {
         var forks = setupForks
-            .Select(setupFork => new ActionBuildWorkflow<TSource, object>(setupFork))
+            .Select(setupFork => new ActionBuildWorkflow<TSource, Ignore>(setupFork))
             .ToArray();
 
         return this.Then<ParallelState<TSource>>()
@@ -172,10 +172,10 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
 
     public IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement, TService>(
         Func<TSource, TService, CancellationToken, ValueTask<IEnumerable<TElement>>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), object>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
         where TService : notnull
     {
-        var iteratorWorkflow = new ActionBuildWorkflow<(TSource, TElement), object>(setupIteratorBuilder);
+        var iteratorWorkflow = new ActionBuildWorkflow<(TSource, TElement), Ignore>(setupIteratorBuilder);
 
         return this.Then<ForeachState<TSource, TElement>>()
             .WithSubWorkflow([iteratorWorkflow.Definition])
