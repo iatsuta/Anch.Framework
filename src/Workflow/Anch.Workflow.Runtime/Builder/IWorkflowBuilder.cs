@@ -135,5 +135,5 @@ public interface IWorkflowBuilder<TSource, TStatus>
 
     IStateBuilder<TSource, TStatus, FinalState> Finish(Func<TSource, object?> getResult);
 
-    IStateBuilder<TSource, TStatus, TaskState> ValueTask(Action<ITaskBuilder<TSource, TStatus>> setup);
+    IStateBuilder<TSource, TStatus, TaskState> Task(Action<ITaskBuilder<TSource, TStatus>> setup);
 }

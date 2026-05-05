@@ -184,7 +184,7 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
             .Input(s => s.Result, getResult);
     }
 
-    public IStateBuilder<TSource, TStatus, TaskState> ValueTask(Action<ITaskBuilder<TSource, TStatus>> setup)
+    public IStateBuilder<TSource, TStatus, TaskState> Task(Action<ITaskBuilder<TSource, TStatus>> setup)
     {
         var taskState = this.ThenInternal<TaskState>(false);
 

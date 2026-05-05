@@ -16,7 +16,7 @@ public class StartWorkflowsWithTaskApproveItemWorkflow : BuildWorkflow<StartWork
         builder
             .Then(wfObj => wfObj.Status = StartWorkflowsWithTaskApproveStatus.Approving)
 
-            .ValueTask(tb => tb
+            .Task(tb => tb
                 .AddCommand(ApproveWaitEvent,
                     approvedBuilder =>
                         approvedBuilder.Then(wfObj => wfObj.Status = StartWorkflowsWithTaskApproveStatus.Approved))
