@@ -29,11 +29,11 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
 
         var exampleApproveEvent = waitApproveEvents.First();
 
-        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).PushEvent(exampleApproveEvent.Header, exampleApproveEvent.TargetState, cancellationToken: ct);
+        await this.TillTheEndWorkflowExecutor.PushEvent(exampleApproveEvent.Header, exampleApproveEvent.TargetState, cancellationToken: ct);
 
         var exampleRejectEvent = waitRejectEvents.First(e => e.TargetState.Workflow.Source != exampleApproveEvent.TargetState.Workflow.Source);
 
-        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).PushEvent(exampleRejectEvent.Header, exampleRejectEvent.TargetState, cancellationToken: ct);
+        await this.TillTheEndWorkflowExecutor.PushEvent(exampleRejectEvent.Header, exampleRejectEvent.TargetState, cancellationToken: ct);
 
         // Assert
 
@@ -79,7 +79,7 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
 
         foreach (var waitApproveEvent in waitApproveEvents)
         {
-            await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).PushEvent(waitApproveEvent.Header, waitApproveEvent.TargetState, cancellationToken: ct);
+            await this.TillTheEndWorkflowExecutor.PushEvent(waitApproveEvent.Header, waitApproveEvent.TargetState, cancellationToken: ct);
         }
 
         // Assert
@@ -115,7 +115,7 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
 
         var approvingInstances = waitApproveEvents.Select(e => e.TargetState.Workflow.Owner!.Workflow).ToArray();
 
-        await this.WorkflowMachineFactory.Create(approvingInstances[0]).Terminate(ct);
+        await this.TillTheEndWorkflowExecutor.Terminate(approvingInstances[0], ct);
 
         // Assert
 

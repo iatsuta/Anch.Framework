@@ -10,7 +10,7 @@ namespace Anch.Workflow.Engine;
 
 public class WorkflowMachine(
     IServiceProvider serviceProvider,
-    IWorkflowHost host,
+    IWorkflowExecutor workflowExecutor,
     ICodeStateProcessorFactory codeStateProcessorFactory,
     IWorkflowRepository storage,
     WorkflowInstance workflowInstance,
@@ -218,11 +218,11 @@ public class WorkflowMachine(
                 stateInstance.Workflow.Status = WorkflowStatus.Terminated;
             }
 
-            return await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep).PushEvent(pushEventInfo, cancellationToken);
+            return await workflowExecutor.PushEvent(pushEventInfo, cancellationToken);
         }
         else if (pushEventInfo.TargetState.Maybe(s => s.Workflow != stateInstance.Workflow))
         {
-            return await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep).PushEvent(pushEventInfo, cancellationToken);
+            return await workflowExecutor.PushEvent(pushEventInfo, cancellationToken);
         }
         else
         {

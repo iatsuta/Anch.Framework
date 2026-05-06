@@ -24,9 +24,7 @@ public class StartWorkflowWorkflowTests : SingleScopeWorkflowTestBase<WaitWorkfl
         var preWiStatus = rootWi.Status;
         var preChildWfStatus = subWf.Status;
 
-        var pushResult = await this.Host
-            .CreateExecutor(WorkflowExecutionPolicy.TillTheEnd)
-            .PushEvent(new EventHeader(WaitWorkflow.WaitEventName), subWf.CurrentState, WaitWorkflow.WaitEventData, ct);
+        var pushResult = await this.TillTheEndWorkflowExecutor.PushEvent(new EventHeader(WaitWorkflow.WaitEventName), subWf.CurrentState, WaitWorkflow.WaitEventData, ct);
 
         // Assert
         Assert.Equal(WorkflowStatus.WaitEvent, preWiStatus);

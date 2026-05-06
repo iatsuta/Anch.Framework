@@ -1,6 +1,5 @@
 using Anch.Workflow.DependencyInjection;
 using Anch.Workflow.Domain.Runtime;
-using Anch.Workflow.Engine;
 using Anch.Workflow.Execution;
 using Anch.Workflow.Serialization;
 
@@ -21,7 +20,7 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
 
     protected IWorkflowHost Host => this.ScopeServiceProvider.GetWorkflowHost();
 
-    protected IWorkflowMachineFactory WorkflowMachineFactory => this.ScopeServiceProvider.GetWorkflowMachineFactory();
+    protected IWorkflowExecutor TillTheEndWorkflowExecutor => this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd);
 
     protected IWorkflowRepository RootRepository => this.ScopeServiceProvider.GetRootRepository();
 
@@ -36,7 +35,7 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
 
     protected async ValueTask<WorkflowProcessResult> StartWorkflowNative(TSource source, CancellationToken cancellationToken) =>
 
-        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).Start<TSource, TWorkflow>(source, cancellationToken);
+        await this.TillTheEndWorkflowExecutor.Start<TSource, TWorkflow>(source, cancellationToken);
 
     protected override void SetupWorkflow(IWorkflowSetup workflowSetup) => workflowSetup.Add<TWorkflow>();
 }

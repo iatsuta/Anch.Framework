@@ -6,7 +6,7 @@ using Anch.Workflow.Execution;
 
 namespace Anch.Workflow.States;
 
-public class StartWorkflowState<TInnerSource>(IWorkflowHost host) : IState
+public class StartWorkflowState<TInnerSource>(IWorkflowExecutor workflowExecutor) : IState
     where TInnerSource : notnull
 {
     public IWorkflowDefinition<TInnerSource> InnerWorkflow { get; set; } = null!;
@@ -33,8 +33,7 @@ public class StartWorkflowState<TInnerSource>(IWorkflowHost host) : IState
         }
         else
         {
-            var startResult = await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep)
-                .Start(this.InnerSource, this.InnerWorkflow, executionContext.CancellationToken);
+            var startResult = await workflowExecutor.Start(this.InnerSource, this.InnerWorkflow, executionContext.CancellationToken);
 
             var wi = startResult.Modified.First();
 

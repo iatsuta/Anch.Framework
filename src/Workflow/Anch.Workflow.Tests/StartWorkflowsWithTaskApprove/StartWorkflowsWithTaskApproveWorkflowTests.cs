@@ -30,12 +30,12 @@ public class StartWorkflowsWithTaskApproveWorkflowTests : SingleScopeWorkflowTes
 
         var exampleApproveEvent = waitApproveEvents.First();
 
-        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd)
+        await this.TillTheEndWorkflowExecutor
             .PushEvent(exampleApproveEvent.Header, exampleApproveEvent.TargetState, cancellationToken: ct);
 
         var exampleRejectEvent = waitRejectEvents.First(e => e.TargetState.Workflow.Source != exampleApproveEvent.TargetState.Workflow.Source);
 
-        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd)
+        await this.TillTheEndWorkflowExecutor
             .PushEvent(exampleRejectEvent.Header, exampleRejectEvent.TargetState, cancellationToken: ct);
 
         // Assert
@@ -84,7 +84,7 @@ public class StartWorkflowsWithTaskApproveWorkflowTests : SingleScopeWorkflowTes
 
         foreach (var waitApproveEvent in waitApproveEvents)
         {
-            await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd)
+            await this.TillTheEndWorkflowExecutor
                 .PushEvent(waitApproveEvent.Header, waitApproveEvent.TargetState, cancellationToken: ct);
         }
 
@@ -121,7 +121,7 @@ public class StartWorkflowsWithTaskApproveWorkflowTests : SingleScopeWorkflowTes
 
         var approvingInstances = waitApproveEvents.Select(e => e.TargetState.Workflow).ToArray();
 
-        await this.WorkflowMachineFactory.Create(approvingInstances[0]).Terminate(ct);
+        await this.TillTheEndWorkflowExecutor.Terminate(approvingInstances[0], ct);
 
         // Assert
 

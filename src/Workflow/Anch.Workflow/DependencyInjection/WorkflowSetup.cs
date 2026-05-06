@@ -27,6 +27,8 @@ public class WorkflowSetup : IWorkflowSetup, IServiceInitializer
             .AddScoped<IWorkflowMachineFactory, WorkflowMachineFactory>()
             .AddScoped<IWorkflowHost, WorkflowHost>()
 
+            .AddScopedFrom<IWorkflowExecutor, IWorkflowHost>(host => host.CreateExecutor(WorkflowExecutionPolicy.SingleStep))
+
             .AddSingleton<IWorkflowSource, WorkflowSource>()
 
             .AddScoped<IInstanceIdGenerator<WorkflowInstance>, RandomIdGenerator<WorkflowInstance>>()

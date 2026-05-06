@@ -23,7 +23,7 @@ public class ParallelWorkflowTests : SingleScopeWorkflowTestBase<ParallelWorkflo
 
         var rejectEvent = waitEvents.Single(ei => ei.Header == ParallelWorkflow.RejectWaitEvent);
 
-        await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).PushEvent(approveEvent.Header, approveEvent.TargetState, cancellationToken: ct);
+        await this.TillTheEndWorkflowExecutor.PushEvent(approveEvent.Header, approveEvent.TargetState, cancellationToken: ct);
 
         // Assert
         Assert.Equal(ParallelApproveStatus.Approving, preWfObjStatus);

@@ -28,7 +28,7 @@ public class ParallelForeachWorkflowTests : SingleScopeWorkflowTestBase<Parallel
 
         foreach (var waitUserEvent in waitUserEvents)
         {
-            await this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd).PushEvent(waitUserEvent.Header, waitUserEvent.TargetState, pushEventData, ct);
+            await this.TillTheEndWorkflowExecutor.PushEvent(waitUserEvent.Header, waitUserEvent.TargetState, pushEventData, ct);
         }
 
         // Assert

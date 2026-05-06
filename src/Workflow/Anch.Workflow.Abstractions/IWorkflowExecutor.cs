@@ -19,6 +19,8 @@ public interface IWorkflowExecutor
 
     ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken cancellationToken = default);
 
+    ValueTask<WorkflowProcessResult> Terminate(WorkflowInstance workflowInstance, CancellationToken cancellationToken = default);
+
     async ValueTask<WorkflowProcessResult> PushEvent(EventHeader @event, StateInstance targetState, object? data = null,
         CancellationToken cancellationToken = default) =>
 

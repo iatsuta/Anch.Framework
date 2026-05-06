@@ -57,6 +57,13 @@ public class WorkflowExecutor(
 
         this.ProcessUnprocessed(workflowProcessResult, false, cancellationToken);
 
+    public async ValueTask<WorkflowProcessResult> Terminate(WorkflowInstance workflowInstance, CancellationToken cancellationToken)
+    {
+        var terminateResult = await workflowMachineFactory.Create(workflowInstance).Terminate(cancellationToken);
+
+        return await this.ProcessUnprocessed(terminateResult, true, cancellationToken);
+    }
+
     private async ValueTask<WorkflowProcessResult> ProcessUnprocessed(
         WorkflowProcessResult preWorkflowProcessResult,
         bool preFirstStepProcessed,
