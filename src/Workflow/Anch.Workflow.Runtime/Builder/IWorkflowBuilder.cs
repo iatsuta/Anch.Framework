@@ -117,7 +117,7 @@ public interface IWorkflowBuilder<TSource, TStatus>
         Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
         where TService : notnull;
 
-    IStateBuilder<TSource, TStatus, ParallelState<TSource>> Parallel(params Action<IWorkflowBuilder<TSource, Ignore>>[] setupForks);
+    IStateBuilder<TSource, TStatus, ParallelState<TSource>> Parallel(params Action<IWorkflowBuilder<TSource, TStatus>>[] setupForks);
 
     IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement>(
         Func<TSource, IEnumerable<TElement>> getElements,

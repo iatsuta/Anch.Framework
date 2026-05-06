@@ -13,6 +13,6 @@ public class StartWorkflowsState<TSource, TElement>(IWorkflowMachineFactory work
 
     protected override IEnumerable<IWorkflowMachine> CreateChildMachines(TSource source)
     {
-        return this.Elements.Select(childrenElement => workflowMachineFactory.Create(childrenElement, this.ElementWorkflow));
+        return this.Elements.Select(childrenElement => workflowMachineFactory.Create(childrenElement, this.ElementWorkflow.Definition));
     }
 }

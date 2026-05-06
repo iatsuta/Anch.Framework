@@ -1,4 +1,5 @@
 ﻿using Anch.Workflow.Domain;
+using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Execution;
 using Anch.Workflow.Serialization;
@@ -21,10 +22,14 @@ public class WorkflowExecutor(
 
         this.Start(source, serviceProvider.GetRequiredService<TWorkflow>(), cancellationToken);
 
-    public async ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken)
+    public ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken)
+        where TSource : notnull =>
+        this.Start(source, workflow.Definition, cancellationToken);
+
+    public async ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflowDefinition, CancellationToken cancellationToken)
         where TSource : notnull
     {
-        var machine = workflowMachineFactory.Create(source, workflow);
+        var machine = workflowMachineFactory.Create(source, workflowDefinition);
 
         var preResult = await machine.ProcessWorkflow(cancellationToken);
 

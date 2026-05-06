@@ -1,4 +1,5 @@
-﻿using Anch.Workflow.Engine;
+﻿using Anch.Workflow.Domain.Definition;
+using Anch.Workflow.Engine;
 
 namespace Anch.Workflow.States;
 
@@ -7,7 +8,7 @@ public class ParallelForeachState<TSource, TElement>(IWorkflowMachineFactory wor
     public IReadOnlyList<TElement> Elements { get; set; } = [];
 
 
-    public IWorkflow<(TSource, TElement)> ElementWorkflow { get; set; } = null!;
+    public IWorkflowDefinition<(TSource, TElement)> ElementWorkflow { get; set; } = null!;
 
     protected override IEnumerable<IWorkflowMachine> CreateChildMachines(TSource source)
     {

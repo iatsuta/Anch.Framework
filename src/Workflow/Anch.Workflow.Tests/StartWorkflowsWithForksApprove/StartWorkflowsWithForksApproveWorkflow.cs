@@ -4,18 +4,19 @@ using Anch.Workflow.Builder.Default;
 
 namespace Anch.Workflow.Tests.StartWorkflowsWithForksApprove;
 
-public class StartWorkflowsWithForksApproveWorkflow : BuildWorkflow<StartWorkflowsWithForksApproveWorkflowObject>
+public class StartWorkflowsWithForksApproveWorkflow : BuildWorkflow<StartWorkflowsWithForksApproveWorkflowObject, StartWorkflowsWithForkApproveStatus>
 {
-    protected override void Build(IWorkflowBuilder<StartWorkflowsWithForksApproveWorkflowObject, Ignore> builder) =>
+    protected override void Build(IWorkflowBuilder<StartWorkflowsWithForksApproveWorkflowObject, StartWorkflowsWithForkApproveStatus> builder) =>
 
         builder
-            .Then(wfObj => wfObj.Status = StartWorkflowsWithForksApproveStatus.Approving)
+            .WithStatusProperty(wfObj => wfObj.Status)
 
             .StartWorkflows<StartWorkflowsWithForksApproveItemWorkflowObject, StartWorkflowsWithForksApproveItemWorkflow>(wfObj => wfObj.Items)
+            .WithStatus(StartWorkflowsWithForkApproveStatus.Approving)
 
-            .SetFinishedBreak(item => item.Status != StartWorkflowsWithForksApproveStatus.Approved)
+            .SetFinishedBreak(item => item.Status != StartWorkflowsWithForkApproveStatus.Approved)
 
-            .Then(wfObj => wfObj.Status = wfObj.Items.All(subWf => subWf.Status == StartWorkflowsWithForksApproveStatus.Approved)
-                ? StartWorkflowsWithForksApproveStatus.Approved
-                : StartWorkflowsWithForksApproveStatus.Rejected);
+            .Then(wfObj => wfObj.Status = wfObj.Items.All(subWf => subWf.Status == StartWorkflowsWithForkApproveStatus.Approved)
+                ? StartWorkflowsWithForkApproveStatus.Approved
+                : StartWorkflowsWithForkApproveStatus.Rejected);
 }

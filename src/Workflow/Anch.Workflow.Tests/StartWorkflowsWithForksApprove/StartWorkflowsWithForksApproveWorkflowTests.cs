@@ -44,7 +44,7 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
 
         var notUsedApprovingInstances = approvingInstances.Where(wf => !usedWfObjects.Contains(wf.Source)).ToArray();
 
-        Assert.Equal(StartWorkflowsWithForksApproveStatus.Approving, startStatus);
+        Assert.Equal(StartWorkflowsWithForkApproveStatus.Approving, startStatus);
 
         Assert.Equal(WorkflowStatus.Finished, approvedWf.Status);
         Assert.Equal(WorkflowStatus.Finished, rejectedWf.Status);
@@ -54,7 +54,7 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
         Assert.Equal(WorkflowStatus.Terminated, notUsedApprovingInstances[1].Status);
         Assert.Equal(WorkflowStatus.Terminated, notUsedApprovingInstances[2].Status);
 
-        Assert.Equal(StartWorkflowsWithForksApproveStatus.Rejected, wfObj.Status);
+        Assert.Equal(StartWorkflowsWithForkApproveStatus.Rejected, wfObj.Status);
 
         Assert.Empty(await this.RootRepository.GetWaitEvents().ToListAsync(ct));
     }
@@ -84,14 +84,14 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
 
         // Assert
 
-        Assert.Equal(StartWorkflowsWithForksApproveStatus.Approving, startStatus);
+        Assert.Equal(StartWorkflowsWithForkApproveStatus.Approving, startStatus);
 
         foreach (var approvingInstance in approvingInstances)
         {
             Assert.Equal(WorkflowStatus.Finished, approvingInstance.Status);
         }
 
-        Assert.Equal(StartWorkflowsWithForksApproveStatus.Approved, wfObj.Status);
+        Assert.Equal(StartWorkflowsWithForkApproveStatus.Approved, wfObj.Status);
 
         Assert.Empty(await this.RootRepository.GetWaitEvents().ToListAsync(ct));
     }
@@ -119,14 +119,14 @@ public class StartWorkflowsWithForksApproveWorkflowTests : SingleScopeWorkflowTe
 
         // Assert
 
-        Assert.Equal(StartWorkflowsWithForksApproveStatus.Approving, startStatus);
+        Assert.Equal(StartWorkflowsWithForkApproveStatus.Approving, startStatus);
 
         foreach (var approvingInstance in approvingInstances)
         {
             Assert.Equal(WorkflowStatus.Terminated, approvingInstance.Status);
         }
 
-        Assert.Equal(StartWorkflowsWithForksApproveStatus.Rejected, wfObj.Status);
+        Assert.Equal(StartWorkflowsWithForkApproveStatus.Rejected, wfObj.Status);
 
         Assert.Empty(await this.RootRepository.GetWaitEvents().ToListAsync(ct));
     }

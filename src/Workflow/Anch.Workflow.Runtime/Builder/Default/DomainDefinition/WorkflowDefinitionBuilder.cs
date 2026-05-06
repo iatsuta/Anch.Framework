@@ -29,7 +29,7 @@ public class WorkflowDefinitionBuilder<TSource, TStatus> : IWorkflowDefinition<T
 
     public bool IsAutoIdentity { get; set; } = true;
 
-    public bool InTechnical { get; set; }
+    public bool IsRoot { get; set; }
 
     public List<IStateDefinitionBuilder<TSource, TStatus>> States { get; set; } = [];
 

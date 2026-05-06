@@ -36,7 +36,7 @@ public interface IWorkflowDefinition
 
     long Version => 1;
 
-    bool InTechnical { get; }
+    bool IsRoot { get; }
 
     IReadOnlyList<IStateDefinition> States { get; }
 

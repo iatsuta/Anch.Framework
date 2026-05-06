@@ -1,4 +1,3 @@
-using Anch.Core;
 using Anch.Workflow.Builder;
 using Anch.Workflow.Builder.Default;
 using Anch.Workflow.Domain;
@@ -6,28 +5,30 @@ using Anch.Workflow.States;
 
 namespace Anch.Workflow.Tests.ParallelForeachApprove;
 
-public class ParallelForeachApproveItemWorkflow : BuildWorkflow<ParallelForeachApproveItemWorkflowObject>
+public class ParallelForeachApproveItemWorkflow : BuildWorkflow<ParallelForeachApproveItemWorkflowObject, ParallelForeachApproveStatus>
 {
     public static readonly EventHeader ApproveWaitEvent = new(nameof(ApproveWaitEvent));
 
     public static readonly EventHeader RejectWaitEvent = new(nameof(RejectWaitEvent));
 
-    protected override void Build(IWorkflowBuilder<ParallelForeachApproveItemWorkflowObject, Ignore> builder) =>
+    protected override void Build(IWorkflowBuilder<ParallelForeachApproveItemWorkflowObject, ParallelForeachApproveStatus> builder) =>
 
         builder
-            .Then(wfObj => wfObj.Status = ParallelForeachApproveStatus.Approving)
-            .Parallel(
+            .WithStatusProperty(wfObj => wfObj.Status)
 
+            .Parallel(
                 approveBranch => approveBranch
                     .Then<WaitEventState>()
                     .Input(s => s.Event, ApproveWaitEvent)
-                    .Output(wfObj => wfObj.Status, ParallelForeachApproveStatus.Approved),
-
+                    .Finish()
+                    .WithStatus(ParallelForeachApproveStatus.Approved),
 
                 rejectBranch => rejectBranch
                     .Then<WaitEventState>()
                     .Input(s => s.Event, RejectWaitEvent)
-                    .Output(wfObj => wfObj.Status, ParallelForeachApproveStatus.Rejected))
+                    .Finish()
+                    .WithStatus(ParallelForeachApproveStatus.Rejected))
 
-            .SetBreak(StateBreakPolicy.WaitAny);
+            .SetBreak(StateBreakPolicy.WaitAny)
+            .WithStatus(ParallelForeachApproveStatus.Approving);
 }

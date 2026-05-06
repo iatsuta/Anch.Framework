@@ -34,11 +34,11 @@ public static class StateBuilderExtensions
             .SetBreak(StateBreakPolicy.AnyFinishedItem(condition));
     }
 
-    internal static IStateBuilder<TSource, TStatus, TState> WithSubWorkflow<TSource, TStatus, TState>(this IStateBuilder<TSource, TStatus, TState> stateBuilder, IEnumerable<IWorkflowDefinitionBuilder> subWorkflows)
+    internal static IStateBuilder<TSource, TStatus, TState> WithSubWorkflow<TSource, TStatus, TState>(this IStateBuilder<TSource, TStatus, TState> stateBuilder, IEnumerable<Lazy<IWorkflowDefinitionBuilder>> subWorkflows)
         where TSource : notnull
         where TState : IState
     {
-        stateBuilder.StateDefinitionBuilder.SubWorkflows.AddRange(subWorkflows);
+        stateBuilder.StateDefinitionBuilder.LazySubWorkflows.AddRange(subWorkflows);
 
         return stateBuilder;
     }

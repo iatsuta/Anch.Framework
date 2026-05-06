@@ -1,6 +1,6 @@
 namespace Anch.Workflow.Tests.StartWorkflowsWithForksApprove;
 
-public enum StartWorkflowsWithForksApproveStatus
+public enum StartWorkflowsWithForkApproveStatus
 {
     Draft,
 

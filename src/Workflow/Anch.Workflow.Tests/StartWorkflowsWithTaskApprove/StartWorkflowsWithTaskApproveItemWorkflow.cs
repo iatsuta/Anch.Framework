@@ -1,28 +1,32 @@
-using Anch.Core;
 using Anch.Workflow.Builder;
 using Anch.Workflow.Builder.Default;
 using Anch.Workflow.Domain;
 
 namespace Anch.Workflow.Tests.StartWorkflowsWithTaskApprove;
 
-public class StartWorkflowsWithTaskApproveItemWorkflow : BuildWorkflow<StartWorkflowsWithTaskApproveItemWorkflowObject>
+public class StartWorkflowsWithTaskApproveItemWorkflow : BuildWorkflow<StartWorkflowsWithTaskApproveItemWorkflowObject, StartWorkflowsWithTaskApproveStatus>
 {
     public static readonly EventHeader ApproveWaitEvent = new(nameof(ApproveWaitEvent));
 
     public static readonly EventHeader RejectWaitEvent = new(nameof(RejectWaitEvent));
 
-    protected override void Build(IWorkflowBuilder<StartWorkflowsWithTaskApproveItemWorkflowObject, Ignore> builder)
+    protected override void Build(IWorkflowBuilder<StartWorkflowsWithTaskApproveItemWorkflowObject, StartWorkflowsWithTaskApproveStatus> builder)
     {
         builder
-            .Then(wfObj => wfObj.Status = StartWorkflowsWithTaskApproveStatus.Approving)
+            .WithStatusProperty(wfObj => wfObj.Status)
 
             .Task(tb => tb
                 .AddCommand(ApproveWaitEvent,
                     approvedBuilder =>
-                        approvedBuilder.Then(wfObj => wfObj.Status = StartWorkflowsWithTaskApproveStatus.Approved))
+                        approvedBuilder
+                            .Finish()
+                            .WithStatus(StartWorkflowsWithTaskApproveStatus.Approved))
 
                 .AddCommand(RejectWaitEvent,
                     rejectBuilder =>
-                        rejectBuilder.Then(wfObj => wfObj.Status = StartWorkflowsWithTaskApproveStatus.Rejected)));
+                        rejectBuilder
+                            .Finish()
+                            .WithStatus(StartWorkflowsWithTaskApproveStatus.Rejected)))
+            .WithStatus(StartWorkflowsWithTaskApproveStatus.Approving);
     }
 }

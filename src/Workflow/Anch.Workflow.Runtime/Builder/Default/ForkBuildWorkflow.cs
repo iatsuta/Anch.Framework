@@ -2,7 +2,9 @@
 
 namespace Anch.Workflow.Builder.Default;
 
-public class ActionBuildWorkflow<TSource, TStatus>(Action<IWorkflowBuilder<TSource, TStatus>> setupBuilder) : BuildWorkflow<TSource, TStatus>
+public class ForkBuildWorkflow<TSource, TStatus>(
+    Action<IWorkflowBuilder<TSource, TStatus>> setupBuilder,
+    WorkflowDefinitionBuilder<TSource, TStatus> parentWorkflowDefinitionBuilder) : ActionBuildWorkflow<TSource, TStatus>(setupBuilder)
     where TSource : notnull
     where TStatus : notnull
 {
@@ -10,10 +12,8 @@ public class ActionBuildWorkflow<TSource, TStatus>(Action<IWorkflowBuilder<TSour
     {
         var header = base.CreateDefinitionHeader();
 
-        header.IsRoot = false;
+        header.StatusAccessors = parentWorkflowDefinitionBuilder.StatusAccessors;
 
         return header;
     }
-
-    protected sealed override void Build(IWorkflowBuilder<TSource, TStatus> builder) => setupBuilder(builder);
 }

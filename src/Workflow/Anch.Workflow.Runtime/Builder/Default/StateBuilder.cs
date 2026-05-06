@@ -14,10 +14,10 @@ public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, T
     where TStatus : notnull
     where TState : IState
 {
-    public StateBuilder(WorkflowDefinitionBuilder<TSource, TStatus> workflowBuilder, bool addDoneEvent)
-        : base(workflowBuilder)
+    public StateBuilder(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder, bool addDoneEvent)
+        : base(workflowDefinitionBuilder)
     {
-        this.StateDefinitionBuilder.Workflow = workflowBuilder;
+        this.StateDefinitionBuilder.Workflow = workflowDefinitionBuilder;
 
         if (addDoneEvent)
         {
@@ -27,7 +27,7 @@ public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, T
             });
         }
 
-        workflowBuilder.AddState(this.StateDefinitionBuilder);
+        workflowDefinitionBuilder.AddState(this.StateDefinitionBuilder);
     }
 
     public StateDefinitionBuilder<TSource, TStatus, TState> StateDefinitionBuilder { get; } = new();

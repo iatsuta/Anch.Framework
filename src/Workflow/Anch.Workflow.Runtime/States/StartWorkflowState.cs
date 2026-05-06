@@ -1,4 +1,5 @@
 ﻿using Anch.Workflow.Domain;
+using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Engine;
 using Anch.Workflow.Execution;
@@ -8,7 +9,7 @@ namespace Anch.Workflow.States;
 public class StartWorkflowState<TInnerSource>(IWorkflowHost host) : IState
     where TInnerSource : notnull
 {
-    public IWorkflow<TInnerSource> InnerWorkflow { get; set; } = null!;
+    public IWorkflowDefinition<TInnerSource> InnerWorkflow { get; set; } = null!;
 
     public TInnerSource InnerSource { get; set; } = default!;
 

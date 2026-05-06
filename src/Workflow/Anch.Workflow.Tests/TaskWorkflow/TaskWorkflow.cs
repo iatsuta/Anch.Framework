@@ -15,18 +15,16 @@ public class TaskWorkflow : BuildWorkflow<TaskWorkflowObject, TaskApproveStatus>
 
         builder
             .WithStatusProperty(wfObj => wfObj.Status)
-            .Then(wfObj => wfObj.Status = TaskApproveStatus.Approving)
-            .WithName("Start")
 
             .Task(tb => tb
                 .AddCommand(ApproveEventHeader,
                     approveBranch => approveBranch
-                        .Then(wfObj => wfObj.Status = TaskApproveStatus.Approved)
+                        .Finish()
                         .WithStatus(TaskApproveStatus.Approved))
 
                 .AddCommand(RejectEventHeader,
                     rejectBranch => rejectBranch
-                        .Then(wfObj => wfObj.Status = TaskApproveStatus.Rejected)
+                        .Finish()
                         .WithStatus(TaskApproveStatus.Rejected)))
 
             .WithStatus(TaskApproveStatus.Approving)

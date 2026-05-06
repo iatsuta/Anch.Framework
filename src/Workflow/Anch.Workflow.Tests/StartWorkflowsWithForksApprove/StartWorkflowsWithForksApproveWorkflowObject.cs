@@ -4,5 +4,5 @@ public class StartWorkflowsWithForksApproveWorkflowObject
 {
     public List<StartWorkflowsWithForksApproveItemWorkflowObject> Items { get; set; } = [];
 
-    public StartWorkflowsWithForksApproveStatus Status { get; set; } = StartWorkflowsWithForksApproveStatus.Draft;
+    public StartWorkflowsWithForkApproveStatus Status { get; set; } = StartWorkflowsWithForkApproveStatus.Draft;
 }

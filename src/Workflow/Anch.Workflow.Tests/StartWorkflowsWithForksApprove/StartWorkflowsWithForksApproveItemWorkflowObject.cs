@@ -2,7 +2,7 @@ namespace Anch.Workflow.Tests.StartWorkflowsWithForksApprove;
 
 public class StartWorkflowsWithForksApproveItemWorkflowObject
 {
-    public StartWorkflowsWithForksApproveStatus Status { get; set; } = StartWorkflowsWithForksApproveStatus.Draft;
+    public StartWorkflowsWithForkApproveStatus Status { get; set; } = StartWorkflowsWithForkApproveStatus.Draft;
 
     public string Name { get; set; } = null!;
 

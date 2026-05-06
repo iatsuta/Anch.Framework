@@ -21,7 +21,9 @@ public class StateDefinitionBuilder<TSource, TStatus, TState> : IStateDefinition
 
     public List<TransitionDefinitionBuilder<TSource, TStatus>> Transitions { get; set; } = [];
 
-    public List<IWorkflowDefinitionBuilder> SubWorkflows { get; set; } = [];
+    public List<Lazy<IWorkflowDefinitionBuilder>> LazySubWorkflows { get; set; } = [];
+
+    public IReadOnlyList<IWorkflowDefinitionBuilder> SubWorkflows => field ??= [.. this.LazySubWorkflows.Select(v => v.Value)];
 
     public Dictionary<string, object> AdditionalInfo { get; set; } = [];
 
@@ -32,9 +34,6 @@ public class StateDefinitionBuilder<TSource, TStatus, TState> : IStateDefinition
 
 
     IReadOnlyDictionary<string, object> IStateDefinition.AdditionalInfo => field ??= this.AdditionalInfo;
-
-
-    IReadOnlyList<IWorkflowDefinitionBuilder> IStateDefinitionBuilder.SubWorkflows => this.SubWorkflows;
 
     IWorkflowDefinitionBuilder IStateDefinitionBuilder.Workflow => this.Workflow;
 

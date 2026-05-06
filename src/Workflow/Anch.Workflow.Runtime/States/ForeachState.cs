@@ -1,4 +1,5 @@
-﻿using Anch.Workflow.Engine;
+﻿using Anch.Workflow.Domain.Definition;
+using Anch.Workflow.Engine;
 using Anch.Workflow.Execution;
 
 namespace Anch.Workflow.States;
@@ -7,7 +8,7 @@ public class ForeachState<TSource, TElement>(IWorkflowHost workflowHost) : IStat
 {
     public IReadOnlyList<TElement> Elements { get; set; } = [];
 
-    public IWorkflow<(TSource, TElement)> ElementWorkflow { get; set; } = null!;
+    public IWorkflowDefinition<(TSource, TElement)> ElementWorkflow { get; set; } = null!;
 
     public int CurrentIndex { get; set; }
 

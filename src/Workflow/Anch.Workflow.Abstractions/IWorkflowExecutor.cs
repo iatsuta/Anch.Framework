@@ -1,4 +1,5 @@
 ﻿using Anch.Workflow.Domain;
+using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Execution;
 
@@ -11,6 +12,9 @@ public interface IWorkflowExecutor
         where TWorkflow : IWorkflow<TSource>;
 
     ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken = default)
+        where TSource : notnull;
+
+    ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflow, CancellationToken cancellationToken = default)
         where TSource : notnull;
 
     ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken cancellationToken = default);

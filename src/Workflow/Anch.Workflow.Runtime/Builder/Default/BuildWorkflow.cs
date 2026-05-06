@@ -20,9 +20,11 @@ public abstract class BuildWorkflow<TSource, TStatus> : IWorkflow<TSource, TStat
 
     public WorkflowDefinitionBuilder<TSource, TStatus> Definition => this.lazyDefinition.Value;
 
+    protected virtual WorkflowDefinitionBuilder<TSource, TStatus> CreateDefinitionHeader() => new() { Identity = new(this.GetType().Name), IsRoot = true };
+
     private WorkflowDefinitionBuilder<TSource, TStatus> CreateDefinition()
     {
-        var workflowDefinition = new WorkflowDefinitionBuilder<TSource, TStatus> { Identity = new(this.GetType().Name) };
+        var workflowDefinition = this.CreateDefinitionHeader();
 
         this.Build(new WorkflowBuilder<TSource, TStatus>(workflowDefinition));
 

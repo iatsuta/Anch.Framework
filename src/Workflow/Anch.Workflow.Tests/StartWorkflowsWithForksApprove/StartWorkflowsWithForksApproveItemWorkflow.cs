@@ -1,4 +1,3 @@
-using Anch.Core;
 using Anch.Workflow.Builder;
 using Anch.Workflow.Builder.Default;
 using Anch.Workflow.Domain;
@@ -6,29 +5,31 @@ using Anch.Workflow.States;
 
 namespace Anch.Workflow.Tests.StartWorkflowsWithForksApprove;
 
-public class StartWorkflowsWithForksApproveItemWorkflow : BuildWorkflow<StartWorkflowsWithForksApproveItemWorkflowObject>
+public class StartWorkflowsWithForksApproveItemWorkflow : BuildWorkflow<StartWorkflowsWithForksApproveItemWorkflowObject, StartWorkflowsWithForkApproveStatus>
 {
     public static readonly EventHeader ApproveWaitEvent = new(nameof(ApproveWaitEvent));
 
     public static readonly EventHeader RejectWaitEvent = new(nameof(RejectWaitEvent));
 
-    protected override void Build(IWorkflowBuilder<StartWorkflowsWithForksApproveItemWorkflowObject, Ignore> builder)
+    protected override void Build(IWorkflowBuilder<StartWorkflowsWithForksApproveItemWorkflowObject, StartWorkflowsWithForkApproveStatus> builder)
     {
         builder
-            .Then(wfObj => wfObj.Status = StartWorkflowsWithForksApproveStatus.Approving)
-            .Parallel(
+            .WithStatusProperty(wfObj => wfObj.Status)
 
+            .Parallel(
                 approveBranch => approveBranch
                     .Then<WaitEventState>()
                     .Input(s => s.Event, ApproveWaitEvent)
-                    .Output(wfObj => wfObj.Status, StartWorkflowsWithForksApproveStatus.Approved),
-
+                    .Finish()
+                    .WithStatus(StartWorkflowsWithForkApproveStatus.Approved),
 
                 rejectBranch => rejectBranch
                     .Then<WaitEventState>()
                     .Input(s => s.Event, RejectWaitEvent)
-                    .Output(wfObj => wfObj.Status, StartWorkflowsWithForksApproveStatus.Rejected))
+                    .Finish()
+                    .WithStatus(StartWorkflowsWithForkApproveStatus.Rejected))
 
-            .SetBreak(StateBreakPolicy.WaitAny);
+            .SetBreak(StateBreakPolicy.WaitAny)
+            .WithStatus(StartWorkflowsWithForkApproveStatus.Approving);
     }
 }

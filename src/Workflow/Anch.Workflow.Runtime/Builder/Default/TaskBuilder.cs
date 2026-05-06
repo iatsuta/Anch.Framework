@@ -4,7 +4,7 @@ using Anch.Workflow.States;
 
 namespace Anch.Workflow.Builder.Default;
 
-public class TaskBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinition, IStateBuilder<TSource, TStatus, TaskState> taskState) : ITaskBuilder<TSource, TStatus>
+public class TaskBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder, IStateBuilder<TSource, TStatus, TaskState> taskState) : ITaskBuilder<TSource, TStatus>
     where TSource : notnull
     where TStatus : notnull
 {
@@ -14,11 +14,11 @@ public class TaskBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TS
 
     public ITaskBuilder<TSource, TStatus> AddCommand(EventHeader eventHeader, Action<IWorkflowBuilder<TSource, TStatus>> branchSetup)
     {
-        var innerDefinition = workflowDefinition.CloneHeader();
+        var innerDefinition = workflowDefinitionBuilder.CloneHeader();
 
         branchSetup(new WorkflowBuilder<TSource, TStatus>(innerDefinition));
 
-        workflowDefinition.Attach(taskState.StateDefinitionBuilder, eventHeader, innerDefinition);
+        workflowDefinitionBuilder.Attach(taskState.StateDefinitionBuilder, eventHeader, innerDefinition);
 
         this.commands.Add(eventHeader);
 

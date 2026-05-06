@@ -6,30 +6,30 @@ using Anch.Workflow.States;
 
 namespace Anch.Workflow.Tests.Parallel;
 
-public class ParallelWorkflow : BuildWorkflow<ParallelWorkflowObject>
+public class ParallelWorkflow : BuildWorkflow<ParallelWorkflowObject, ParallelApproveStatus>
 {
     public static readonly EventHeader ApproveWaitEvent = new(nameof(ApproveWaitEvent));
 
     public static readonly EventHeader RejectWaitEvent = new(nameof(RejectWaitEvent));
 
-    protected override void Build(IWorkflowBuilder<ParallelWorkflowObject, Ignore> builder) =>
+    protected override void Build(IWorkflowBuilder<ParallelWorkflowObject, ParallelApproveStatus> builder) =>
 
         builder
-            .Then(wfObj => wfObj.Status = ParallelApproveStatus.Approving)
-            .WithName("ApprovingState")
+            .WithStatusProperty(wfObj => wfObj.Status)
 
             .Parallel(
-
                 approveBranch => approveBranch
                     .Then<WaitEventState>()
                     .Input(s => s.Event, ApproveWaitEvent)
-                    .Output(wfObj => wfObj.Status, ParallelApproveStatus.Approved),
-
+                    .Finish()
+                    .WithStatus(ParallelApproveStatus.Approved),
 
                 rejectBranch => rejectBranch
                     .Then<WaitEventState>()
                     .Input(s => s.Event, RejectWaitEvent)
-                    .Output(wfObj => wfObj.Status, ParallelApproveStatus.Rejected))
+                    .Finish()
+                    .WithStatus(ParallelApproveStatus.Rejected))
 
-            .SetBreak(StateBreakPolicy.WaitAny);
+            .SetBreak(StateBreakPolicy.WaitAny)
+            .WithStatus(ParallelApproveStatus.Approving);
 }
