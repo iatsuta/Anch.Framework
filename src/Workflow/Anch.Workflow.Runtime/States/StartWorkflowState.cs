@@ -17,12 +17,12 @@ public class StartWorkflowState<TInnerSource>(IWorkflowExecutor workflowExecutor
 
     public StateLeavePolicy LeavePolicy { get; set; } = StateLeavePolicy.TerminateChild;
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         if (executionContext.CallbackEventInfo is { } callbackEventInfo)
         {
             if (callbackEventInfo.Header == EventHeader.WorkflowFinished
-                && callbackEventInfo.SourceWorkflow!.Owner == executionContext.StateInstance)
+                && callbackEventInfo.SourceWorkflow?.Owner == executionContext.StateInstance)
             {
                 return new Done();
             }
@@ -48,27 +48,16 @@ public class StartWorkflowState<TInnerSource>(IWorkflowExecutor workflowExecutor
             }
 #endif
 
-            if (wi.Status == WorkflowStatus.Finished)
+            if (wi.Status == WorkflowStatus.Finished || this.Mode == StartWorkflowMode.FireAndForget)
             {
-                return new Done();
+                return new Done { WorkflowProcessResult = startResult };
             }
             else
             {
-                switch (this.Mode)
+                return new WaitEventResult(EventHeader.WorkflowFinished, wi)
                 {
-                    case StartWorkflowMode.WaitFinish:
-                        return new MultiExecutionResult(
-                        [
-                            new WaitEventResult(EventHeader.WorkflowFinished, wi),
-                            new WorkflowProcessExecutionResult(startResult, false),
-                        ]);
-
-                    case StartWorkflowMode.FireAndForget:
-                        return new WorkflowProcessExecutionResult(startResult, true);
-
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(this.Mode));
-                }
+                    WorkflowProcessResult = startResult
+                };
             }
         }
     }

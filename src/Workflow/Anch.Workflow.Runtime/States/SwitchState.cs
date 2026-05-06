@@ -10,7 +10,7 @@ public class SwitchState<TProperty> : IState
 
     public IReadOnlyDictionary<TProperty, EventHeader> Cases { get; set; } = null!;
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         return new PushEventResult(
             this.Cases.GetValueOrDefault(this.Value, DefaultCaseEvent),

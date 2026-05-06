@@ -8,7 +8,7 @@ public class ActionState<TSource, TService>(TService service) : IState
 {
     public Func<TSource, TService, CancellationToken, ValueTask> Action { get; set; } = null!;
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         await this.Action((TSource)executionContext.Source, service, executionContext.CancellationToken);
 

@@ -13,7 +13,7 @@ public class PushEventState : IState
 
     public object? Data { get; set; }
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         return new PushEventResult(this.Event, this.TargetState, this.Data);
     }

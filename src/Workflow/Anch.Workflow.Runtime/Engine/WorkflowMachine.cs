@@ -34,8 +34,8 @@ public class WorkflowMachine(
         return await this.ProcessCurrentState(this.CreateExecutionContext(cancellationToken));
     }
 
-    public ValueTask<WorkflowProcessResult> ProcessWorkflow(IExecutionResult executionResult, CancellationToken cancellationToken) =>
-        this.ProcessExecutionResult(this.WorkflowInstance.CurrentState, executionResult, cancellationToken);
+    public async ValueTask<WorkflowProcessResult> ProcessWorkflow(ExecutionResult executionResult, CancellationToken cancellationToken) =>
+        executionResult.WorkflowProcessResult + await this.ProcessExecutionResult(this.WorkflowInstance.CurrentState, executionResult, cancellationToken);
 
     public async ValueTask<WorkflowProcessResult> Terminate(CancellationToken cancellationToken)
     {
@@ -152,26 +152,12 @@ public class WorkflowMachine(
         }
     }
 
-    protected virtual async ValueTask<WorkflowProcessResult> ProcessExecutionResult(StateInstance stateInstance, IExecutionResult executionResult,
+    protected virtual async ValueTask<WorkflowProcessResult> ProcessExecutionResult(StateInstance stateInstance, ExecutionResult executionResult,
         CancellationToken cancellationToken)
     {
         switch (executionResult)
         {
-            case WorkflowProcessExecutionResult workflowProcessExecutionResult:
-            {
-                if (workflowProcessExecutionResult.IsDone)
-                {
-                    return workflowProcessExecutionResult.WorkflowProcessResult +
-
-                           await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
-                }
-                else
-                {
-                    return workflowProcessExecutionResult.WorkflowProcessResult;
-                }
-            }
-
-            case Wait:
+            case WaitAnyEvent:
                 stateInstance.Workflow.Status = WorkflowStatus.WaitEvent;
                 return WorkflowProcessResult.Empty;
 
@@ -180,11 +166,11 @@ public class WorkflowMachine(
                 stateInstance.RegisterWaitEvent(waitEventResult.ToEventInfo(stateInstance));
                 return WorkflowProcessResult.Empty;
 
-            case Done:
-                return await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
-
             case PushEventResult pushEventResult:
                 return await this.ProcessExecutionResult(stateInstance, pushEventResult, cancellationToken);
+
+            case Done:
+                return await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
 
             case MultiExecutionResult multiExecutionResult:
                 return new WorkflowProcessResult([],

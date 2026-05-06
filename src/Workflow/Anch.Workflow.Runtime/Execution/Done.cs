@@ -1,6 +1,6 @@
 ﻿namespace Anch.Workflow.Execution;
 
-public record Done() : IExecutionResult
+public record Done : ExecutionResult
 {
-    public bool LeaveState { get; } = true;
+    public override bool LeaveState { get; } = true;
 }

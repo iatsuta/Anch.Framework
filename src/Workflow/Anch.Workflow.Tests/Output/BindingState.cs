@@ -13,7 +13,7 @@ public class BindingState : IState
     public int Result { get; set; }
 
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         this.Result = this.Value1 + this.Value2;
 

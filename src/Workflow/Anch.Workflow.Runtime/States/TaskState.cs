@@ -8,7 +8,7 @@ public class TaskState : IState
 {
     public IReadOnlyList<EventHeader> CommandHeaders { get; set; } = null!;
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         if (executionContext.CallbackEventInfo is { } callbackEventInfo)
         {

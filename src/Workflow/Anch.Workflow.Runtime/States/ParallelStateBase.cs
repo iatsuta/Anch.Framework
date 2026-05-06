@@ -11,7 +11,7 @@ public abstract class ParallelStateBase<TSource> : IState
 
     public StateLeavePolicy LeavePolicy { get; set; } = StateLeavePolicy.TerminateChild;
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         var startSteps = await this.TryStart(executionContext);
 
@@ -21,22 +21,21 @@ public abstract class ParallelStateBase<TSource> : IState
 
         if (!isBreak && notProcessedWorkflow.Any())
         {
-            var startExecutionResult = new WorkflowProcessExecutionResult(startSteps, false);
-
             if (executionContext.CallbackEventInfo == null)
             {
-                return new MultiExecutionResult([
-                    startExecutionResult, .. notProcessedWorkflow.Select(subWf => new WaitEventResult(EventHeader.WorkflowFinished, subWf))
-                ]);
+                return new MultiExecutionResult([.. notProcessedWorkflow.Select(subWf => new WaitEventResult(EventHeader.WorkflowFinished, subWf))])
+                {
+                    WorkflowProcessResult = startSteps
+                };
             }
             else
             {
-                return new MultiExecutionResult([new Wait(), startExecutionResult]);
+                return new WaitAnyEvent { WorkflowProcessResult = startSteps };
             }
         }
         else
         {
-            return new WorkflowProcessExecutionResult(startSteps, true);
+            return new Done { WorkflowProcessResult = startSteps };
         }
     }
 

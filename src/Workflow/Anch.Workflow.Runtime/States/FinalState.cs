@@ -8,7 +8,7 @@ public class FinalState : IState
 {
     public object? Result { get; set; }
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         return new PushEventResult(EventHeader.WorkflowFinished, null, this.Result);
     }

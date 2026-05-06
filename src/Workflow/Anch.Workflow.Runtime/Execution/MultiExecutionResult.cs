@@ -2,7 +2,7 @@
 
 namespace Anch.Workflow.Execution;
 
-public record MultiExecutionResult(ImmutableArray<IExecutionResult> ExecutionResults) : IExecutionResult
+public record MultiExecutionResult(ImmutableArray<ExecutionResult> ExecutionResults) : ExecutionResult
 {
-    public bool LeaveState => this.ExecutionResults.All(er => er.LeaveState);
+    public override bool LeaveState => this.ExecutionResults.All(er => er.LeaveState);
 }

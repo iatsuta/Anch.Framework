@@ -7,5 +7,5 @@ public interface IState
 {
     StateLeavePolicy LeavePolicy => StateLeavePolicy.Forget;
 
-    ValueTask<IExecutionResult> Run(IExecutionContext executionContext);
+    ValueTask<ExecutionResult> Run(IExecutionContext executionContext);
 }

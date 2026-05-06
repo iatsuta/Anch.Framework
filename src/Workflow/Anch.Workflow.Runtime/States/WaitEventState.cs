@@ -15,7 +15,7 @@ public class WaitEventState : IState
 
     public object? ReceivedData { get; set; }
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         if (executionContext.CallbackEventInfo is { } callbackEventInfo)
         {

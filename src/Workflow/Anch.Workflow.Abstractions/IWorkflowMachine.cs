@@ -14,7 +14,7 @@ public interface IWorkflowMachine
 
     ValueTask<WorkflowProcessResult> ProcessWorkflow(CancellationToken cancellationToken = default);
 
-    ValueTask<WorkflowProcessResult> ProcessWorkflow(IExecutionResult executionResult, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> ProcessWorkflow(ExecutionResult executionResult, CancellationToken cancellationToken = default);
 
     ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken cancellationToken = default);
 

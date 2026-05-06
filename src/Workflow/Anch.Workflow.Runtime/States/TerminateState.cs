@@ -6,7 +6,7 @@ namespace Anch.Workflow.States;
 
 public class TerminateState : IState
 {
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         return new MultiExecutionResult([
             new PushEventResult(EventHeader.WorkflowTerminated, null),

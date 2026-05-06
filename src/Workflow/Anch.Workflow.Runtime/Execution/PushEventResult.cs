@@ -3,12 +3,9 @@ using Anch.Workflow.Domain.Runtime;
 
 namespace Anch.Workflow.Execution;
 
-public record PushEventResult(EventHeader @Event, StateInstance? TargetState, object? Data = null) : IExecutionResult
+public record PushEventResult(EventHeader @Event, StateInstance? TargetState, object? Data = null) : ExecutionResult
 {
-    public PushEventInfo ToEventInfo(WorkflowInstance sourceWorkflow)
-    {
-        return new PushEventInfo(this.Event, sourceWorkflow, this.TargetState, this.Data);
-    }
+    public PushEventInfo ToEventInfo(WorkflowInstance sourceWorkflow) => new(this.Event, sourceWorkflow, this.TargetState, this.Data);
 
-    public bool LeaveState { get; } = true;
+    public override bool LeaveState { get; } = true;
 }

@@ -8,7 +8,7 @@ public class IfState : IState
 {
     public bool Condition { get; set; }
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         var condition = this.Condition;
 

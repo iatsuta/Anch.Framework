@@ -13,7 +13,7 @@ public class WhileState<TLoopWorkflow, TSource>(IWorkflowHost workflowHost) : IS
 
     public TLoopWorkflow LoopWorkflow { get; set; } = default!;
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         if (!this.Condition)
         {

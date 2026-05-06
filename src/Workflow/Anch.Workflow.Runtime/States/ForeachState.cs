@@ -12,7 +12,7 @@ public class ForeachState<TSource, TElement>(IWorkflowHost workflowHost) : IStat
 
     public int CurrentIndex { get; set; }
 
-    public async ValueTask<IExecutionResult> Run(IExecutionContext executionContext)
+    public async ValueTask<ExecutionResult> Run(IExecutionContext executionContext)
     {
         throw new NotImplementedException();
 
