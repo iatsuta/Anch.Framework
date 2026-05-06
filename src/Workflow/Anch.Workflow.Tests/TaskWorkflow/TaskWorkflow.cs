@@ -19,16 +19,18 @@ public class TaskWorkflow : BuildWorkflow<TaskWorkflowObject, TaskApproveStatus>
             .Task(tb => tb
                 .AddCommand(ApproveEventHeader,
                     approveBranch => approveBranch
+
+                        .Then(wfObj => wfObj.PostProcessWork = true)
+                        .WithName("PostProcessWorkState")
+
                         .Finish()
                         .WithStatus(TaskApproveStatus.Approved))
 
                 .AddCommand(RejectEventHeader,
                     rejectBranch => rejectBranch
+
                         .Finish()
                         .WithStatus(TaskApproveStatus.Rejected)))
 
-            .WithStatus(TaskApproveStatus.Approving)
-
-            .Then(wfObj => wfObj.PostProcessWork = true)
-            .WithName("PostProcessWorkState");
+            .WithStatus(TaskApproveStatus.Approving);
 }
