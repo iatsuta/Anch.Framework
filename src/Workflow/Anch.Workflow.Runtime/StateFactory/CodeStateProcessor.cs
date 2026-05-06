@@ -10,6 +10,7 @@ public class CodeStateProcessor<TSource, TStatus, TState>(
     IStateDefinition<TSource, TStatus, TState> stateDefinition,
     TSource source) : ICodeStateProcessor
     where TSource : notnull
+    where TStatus : struct
     where TState : IState
 {
     private readonly TState codeState = serviceProxyFactory.Create<TState>();

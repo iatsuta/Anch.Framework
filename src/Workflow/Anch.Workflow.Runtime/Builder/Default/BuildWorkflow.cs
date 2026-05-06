@@ -9,7 +9,7 @@ public abstract class BuildWorkflow<TSource> : BuildWorkflow<TSource, Ignore>
 
 public abstract class BuildWorkflow<TSource, TStatus> : IWorkflow<TSource, TStatus>
     where TSource : notnull
-    where TStatus : notnull
+    where TStatus : struct
 {
     protected abstract void Build(IWorkflowBuilder<TSource, TStatus> builder);
 

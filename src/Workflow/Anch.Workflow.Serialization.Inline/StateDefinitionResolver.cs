@@ -4,14 +4,14 @@ namespace Anch.Workflow.Serialization.Inline;
 
 public class StateDefinitionResolver<TSource, TStatus>(IWorkflowDefinition<TSource, TStatus> workflow) : IStateDefinitionResolver<TSource>
     where TSource : notnull
-    where TStatus : notnull
+    where TStatus : struct
 {
     private readonly Func<TSource, TStatus> getStatus = (workflow.StatusAccessors ?? throw new InvalidOperationException("StatusAccessors cannot be null"))
         .Getter;
 
     //private readonly Func<TSource, TStatus> getStatus = ((Expression<Func<TSource, TStatus>>)workflow.Definition.DomainBindingInfo.StatusProperty!).Compile(LambdaCompileCache.Default);
 
-    private readonly Dictionary<TStatus, IStateDefinition<TSource, TStatus>> statusMap = workflow.States.Where(state => state.Status != null).ToDictionary(st => st.Status!);
+    private readonly Dictionary<TStatus, IStateDefinition<TSource, TStatus>> statusMap = workflow.States.Where(state => state.Status != null).ToDictionary(st => st.Status!.Value);
 
     public IStateDefinition GetCurrentStateDefinition(TSource source)
     {

@@ -2,6 +2,7 @@
 
 public interface ITransitionDefinition<TSource, TStatus> : ITransitionDefinition
     where TSource : notnull
+    where TStatus : struct
 {
     new IStateDefinition<TSource, TStatus> To { get; }
 

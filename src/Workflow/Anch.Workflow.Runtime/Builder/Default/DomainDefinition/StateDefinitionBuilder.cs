@@ -4,10 +4,11 @@ namespace Anch.Workflow.Builder.Default.DomainDefinition;
 
 public class StateDefinitionBuilder<TSource, TStatus, TState> : IStateDefinitionBuilder<TSource, TStatus>, IStateDefinition<TSource, TStatus, TState>
     where TSource : notnull
+    where TStatus : struct
 {
     public string Name { get; set; } = "";
 
-    public TStatus? Status { get; set; }
+    public TStatus? Status { get; set; } = null;
 
     public bool IsAutoName { get; set; } = true;
 

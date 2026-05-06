@@ -10,7 +10,7 @@ namespace Anch.Workflow.Builder.Default;
 
 public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder) : IWorkflowBuilder<TSource, TStatus>
     where TSource : notnull
-    where TStatus : notnull
+    where TStatus : struct
 {
     public IWorkflowBuilder<TSource, TStatus> WithStatusProperty(Expression<Func<TSource, TStatus>> statusPath)
     {

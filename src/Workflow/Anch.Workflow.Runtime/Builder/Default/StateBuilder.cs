@@ -11,7 +11,7 @@ namespace Anch.Workflow.Builder.Default;
 
 public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, TStatus>, IStateBuilder<TSource, TStatus, TState>
     where TSource : notnull
-    where TStatus : notnull
+    where TStatus : struct
     where TState : IState
 {
     public StateBuilder(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder, bool addDoneEvent)

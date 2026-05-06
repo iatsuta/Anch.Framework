@@ -6,7 +6,7 @@ public class ForkBuildWorkflow<TSource, TStatus>(
     Action<IWorkflowBuilder<TSource, TStatus>> setupBuilder,
     WorkflowDefinitionBuilder<TSource, TStatus> parentWorkflowDefinitionBuilder) : ActionBuildWorkflow<TSource, TStatus>(setupBuilder)
     where TSource : notnull
-    where TStatus : notnull
+    where TStatus : struct
 {
     protected override WorkflowDefinitionBuilder<TSource, TStatus> CreateDefinitionHeader()
     {

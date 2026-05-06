@@ -6,7 +6,7 @@ namespace Anch.Workflow.Builder.Default;
 
 public class TaskBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder, IStateBuilder<TSource, TStatus, TaskState> taskState) : ITaskBuilder<TSource, TStatus>
     where TSource : notnull
-    where TStatus : notnull
+    where TStatus : struct
 {
     private readonly List<EventHeader> commands = [];
 

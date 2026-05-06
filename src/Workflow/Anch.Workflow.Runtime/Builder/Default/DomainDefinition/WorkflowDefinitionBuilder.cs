@@ -7,6 +7,7 @@ namespace Anch.Workflow.Builder.Default.DomainDefinition;
 
 public class WorkflowDefinitionBuilder<TSource, TStatus> : IWorkflowDefinition<TSource, TStatus>, IWorkflowDefinitionBuilder
     where TSource : notnull
+    where TStatus : struct
 {
     private readonly List<IStateDefinitionBuilder<TSource, TStatus>> statesWithAutoFinish = [];
 

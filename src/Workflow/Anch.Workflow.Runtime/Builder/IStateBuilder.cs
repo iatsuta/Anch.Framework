@@ -7,12 +7,14 @@ namespace Anch.Workflow.Builder;
 
 public interface IStateBuilder<TSource, TStatus>
     where TSource : notnull
+    where TStatus : struct
 {
     IStateDefinitionBuilder<TSource, TStatus> StateDefinitionBuilder { get; }
 }
 
 public interface IStateBuilder<TSource, TStatus, TState> : IWorkflowBuilder<TSource, TStatus>, IStateBuilder<TSource, TStatus>
     where TSource : notnull
+    where TStatus : struct
     where TState : IState
 {
     new StateDefinitionBuilder<TSource, TStatus, TState> StateDefinitionBuilder { get; }

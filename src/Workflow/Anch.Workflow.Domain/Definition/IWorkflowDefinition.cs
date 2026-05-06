@@ -4,6 +4,7 @@ namespace Anch.Workflow.Domain.Definition;
 
 public interface IWorkflowDefinition<TSource, TStatus> : IWorkflowDefinition<TSource>
     where TSource : notnull
+    where TStatus : struct
 {
     PropertyAccessors<TSource, TStatus>? StatusAccessors { get; }
 

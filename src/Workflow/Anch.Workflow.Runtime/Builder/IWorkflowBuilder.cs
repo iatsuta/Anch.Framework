@@ -8,6 +8,7 @@ namespace Anch.Workflow.Builder;
 
 public interface IWorkflowBuilder<TSource, TStatus>
     where TSource : notnull
+    where TStatus : struct
 {
     IWorkflowBuilder<TSource, TStatus> WithIdentity(string name)
     {

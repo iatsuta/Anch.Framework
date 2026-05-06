@@ -4,6 +4,7 @@ namespace Anch.Workflow.Builder.Default.DomainDefinition;
 
 public class TransitionDefinitionBuilder<TSource, TStatus> : ITransitionDefinition<TSource, TStatus>
     where TSource : notnull
+    where TStatus : struct
 {
     public EventDefinitionBuilder Event { get; set; } = null!;
 

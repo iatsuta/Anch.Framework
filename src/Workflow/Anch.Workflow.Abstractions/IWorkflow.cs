@@ -4,6 +4,7 @@ namespace Anch.Workflow;
 
 public interface IWorkflow<TSource, TStatus> : IWorkflow<TSource>
     where TSource : notnull
+    where TStatus : struct
 {
     new IWorkflowDefinition<TSource, TStatus> Definition { get; }
 
