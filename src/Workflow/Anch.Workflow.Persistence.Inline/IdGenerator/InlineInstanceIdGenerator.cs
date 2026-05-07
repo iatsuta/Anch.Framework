@@ -2,7 +2,6 @@
 
 using Anch.Core;
 using Anch.IdentitySource;
-using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
 
 namespace Anch.Workflow.Persistence.Inline.IdGenerator;

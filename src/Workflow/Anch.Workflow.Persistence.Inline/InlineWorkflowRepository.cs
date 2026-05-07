@@ -1,4 +1,6 @@
-﻿using Anch.GenericQueryable;
+﻿using System.Security.Principal;
+
+using Anch.GenericQueryable;
 using Anch.Workflow.Domain;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
@@ -18,11 +20,11 @@ public class InlineWorkflowRepository<TSource, TStatus>(
 {
     private readonly IWorkflowInstanceSerializer<TSource> workflowInstanceSerializer = workflowInstanceSerializerFactory.Create(workflowDefinition);
 
-    public IWorkflowDefinition WorkflowDefinitionBuilder { get; } = workflowDefinition;
+    public IWorkflowDefinition WorkflowDefinition { get; } = workflowDefinition;
 
     public async ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken cancellationToken)
     {
-        if (workflowInstance.Definition != this.WorkflowDefinitionBuilder)
+        if (workflowInstance.Definition != this.WorkflowDefinition)
         {
             throw new InvalidOperationException("Wrong storage");
         }
@@ -51,12 +53,21 @@ public class InlineWorkflowRepository<TSource, TStatus>(
 
     public IAsyncEnumerable<WaitEventInfo> GetWaitEvents(PushEventInfo pushEventInfo)
     {
-        throw new NotImplementedException();
+        var definition = pushEventInfo.TargetState?.Definition;
+
+        if (definition != null && definition.Workflow != this.WorkflowDefinition)
+        {
+            return AsyncEnumerable.Empty<WaitEventInfo>();
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public async ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken cancellationToken)
     {
-        if (identity.Definition != null && identity.Definition != this.WorkflowDefinitionBuilder.Identity)
+        if (identity.Definition != null && identity.Definition != this.WorkflowDefinition.Identity)
         {
             return null;
         }
@@ -64,7 +75,7 @@ public class InlineWorkflowRepository<TSource, TStatus>(
         {
             var source = await persistSource
                 .GetQueryable()
-                .Where(persistSource.GetFilter(identity with { Definition = this.WorkflowDefinitionBuilder.Identity }))
+                .Where(persistSource.GetFilter(identity with { Definition = this.WorkflowDefinition.Identity }))
                 .GenericSingleOrDefaultAsync(cancellationToken);
 
             if (source is not null)
@@ -89,7 +100,7 @@ public class InlineWorkflowRepository<TSource, TStatus>(
 
     public async ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken cancellationToken)
     {
-        if (identity.Definition != null && identity.Definition != this.WorkflowDefinitionBuilder.Identity)
+        if (identity.Definition != null && identity.Definition != this.WorkflowDefinition.Identity)
         {
             return null;
         }
@@ -97,7 +108,7 @@ public class InlineWorkflowRepository<TSource, TStatus>(
         {
             var source = await persistSource
                 .GetQueryable()
-                .Where(persistSource.GetFilter(identity with { Definition = this.WorkflowDefinitionBuilder.Identity }))
+                .Where(persistSource.GetFilter(identity with { Definition = this.WorkflowDefinition.Identity }))
                 .GenericSingleOrDefaultAsync(cancellationToken);
 
             if (source is not null)

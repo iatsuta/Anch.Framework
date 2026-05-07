@@ -15,7 +15,7 @@ public record WorkflowStatus(string Name, WorkflowStatusRole Role)
 
     public static WorkflowStatus WaitEvent { get; } = new (nameof(WaitEvent));
 
-    public static WorkflowStatus Suspended { get; } = new (nameof(Suspended));
+    //public static WorkflowStatus Suspended { get; } = new (nameof(Suspended));
 
     public static WorkflowStatus Terminated { get; } = new (nameof(Terminated), WorkflowStatusRole.Finished);
 }

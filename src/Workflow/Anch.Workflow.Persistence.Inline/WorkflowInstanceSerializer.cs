@@ -1,6 +1,7 @@
 ﻿using Anch.IdentitySource;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
+using Anch.Workflow.States;
 
 namespace Anch.Workflow.Persistence.Inline;
 
@@ -13,54 +14,55 @@ public class WorkflowInstanceSerializer<TSource, TStatus>(
     where TSource : class
     where TStatus : struct
 {
-    private readonly IStateInstanceSerializer<TSource> stateInstanceSerializer = stateInstanceSerializerFactory.Create(workflow);
+    private readonly IStateInstanceSerializer stateInstanceSerializer = stateInstanceSerializerFactory.Create(workflow);
 
     public WorkflowInstance Deserialize(TSource source)
     {
-        var currentState = this.stateInstanceSerializer.Deserialize(source);
-
         var workflowInstance = new WorkflowInstance
         {
             Definition = workflow,
-            Source = source!,
+            Source = source,
             Id = identityInfo.Id.Getter(source),
-            CurrentState = currentState,
-            Status = this.GetWorkflowStatus(currentState.Definition)
+            Status = WorkflowStatus.NotStarted
         };
+
+        var currentState = this.stateInstanceSerializer.Deserialize(workflowInstance);
+
+        workflowInstance.CurrentState = currentState;
+        workflowInstance.Status = this.GetWorkflowStatus(currentState.Definition);
 
         return workflowInstance;
     }
 
     private WorkflowStatus GetWorkflowStatus(IStateDefinition currentStateDefinition)
     {
-        throw new NotImplementedException();
+        var isFinished = currentStateDefinition.StateType == typeof(FinalState);
+        var isTerminated = currentStateDefinition.StateType == typeof(TerminateState);
 
-        //var isFinished = currentStateDefinition.StateType == typeof(FinalState);
-        //var isTerminated = currentStateDefinition.StateType == typeof(TerminateState);
+        if (isTerminated)
+        {
+            return WorkflowStatus.Terminated;
+        }
+        else if (isFinished)
+        {
+            return WorkflowStatus.Finished;
+        }
+        else if (currentStateDefinition.StateType == typeof(TaskState))
+            //&& currentStateDefinition.AdditionalInfo.TryGetValue(TaskState.CommandsKey, out var untypedEventHeaders)
+            //&& untypedEventHeaders is IReadOnlyList<EventHeader> eventHeaders)
+        {
+            //foreach (var eventHeader in eventHeaders)
+            //{
+            //    result.CurrentState.WaitEvents.Add(new WaitEventInfo(eventHeader, null, result.CurrentState));
+            //}
 
-        //if (isTerminated)
-        //{
-        //    return WorkflowStatus.Terminated;
-        //}
-        //else if (isFinished)
-        //{
-        //    return WorkflowStatus.Finished;
-        //}
-        //else if (currentStateDefinition.StateType == typeof(TaskState))
-        //    //&& currentStateDefinition.AdditionalInfo.TryGetValue(TaskState.CommandsKey, out var untypedEventHeaders)
-        //    //&& untypedEventHeaders is IReadOnlyList<EventHeader> eventHeaders)
-        //{
-        //    //foreach (var eventHeader in eventHeaders)
-        //    //{
-        //    //    result.CurrentState.WaitEvents.Add(new WaitEventInfo(eventHeader, null, result.CurrentState));
-        //    //}
-
-        //    return WorkflowStatus.WaitEvent;
-        //}
-        //else
-        //{
-        //    return WorkflowStatus.Runnable;
-        //}
+            return WorkflowStatus.WaitEvent;
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(currentStateDefinition), $"Unexpected state type: {currentStateDefinition.StateType}");
+            //return WorkflowStatus.Runnable;
+        }
     }
 
     public void Serialize(WorkflowInstance wi)

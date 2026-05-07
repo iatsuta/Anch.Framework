@@ -1,33 +1,33 @@
 ﻿using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
+using Anch.Workflow.States;
 
 namespace Anch.Workflow.Persistence.Inline;
 
 public class StateInstanceSerializer<TSource, TStatus>(
     IWorkflowDefinition<TSource, TStatus> workflowDefinition,
-    IStateDefinitionResolverFactory stateDefinitionResolverFactory) : IStateInstanceSerializer<TSource>
+    IStateDefinitionResolverFactory stateDefinitionResolverFactory) : IStateInstanceSerializer
     where TSource : class
     where TStatus : struct
 {
     private readonly IStateDefinitionResolver<TSource, TStatus> stateDefinitionResolver = stateDefinitionResolverFactory.Create(workflowDefinition);
 
-    public StateInstance Deserialize(TSource source)
+    public StateInstance Deserialize(WorkflowInstance workflowInstance)
     {
+        var source = (TSource)workflowInstance.Source;
+
         var currentStateDefinition = this.stateDefinitionResolver.GetCurrentStateDefinition(source);
 
-        throw new NotImplementedException();
+        var isFinal = new[] { typeof(FinalState), typeof(TerminateState) }.Contains(currentStateDefinition.StateType);
 
-        //var isFinished = currentStateDefinition.StateType == typeof(FinalState);
-        //var isTerminated = currentStateDefinition.StateType == typeof(TerminateState);
-
-        //var stateInstance = new StateInstance
-        //{
-        //    Id = source.Id,
-        //    Workflow = result,
-        //    Definition = currentStateDefinition,
-        //    InputProcessed = true,
-        //    OutputProcessed = isFinished || isTerminated
-        //};
+        return new StateInstance
+        {
+            Id = workflowInstance.Id,
+            Workflow = workflowInstance,
+            Definition = currentStateDefinition,
+            InputProcessed = isFinal,
+            OutputProcessed = isFinal
+        };
     }
 
     public void Serialize(StateInstance workflowInstance)

@@ -8,6 +8,6 @@ public class StateInstanceSerializerFactory<TSource, TStatus>(IServiceProxyFacto
     where TSource : class
     where TStatus : struct
 {
-    public IStateInstanceSerializer<TSource> Create(IWorkflowDefinition<TSource, TStatus> workflowDefinition) =>
+    public IStateInstanceSerializer Create(IWorkflowDefinition<TSource, TStatus> workflowDefinition) =>
         serviceProxyFactory.Create<StateInstanceSerializer<TSource, TStatus>>(workflowDefinition);
 }

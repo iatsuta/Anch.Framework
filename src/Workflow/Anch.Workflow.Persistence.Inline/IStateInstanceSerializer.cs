@@ -4,9 +4,9 @@ namespace Anch.Workflow.Persistence.Inline;
 
 //public interface IStateInstanceSerializer<in TSource, TState>;
 
-public interface IStateInstanceSerializer<in TSource>
+public interface IStateInstanceSerializer
 {
-    StateInstance Deserialize(TSource source);
+    StateInstance Deserialize(WorkflowInstance workflowInstance);
 
     void Serialize(StateInstance workflowInstance);
 }

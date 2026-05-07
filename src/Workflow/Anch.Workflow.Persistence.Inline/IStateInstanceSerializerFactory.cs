@@ -6,5 +6,5 @@ public interface IStateInstanceSerializerFactory<TSource, TStatus>
     where TSource : class
     where TStatus : struct
 {
-    IStateInstanceSerializer<TSource> Create(IWorkflowDefinition<TSource, TStatus> workflowDefinition);
+    IStateInstanceSerializer Create(IWorkflowDefinition<TSource, TStatus> workflowDefinition);
 }
