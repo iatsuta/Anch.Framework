@@ -9,6 +9,7 @@
     <ProjectReference Include="..\..\IdentitySource\Anch.IdentitySource.Abstractions\Anch.IdentitySource.Abstractions.csproj" />
     <ProjectReference Include="..\Anch.Workflow.Abstractions\Anch.Workflow.Abstractions.csproj" />
     <ProjectReference Include="..\Anch.Workflow.Serialization\Anch.Workflow.Serialization.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.States.Abstractions\Anch.Workflow.States.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

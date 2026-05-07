@@ -7,6 +7,8 @@
     <Project Path="Workflow/Anch.Workflow.Serialization.Inline/Anch.Workflow.Serialization.Inline.csproj" />
     <Project Path="Workflow/Anch.Workflow.Serialization.Memory/Anch.Workflow.Serialization.Memory.csproj" />
     <Project Path="Workflow/Anch.Workflow.Serialization/Anch.Workflow.Serialization.csproj" />
+    <Project Path="Workflow/Anch.Workflow.States.Abstractions/Anch.Workflow.States.Abstractions.csproj" />
+    <Project Path="Workflow/Anch.Workflow.States/Anch.Workflow.States.csproj" />
     <Project Path="Workflow/Anch.Workflow/Anch.Workflow.csproj" />
   </Folder>
   <Folder Name="/Workflow/Tests/">

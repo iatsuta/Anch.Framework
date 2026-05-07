@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Workflow.States</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Workflow.States.Abstractions\Anch.Workflow.States.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
