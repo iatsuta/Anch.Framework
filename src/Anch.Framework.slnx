@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Workflow/">
     <Project Path="Workflow/Anch.Workflow.Abstractions/Anch.Workflow.Abstractions.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Building/Anch.Workflow.Building.csproj" />
     <Project Path="Workflow/Anch.Workflow.Domain/Anch.Workflow.Domain.csproj" />
     <Project Path="Workflow/Anch.Workflow.Runtime/Anch.Workflow.Runtime.csproj" />
     <Project Path="Workflow/Anch.Workflow.Serialization.Inline/Anch.Workflow.Serialization.Inline.csproj" />
@@ -9,6 +10,7 @@
     <Project Path="Workflow/Anch.Workflow/Anch.Workflow.csproj" />
   </Folder>
   <Folder Name="/Workflow/Tests/">
+    <Project Path="Workflow/Anch.Workflow.IntegrationTests.EntityFramework/Anch.Workflow.IntegrationTests.EntityFramework.csproj" />
     <Project Path="Workflow/Anch.Workflow.IntegrationTests/Anch.Workflow.IntegrationTests.csproj" />
     <Project Path="Workflow/Anch.Workflow.Tests/Anch.Workflow.Tests.csproj" />
   </Folder>

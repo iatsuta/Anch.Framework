@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Workflow.Building</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Workflow.Runtime\Anch.Workflow.Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

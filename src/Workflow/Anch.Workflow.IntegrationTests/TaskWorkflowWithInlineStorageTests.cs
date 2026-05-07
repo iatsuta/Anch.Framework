@@ -4,7 +4,7 @@ using Anch.Workflow.Tests.StartWorkflowsWithTaskApprove;
 
 namespace Anch.Workflow.IntegrationTests;
 
-public class StartWorkflowsWithForksApproveTests : InlineWorkflowTestBase
+public abstract class StartWorkflowsWithForksApproveTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
     [AnchFact]
     public async Task Task_SendApproveCommand_WorkflowApproved(CancellationToken ct)

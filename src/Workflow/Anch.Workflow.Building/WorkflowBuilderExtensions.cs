@@ -1,6 +1,6 @@
 ﻿using Anch.Workflow.States.Output;
 
-namespace Anch.Workflow.Builder;
+namespace Anch.Workflow.Building;
 
 public static class WorkflowBuilderExtensions
 {

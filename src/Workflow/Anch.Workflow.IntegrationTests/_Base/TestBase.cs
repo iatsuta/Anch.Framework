@@ -1,16 +1,10 @@
 using Anch.Core;
-using Anch.DependencyInjection;
-using Anch.Workflow.Domain.Runtime;
-using Anch.Workflow.Serialization;
-using Anch.Workflow.Serialization.Inline;
-using Anch.Workflow.Serialization.Inline.IdGenerator;
-using Anch.Workflow.Tests._Base;
 
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Workflow.IntegrationTests._Base;
 
-public class InlineWorkflowTestBase : MultiScopeWorkflowTestBase
+public class TestBase(IServiceProvider rootServiceProvider)
 {
     //protected override IServiceCollection CreateServices()
     //{
@@ -25,17 +19,17 @@ public class InlineWorkflowTestBase : MultiScopeWorkflowTestBase
     //        .ReplaceScoped<ISpecificWorkflowExternalStorageSource, InlineSpecificWorkflowExternalStorageSource>();
     //}
 
-    protected override IServiceCollection CreateServices(IServiceCollection services)
-    {
-        return base.CreateServices(services)
-            .ReplaceScoped<IInstanceIdGenerator<WorkflowInstance>, WorkflowInstanceInlineIdGenerator>()
-            .ReplaceScoped<IInstanceIdGenerator<StateInstance>, StateInstanceInlineIdGenerator>()
-            .ReplaceScoped<IWorkflowRepositoryFactory, InlineWorkflowRepositoryFactory>();
-    }
+    //protected override IServiceCollection CreateServices(IServiceCollection services)
+    //{
+    //    return base.CreateServices(services)
+    //        .ReplaceScoped<IInstanceIdGenerator<WorkflowInstance>, WorkflowInstanceInlineIdGenerator>()
+    //        .ReplaceScoped<IInstanceIdGenerator<StateInstance>, StateInstanceInlineIdGenerator>()
+    //        .ReplaceScoped<IWorkflowRepositoryFactory, InlineWorkflowRepositoryFactory>();
+    //}
 
     protected async Task<TResult> EvaluateScope<TResult>(Func<IServiceProvider, Task<TResult>> func)
     {
-        await using var scope = this.RootServiceProvider.CreateAsyncScope();
+        await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var result = await func(scope.ServiceProvider);
 

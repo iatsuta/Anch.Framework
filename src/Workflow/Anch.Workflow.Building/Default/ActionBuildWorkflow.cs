@@ -1,6 +1,6 @@
-﻿using Anch.Workflow.Builder.Default.DomainDefinition;
+﻿using Anch.Workflow.Building.Default.DomainDefinition;
 
-namespace Anch.Workflow.Builder.Default;
+namespace Anch.Workflow.Building.Default;
 
 public class ActionBuildWorkflow<TSource, TStatus>(Action<IWorkflowBuilder<TSource, TStatus>> setupBuilder) : BuildWorkflow<TSource, TStatus>
     where TSource : notnull

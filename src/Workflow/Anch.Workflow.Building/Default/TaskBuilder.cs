@@ -1,8 +1,8 @@
-﻿using Anch.Workflow.Builder.Default.DomainDefinition;
+﻿using Anch.Workflow.Building.Default.DomainDefinition;
 using Anch.Workflow.Domain;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.Builder.Default;
+namespace Anch.Workflow.Building.Default;
 
 public class TaskBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder, IStateBuilder<TSource, TStatus, TaskState> taskState) : ITaskBuilder<TSource, TStatus>
     where TSource : notnull

@@ -3,7 +3,7 @@ using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Engine;
 using Anch.Workflow.Serialization;
 using Anch.Workflow.Serialization.Memory;
-using Anch.Workflow.StateFactory;
+using Anch.Workflow.StateProcessing;
 
 using Microsoft.Extensions.DependencyInjection;
 

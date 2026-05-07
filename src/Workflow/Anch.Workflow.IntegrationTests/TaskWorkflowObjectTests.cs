@@ -1,17 +1,14 @@
 using Anch.GenericQueryable;
 using Anch.Testing.Xunit;
-using Anch.Workflow.DependencyInjection;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.IntegrationTests._Base;
 using Anch.Workflow.Serialization;
-using Anch.Workflow.Serialization.Inline;
 using Anch.Workflow.Tests.TaskWorkflow;
 
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Workflow.IntegrationTests;
 
-public abstract class TaskWorkflowObjectTests : InlineWorkflowTestBase
+public abstract class TaskWorkflowObjectTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
     [AnchFact]
     public async Task Task_SendApproveCommand_WorkflowApproved(CancellationToken ct)
@@ -62,23 +59,5 @@ public abstract class TaskWorkflowObjectTests : InlineWorkflowTestBase
             Assert.Single(processedWiIdents);
             Assert.Equal(rootWiIdentity, processedWiIdents.Single());
         });
-    }
-
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup)
-    {
-        base.SetupWorkflow(workflowSetup.Add<TaskWorkflow>());
-    }
-
-    protected override IServiceCollection CreateServices(IServiceCollection services)
-    {
-        return base.CreateServices(services)
-
-            //.AddScoped<InlineWorkflowStorageItem<TaskWorkflowObject>, TaskWorkflowInlineWorkflowStorageItem>()
-            .AddScoped<IWorkflowInstanceSerializerFactory, WorkflowInstanceSerializerFactory>()
-            .AddScoped<IStateInstanceSerializerFactory, StateInstanceSerializerFactory>()
-
-            //.AddScoped(typeof(IInlineStorage<>), typeof (NHibInlineStorage<>))
-
-            .AddSingleton<IStateDefinitionResolverFactory, StateDefinitionResolverFactory>();
     }
 }

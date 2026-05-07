@@ -1,6 +1,6 @@
 ﻿using Anch.Workflow.Domain;
 
-namespace Anch.Workflow.Builder;
+namespace Anch.Workflow.Building;
 
 public interface ITaskBuilder<TSource, TStatus>
     where TSource : notnull

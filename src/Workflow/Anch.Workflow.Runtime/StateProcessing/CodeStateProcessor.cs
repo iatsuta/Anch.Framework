@@ -2,7 +2,7 @@
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.StateFactory;
+namespace Anch.Workflow.StateProcessing;
 
 public class CodeStateProcessor<TSource, TStatus, TState>(
     IServiceProxyFactory serviceProxyFactory,

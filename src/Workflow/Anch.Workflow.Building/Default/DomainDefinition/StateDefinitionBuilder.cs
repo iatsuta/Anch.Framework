@@ -1,6 +1,6 @@
 ﻿using Anch.Workflow.Domain.Definition;
 
-namespace Anch.Workflow.Builder.Default.DomainDefinition;
+namespace Anch.Workflow.Building.Default.DomainDefinition;
 
 public class StateDefinitionBuilder<TSource, TStatus, TState> : IStateDefinitionBuilder<TSource, TStatus>, IStateDefinition<TSource, TStatus, TState>
     where TSource : notnull

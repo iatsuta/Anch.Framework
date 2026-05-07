@@ -2,7 +2,7 @@
 using Anch.Core.DictionaryCache;
 using Anch.Workflow.Domain.Runtime;
 
-namespace Anch.Workflow.StateFactory;
+namespace Anch.Workflow.StateProcessing;
 
 public class CodeStateProcessorFactory(IServiceProxyFactory serviceProxyFactory) : ICodeStateProcessorFactory
 {

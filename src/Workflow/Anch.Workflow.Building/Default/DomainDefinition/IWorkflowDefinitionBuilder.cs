@@ -1,6 +1,6 @@
 ﻿using Anch.Workflow.Domain.Definition;
 
-namespace Anch.Workflow.Builder.Default.DomainDefinition;
+namespace Anch.Workflow.Building.Default.DomainDefinition;
 
 public interface IWorkflowDefinitionBuilder : IWorkflowDefinition
 {

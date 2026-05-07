@@ -1,12 +1,12 @@
 ﻿using System.Linq.Expressions;
 
 using Anch.Core;
-using Anch.Workflow.Builder.Default.DomainDefinition;
+using Anch.Workflow.Building.Default.DomainDefinition;
 using Anch.Workflow.Domain;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.Builder.Default;
+namespace Anch.Workflow.Building.Default;
 
 public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder) : IWorkflowBuilder<TSource, TStatus>
     where TSource : notnull

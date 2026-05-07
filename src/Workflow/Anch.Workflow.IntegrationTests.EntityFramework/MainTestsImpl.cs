@@ -1,0 +1,3 @@
+﻿namespace Anch.Workflow.IntegrationTests;
+
+public class TaskWorkflowObjectTestsImpl(IServiceProvider rootServiceProvider) : TaskWorkflowObjectTests(rootServiceProvider);

@@ -4,7 +4,7 @@ using Anch.Core;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.Builder;
+namespace Anch.Workflow.Building;
 
 public interface IWorkflowBuilder<TSource, TStatus>
     where TSource : notnull

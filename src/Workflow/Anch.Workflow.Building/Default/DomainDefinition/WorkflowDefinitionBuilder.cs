@@ -3,7 +3,7 @@ using Anch.Workflow.Domain;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.Builder.Default.DomainDefinition;
+namespace Anch.Workflow.Building.Default.DomainDefinition;
 
 public class WorkflowDefinitionBuilder<TSource, TStatus> : IWorkflowDefinition<TSource, TStatus>, IWorkflowDefinitionBuilder
     where TSource : notnull

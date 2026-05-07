@@ -1,6 +1,6 @@
 ﻿using Anch.Workflow.States;
 
-namespace Anch.Workflow.StateFactory;
+namespace Anch.Workflow.StateProcessing;
 
 public interface ICodeStateProcessor
 {

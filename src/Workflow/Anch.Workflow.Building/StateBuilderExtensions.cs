@@ -1,7 +1,7 @@
-﻿using Anch.Workflow.Builder.Default.DomainDefinition;
+﻿using Anch.Workflow.Building.Default.DomainDefinition;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.Builder;
+namespace Anch.Workflow.Building;
 
 public static class StateBuilderExtensions
 {

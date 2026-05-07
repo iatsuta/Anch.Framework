@@ -1,8 +1,8 @@
 ﻿using Anch.Core;
-using Anch.Workflow.Builder.Default.DomainDefinition;
+using Anch.Workflow.Building.Default.DomainDefinition;
 using Anch.Workflow.Domain.Definition;
 
-namespace Anch.Workflow.Builder.Default;
+namespace Anch.Workflow.Building.Default;
 
 public abstract class BuildWorkflow<TSource> : BuildWorkflow<TSource, Ignore>
     where TSource : notnull;

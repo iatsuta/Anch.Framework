@@ -1,13 +1,13 @@
 ﻿using System.Linq.Expressions;
 
 using Anch.Core;
-using Anch.Workflow.Builder.Default.DomainDefinition;
+using Anch.Workflow.Building.Default.DomainDefinition;
 using Anch.Workflow.Domain;
 using Anch.Workflow.States;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Anch.Workflow.Builder.Default;
+namespace Anch.Workflow.Building.Default;
 
 public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, TStatus>, IStateBuilder<TSource, TStatus, TState>
     where TSource : notnull

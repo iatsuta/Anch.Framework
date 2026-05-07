@@ -3,6 +3,9 @@ using Anch.DependencyInjection;
 using Anch.Testing.Database;
 using Anch.Testing.Database.DependencyInjection;
 using Anch.Testing.Database.Sqlite;
+using Anch.Workflow.DependencyInjection;
+using Anch.Workflow.Serialization.Inline;
+using Anch.Workflow.Tests.TaskWorkflow;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +18,12 @@ public abstract class TestEnvironment : ITestEnvironment
     public IServiceProvider BuildServiceProvider(IServiceCollection services) =>
 
         services
+
+            .AddWorkflow(ws => ws.Add<TaskWorkflow>())
+
+            .AddScoped<IWorkflowInstanceSerializerFactory, WorkflowInstanceSerializerFactory>()
+            .AddScoped<IStateInstanceSerializerFactory, StateInstanceSerializerFactory>()
+            .AddSingleton<IStateDefinitionResolverFactory, StateDefinitionResolverFactory>()
 
             .Pipe(this.AddServices)
 

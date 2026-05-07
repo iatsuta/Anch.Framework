@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 
-using Anch.Workflow.Builder.Default.DomainDefinition;
+using Anch.Workflow.Building.Default.DomainDefinition;
 using Anch.Workflow.States;
 
-namespace Anch.Workflow.Builder;
+namespace Anch.Workflow.Building;
 
 public interface IStateBuilder<TSource, TStatus>
     where TSource : notnull

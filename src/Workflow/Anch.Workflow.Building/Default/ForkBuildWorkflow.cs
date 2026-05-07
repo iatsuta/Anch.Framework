@@ -1,6 +1,6 @@
-﻿using Anch.Workflow.Builder.Default.DomainDefinition;
+﻿using Anch.Workflow.Building.Default.DomainDefinition;
 
-namespace Anch.Workflow.Builder.Default;
+namespace Anch.Workflow.Building.Default;
 
 public class ForkBuildWorkflow<TSource, TStatus>(
     Action<IWorkflowBuilder<TSource, TStatus>> setupBuilder,
