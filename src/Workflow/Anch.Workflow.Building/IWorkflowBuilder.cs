@@ -7,7 +7,7 @@ using Anch.Workflow.States;
 namespace Anch.Workflow.Building;
 
 public interface IWorkflowBuilder<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     IWorkflowBuilder<TSource, TStatus> WithIdentity(string name)
@@ -42,12 +42,12 @@ public interface IWorkflowBuilder<TSource, TStatus>
 
     IStateBuilder<TSource, TStatus, StartWorkflowState<TInnerSource>> StartWorkflow<TInnerSource, TInnerWorkflow>(Func<TSource, TInnerSource> getInnerSource)
         where TInnerWorkflow : IWorkflow<TInnerSource>
-        where TInnerSource : notnull;
+        where TInnerSource : class;
 
     IStateBuilder<TSource, TStatus, StartWorkflowsState<TSource, TInnerSource>> StartWorkflows<TInnerSource, TInnerWorkflow>(
         Func<TSource, IEnumerable<TInnerSource>> getElements)
         where TInnerWorkflow : IWorkflow<TInnerSource>
-        where TInnerSource : notnull;
+        where TInnerSource : class;
 
     IStateBuilder<TSource, TStatus, IfState> If(
         Func<TSource, bool> condition,
@@ -108,28 +108,28 @@ public interface IWorkflowBuilder<TSource, TStatus>
 
     IStateBuilder<TSource, TStatus, ParallelForeachState<TSource, TElement>> ParallelForeach<TElement>(
         Func<TSource, IEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<SourceItem<TSource, TElement>, Ignore>> setupIteratorBuilder)
     {
         return this.ParallelForeach<TElement, IServiceProvider>((source, _) => getElements(source).ToAsyncEnumerable(), setupIteratorBuilder);
     }
 
     public IStateBuilder<TSource, TStatus, ParallelForeachState<TSource, TElement>> ParallelForeach<TElement, TService>(
         Func<TSource, TService, IAsyncEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<SourceItem<TSource, TElement>, Ignore>> setupIteratorBuilder)
         where TService : notnull;
 
     IStateBuilder<TSource, TStatus, ParallelState<TSource>> Parallel(params Action<IWorkflowBuilder<TSource, TStatus>>[] setupForks);
 
     IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement>(
         Func<TSource, IEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<SourceItem<TSource, TElement>, Ignore>> setupIteratorBuilder)
     {
         return this.Foreach<TElement, IServiceProvider>((source, _) => getElements(source).ToAsyncEnumerable(), setupIteratorBuilder);
     }
 
     IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement, TService>(
         Func<TSource, TService, IAsyncEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<SourceItem<TSource, TElement>, Ignore>> setupIteratorBuilder)
         where TService : notnull;
 
     IStateBuilder<TSource, TStatus, FinalState> Finish(object? result = null) => this.Finish(_ => result);

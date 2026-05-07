@@ -24,12 +24,13 @@ public abstract class MultiScopeWorkflowTestBase
 
     protected virtual void SetupWorkflow(IWorkflowSetup workflowSetup)
     {
+        workflowSetup.SetDatabaseProvider<MemoryWorkflowDatabaseProvider>();
     }
 
     private IServiceProvider BuildServiceProvider()
     {
         return this.CreateServices(new ServiceCollection())
-            .AddWorkflow(sw => this.SetupWorkflow(sw.SetDatabaseProvider<MemoryWorkflowDatabaseProvider>()))
+            .AddWorkflow(this.SetupWorkflow)
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });

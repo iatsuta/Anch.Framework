@@ -3,7 +3,7 @@
 namespace Anch.Workflow.Building.Default;
 
 public class ActionBuildWorkflow<TSource, TStatus>(Action<IWorkflowBuilder<TSource, TStatus>> setupBuilder) : BuildWorkflow<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     protected override WorkflowDefinitionBuilder<TSource, TStatus> CreateDefinitionHeader()

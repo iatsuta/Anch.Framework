@@ -5,7 +5,7 @@ namespace Anch.Workflow.Building;
 public static class WorkflowBuilderExtensions
 {
     public static IStateBuilder<TSource, TStatus, WriteLineState> WriteLine<TSource, TStatus>(this IWorkflowBuilder<TSource, TStatus> builder, string message)
-        where TSource : notnull
+        where TSource : class
         where TStatus : struct =>
 
         builder.WriteLine(_ => message);
@@ -13,7 +13,7 @@ public static class WorkflowBuilderExtensions
 
     public static IStateBuilder<TSource, TStatus, WriteLineState> WriteLine<TSource, TStatus>(this IWorkflowBuilder<TSource, TStatus> builder,
         Func<TSource, string> getMessage)
-        where TSource : notnull
+        where TSource : class
         where TStatus : struct =>
 
         builder

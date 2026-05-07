@@ -4,7 +4,7 @@ using Anch.Workflow.Engine;
 namespace Anch.Workflow.States;
 
 public class ParallelState<TSource>(IWorkflowMachineFactory workflowMachineFactory) : ParallelStateBase<TSource>
-    where TSource : notnull
+    where TSource : class
 {
     public IReadOnlyList<IWorkflowDefinition<TSource>> Forks { get; set; } = [];
 

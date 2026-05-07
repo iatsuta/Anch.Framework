@@ -6,7 +6,7 @@ using Anch.Workflow.States;
 namespace Anch.Workflow.Building.Default.DomainDefinition;
 
 public class WorkflowDefinitionBuilder<TSource, TStatus> : IWorkflowDefinition<TSource, TStatus>, IWorkflowDefinitionBuilder
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     private readonly List<IStateDefinitionBuilder<TSource, TStatus>> statesWithAutoFinish = [];

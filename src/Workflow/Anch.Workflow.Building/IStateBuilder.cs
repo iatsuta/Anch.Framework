@@ -6,14 +6,14 @@ using Anch.Workflow.States;
 namespace Anch.Workflow.Building;
 
 public interface IStateBuilder<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     IStateDefinitionBuilder<TSource, TStatus> StateDefinitionBuilder { get; }
 }
 
 public interface IStateBuilder<TSource, TStatus, TState> : IWorkflowBuilder<TSource, TStatus>, IStateBuilder<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
     where TState : IState
 {

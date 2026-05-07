@@ -5,11 +5,11 @@ namespace Anch.Workflow.States;
 
 public class WhileState<TLoopWorkflow, TSource>(IWorkflowHost workflowHost) : IState
     where TLoopWorkflow : IWorkflow<TSource>
-    where TSource : notnull
+    where TSource : class
 {
     public bool Condition { get; set; }
 
-    public TSource Source { get; set; } = default!;
+    public TSource Source { get; set; } = null!;
 
     public TLoopWorkflow LoopWorkflow { get; set; } = default!;
 

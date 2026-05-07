@@ -10,7 +10,7 @@ public class WorkflowInstanceSerializer<TSource>(
     IStateInstanceSerializerFactory stateInstanceSerializerFactory,
     IIdentityInfo<TSource, Guid> identityInfo)
     : IWorkflowInstanceSerializer
-    where TSource : notnull
+    where TSource : class
 {
     private readonly IStateInstanceSerializer stateInstanceSerializer = stateInstanceSerializerFactory.Create(workflow);
 

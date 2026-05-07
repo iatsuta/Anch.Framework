@@ -3,7 +3,7 @@
 namespace Anch.Workflow;
 
 public interface IWorkflow<TSource, TStatus> : IWorkflow<TSource>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     new IWorkflowDefinition<TSource, TStatus> Definition { get; }
@@ -12,7 +12,7 @@ public interface IWorkflow<TSource, TStatus> : IWorkflow<TSource>
 }
 
 public interface IWorkflow<TSource> : IWorkflow
-    where TSource : notnull
+    where TSource : class
 {
     new IWorkflowDefinition<TSource> Definition { get; }
 

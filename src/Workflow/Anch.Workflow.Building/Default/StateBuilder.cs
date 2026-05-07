@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Anch.Workflow.Building.Default;
 
 public class StateBuilder<TSource, TStatus, TState> : WorkflowBuilder<TSource, TStatus>, IStateBuilder<TSource, TStatus, TState>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
     where TState : IState
 {

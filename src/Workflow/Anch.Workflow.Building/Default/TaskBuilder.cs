@@ -5,7 +5,7 @@ using Anch.Workflow.States;
 namespace Anch.Workflow.Building.Default;
 
 public class TaskBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder, IStateBuilder<TSource, TStatus, TaskState> taskState) : ITaskBuilder<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     private readonly List<EventHeader> commands = [];

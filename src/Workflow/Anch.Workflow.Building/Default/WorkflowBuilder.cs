@@ -9,7 +9,7 @@ using Anch.Workflow.States;
 namespace Anch.Workflow.Building.Default;
 
 public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource, TStatus> workflowDefinitionBuilder) : IWorkflowBuilder<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     public IWorkflowBuilder<TSource, TStatus> WithStatusProperty(Expression<Func<TSource, TStatus>> statusPath)
@@ -58,7 +58,7 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
     public IStateBuilder<TSource, TStatus, StartWorkflowState<TInnerSource>> StartWorkflow<TInnerSource, TInnerWorkflow>(
         Func<TSource, TInnerSource> getInnerSource)
         where TInnerWorkflow : IWorkflow<TInnerSource>
-        where TInnerSource : notnull
+        where TInnerSource : class
     {
         return this.Then<StartWorkflowState<TInnerSource>>()
             .Input(s => s.InnerWorkflow, async (TSource _, TInnerWorkflow innerWorkflow, CancellationToken _) => innerWorkflow.Definition)
@@ -68,7 +68,7 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
     public IStateBuilder<TSource, TStatus, StartWorkflowsState<TSource, TInnerSource>> StartWorkflows<TInnerSource, TInnerWorkflow>(
         Func<TSource, IEnumerable<TInnerSource>> getElements)
         where TInnerWorkflow : IWorkflow<TInnerSource>
-        where TInnerSource : notnull
+        where TInnerSource : class
     {
         return this.Then<StartWorkflowsState<TSource, TInnerSource>>()
             .Input(s => s.ElementWorkflow, async (TSource _, TInnerWorkflow innerWorkflow, CancellationToken _) => innerWorkflow)
@@ -142,10 +142,10 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
 
     public IStateBuilder<TSource, TStatus, ParallelForeachState<TSource, TElement>> ParallelForeach<TElement, TService>(
         Func<TSource, TService, IAsyncEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<SourceItem<TSource, TElement>, Ignore>> setupIteratorBuilder)
         where TService : notnull
     {
-        var iteratorWorkflow = new ActionBuildWorkflow<(TSource, TElement), Ignore>(setupIteratorBuilder);
+        var iteratorWorkflow = new ActionBuildWorkflow<SourceItem<TSource, TElement>, Ignore>(setupIteratorBuilder);
 
         return this.Then<ParallelForeachState<TSource, TElement>>()
             .WithSubWorkflow([LazyHelper.Create<IWorkflowDefinitionBuilder>(() => iteratorWorkflow.Definition)])
@@ -167,10 +167,10 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
 
     public IStateBuilder<TSource, TStatus, ForeachState<TSource, TElement>> Foreach<TElement, TService>(
         Func<TSource, TService, IAsyncEnumerable<TElement>> getElements,
-        Action<IWorkflowBuilder<(TSource Source, TElement Element), Ignore>> setupIteratorBuilder)
+        Action<IWorkflowBuilder<SourceItem<TSource, TElement>, Ignore>> setupIteratorBuilder)
         where TService : notnull
     {
-        var iteratorWorkflow = new ActionBuildWorkflow<(TSource, TElement), Ignore>(setupIteratorBuilder);
+        var iteratorWorkflow = new ActionBuildWorkflow<SourceItem<TSource, TElement>, Ignore>(setupIteratorBuilder);
 
         return this.Then<ForeachState<TSource, TElement>>()
             .WithSubWorkflow([LazyHelper.Create<IWorkflowDefinitionBuilder>(() => iteratorWorkflow.Definition)])

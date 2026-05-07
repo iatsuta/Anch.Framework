@@ -15,7 +15,7 @@
 //    ISpecificWorkflowRepository storage,
 //    StateInstance stateInstance)
 //    where TState : IState
-//    where TSource : notnull
+//    where TSource : class
 //{
 //    private WorkflowInstance WorkflowInstance => stateInstance.Workflow;
 

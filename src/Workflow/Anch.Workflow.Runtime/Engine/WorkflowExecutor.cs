@@ -17,17 +17,17 @@ public class WorkflowExecutor(
     : IWorkflowExecutor
 {
     public ValueTask<WorkflowProcessResult> Start<TSource, TWorkflow>(TSource source, CancellationToken cancellationToken)
-        where TSource : notnull
+        where TSource : class
         where TWorkflow : IWorkflow<TSource> =>
 
         this.Start(source, serviceProvider.GetRequiredService<TWorkflow>(), cancellationToken);
 
     public ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken)
-        where TSource : notnull =>
+        where TSource : class =>
         this.Start(source, workflow.Definition, cancellationToken);
 
     public async ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflowDefinition, CancellationToken cancellationToken)
-        where TSource : notnull
+        where TSource : class
     {
         var machine = workflowMachineFactory.Create(source, workflowDefinition);
 

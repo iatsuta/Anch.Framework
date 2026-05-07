@@ -9,7 +9,7 @@ public class CodeStateProcessor<TSource, TStatus, TState>(
     IServiceProvider serviceProvider,
     IStateDefinition<TSource, TStatus, TState> stateDefinition,
     TSource source) : ICodeStateProcessor
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
     where TState : IState
 {

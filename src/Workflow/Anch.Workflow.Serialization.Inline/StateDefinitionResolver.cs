@@ -3,7 +3,7 @@
 namespace Anch.Workflow.Serialization.Inline;
 
 public class StateDefinitionResolver<TSource, TStatus>(IWorkflowDefinition<TSource, TStatus> workflow) : IStateDefinitionResolver<TSource>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     private readonly Func<TSource, TStatus> getStatus = (workflow.StatusAccessors ?? throw new InvalidOperationException("StatusAccessors cannot be null"))

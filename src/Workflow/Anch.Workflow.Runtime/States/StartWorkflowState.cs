@@ -7,11 +7,11 @@ using Anch.Workflow.Execution;
 namespace Anch.Workflow.States;
 
 public class StartWorkflowState<TInnerSource>(IWorkflowExecutor workflowExecutor) : IState
-    where TInnerSource : notnull
+    where TInnerSource : class
 {
     public IWorkflowDefinition<TInnerSource> InnerWorkflow { get; set; } = null!;
 
-    public TInnerSource InnerSource { get; set; } = default!;
+    public TInnerSource InnerSource { get; set; } = null!;
 
     public StartWorkflowMode Mode { get; set; } = StartWorkflowMode.WaitFinish;
 

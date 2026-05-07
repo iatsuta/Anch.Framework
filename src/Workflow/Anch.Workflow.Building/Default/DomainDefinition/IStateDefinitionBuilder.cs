@@ -3,7 +3,7 @@
 namespace Anch.Workflow.Building.Default.DomainDefinition;
 
 public interface IStateDefinitionBuilder<TSource, TStatus> : IStateDefinition<TSource, TStatus>, IStateDefinitionBuilder
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     new string Name { get; set; }

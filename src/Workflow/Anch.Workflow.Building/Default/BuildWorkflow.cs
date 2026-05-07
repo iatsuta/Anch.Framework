@@ -5,10 +5,10 @@ using Anch.Workflow.Domain.Definition;
 namespace Anch.Workflow.Building.Default;
 
 public abstract class BuildWorkflow<TSource> : BuildWorkflow<TSource, Ignore>
-    where TSource : notnull;
+    where TSource : class;
 
 public abstract class BuildWorkflow<TSource, TStatus> : IWorkflow<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     protected abstract void Build(IWorkflowBuilder<TSource, TStatus> builder);

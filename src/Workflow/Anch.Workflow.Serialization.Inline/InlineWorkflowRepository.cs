@@ -6,14 +6,14 @@ using Anch.Workflow.Domain.Runtime;
 namespace Anch.Workflow.Serialization.Inline;
 
 public class InlineWorkflowRepository<TSource, TStatus>(
-    IWorkflowDefinition<TSource, TStatus> workflowDefinition,
     IInstanceIdGenerator<WorkflowInstance> workflowInstanceIdGenerator,
     IInstanceIdGenerator<StateInstance> stateInstanceIdGenerator,
     IWorkflowInstanceSerializerFactory workflowInstanceSerializerFactory,
+    IWorkflowDefinition<TSource, TStatus> workflowDefinition,
     IInlineStorage<TSource> persistSource)
     : IWorkflowRepository
 
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     private readonly IWorkflowInstanceSerializer workflowInstanceSerializer = workflowInstanceSerializerFactory.Create(workflowDefinition);
@@ -127,10 +127,5 @@ public class InlineWorkflowRepository<TSource, TStatus>(
         return queryable
             .GenericAsAsyncEnumerable()
             .Select(source => this.workflowInstanceSerializer.Deserialize(source!));
-    }
-
-    public async ValueTask FlushChanges(CancellationToken cancellationToken)
-    {
-        await persistSource.FlushChanges(cancellationToken);
     }
 }

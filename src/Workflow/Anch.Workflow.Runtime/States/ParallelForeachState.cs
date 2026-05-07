@@ -8,10 +8,10 @@ public class ParallelForeachState<TSource, TElement>(IWorkflowMachineFactory wor
     public IReadOnlyList<TElement> Elements { get; set; } = [];
 
 
-    public IWorkflowDefinition<(TSource, TElement)> ElementWorkflow { get; set; } = null!;
+    public IWorkflowDefinition<SourceItem<TSource, TElement>> ElementWorkflow { get; set; } = null!;
 
     protected override IEnumerable<IWorkflowMachine> CreateChildMachines(TSource source)
     {
-        return this.Elements.Select(childrenElement => workflowMachineFactory.Create((source, childrenElement), this.ElementWorkflow));
+        return this.Elements.Select(childrenElement => workflowMachineFactory.Create(new (source, childrenElement), this.ElementWorkflow));
     }
 }

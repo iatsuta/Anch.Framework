@@ -8,7 +8,7 @@ public class ForeachState<TSource, TElement>(IWorkflowHost workflowHost) : IStat
 {
     public IReadOnlyList<TElement> Elements { get; set; } = [];
 
-    public IWorkflowDefinition<(TSource, TElement)> ElementWorkflow { get; set; } = null!;
+    public IWorkflowDefinition<SourceItem<TSource, TElement>> ElementWorkflow { get; set; } = null!;
 
     public int CurrentIndex { get; set; }
 

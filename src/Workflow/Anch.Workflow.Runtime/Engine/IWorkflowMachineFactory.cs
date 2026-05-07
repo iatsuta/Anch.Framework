@@ -8,5 +8,5 @@ public interface IWorkflowMachineFactory
     IWorkflowMachine Create(WorkflowInstance wi);
 
     IWorkflowMachine Create<TSource>(TSource source, IWorkflowDefinition<TSource> workflowDefinition)
-        where TSource : notnull;
+        where TSource : class;
 }

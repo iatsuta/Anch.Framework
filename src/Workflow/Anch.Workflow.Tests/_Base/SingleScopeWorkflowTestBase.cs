@@ -9,7 +9,7 @@ namespace Anch.Workflow.Tests._Base;
 
 public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiScopeWorkflowTestBase
     where TWorkflow : class, IWorkflow<TSource>, new()
-    where TSource : notnull
+    where TSource : class
 {
     private readonly Lazy<IServiceScope> lazyScope;
 
@@ -37,5 +37,5 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
 
         await this.TillTheEndWorkflowExecutor.Start<TSource, TWorkflow>(source, cancellationToken);
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) => workflowSetup.Add<TWorkflow>();
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) => base.SetupWorkflow(workflowSetup.Add<TWorkflow>());
 }

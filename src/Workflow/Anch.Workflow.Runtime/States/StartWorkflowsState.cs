@@ -3,7 +3,7 @@
 namespace Anch.Workflow.States;
 
 public class StartWorkflowsState<TSource, TElement>(IWorkflowMachineFactory workflowMachineFactory) : ParallelStateBase<TSource>
-    where TElement : notnull
+    where TElement : class
 {
     public IReadOnlyList<TElement> Elements { get; set; } = [];
 
