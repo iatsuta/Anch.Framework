@@ -14,6 +14,7 @@ public class EfTestEnvironment : TestEnvironment
 
         services
             .AddDbContext<TestDbContext>()
+            .AddScoped<EfAutoCommitSession>()
             .AddScoped<IGenericRepository, EfGenericRepository>()
             .AddScoped<IQueryableSource, EfQueryableSource>()
 

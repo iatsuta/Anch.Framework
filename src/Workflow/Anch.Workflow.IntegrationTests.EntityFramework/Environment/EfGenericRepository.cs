@@ -4,26 +4,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Anch.Workflow.IntegrationTests.Environment;
 
-public class EfGenericRepository(TestDbContext dbContext) : IGenericRepository
+public class EfGenericRepository(EfAutoCommitSession session) : IGenericRepository
 {
     public async Task SaveAsync<TDomainObject>(TDomainObject domainObject, CancellationToken cancellationToken)
         where TDomainObject : class
     {
-        var state = dbContext.Entry(domainObject).State;
+        var state = session.NativeSession.Entry(domainObject).State;
 
         if (state == EntityState.Detached)
         {
-            await dbContext.AddAsync(domainObject, cancellationToken);
+            await session.NativeSession.AddAsync(domainObject, cancellationToken);
         }
-
-        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task RemoveAsync<TDomainObject>(TDomainObject domainObject, CancellationToken cancellationToken)
         where TDomainObject : class
     {
-        dbContext.Remove(domainObject);
-
-        await dbContext.SaveChangesAsync(cancellationToken);
+        session.NativeSession.Remove(domainObject);
     }
 }

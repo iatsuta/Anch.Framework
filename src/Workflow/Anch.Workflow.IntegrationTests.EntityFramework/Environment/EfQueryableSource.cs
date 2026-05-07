@@ -2,11 +2,11 @@
 
 namespace Anch.Workflow.IntegrationTests.Environment;
 
-public class EfQueryableSource(TestDbContext dbContext) : IQueryableSource
+public class EfQueryableSource(EfAutoCommitSession session) : IQueryableSource
 {
     public IQueryable<TDomainObject> GetQueryable<TDomainObject>()
         where TDomainObject : class
     {
-        return dbContext.Set<TDomainObject>();
+        return session.NativeSession.Set<TDomainObject>();
     }
 }
