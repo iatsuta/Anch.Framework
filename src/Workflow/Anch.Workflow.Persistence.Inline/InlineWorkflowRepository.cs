@@ -53,9 +53,16 @@ public class InlineWorkflowRepository<TSource, TStatus>(
     {
         var definition = pushEventInfo.TargetState?.Definition;
 
-        if (definition != null && definition.Workflow != this.WorkflowDefinition)
+        if (pushEventInfo.TargetState is { } targetState)
         {
-            return AsyncEnumerable.Empty<WaitEventInfo>();
+            if (targetState.Workflow.Definition == this.WorkflowDefinition)
+            {
+                return targetState.WaitEvents.ToAsyncEnumerable();
+            }
+            else
+            {
+                return AsyncEnumerable.Empty<WaitEventInfo>();
+            }
         }
         else
         {
