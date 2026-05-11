@@ -1,7 +1,7 @@
 using Anch.Workflow.DependencyInjection;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Execution;
-using Anch.Workflow.Serialization;
+using Anch.Workflow.Persistence;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +9,7 @@ namespace Anch.Workflow.Tests._Base;
 
 public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiScopeWorkflowTestBase
     where TWorkflow : class, IWorkflow<TSource>, new()
-    where TSource : notnull
+    where TSource : class
 {
     private readonly Lazy<IServiceScope> lazyScope;
 
@@ -18,11 +18,11 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
         this.lazyScope = new Lazy<IServiceScope>(() => this.RootServiceProvider.CreateScope());
     }
 
-    protected IWorkflowHost Host => this.ScopeServiceProvider.GetWorkflowHost();
+    protected IWorkflowHost Host => this.ScopeServiceProvider.GetRequiredService<IWorkflowHost>();
 
     protected IWorkflowExecutor TillTheEndWorkflowExecutor => this.Host.CreateExecutor(WorkflowExecutionPolicy.TillTheEnd);
 
-    protected IWorkflowRepository RootRepository => this.ScopeServiceProvider.GetRootRepository();
+    protected IWorkflowRepository RootRepository => this.ScopeServiceProvider.GetRequiredKeyedService<IWorkflowRepository>(IWorkflowRepository.RootKey);
 
     protected IServiceProvider ScopeServiceProvider => this.lazyScope.Value.ServiceProvider;
 
@@ -37,5 +37,5 @@ public abstract class SingleScopeWorkflowTestBase<TSource, TWorkflow> : MultiSco
 
         await this.TillTheEndWorkflowExecutor.Start<TSource, TWorkflow>(source, cancellationToken);
 
-    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) => workflowSetup.Add<TWorkflow>();
+    protected override void SetupWorkflow(IWorkflowSetup workflowSetup) => base.SetupWorkflow(workflowSetup.Add<TWorkflow>());
 }

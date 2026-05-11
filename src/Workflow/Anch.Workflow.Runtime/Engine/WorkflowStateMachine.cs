@@ -2,7 +2,7 @@
 //using Anch.Workflow.Domain;
 //using Anch.Workflow.Domain.Runtime;
 //using Anch.Workflow.Execution;
-//using Anch.Workflow.Serialization;
+//using Anch.Workflow.Persistence;
 //using Anch.Workflow.StateFactory;
 //using Anch.Workflow.States;
 
@@ -15,7 +15,7 @@
 //    ISpecificWorkflowRepository storage,
 //    StateInstance stateInstance)
 //    where TState : IState
-//    where TSource : notnull
+//    where TSource : class
 //{
 //    private WorkflowInstance WorkflowInstance => stateInstance.Workflow;
 

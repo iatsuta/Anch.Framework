@@ -8,8 +8,6 @@
     <ProjectReference Include="..\..\DependencyInjection\Anch.DependencyInjection\Anch.DependencyInjection.csproj" />
 
     <ProjectReference Include="..\Anch.Workflow.Runtime\Anch.Workflow.Runtime.csproj" />
-
-    <ProjectReference Include="..\Anch.Workflow.Serialization.Memory\Anch.Workflow.Serialization.Memory.csproj" />
   </ItemGroup>
 
 </Project>

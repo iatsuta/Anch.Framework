@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Testing\Anch.Testing.Xunit\Anch.Testing.Xunit.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.Persistence.Memory\Anch.Workflow.Persistence.Memory.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.Tests.Definitions\Anch.Workflow.Tests.Definitions.csproj" />
     <ProjectReference Include="..\Anch.Workflow\Anch.Workflow.csproj" />
   </ItemGroup>
 

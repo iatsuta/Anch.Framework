@@ -8,14 +8,14 @@ namespace Anch.Workflow;
 public interface IWorkflowExecutor
 {
     ValueTask<WorkflowProcessResult> Start<TSource, TWorkflow>(TSource source, CancellationToken cancellationToken = default)
-        where TSource : notnull
+        where TSource : class
         where TWorkflow : IWorkflow<TSource>;
 
     ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken = default)
-        where TSource : notnull;
+        where TSource : class;
 
     ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflow, CancellationToken cancellationToken = default)
-        where TSource : notnull;
+        where TSource : class;
 
     ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken cancellationToken = default);
 

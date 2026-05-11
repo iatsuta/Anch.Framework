@@ -1,6 +1,7 @@
 using Anch.DependencyInjection;
 using Anch.Testing.Xunit;
 using Anch.Workflow.DependencyInjection;
+using Anch.Workflow.Persistence.Memory;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +24,7 @@ public abstract class MultiScopeWorkflowTestBase
 
     protected virtual void SetupWorkflow(IWorkflowSetup workflowSetup)
     {
+        workflowSetup.SetDatabaseProvider<MemoryWorkflowDatabaseProvider>();
     }
 
     private IServiceProvider BuildServiceProvider()

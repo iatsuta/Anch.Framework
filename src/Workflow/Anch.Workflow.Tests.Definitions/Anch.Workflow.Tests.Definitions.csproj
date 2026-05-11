@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+    <RootNamespace>Anch.Workflow.Tests</RootNamespace>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Workflow.Building\Anch.Workflow.Building.csproj" />
+  </ItemGroup>
+
+</Project>
