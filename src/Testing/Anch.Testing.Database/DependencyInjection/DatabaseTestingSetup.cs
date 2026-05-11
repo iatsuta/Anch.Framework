@@ -31,9 +31,7 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
             .AddSingleton(typeof(ISynchronizedInitializer<>), typeof(SynchronizedInitializer<>))
 
             .AddKeyedSingleton<IInitializer, CachedEmptySchemaInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey)
-            .AddKeyedSingleton<IInitializer, CachedTestDataInitializer>(TestDatabaseInitializer.CachedTestDataKey)
-
-            .AddSingleton<IDatabaseManager, FileDatabaseManager>();
+            .AddKeyedSingleton<IInitializer, CachedTestDataInitializer>(TestDatabaseInitializer.CachedTestDataKey);
 
         (this.initEmptySchemaAction ?? throw new InvalidOperationException("Empty schema initializer is not set.")).Invoke(services);
 
