@@ -4,7 +4,18 @@ namespace Anch.Testing.Database.Hooks;
 
 public class CleanDatabaseEnvironmentHook(
     IDatabaseManager databaseManager,
-    ITestConnectionStringProvider connectionStringProvider) : ITestEnvironmentHook
+    ITestConnectionStringProvider connectionStringProvider,
+    TestDatabaseSettings databaseSettings) : ITestEnvironmentHook
 {
-    public ValueTask Process(CancellationToken ct) => databaseManager.Remove(connectionStringProvider.Actual, ct);
+    public ValueTask Process(CancellationToken ct)
+    {
+        if (databaseSettings.InitMode == DatabaseInitMode.External)
+        {
+            return ValueTask.CompletedTask;
+        }
+        else
+        {
+            return databaseManager.Remove(connectionStringProvider.Actual, ct);
+        }
+    }
 }
