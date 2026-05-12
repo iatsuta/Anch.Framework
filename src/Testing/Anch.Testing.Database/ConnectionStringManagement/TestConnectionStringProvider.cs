@@ -9,5 +9,7 @@ public class TestConnectionStringProvider(
 
     public TestDatabaseConnectionString FilledSnapshot => settings.DefaultConnectionString;
 
-    public TestDatabaseConnectionString Actual { get; } = testDatabaseConnectionStringBuilder.AddPostfix($"_pool_{serviceProviderIndex.Index:D5}");
+    public TestDatabaseConnectionString Actual { get; } = settings.InitMode == DatabaseInitMode.External
+        ? settings.DefaultConnectionString
+        : testDatabaseConnectionStringBuilder.AddPostfix($"_pool_{serviceProviderIndex.Index:D5}");
 }
