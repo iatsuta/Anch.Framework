@@ -7,7 +7,8 @@ namespace Anch.Testing.Database.Hooks;
 public class PrepareDatabaseEnvironmentHook(
     ISharedServiceSource sharedServiceSource,
     IDatabaseManager databaseManager,
-    ITestConnectionStringProvider connectionStringProvider) : ITestEnvironmentHook
+    ITestConnectionStringProvider connectionStringProvider,
+    TestDatabaseSettings databaseSettings) : ITestEnvironmentHook
 {
     private readonly IInitializer emptySchemaInitializer = sharedServiceSource.GetSharedService<IInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey);
 
@@ -15,6 +16,11 @@ public class PrepareDatabaseEnvironmentHook(
 
     public async ValueTask Process(CancellationToken ct)
     {
+        if (databaseSettings.InitMode == DatabaseInitMode.External)
+        {
+            return;
+        }
+
         await this.emptySchemaInitializer.Initialize(ct);
 
         await this.testDataInitializer.Initialize(ct);
