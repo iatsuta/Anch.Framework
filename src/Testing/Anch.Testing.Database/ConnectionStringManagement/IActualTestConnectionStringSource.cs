@@ -1,6 +1,4 @@
-﻿using Anch.Testing.Database.ConnectionStringManagement;
-
-namespace Anch.Testing.Database.Hooks;
+﻿namespace Anch.Testing.Database.ConnectionStringManagement;
 
 public interface IActualTestConnectionStringSource
 {
