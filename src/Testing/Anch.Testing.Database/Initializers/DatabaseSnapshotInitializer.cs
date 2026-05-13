@@ -47,7 +47,6 @@ public class DatabaseSnapshotInitializer(
         }
     }
 
-
     protected virtual async ValueTask InitializeSchema(CancellationToken cancellationToken)
     {
         try
