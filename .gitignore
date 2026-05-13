@@ -250,3 +250,4 @@ ModelManifest.xml
 *.db-shm
 *.db-wal
 /src/.github/copilot-instructions.md
+/.github/copilot-instructions.md

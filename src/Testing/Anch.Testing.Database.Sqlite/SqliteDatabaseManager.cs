@@ -1,6 +1,8 @@
-﻿namespace Anch.Testing.Database.ConnectionStringManagement;
+﻿using Anch.Testing.Database.ConnectionStringManagement;
 
-public class FileDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : IDatabaseManager
+namespace Anch.Testing.Database.Sqlite;
+
+public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : IDatabaseManager
 {
     public ValueTask<bool> Exists(TestConnectionString connectionString, CancellationToken ct)
     {
