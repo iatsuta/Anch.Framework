@@ -28,8 +28,6 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 
     private Action<IServiceCollection>? initSettingsAction;
 
-    private Action<IServiceCollection>? initRebindConnectionStringAction;
-
     public void Initialize(IServiceCollection services)
     {
         services
@@ -42,8 +40,6 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
             .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
             .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After)
 
-            .AddSingleton<IDatabaseManager, FileDatabaseManager>()
-
             .AddKeyedSingleton<IInitializer, DatabaseSnapshotInitializer>(IServiceProviderPool.MainServiceProviderKey)
             .AddSingleton<IDatabaseSnapshotManager, DatabaseSnapshotManager>()
             .AddSingleton<IActualConnectionStringResolver, ActualConnectionStringResolver>();
@@ -53,8 +49,6 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
         (this.initTestDataAction ?? throw new InvalidOperationException("Shared test data initializer is not set.")).Invoke(services);
 
         (this.initSettingsAction ?? throw new InvalidOperationException("Settings initializer is not set.")).Invoke(services);
-
-        (this.initRebindConnectionStringAction ?? throw new InvalidOperationException("Rebind connection string initializer is not set.")).Invoke(services);
 
         (this.databaseTestingProvider ?? throw new InvalidOperationException("Database testing provider is not set.")).AddServices(services);
     }
@@ -108,14 +102,6 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
     public IDatabaseTestingSetup SetSettings(Func<IServiceProvider, TestDatabaseSettings> testDatabaseSettingsFactory)
     {
         this.initSettingsAction = sc => sc.AddSingleton(testDatabaseSettingsFactory);
-
-        return this;
-    }
-
-    public IDatabaseTestingSetup RebindActualConnection<T>(Func<TestConnectionString, T> rebindFunc)
-        where T : class
-    {
-        this.initRebindConnectionStringAction = sc => sc.ReplaceSingletonFrom((ITestConnectionStringProvider csp) => rebindFunc(csp.Actual));
 
         return this;
     }

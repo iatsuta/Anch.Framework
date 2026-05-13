@@ -4,6 +4,7 @@ using Anch.HierarchicalExpand.DependencyInjection;
 using Anch.HierarchicalExpand.IntegrationTests.Domain;
 using Anch.HierarchicalExpand.IntegrationTests.Environment.UndirectView;
 using Anch.Testing.Database;
+using Anch.Testing.Database.ConnectionStringManagement;
 using Anch.Testing.Database.DependencyInjection;
 using Anch.Testing.Database.Sqlite;
 
@@ -11,14 +12,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;
 
-public abstract class TestEnvironment : ITestEnvironment
+public abstract class TestEnvironment : DatabaseTestEnvironment
 {
-    public IServiceProvider BuildServiceProvider(IServiceCollection services)
+    protected override void InitDatabase(IDatabaseTestingSetup dts) =>
+        dts.SetProvider<SqliteDatabaseTestingProvider>()
+            .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
+            .SetTestDataInitializer<TestDataInitializer>();
+
+    protected override DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitModeHelper.DatabaseInitMode;
+
+    protected override TestConnectionString MainConnectionString { get; } = new("Data Source=test.db;Pooling=False");
+
+    protected override IServiceProvider BuildServiceProvider(IServiceCollection services, TestConnectionString actualConnectionString)
     {
         return services
 
             .Pipe(this.InitializeServices)
-
+            .ReplaceSingleton<IMainConnectionStringSource>(new MainConnectionStringSource(actualConnectionString.Value))
             .AddSingleton<ScopeEvaluator>()
 
             .AddSingleton<IUndirectedAncestorViewScriptGenerator, UndirectedAncestorViewScriptGenerator>()
@@ -36,17 +46,6 @@ public abstract class TestEnvironment : ITestEnvironment
                     new AncestorLinkInfo<TestHierarchicalObject, TestHierarchicalObjectDirectAncestorLink>(link => link.Ancestor, link => link.Child),
                     new AncestorLinkInfo<TestHierarchicalObject, TestHierarchicalObjectUndirectAncestorLink>(view => view.Source, view => view.Target),
                     v => v.DeepLevel))
-
-            .AddDatabaseTesting(dts => dts
-                .SetProvider<SqliteDatabaseTestingProvider>()
-                .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
-                .SetTestDataInitializer<TestDataInitializer>()
-                .SetSettings(new TestDatabaseSettings
-                {
-                    InitMode = DatabaseInitModeHelper.DatabaseInitMode,
-                    DefaultConnectionString = new("Data Source=test.db;Pooling=False")
-                })
-                .RebindActualConnection<IMainConnectionStringSource>(connectionString => new MainConnectionStringSource(connectionString.Value)))
 
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()

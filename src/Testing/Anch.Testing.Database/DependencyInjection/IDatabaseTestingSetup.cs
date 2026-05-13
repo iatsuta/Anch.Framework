@@ -1,5 +1,4 @@
 ﻿using Anch.Core;
-using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.DependencyInjection;
 
@@ -23,7 +22,4 @@ public interface IDatabaseTestingSetup
     IDatabaseTestingSetup SetSettings(TestDatabaseSettings testDatabaseSettings);
 
     IDatabaseTestingSetup SetSettings(Func<IServiceProvider, TestDatabaseSettings> testDatabaseSettingsFactory);
-
-    IDatabaseTestingSetup RebindActualConnection<T>(Func<TestConnectionString, T> rebindFunc)
-        where T : class;
 }

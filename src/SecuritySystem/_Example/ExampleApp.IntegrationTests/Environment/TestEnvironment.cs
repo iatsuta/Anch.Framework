@@ -2,6 +2,7 @@
 using Anch.DependencyInjection;
 using Anch.SecuritySystem.Testing.DependencyInjection;
 using Anch.Testing.Database;
+using Anch.Testing.Database.Configuration;
 using Anch.Testing.Database.DependencyInjection;
 using Anch.Testing.Database.Sqlite;
 
@@ -16,14 +17,21 @@ namespace ExampleApp.IntegrationTests.Environment;
 
 public abstract class TestEnvironment : ConfigurationTestEnvironment
 {
+    protected override DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitModeHelper.DatabaseInitMode;
+
     protected sealed override IConfiguration GetMainConfiguration() => new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
 
-    protected sealed override string GetDefaultConnectionStringName() => MainConnectionStringSource.DefaultName;
+    protected sealed override string GetMainConnectionStringName() => MainConnectionStringSource.DefaultName;
+
+    protected override void InitDatabase(IDatabaseTestingSetup dts) =>
+        dts
+            .SetProvider<SqliteDatabaseTestingProvider>()
+            .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
+            .SetTestDataInitializer<ITestDataInitializer>(register: false);
 
     protected sealed override IServiceProvider BuildServiceProvider(IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .AddSingleton(configuration)
             .AddSingleton(TimeProvider.System)
             .AddInfrastructure(configuration)
             .Pipe(s => this.InitializeServices(s, configuration))
@@ -32,17 +40,6 @@ public abstract class TestEnvironment : ConfigurationTestEnvironment
             .ReplaceSingleton<IDefaultCancellationTokenSource, XUnitDefaultCancellationTokenSource>()
 
             .AddSecuritySystemTesting()
-
-            .AddDatabaseTesting(dts => dts
-                .SetProvider<SqliteDatabaseTestingProvider>()
-                .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
-                .SetTestDataInitializer<ITestDataInitializer>(register: false)
-                .SetSettings(new TestDatabaseSettings
-                {
-                    InitMode = DatabaseInitModeHelper.DatabaseInitMode,
-                    DefaultConnectionString = new (configuration.GetRequiredConnectionString(MainConnectionStringSource.DefaultName))
-                })
-                .RebindActualConnection<IMainConnectionStringSource>(connectionString => new ManualMainConnectionStringSource(connectionString.Value)))
 
             .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<RootImpersonateServiceState>().Reset())
 

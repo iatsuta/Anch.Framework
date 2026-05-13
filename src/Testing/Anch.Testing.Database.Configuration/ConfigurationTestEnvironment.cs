@@ -1,31 +1,31 @@
 ﻿using Anch.Testing.Database.ConnectionStringManagement;
-using Anch.Testing.Database.Initializers;
-
-using ExampleApp.Infrastructure.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ExampleApp.IntegrationTests.Environment;
+namespace Anch.Testing.Database.Configuration;
 
 public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 {
-    private string DefaultConnectionStringName => field ??= this.GetDefaultConnectionStringName();
+    private string MainConnectionStringName => field ??= this.GetMainConnectionStringName();
 
     private IConfiguration MainConfiguration => field ??= this.GetMainConfiguration();
 
-    protected override TestConnectionString MainConnectionString => field ??=
+    protected override TestConnectionString MainConnectionString =>
+        field ??= new TestConnectionString(this.MainConfiguration.GetRequiredConnectionString(this.MainConnectionStringName));
 
-        field ??= new(this.MainConfiguration.GetRequiredConnectionString(this.DefaultConnectionStringName));
+    protected override IServiceProvider BuildServiceProvider(IServiceCollection services, TestConnectionString actualConnectionString)
+    {
+        var actualConfiguration = this.GetActualConfiguration(actualConnectionString);
 
-    protected override IServiceProvider BuildServiceProvider(IServiceCollection services, TestConnectionString actualConnectionString) =>
-        this.BuildServiceProvider(services, this.GetActualConfiguration(actualConnectionString));
+        return this.BuildServiceProvider(services.AddSingleton(actualConfiguration), actualConfiguration);
+    }
 
     protected abstract IConfiguration GetMainConfiguration();
 
     protected abstract IServiceProvider BuildServiceProvider(IServiceCollection services, IConfiguration configuration);
 
-    protected virtual string GetDefaultConnectionStringName() => "DefaultConnection";
+    protected virtual string GetMainConnectionStringName() => "DefaultConnection";
 
     private IConfiguration GetActualConfiguration(TestConnectionString actualConnectionString)
     {
@@ -38,7 +38,7 @@ public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
             return new ConfigurationBuilder()
                 .AddConfiguration(this.MainConfiguration)
                 .AddInMemoryCollection(new Dictionary<string, string?>
-                    { [$"ConnectionStrings:{this.DefaultConnectionStringName}"] = actualConnectionString.Value })
+                    { [$"ConnectionStrings:{this.MainConnectionStringName}"] = actualConnectionString.Value })
                 .Build();
         }
     }

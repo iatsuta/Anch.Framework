@@ -8,9 +8,9 @@ public class SqliteTestConnectionStringBuilder(TestDatabaseSettings databaseSett
 {
     public TestConnectionString AddPostfix(string postfix)
     {
-        var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.DefaultConnectionString.Value };
+        var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.MainConnectionString.Value };
 
-        var dataSource = builder["Data Source"]?.ToString();
+        var dataSource = builder["Data Source"].ToString();
 
         if (string.IsNullOrWhiteSpace(dataSource))
             throw new InvalidOperationException("Data Source is missing in connection string.");

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace ExampleApp.Infrastructure.Services;
+namespace Anch.Testing.Database.Configuration;
 
 public static class ConfigurationExtensions
 {

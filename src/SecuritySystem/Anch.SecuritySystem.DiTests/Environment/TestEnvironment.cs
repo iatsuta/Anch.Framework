@@ -15,7 +15,7 @@ namespace Anch.SecuritySystem.DiTests.Environment;
 
 public class TestEnvironment : ITestEnvironment
 {
-    public IServiceProvider BuildServiceProvider(IServiceCollection services) =>
+    public IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderIndex _) =>
 
         services.AddSecuritySystem(settings =>
 
