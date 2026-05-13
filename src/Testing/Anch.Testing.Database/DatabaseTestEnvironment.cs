@@ -19,20 +19,33 @@ public abstract class DatabaseTestEnvironment : ITestEnvironment
 
     public IServiceProvider BuildServiceProvider(IServiceCollection baseServices, ServiceProviderIndex serviceProviderIndex)
     {
+        var actualConnectionString = this.GetActualConnectionString(serviceProviderIndex);
+
         var services = baseServices
+            .AddSingleton<IActualTestConnectionStringSource>(new ActualTestConnectionStringSource(actualConnectionString))
             .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
             .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After);
 
         if (serviceProviderIndex.IsMain)
         {
-            return this.mainServiceProvider ??= this.BuildServiceProvider(this.InitMainServices(services), this.MainConnectionString);
+            return this.mainServiceProvider ??= this.BuildServiceProvider(this.InitMainServices(services), actualConnectionString);
         }
         else
         {
-            var actualConnectionString = (this.mainServiceProvider ?? throw new InvalidOperationException("Main service provider is not initialized."))
-                .GetRequiredService<IActualConnectionStringResolver>().GetActualConnectionString(serviceProviderIndex);
-
             return this.BuildServiceProvider(services, actualConnectionString);
+        }
+    }
+
+    private TestConnectionString GetActualConnectionString(ServiceProviderIndex serviceProviderIndex)
+    {
+        if (serviceProviderIndex.IsMain)
+        {
+            return this.MainConnectionString;
+        }
+        else
+        {
+            return (this.mainServiceProvider ?? throw new InvalidOperationException("Main service provider is not initialized."))
+                .GetRequiredService<IActualTestConnectionStringFactory>().Create(serviceProviderIndex);
         }
     }
 

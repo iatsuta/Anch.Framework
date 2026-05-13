@@ -38,7 +38,7 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 
             .AddKeyedSingleton<IInitializer, DatabaseSnapshotInitializer>(IServiceProviderPool.MainServiceProviderKey)
             .AddSingleton<IDatabaseSnapshotManager, DatabaseSnapshotManager>()
-            .AddSingleton<IActualConnectionStringResolver, ActualConnectionStringResolver>();
+            .AddSingleton<IActualTestConnectionStringFactory, ActualTestConnectionStringFactory>();
 
         (this.initEmptySchemaAction ?? throw new InvalidOperationException("Empty schema initializer is not set.")).Invoke(services);
 

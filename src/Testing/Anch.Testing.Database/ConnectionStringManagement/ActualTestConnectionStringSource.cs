@@ -1,0 +1,3 @@
+﻿namespace Anch.Testing.Database.ConnectionStringManagement;
+
+public record ActualTestConnectionStringSource(TestConnectionString ActualConnectionString) : IActualTestConnectionStringSource;
