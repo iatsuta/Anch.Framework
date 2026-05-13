@@ -1,7 +1,6 @@
 ﻿using Anch.Core;
 using Anch.DependencyInjection;
 using Anch.Testing.Database.ConnectionStringManagement;
-using Anch.Testing.Database.Hooks;
 using Anch.Testing.Database.Initializers;
 
 using Microsoft.Extensions.DependencyInjection;
