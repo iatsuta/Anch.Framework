@@ -9,26 +9,24 @@ namespace Anch.Testing.Database;
 
 public abstract class DatabaseTestEnvironment : ITestEnvironment
 {
-    private IServiceProvider? mainServiceProvider;
-
     protected abstract TestConnectionString MainConnectionString { get; }
 
     protected virtual DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitMode.RebuildSnapshot;
 
     protected virtual bool RemoveDatabaseOnFailure { get; } = true;
 
-    public IServiceProvider BuildServiceProvider(IServiceCollection baseServices, ServiceProviderIndex serviceProviderIndex)
+    public IServiceProvider BuildServiceProvider(IServiceCollection baseServices, ServiceProviderBuildContext buildContext)
     {
-        var actualConnectionString = this.GetActualConnectionString(serviceProviderIndex);
+        var actualConnectionString = this.GetActualConnectionString(buildContext);
 
         var services = baseServices
             .AddSingleton<IActualTestConnectionStringSource>(new ActualTestConnectionStringSource(actualConnectionString))
             .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
             .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After);
 
-        if (serviceProviderIndex.IsMain)
+        if (buildContext.Index.IsMain)
         {
-            return this.mainServiceProvider ??= this.BuildServiceProvider(this.InitMainServices(services), actualConnectionString);
+            return this.BuildServiceProvider(this.InitMainServices(services), actualConnectionString);
         }
         else
         {
@@ -36,16 +34,18 @@ public abstract class DatabaseTestEnvironment : ITestEnvironment
         }
     }
 
-    private TestConnectionString GetActualConnectionString(ServiceProviderIndex serviceProviderIndex)
+    private TestConnectionString GetActualConnectionString(ServiceProviderBuildContext buildContext)
     {
-        if (serviceProviderIndex.IsMain)
+        switch (buildContext)
         {
-            return this.MainConnectionString;
-        }
-        else
-        {
-            return (this.mainServiceProvider ?? throw new InvalidOperationException("Main service provider is not initialized."))
-                .GetRequiredService<IActualTestConnectionStringFactory>().Create(serviceProviderIndex);
+            case PooledServiceProviderBuildContext pooledContext:
+                return pooledContext.MainServiceProvider.GetRequiredService<IActualTestConnectionStringFactory>().Create(buildContext.Index);
+
+            case { Index.IsMain: true }:
+                return this.MainConnectionString;
+
+            default:
+                throw new InvalidOperationException("Unsupported build context.");
         }
     }
 

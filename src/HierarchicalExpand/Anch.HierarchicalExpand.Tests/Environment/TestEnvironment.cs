@@ -12,7 +12,7 @@ namespace Anch.HierarchicalExpand.Tests.Environment;
 
 public class TestEnvironment : ITestEnvironment
 {
-    public IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderIndex _) =>
+    public IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderBuildContext _) =>
 
         services
             .AddSingleton<TestQueryableSource>()

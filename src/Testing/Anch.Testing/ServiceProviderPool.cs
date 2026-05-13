@@ -33,13 +33,13 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
             {
                 if (this.internalServiceProviderPool == null)
                 {
-                    var serviceProviderIndex = ServiceProviderIndex.Main;
+                    var serviceProviderBuildContext = ServiceProviderBuildContext.Main;
 
                     var services = new ServiceCollection()
                         .AddKeyedSingleton<IServiceProvider>(IServiceProviderPool.MainServiceProviderKey, (sp, _) => sp)
-                        .AddSingleton(serviceProviderIndex);
+                        .AddSingleton(serviceProviderBuildContext.Index);
 
-                    var preMainServiceProvider = testEnvironment.BuildServiceProvider(services, serviceProviderIndex);
+                    var preMainServiceProvider = testEnvironment.BuildServiceProvider(services, serviceProviderBuildContext);
 
                     foreach (var initializer in preMainServiceProvider.GetKeyedServices<IInitializer>(IServiceProviderPool.MainServiceProviderKey))
                     {
