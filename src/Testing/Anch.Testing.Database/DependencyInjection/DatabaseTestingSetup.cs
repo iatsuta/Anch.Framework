@@ -11,14 +11,6 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 {
     private bool allowParallelization = true;
 
-    public IDatabaseTestingSetup SetParallelization(bool allow)
-    {
-        this.allowParallelization = allow;
-
-        return this;
-    }
-
-
     private IDatabaseTestingProvider? databaseTestingProvider;
 
     private Action<IServiceCollection>? initEmptySchemaAction;
@@ -26,6 +18,23 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
     private Action<IServiceCollection>? initTestDataAction;
 
     private Action<IServiceCollection>? initSettingsAction;
+
+    private Type databaseSnapshotInitializerType = typeof(DatabaseSnapshotInitializer);
+
+    public IDatabaseTestingSetup SetParallelization(bool allow)
+    {
+        this.allowParallelization = allow;
+
+        return this;
+    }
+
+    public IDatabaseTestingSetup SetDatabaseSnapshotInitializer<TDatabaseSnapshotInitializer>()
+        where TDatabaseSnapshotInitializer : IInitializer
+    {
+        this.databaseSnapshotInitializerType = typeof(TDatabaseSnapshotInitializer);
+
+        return this;
+    }
 
     public void Initialize(IServiceCollection services)
     {
@@ -35,8 +44,7 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
                 new MainServiceProviderSettings(this.allowParallelization, settings.InitMode == DatabaseInitMode.External))
 
             .AddSingleton<ITestConnectionStringProvider, TestConnectionStringProvider>()
-
-            .AddKeyedSingleton<IInitializer, DatabaseSnapshotInitializer>(IServiceProviderPool.MainServiceProviderKey)
+            .AddKeyedSingleton(typeof(IInitializer), IServiceProviderPool.MainServiceProviderKey, this.databaseSnapshotInitializerType)
             .AddSingleton<IDatabaseSnapshotManager, DatabaseSnapshotManager>()
             .AddSingleton<IActualTestConnectionStringFactory, ActualTestConnectionStringFactory>();
 
