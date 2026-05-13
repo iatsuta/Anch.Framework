@@ -2,5 +2,5 @@
 
 public interface IDatabaseFilePathExtractor
 {
-    string Extract(TestDatabaseConnectionString connectionString);
+    string Extract(TestConnectionString connectionString);
 }

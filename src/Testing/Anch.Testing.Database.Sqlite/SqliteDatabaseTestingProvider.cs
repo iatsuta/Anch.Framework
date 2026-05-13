@@ -10,6 +10,6 @@ public class SqliteDatabaseTestingProvider : IDatabaseTestingProvider
     public void AddServices(IServiceCollection services)
     {
         services.AddSingleton<IDatabaseFilePathExtractor, SqliteDatabaseFilePathExtractor>()
-            .AddSingleton<ITestDatabaseConnectionStringBuilder, SqliteTestDatabaseConnectionStringBuilder>();
+            .AddSingleton<ITestConnectionStringBuilder, SqliteTestConnectionStringBuilder>();
     }
 }

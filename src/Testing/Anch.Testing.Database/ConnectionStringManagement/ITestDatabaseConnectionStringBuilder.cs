@@ -1,6 +1,6 @@
 ﻿namespace Anch.Testing.Database.ConnectionStringManagement;
 
-public interface ITestDatabaseConnectionStringBuilder
+public interface ITestConnectionStringBuilder
 {
-    TestDatabaseConnectionString AddPostfix(string postfix);
+    TestConnectionString AddPostfix(string postfix);
 }

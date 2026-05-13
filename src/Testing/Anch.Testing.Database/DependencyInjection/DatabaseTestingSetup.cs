@@ -10,6 +10,16 @@ namespace Anch.Testing.Database.DependencyInjection;
 
 public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 {
+    private bool allowParallelization = true;
+
+    public IDatabaseTestingSetup SetParallelization(bool allow)
+    {
+        this.allowParallelization = allow;
+
+        return this;
+    }
+
+
     private IDatabaseTestingProvider? databaseTestingProvider;
 
     private Action<IServiceCollection>? initEmptySchemaAction;
@@ -23,17 +33,20 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
     public void Initialize(IServiceCollection services)
     {
         services
+
+            .AddSingletonFrom((TestDatabaseSettings settings) =>
+                new MainServiceProviderSettings(this.allowParallelization, settings.InitMode == DatabaseInitMode.External))
+
             .AddSingleton<ITestConnectionStringProvider, TestConnectionStringProvider>()
 
             .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
             .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After)
 
-            .AddSingleton(typeof(ISynchronizedInitializer<>), typeof(SynchronizedInitializer<>))
+            .AddSingleton<IDatabaseManager, FileDatabaseManager>()
 
-            .AddKeyedSingleton<IInitializer, CachedEmptySchemaInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey)
-            .AddKeyedSingleton<IInitializer, CachedTestDataInitializer>(TestDatabaseInitializer.CachedTestDataKey)
-
-            .AddSingleton<IDatabaseManager, FileDatabaseManager>();
+            .AddKeyedSingleton<IInitializer, DatabaseSnapshotInitializer>(IServiceProviderPool.MainServiceProviderKey)
+            .AddSingleton<IDatabaseSnapshotManager, DatabaseSnapshotManager>()
+            .AddSingleton<IActualConnectionStringResolver, ActualConnectionStringResolver>();
 
         (this.initEmptySchemaAction ?? throw new InvalidOperationException("Empty schema initializer is not set.")).Invoke(services);
 
@@ -99,7 +112,7 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
         return this;
     }
 
-    public IDatabaseTestingSetup RebindActualConnection<T>(Func<TestDatabaseConnectionString, T> rebindFunc)
+    public IDatabaseTestingSetup RebindActualConnection<T>(Func<TestConnectionString, T> rebindFunc)
         where T : class
     {
         this.initRebindConnectionStringAction = sc => sc.ReplaceSingletonFrom((ITestConnectionStringProvider csp) => rebindFunc(csp.Actual));

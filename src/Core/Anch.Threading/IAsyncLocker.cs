@@ -2,5 +2,5 @@
 
 public interface IAsyncLocker
 {
-    ValueTask<IDisposable> CreateScope();
+    ValueTask<IDisposable> CreateScope(CancellationToken ct = default);
 }

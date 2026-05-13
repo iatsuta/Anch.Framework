@@ -21,7 +21,8 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner,
                 sendTestClassMessages: true
             );
 
-        var serviceProvider = serviceProviderPool == null ? null : await serviceProviderPool.GetAsync(ctxt.CancellationTokenSource.Token);
+        var ct = serviceProviderPool == null ? CancellationToken.None : ctxt.CancellationTokenSource.Token;
+        var serviceProvider = serviceProviderPool == null ? null : await serviceProviderPool.GetAsync(ct);
 
         try
         {
@@ -39,7 +40,7 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner,
         finally
         {
             if (serviceProviderPool != null && serviceProvider is not null)
-                serviceProviderPool.Release(serviceProvider);
+                await serviceProviderPool.ReleaseAsync(serviceProvider, ct);
         }
     }
 }

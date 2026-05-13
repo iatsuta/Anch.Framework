@@ -4,7 +4,5 @@ namespace Anch.Testing;
 
 public interface ITestEnvironment
 {
-    bool AllowParallelization => true;
-
-    IServiceProvider BuildServiceProvider(IServiceCollection services);
+    IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderIndex serviceProviderIndex);
 }

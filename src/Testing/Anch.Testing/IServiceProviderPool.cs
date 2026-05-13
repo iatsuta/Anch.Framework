@@ -2,9 +2,9 @@
 
 public interface IServiceProviderPool
 {
-    IServiceProvider Get();
+    public const string MainServiceProviderKey = "ServiceProviderPool.Main";
 
     ValueTask<IServiceProvider> GetAsync(CancellationToken ct);
 
-    void Release(IServiceProvider serviceProvider);
+    ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct);
 }

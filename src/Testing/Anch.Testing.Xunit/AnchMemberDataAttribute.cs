@@ -147,7 +147,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
             {
                 await serviceProvider.RunEnvironmentHooks(EnvironmentHookType.After, testContext.CancellationToken);
 
-                this.ServiceProviderPool.Release(serviceProvider);
+                await this.ServiceProviderPool.ReleaseAsync(serviceProvider, testContext.CancellationToken);
             }
         }
     }

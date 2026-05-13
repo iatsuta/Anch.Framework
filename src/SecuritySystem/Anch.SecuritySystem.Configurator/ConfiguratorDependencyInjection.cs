@@ -44,7 +44,7 @@ public static class ConfiguratorDependencyInjection
     extension(IEndpointRouteBuilder endpointsBuilder)
     {
         private void MapApi(string route) =>
-            endpointsBuilder.ServiceProvider.GetRequiredService<IEnumerable<IConfiguratorModule>>()
+            endpointsBuilder.ServiceProvider.GetServices<IConfiguratorModule>()
                 .Foreach(module => module.MapApi(endpointsBuilder, route));
 
         public IEndpointRouteBuilder Get<THandler>(string pattern)

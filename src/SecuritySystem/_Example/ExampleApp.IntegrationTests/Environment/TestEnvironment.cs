@@ -14,12 +14,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ExampleApp.IntegrationTests.Environment;
 
-public abstract class TestEnvironment : ITestEnvironment
+public abstract class TestEnvironment : ConfigurationTestEnvironment
 {
-    public IServiceProvider BuildServiceProvider(IServiceCollection services)
-    {
-        var configuration = new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
+    protected sealed override IConfiguration GetMainConfiguration() => new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
 
+    protected sealed override string GetDefaultConnectionStringName() => MainConnectionStringSource.DefaultName;
+
+    protected sealed override IServiceProvider BuildServiceProvider(IServiceCollection services, IConfiguration configuration)
+    {
         return services
             .AddSingleton(configuration)
             .AddSingleton(TimeProvider.System)

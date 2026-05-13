@@ -1,10 +1,14 @@
-﻿using Anch.Testing.Database.ConnectionStringManagement;
+﻿using Anch.Testing.Database.Initializers;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Hooks;
 
 public class CleanDatabaseEnvironmentHook(
-    IDatabaseManager databaseManager,
-    ITestConnectionStringProvider connectionStringProvider) : ITestEnvironmentHook
+    [FromKeyedServices(IServiceProviderPool.MainServiceProviderKey)] IServiceProvider mainServiceProvider,
+    ServiceProviderIndex serviceProviderIndex) : ITestEnvironmentHook
 {
-    public ValueTask Process(CancellationToken ct) => databaseManager.Remove(connectionStringProvider.Actual, ct);
+    private readonly IDatabaseSnapshotManager databaseSnapshotManager = mainServiceProvider.GetRequiredService<IDatabaseSnapshotManager>();
+
+    public ValueTask Process(CancellationToken ct) => this.databaseSnapshotManager.RemoveRestoredDatabase(serviceProviderIndex, ct);
 }
