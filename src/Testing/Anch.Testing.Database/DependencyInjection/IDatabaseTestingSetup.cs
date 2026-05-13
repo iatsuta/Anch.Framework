@@ -1,10 +1,11 @@
 ﻿using Anch.Core;
-using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.DependencyInjection;
 
 public interface IDatabaseTestingSetup
 {
+    IDatabaseTestingSetup SetParallelization(bool allow);
+
     IDatabaseTestingSetup SetProvider<TDatabaseTestingProvider>()
         where TDatabaseTestingProvider : IDatabaseTestingProvider, new() =>
         this.SetProvider(new TDatabaseTestingProvider());
@@ -20,7 +21,4 @@ public interface IDatabaseTestingSetup
     IDatabaseTestingSetup SetSettings(TestDatabaseSettings testDatabaseSettings);
 
     IDatabaseTestingSetup SetSettings(Func<IServiceProvider, TestDatabaseSettings> testDatabaseSettingsFactory);
-
-    IDatabaseTestingSetup RebindActualConnection<T>(Func<TestDatabaseConnectionString, T> rebindFunc)
-        where T : class;
 }

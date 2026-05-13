@@ -502,7 +502,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
             .AddScoped(sp =>
             {
-                var factoryList = sp.GetRequiredService<IEnumerable<IPermissionSystemFactory>>();
+                var factoryList = sp.GetServices<IPermissionSystemFactory>();
                 var securityRuleCredential = sp.GetRequiredService<SecurityRuleCredential>();
 
                 return factoryList.Select(factory => factory.Create(securityRuleCredential));

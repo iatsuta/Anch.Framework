@@ -6,7 +6,7 @@ namespace Anch.Testing.Database.Sqlite;
 
 public class SqliteDatabaseFilePathExtractor : IDatabaseFilePathExtractor
 {
-    public string Extract(TestDatabaseConnectionString connectionString)
+    public string Extract(TestConnectionString connectionString)
     {
         var builder = new DbConnectionStringBuilder
         {

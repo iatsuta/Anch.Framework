@@ -4,7 +4,7 @@ namespace Anch.Testing.Database.Sqlite;
 
 public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : IDatabaseManager
 {
-    public ValueTask<bool> Exists(TestDatabaseConnectionString connectionString, CancellationToken ct)
+    public ValueTask<bool> Exists(TestConnectionString connectionString, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
 
@@ -13,7 +13,7 @@ public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : I
         return new(File.Exists(filePath) && new FileInfo(filePath).Length > 0);
     }
 
-    public ValueTask Remove(TestDatabaseConnectionString connectionString, CancellationToken ct)
+    public ValueTask Remove(TestConnectionString connectionString, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
 
@@ -28,8 +28,8 @@ public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : I
     }
 
     public ValueTask Copy(
-        TestDatabaseConnectionString from,
-        TestDatabaseConnectionString to,
+        TestConnectionString from,
+        TestConnectionString to,
         bool force,
         CancellationToken ct)
     {
@@ -63,8 +63,8 @@ public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : I
     }
 
     public ValueTask Move(
-        TestDatabaseConnectionString from,
-        TestDatabaseConnectionString to,
+        TestConnectionString from,
+        TestConnectionString to,
         bool force,
         CancellationToken ct)
     {

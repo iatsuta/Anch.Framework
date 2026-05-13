@@ -12,7 +12,7 @@ namespace Anch.HierarchicalExpand.Tests.Environment;
 
 public class TestEnvironment : ITestEnvironment
 {
-    public IServiceProvider BuildServiceProvider(IServiceCollection services) =>
+    public IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderIndex _) =>
 
         services
             .AddSingleton<TestQueryableSource>()
@@ -23,7 +23,8 @@ public class TestEnvironment : ITestEnvironment
                 .AddHierarchicalInfo(
                     v => v.Parent,
                     new AncestorLinkInfo<DomainObject, DirectAncestorLink>(link => link.From, link => link.To),
-                    new AncestorLinkInfo<DomainObject, UnDirectAncestorLink>(view => view.From, view => view.To))).AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<TestQueryableSource>().Reset())
+                    new AncestorLinkInfo<DomainObject, UnDirectAncestorLink>(view => view.From, view => view.To)))
+            .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<TestQueryableSource>().Reset())
 
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()

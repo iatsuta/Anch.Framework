@@ -4,13 +4,13 @@ using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.Sqlite;
 
-public class SqliteTestDatabaseConnectionStringBuilder(TestDatabaseSettings databaseSettings) : ITestDatabaseConnectionStringBuilder
+public class SqliteTestConnectionStringBuilder(TestDatabaseSettings databaseSettings) : ITestConnectionStringBuilder
 {
-    public TestDatabaseConnectionString AddPostfix(string postfix)
+    public TestConnectionString AddPostfix(string postfix)
     {
-        var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.DefaultConnectionString.Value };
+        var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.MainConnectionString.Value };
 
-        var dataSource = builder["Data Source"]?.ToString();
+        var dataSource = builder["Data Source"].ToString();
 
         if (string.IsNullOrWhiteSpace(dataSource))
             throw new InvalidOperationException("Data Source is missing in connection string.");
@@ -26,6 +26,6 @@ public class SqliteTestDatabaseConnectionStringBuilder(TestDatabaseSettings data
 
         builder["Data Source"] = newDataSource;
 
-        return new TestDatabaseConnectionString(builder.ConnectionString);
+        return new TestConnectionString(builder.ConnectionString);
     }
 }

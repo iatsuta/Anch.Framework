@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Anch.Core;
+using Anch.Threading;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,60 +7,52 @@ namespace Anch.Testing;
 
 public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServiceProviderPool
 {
-    private int lastIndex;
+    private readonly IAsyncLocker asyncLocker = new AsyncLocker();
 
-    private readonly ConcurrentBag<IServiceProvider> pool = [];
-
-    private readonly RootSharedServiceSource rootSharedServiceSource = new();
-
-    private readonly SemaphoreSlim? parallelSemaphoreSlim = testEnvironment.AllowParallelization ? null : new SemaphoreSlim(1, 1);
-
-    public IServiceProvider Get()
-    {
-        this.parallelSemaphoreSlim?.Wait();
-
-        try
-        {
-            return this.pool.TryTake(out var serviceProvider)
-                ? serviceProvider
-                : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
-        }
-        catch
-        {
-            this.parallelSemaphoreSlim?.Release();
-            throw;
-        }
-    }
+    private IServiceProviderPool? internalServiceProviderPool;
 
     public async ValueTask<IServiceProvider> GetAsync(CancellationToken ct)
     {
-        if (this.parallelSemaphoreSlim != null)
-        {
-            await this.parallelSemaphoreSlim.WaitAsync(ct);
-        }
+        var v = await this.GetInternalServiceProviderPool(ct);
 
-        try
-        {
-            return this.pool.TryTake(out var serviceProvider)
-                ? serviceProvider
-                : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
-        }
-        catch
-        {
-            this.parallelSemaphoreSlim?.Release();
-            throw;
-        }
+        return await v.GetAsync(ct);
     }
 
-    public void Release(IServiceProvider serviceProvider)
+    public async ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct)
     {
-        this.pool.Add(serviceProvider);
+        var v = await this.GetInternalServiceProviderPool(ct);
 
-        this.parallelSemaphoreSlim?.Release();
+        await v.ReleaseAsync(serviceProvider, ct);
     }
 
-    private IServiceCollection CreateServiceCollection() =>
-        new ServiceCollection()
-            .AddSingleton<ISharedServiceSource>(sp => new SharedServiceSource(this.rootSharedServiceSource, sp))
-            .AddSingleton(new ServiceProviderIndex(Interlocked.Increment(ref this.lastIndex) - 1));
+    private async ValueTask<IServiceProviderPool> GetInternalServiceProviderPool(CancellationToken ct)
+    {
+        if (this.internalServiceProviderPool == null)
+        {
+            using (await this.asyncLocker.CreateScope(ct))
+            {
+                if (this.internalServiceProviderPool == null)
+                {
+                    var serviceProviderIndex = ServiceProviderIndex.Main;
+
+                    var services = new ServiceCollection()
+                        .AddKeyedSingleton<IServiceProvider>(IServiceProviderPool.MainServiceProviderKey, (sp, _) => sp)
+                        .AddSingleton(serviceProviderIndex);
+
+                    var preMainServiceProvider = testEnvironment.BuildServiceProvider(services, serviceProviderIndex);
+
+                    foreach (var initializer in preMainServiceProvider.GetKeyedServices<IInitializer>(IServiceProviderPool.MainServiceProviderKey))
+                    {
+                        await initializer.Initialize(ct);
+                    }
+
+                    var mainServiceProviderSettings = preMainServiceProvider.GetService<MainServiceProviderSettings>() ?? MainServiceProviderSettings.Default;
+
+                    this.internalServiceProviderPool = new InternalServiceProviderPool(testEnvironment, preMainServiceProvider, mainServiceProviderSettings);
+                }
+            }
+        }
+
+        return this.internalServiceProviderPool;
+    }
 }

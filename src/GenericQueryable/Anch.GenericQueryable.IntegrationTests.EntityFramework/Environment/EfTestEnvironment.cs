@@ -17,4 +17,5 @@ public class EfTestEnvironment : TestEnvironment
             .AddScoped<IQueryableSource, EfQueryableSource>()
 
             .AddSingleton<IEmptySchemaInitializer, EfEmptySchemaInitializer>();
+
 }

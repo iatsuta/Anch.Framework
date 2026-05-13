@@ -1,15 +1,11 @@
 ﻿namespace Anch.Testing.Database.ConnectionStringManagement;
 
-public class TestConnectionStringProvider(
-    ITestDatabaseConnectionStringBuilder testDatabaseConnectionStringBuilder,
-    ServiceProviderIndex serviceProviderIndex,
-    TestDatabaseSettings settings) : ITestConnectionStringProvider
+public class TestConnectionStringProvider(ITestConnectionStringBuilder testDatabaseConnectionStringBuilder, TestDatabaseSettings settings)
+    : ITestConnectionStringProvider
 {
-    public TestDatabaseConnectionString EmptySnapshot { get; } = testDatabaseConnectionStringBuilder.AddPostfix("_empty");
+    public TestConnectionString EmptySnapshot { get; } = testDatabaseConnectionStringBuilder.AddPostfix("_empty");
 
-    public TestDatabaseConnectionString FilledSnapshot => settings.DefaultConnectionString;
+    public TestConnectionString FilledSnapshot { get; } = testDatabaseConnectionStringBuilder.AddPostfix("_filled");
 
-    public TestDatabaseConnectionString Actual { get; } = settings.InitMode == DatabaseInitMode.External
-        ? settings.DefaultConnectionString
-        : testDatabaseConnectionStringBuilder.AddPostfix($"_pool_{serviceProviderIndex.Index:D5}");
+    public TestConnectionString Main { get; } = settings.MainConnectionString;
 }

@@ -2,9 +2,9 @@
 
 public interface ITestConnectionStringProvider
 {
-    TestDatabaseConnectionString EmptySnapshot { get; }
+    TestConnectionString EmptySnapshot { get; }
 
-    TestDatabaseConnectionString FilledSnapshot { get; }
+    TestConnectionString FilledSnapshot { get; }
 
-    TestDatabaseConnectionString Actual { get; }
+    TestConnectionString Main { get; }
 }

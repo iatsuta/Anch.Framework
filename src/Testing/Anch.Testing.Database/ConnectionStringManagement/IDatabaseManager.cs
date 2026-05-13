@@ -2,11 +2,11 @@
 
 public interface IDatabaseManager
 {
-    ValueTask<bool> Exists(TestDatabaseConnectionString connectionString, CancellationToken ct);
+    ValueTask<bool> Exists(TestConnectionString connectionString, CancellationToken ct);
 
-    ValueTask Remove(TestDatabaseConnectionString connectionString, CancellationToken ct);
+    ValueTask Remove(TestConnectionString connectionString, CancellationToken ct);
 
-    ValueTask Copy(TestDatabaseConnectionString from, TestDatabaseConnectionString to, bool force, CancellationToken ct);
+    ValueTask Copy(TestConnectionString from, TestConnectionString to, bool force, CancellationToken ct);
 
-    ValueTask Move(TestDatabaseConnectionString from, TestDatabaseConnectionString to, bool force, CancellationToken ct);
+    ValueTask Move(TestConnectionString from, TestConnectionString to, bool force, CancellationToken ct);
 }
