@@ -108,7 +108,7 @@ public class GeneralPrincipalManagementService<TPrincipal, TPermission, TPermiss
     {
         var permissionsData = await permissionLoader
             .LoadAsync(dbPrincipal)
-            .Select(permissionRestrictionLoader.ToPermissionData)
+            .Select(async (v, ct) => await permissionRestrictionLoader.ToPermissionData(v, ct))
             .ToImmutableArrayAsync(cancellationToken);
 
         return new PrincipalData<TPrincipal, TPermission, TPermissionRestriction>(dbPrincipal, permissionsData);

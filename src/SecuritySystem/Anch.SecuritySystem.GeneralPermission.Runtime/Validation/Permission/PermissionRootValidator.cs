@@ -11,7 +11,7 @@ public class PermissionRootValidator<TPermission, TPermissionRestriction>(
     IPermissionRestrictionValidator<TPermissionRestriction> permissionRestrictionRootValidator)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
     {
         foreach (var validator in validators)
         {

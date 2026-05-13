@@ -32,7 +32,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
 
     private readonly Expression<Func<TPermission, string>> fullNamePath = bindingInfo.Principal.Path.Select(principalVisualIdentityInfo.Name.Path);
 
-    public async ValueTask<bool> HasAccessAsync(CancellationToken cancellationToken) => await this.GetPermissionQuery().GenericAnyAsync(cancellationToken);
+    public async Task<bool> HasAccessAsync(CancellationToken cancellationToken) => await this.GetPermissionQuery().GenericAnyAsync(cancellationToken);
 
     public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes)
     {

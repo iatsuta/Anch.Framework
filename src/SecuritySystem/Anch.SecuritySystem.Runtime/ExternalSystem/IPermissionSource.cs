@@ -5,7 +5,7 @@ namespace Anch.SecuritySystem.ExternalSystem;
 
 public interface IPermissionSource
 {
-    ValueTask<bool> HasAccessAsync(CancellationToken cancellationToken);
+    Task<bool> HasAccessAsync(CancellationToken cancellationToken);
 
     IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes);
 }

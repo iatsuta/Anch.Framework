@@ -7,7 +7,7 @@ public interface IPermissionRestrictionLoader<TPermission, TPermissionRestrictio
 {
     IAsyncEnumerable<TPermissionRestriction> LoadAsync(TPermission permission);
 
-    async ValueTask<PermissionData<TPermission, TPermissionRestriction>> ToPermissionData(TPermission dbPermission, CancellationToken cancellationToken)
+    async Task<PermissionData<TPermission, TPermissionRestriction>> ToPermissionData(TPermission dbPermission, CancellationToken cancellationToken)
     {
         var dbRestrictions = await this.LoadAsync(dbPermission).ToImmutableArrayAsync(cancellationToken);
 

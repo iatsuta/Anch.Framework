@@ -36,7 +36,7 @@ public class GeneralPermissionSource<TPermission>(
 
     private IPermissionSource<TPermission> InnerService => this.lazyInnerService.Value;
 
-    public ValueTask<bool> HasAccessAsync(CancellationToken cancellationToken) => this.InnerService.HasAccessAsync(cancellationToken);
+    public Task<bool> HasAccessAsync(CancellationToken cancellationToken) => this.InnerService.HasAccessAsync(cancellationToken);
 
     public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) =>
         this.InnerService.GetPermissionsAsync(securityContextTypes);
@@ -63,7 +63,7 @@ public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestric
     where TSecurityContextObjectIdent : notnull
     where TPermissionIdent : notnull
 {
-    public async ValueTask<bool> HasAccessAsync(CancellationToken cancellationToken) => await this.GetPermissionQuery().GenericAnyAsync(cancellationToken);
+    public async Task<bool> HasAccessAsync(CancellationToken cancellationToken) => await this.GetPermissionQuery().GenericAnyAsync(cancellationToken);
 
     public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) => this.GetPermissionsInternalAsync(securityContextTypes);
 
@@ -75,7 +75,7 @@ public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestric
             .Select(permissionIdentityInfo.Id.Path)
             .GenericToArrayAsync(cancellationToken);
 
-        var containsPermissionFilter = permissionIdentityInfo.CreateFilter((IEnumerable<TPermissionIdent>)permissionIdents);
+        var containsPermissionFilter = permissionIdentityInfo.CreateFilter(permissionIdents);
 
         var permissionRestrictions = await queryableSource
             .GetQueryable<TPermissionRestriction>()

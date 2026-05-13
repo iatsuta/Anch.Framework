@@ -64,7 +64,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
             ? _ => true
             : principalVisualIdentityInfo.Name.Path.Select(principalName => principalName.Contains(nameFilter));
 
-    public async ValueTask<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
         var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken);
 

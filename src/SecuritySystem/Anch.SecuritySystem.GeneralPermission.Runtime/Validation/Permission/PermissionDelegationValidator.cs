@@ -23,7 +23,7 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
     where TPrincipal : class
     where TPermission : class
 {
-    public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
     {
         if (permissionBindingInfo.DelegatedFrom == null)
         {

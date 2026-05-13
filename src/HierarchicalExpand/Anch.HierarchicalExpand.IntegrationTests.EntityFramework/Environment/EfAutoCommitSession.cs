@@ -35,14 +35,11 @@ public sealed class EfAutoCommitSession : IAsyncDisposable, IDisposable
 
         this.closed = true;
 
+        await using (this.efTransaction)
         await using (this.NativeSession)
         {
-            await using (this.efTransaction)
-            {
-                await this.NativeSession.SaveChangesAsync(cancellationToken);
-
-                await this.efTransaction.CommitAsync(cancellationToken);
-            }
+            await this.NativeSession.SaveChangesAsync(cancellationToken);
+            await this.efTransaction.CommitAsync(cancellationToken);
         }
     }
 }

@@ -26,7 +26,7 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
 
         var existsLinks = await queryableSource.GetQueryable<TDirectAncestorLink>().WithFetch(this.linkFetchRule).GenericToListAsync(cancellationToken);
 
-        var nonExistsDomainObjects = existsLinks.Select<TDirectAncestorLink, AncestorLinkData<TDomainObject>>(this.ToInfo).SelectMany(link => new[] { link.Ancestor, link.Child }).Except(existsDomainObjects);
+        var nonExistsDomainObjects = existsLinks.Select(this.ToInfo).SelectMany(link => new[] { link.Ancestor, link.Child }).Except(existsDomainObjects);
 
         return await this.GetSyncResult(existsDomainObjects, nonExistsDomainObjects, cancellationToken);
     }
@@ -40,7 +40,7 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
 
         var existsLinkInfos = await updatedDomainObjectsBase
             .ToAsyncEnumerable()
-            .Select((domainObject, ct) => this.GetSyncResult(domainObject, domainObjectExpander, ct))
+            .Select(async (domainObject, ct) => await this.GetSyncResult(domainObject, domainObjectExpander, ct))
             .ToArrayAsync(cancellationToken);
 
         var forceRemovedLinks = await this.GetExistsLinks(removedDomainObjects, cancellationToken);
@@ -53,7 +53,7 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
     public Task<SyncResult<TDomainObject, TDirectAncestorLink>> GetSyncResult(TDomainObject domainObject, CancellationToken cancellationToken) =>
         this.GetSyncResult([domainObject], [], cancellationToken);
 
-    private async ValueTask<SyncResult<TDomainObject, TDirectAncestorLink>> GetSyncResult(
+    private async Task<SyncResult<TDomainObject, TDirectAncestorLink>> GetSyncResult(
         TDomainObject domainObject,
         IDomainObjectExpander<TDomainObject> domainObjectExpander,
         CancellationToken cancellationToken)
@@ -94,17 +94,17 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
         }
     }
 
-    private ValueTask<ImmutableArray<TDirectAncestorLink>> GetExistsLinks(IEnumerable<TDomainObject> domainObjects, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<TDirectAncestorLink>> GetExistsLinks(IEnumerable<TDomainObject> domainObjects, CancellationToken cancellationToken)
     {
         var filter = this.ancestorLinkInfo.From.Path.Select(fromObj => domainObjects.Contains(fromObj))
             .BuildOr(this.ancestorLinkInfo.To.Path.Select(toObj => domainObjects.Contains(toObj)));
 
-        return queryableSource
+        return await queryableSource
             .GetQueryable<TDirectAncestorLink>()
             .Where(filter)
             .WithFetch(this.linkFetchRule)
             .GenericAsAsyncEnumerable()
-            .ToImmutableArrayAsync<TDirectAncestorLink>(cancellationToken);
+            .ToImmutableArrayAsync(cancellationToken);
     }
 
     private AncestorLinkData<TDomainObject> ToInfo(TDirectAncestorLink link)

@@ -11,11 +11,11 @@ public class ManagedPrincipalConverter<TPrincipal, TPermission, TPermissionRestr
     where TPrincipal : class
     where TPermission : class
 {
-    public async ValueTask<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken cancellationToken)
     {
         var permissions = await permissionLoader
             .LoadAsync(dbPrincipal)
-            .Select(permissionManagementService.ToManagedPermissionAsync)
+            .Select(async (v, ct) => await permissionManagementService.ToManagedPermissionAsync(v, ct))
             .ToImmutableArrayAsync(cancellationToken);
 
         return new ManagedPrincipal(headerConverter.Convert(dbPrincipal), permissions);

@@ -21,7 +21,7 @@ public class RootPrincipalSourceService(IEnumerable<IPrincipalSourceService> pri
             .Take(limit);
     }
 
-    public async ValueTask<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
         var request =
 

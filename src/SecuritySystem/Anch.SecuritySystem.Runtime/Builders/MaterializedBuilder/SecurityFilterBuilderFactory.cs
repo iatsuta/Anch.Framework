@@ -24,7 +24,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
     private readonly IExpressionEvaluator expressionEvaluator =
         expressionEvaluatorStorage.GetForType(typeof(SecurityFilterBuilderFactory<TDomainObject>));
 
-    public async ValueTask<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
         CancellationToken cancellationToken)

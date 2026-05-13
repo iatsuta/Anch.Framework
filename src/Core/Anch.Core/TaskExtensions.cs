@@ -16,7 +16,28 @@ public static class TaskExtensions
             return null;
         };
 
-    public static Func<T1, T2, Task<object?>> ToDefaultTask<T1, T2>(this Func<T1, T2, Task> func) =>
+    public static Func<T1, T2, Task<object?>> ToDefaultValueTask<T1, T2>(this Func<T1, T2, Task> func) =>
+        async (arg1, arg2) =>
+        {
+            await func(arg1, arg2);
+            return null;
+        };
+
+    public static Func<ValueTask<object?>> ToDefaultValueTask(this Func<ValueTask> func) =>
+        async () =>
+        {
+            await func();
+            return null;
+        };
+
+    public static Func<T1, ValueTask<object?>> ToDefaultValueTask<T1>(this Func<T1, ValueTask> func) =>
+        async arg =>
+        {
+            await func(arg);
+            return null;
+        };
+
+    public static Func<T1, T2, ValueTask<object?>> ToDefaultValueTask<T1, T2>(this Func<T1, T2, ValueTask> func) =>
         async (arg1, arg2) =>
         {
             await func(arg1, arg2);

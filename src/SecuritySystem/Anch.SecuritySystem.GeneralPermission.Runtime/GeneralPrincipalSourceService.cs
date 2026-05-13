@@ -32,7 +32,7 @@ public class GeneralPrincipalSourceService<TPrincipal, TPermission>(
             .GenericAsAsyncEnumerable();
     }
 
-    public async ValueTask<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
         var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken);
 

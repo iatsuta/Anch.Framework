@@ -4,5 +4,5 @@ namespace Anch.SecuritySystem.Services;
 
 public interface IManagedPrincipalConverter<in TPrincipal>
 {
-	ValueTask<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken cancellationToken);
+	Task<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken cancellationToken);
 }

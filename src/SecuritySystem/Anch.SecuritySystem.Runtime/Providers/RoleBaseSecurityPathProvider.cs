@@ -22,7 +22,7 @@ public class RoleBaseSecurityPathProvider<TDomainObject>(
     private AccessorsFilterInfo<TDomainObject>? accessorsFilterCache;
 
     public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) =>
-        defaultCancellationTokenSource.RunSync(this.GetOrCreateSecurityFilterInfo).InjectFunc(queryable);
+        defaultCancellationTokenSource.RunSync(async ct => await this.GetOrCreateSecurityFilterInfo(ct)).InjectFunc(queryable);
 
     public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken)
     {
