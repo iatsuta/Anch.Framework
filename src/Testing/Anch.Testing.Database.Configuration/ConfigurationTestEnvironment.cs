@@ -9,7 +9,7 @@ public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 {
     private string MainConnectionStringName => field ??= this.GetMainConnectionStringName();
 
-    private IConfiguration MainConfiguration => field ??= this.GetMainConfiguration();
+    protected abstract IConfiguration MainConfiguration { get; }
 
     protected override TestConnectionString MainConnectionString =>
         field ??= new TestConnectionString(this.MainConfiguration.GetRequiredConnectionString(this.MainConnectionStringName));
@@ -20,8 +20,6 @@ public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 
         return this.BuildServiceProvider(services.AddSingleton(actualConfiguration), actualConfiguration);
     }
-
-    protected abstract IConfiguration GetMainConfiguration();
 
     protected abstract IServiceProvider BuildServiceProvider(IServiceCollection services, IConfiguration configuration);
 
