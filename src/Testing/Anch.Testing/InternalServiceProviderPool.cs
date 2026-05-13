@@ -34,7 +34,7 @@ public class InternalServiceProviderPool(ITestEnvironment testEnvironment, IServ
 
             try
             {
-                return testEnvironment.BuildServiceProvider(services, serviceProviderIndex);
+                return testEnvironment.BuildServiceProvider(services, new PooledServiceProviderBuildContext(serviceProviderIndex, mainServiceProvider));
             }
             catch (Exception)
             {

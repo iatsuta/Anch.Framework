@@ -4,5 +4,5 @@ namespace Anch.Testing;
 
 public interface ITestEnvironment
 {
-    IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderIndex serviceProviderIndex);
+    IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderBuildContext buildContext);
 }
