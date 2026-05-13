@@ -17,13 +17,13 @@ namespace ExampleApp.IntegrationTests.Environment;
 
 public abstract class TestEnvironment : ConfigurationTestEnvironment
 {
-    protected override DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitModeHelper.DatabaseInitMode;
+    protected sealed override DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitModeHelper.DatabaseInitMode;
 
-    protected sealed override IConfiguration GetMainConfiguration() => new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
+    protected sealed override IConfiguration MainConfiguration { get; } = new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
 
     protected sealed override string GetMainConnectionStringName() => MainConnectionStringSource.DefaultName;
 
-    protected override void InitDatabase(IDatabaseTestingSetup dts) =>
+    protected sealed override void InitDatabase(IDatabaseTestingSetup dts) =>
         dts
             .SetProvider<SqliteDatabaseTestingProvider>()
             .SetEmptySchemaInitializer<IEmptySchemaInitializer>(register: false)
