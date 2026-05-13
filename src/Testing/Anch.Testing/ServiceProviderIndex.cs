@@ -2,5 +2,7 @@
 
 public record ServiceProviderIndex(int Index)
 {
-    public bool IsMain => this.Index == -1;
+    public bool IsMain => this == Main;
+
+    public static ServiceProviderIndex Main { get; } = new(-1);
 }

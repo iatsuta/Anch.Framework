@@ -33,7 +33,7 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServicePro
             {
                 if (this.internalServiceProviderPool == null)
                 {
-                    var serviceProviderIndex = new ServiceProviderIndex(-1);
+                    var serviceProviderIndex = ServiceProviderIndex.Main;
 
                     var services = new ServiceCollection()
                         .AddKeyedSingleton<IServiceProvider>(IServiceProviderPool.MainServiceProviderKey, (sp, _) => sp)
