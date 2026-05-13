@@ -73,7 +73,7 @@ public class RunAsManager<TUser>(
         }
     }
 
-    private ValueTask CheckAccessAsync(CancellationToken cancellationToken) =>
+    private Task CheckAccessAsync(CancellationToken cancellationToken) =>
         securitySystemFactory.Create(new SecurityRuleCredential.CurrentUserWithoutRunAsCredential())
             .CheckAccessAsync(SecurityRole.Administrator, cancellationToken);
 }

@@ -10,7 +10,7 @@ public class ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecur
     : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public async Task ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
     {
         var securityContextObjectId = restrictionBindingInfo.SecurityContextObjectId.Getter(permissionRestriction);
 
@@ -21,6 +21,10 @@ public class ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecur
         if (!typedSecurityContextStorage.IsExists(TypedSecurityIdentity.Create(securityContextObjectId)))
         {
             throw new SecuritySystemValidationException($"{securityContextType.Name} with id '{securityContextObjectId}' not exists");
+        }
+        else
+        {
+            return ValueTask.CompletedTask;
         }
     }
 }

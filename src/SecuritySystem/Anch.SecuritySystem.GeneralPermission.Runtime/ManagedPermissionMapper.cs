@@ -33,7 +33,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
     where TSecurityContextType : class
     where TSecurityContextObjectIdent : notnull
 {
-    public virtual async ValueTask<ManagedPermission> ToManagedPermissionAsync(TPermission dbPermission, CancellationToken cancellationToken) =>
+    public virtual async Task<ManagedPermission> ToManagedPermissionAsync(TPermission dbPermission, CancellationToken cancellationToken) =>
         new()
         {
             Identity = permissionSecurityIdentityManager.GetIdentity(dbPermission),
@@ -47,7 +47,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
             Restrictions = (await rawPermissionRestrictionLoader.LoadAsync(dbPermission, cancellationToken)).ToImmutableDictionary()
         };
 
-    public virtual async ValueTask<PermissionData<TPermission, TPermissionRestriction>> CreatePermissionAsync(
+    public virtual async Task<PermissionData<TPermission, TPermissionRestriction>> CreatePermissionAsync(
         TPrincipal dbPrincipal,
         ManagedPermission managedPermission,
         CancellationToken cancellationToken)
@@ -109,7 +109,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
         return new PermissionData<TPermission, TPermissionRestriction>(newDbPermission, newPermissionRestrictions);
     }
 
-    public virtual async ValueTask<(PermissionData<TPermission, TPermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
+    public virtual async Task<(PermissionData<TPermission, TPermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
         TPermission dbPermission,
         ManagedPermission managedPermission,
         CancellationToken cancellationToken)

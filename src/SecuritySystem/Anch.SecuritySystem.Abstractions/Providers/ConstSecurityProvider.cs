@@ -11,5 +11,5 @@ public class ConstSecurityProvider<TDomainObject>(bool hasAccess) : ISecurityPro
         return queryable.Where(_ => hasAccess);
     }
 
-    public async ValueTask<bool> HasAccess(TDomainObject _, CancellationToken cancellationToken) => hasAccess;
+    public ValueTask<bool> HasAccessAsync(TDomainObject _, CancellationToken cancellationToken) => new(hasAccess);
 }

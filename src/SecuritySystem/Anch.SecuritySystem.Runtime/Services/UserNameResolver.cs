@@ -8,7 +8,7 @@ namespace Anch.SecuritySystem.Services;
 
 public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNameResolver
 {
-    public async ValueTask<string> GetUserNameAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<string> GetUserNameAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
         switch (userCredential)
         {
@@ -21,7 +21,7 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
 
                     await userSourceList
                         .ToAsyncEnumerable()
-                        .Select((userSource, ct) => userSource.ToSimple().TryGetUserAsync(userCredential, ct))
+                        .Select(async (userSource, ct) => await userSource.ToSimple().TryGetUserAsync(userCredential, ct))
                         .Where(user => user != null)
                         .Select(user => user!.Name)
                         .Distinct()
@@ -43,7 +43,7 @@ public class UserNameResolver<TUser>(
 {
     private readonly IUserSource<User> simpleUserSource = userSource.ToSimple();
 
-    public async ValueTask<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken cancellationToken)
+    public async Task<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken cancellationToken)
     {
         return credential switch
         {

@@ -23,7 +23,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction>(
             restrictionBindingInfo);
     });
 
-    public Task ValidateAsync(TPermissionRestriction value, CancellationToken cancellationToken) => this.lazyInnerService.Value.ValidateAsync(value, cancellationToken);
+    public ValueTask ValidateAsync(TPermissionRestriction value, CancellationToken cancellationToken) => this.lazyInnerService.Value.ValidateAsync(value, cancellationToken);
 }
 
 public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
@@ -33,7 +33,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, T
     : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public async Task ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
     {
         var permission = restrictionBindingInfo.Permission.Getter(permissionRestriction);
 
@@ -45,7 +45,11 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, T
 
         var allowed = allowedSecurityContexts == null || allowedSecurityContexts.Contains(securityContextType);
 
-        if (!allowed)
+        if (allowed)
+        {
+            return ValueTask.CompletedTask;
+        }
+        else
         {
             throw new SecuritySystemValidationException($"Invalid SecurityContextType: {securityContextType.Name}");
         }

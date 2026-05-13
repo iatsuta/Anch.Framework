@@ -8,7 +8,7 @@ public class SecurityFilterFactory<TDomainObject>(
     ISecurityFilterFactory<TDomainObject> hasAccessFactory)
     : ISecurityFilterFactory<TDomainObject>
 {
-    public async ValueTask<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
     {
         return new SecurityFilterInfo<TDomainObject>(

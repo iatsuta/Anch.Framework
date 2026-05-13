@@ -25,8 +25,8 @@ public class Repository<TDomainObject>(
         await dal.RemoveAsync(domainObject, cancellationToken);
     }
 
-    private Task CheckAccess(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        securityProvider.CheckAccessAsync(domainObject, accessDeniedExceptionService, cancellationToken);
+    private async Task CheckAccess(TDomainObject domainObject, CancellationToken cancellationToken) =>
+        await securityProvider.CheckAccessAsync(domainObject, accessDeniedExceptionService, cancellationToken);
 
     public IQueryable<TDomainObject> GetQueryable() => securityProvider.Inject(dal.GetQueryable());
 }

@@ -7,5 +7,5 @@ public interface ISecurityValidator
 
 public interface ISecurityValidator<in T> : ISecurityValidator
 {
-	Task ValidateAsync(T value, CancellationToken cancellationToken);
+    ValueTask ValidateAsync(T value, CancellationToken cancellationToken);
 }

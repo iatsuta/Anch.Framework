@@ -48,7 +48,7 @@ public class DatabaseSnapshotInitializer(
     }
 
 
-    private async Task InitializeSchema(CancellationToken cancellationToken)
+    protected virtual async ValueTask InitializeSchema(CancellationToken cancellationToken)
     {
         try
         {
@@ -75,7 +75,7 @@ public class DatabaseSnapshotInitializer(
             throw;
         }
     }
-    private async Task InitializeTestData(CancellationToken cancellationToken)
+    protected virtual async ValueTask InitializeTestData(CancellationToken cancellationToken)
     {
         try
         {

@@ -35,7 +35,7 @@ public class CustomPermissionManagementService(
 {
     private const string ExtendedKey = nameof(AuthGeneral.Permission.ExtendedValue);
 
-    public override async ValueTask<PermissionData<AuthGeneral.Permission, AuthGeneral.PermissionRestriction>> CreatePermissionAsync(
+    public override async Task<PermissionData<AuthGeneral.Permission, AuthGeneral.PermissionRestriction>> CreatePermissionAsync(
         AuthGeneral.Principal dbPrincipal,
         ManagedPermission managedPermission,
         CancellationToken cancellationToken)
@@ -52,14 +52,14 @@ public class CustomPermissionManagementService(
         return baseResult;
     }
 
-    public override async ValueTask<ManagedPermission> ToManagedPermissionAsync(AuthGeneral.Permission dbPermission, CancellationToken cancellationToken)
+    public override async Task<ManagedPermission> ToManagedPermissionAsync(AuthGeneral.Permission dbPermission, CancellationToken cancellationToken)
     {
         var baseResult = await base.ToManagedPermissionAsync(dbPermission, cancellationToken);
 
         return baseResult.WithExtendedData(ExtendedKey, dbPermission.ExtendedValue);
     }
 
-    public override async ValueTask<(PermissionData<AuthGeneral.Permission, AuthGeneral.PermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
+    public override async Task<(PermissionData<AuthGeneral.Permission, AuthGeneral.PermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
         AuthGeneral.Permission dbPermission, ManagedPermission managedPermission, CancellationToken cancellationToken)
     {
         var baseResult = await base.UpdatePermission(dbPermission, managedPermission, cancellationToken);

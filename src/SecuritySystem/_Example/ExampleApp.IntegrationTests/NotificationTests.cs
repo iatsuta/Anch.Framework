@@ -44,8 +44,6 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
     protected override async ValueTask InitializeAsync(CancellationToken ct)
     {
-        await base.InitializeAsync(ct);
-
         this.rootBusinessUnit = await this.SaveBusinessUnit(nameof(this.rootBusinessUnit), null, ct);
         this.child_1_0_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_0_BusinessUnit), this.rootBusinessUnit, ct);
 		this.child_1_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_1_BusinessUnit), this.child_1_0_BusinessUnit, ct);

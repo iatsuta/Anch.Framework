@@ -27,7 +27,8 @@ public abstract class SecurityProvider<TDomainObject> : ISecurityProvider<TDomai
 
     public virtual IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => queryable.Where(this.SecurityFilter);
 
-    public virtual async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.lazyHasAccessFunc.Value(domainObject);
+    public virtual ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
+        new(this.lazyHasAccessFunc.Value(domainObject));
 
     public abstract ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken);
 }

@@ -11,7 +11,7 @@ public class PrincipalRootValidator<TPrincipal, TPermission, TPermissionRestrict
     IPermissionValidator<TPermission, TPermissionRestriction> permissionRootValidator)
     : IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
     {
         foreach (var validator in validators)
         {

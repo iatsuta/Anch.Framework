@@ -24,7 +24,7 @@ public static class DictionaryExtensions
             return value;
         }
 
-        public async ValueTask<TValue> GetValueOrCreateAsync(TKey key, Func<TKey, ValueTask<TValue>> getNewValue)
+        public async Task<TValue> GetValueOrCreateAsync(TKey key, Func<TKey, Task<TValue>> getNewValue)
         {
             if (!source.TryGetValue(key, out var value))
             {
@@ -36,7 +36,7 @@ public static class DictionaryExtensions
             return value;
         }
 
-        public ValueTask<TValue> GetValueOrCreateAsync(TKey key, Func<ValueTask<TValue>> getNewValue) =>
+        public Task<TValue> GetValueOrCreateAsync(TKey key, Func<Task<TValue>> getNewValue) =>
             source.GetValueOrCreateAsync(key, _ => getNewValue());
     }
 

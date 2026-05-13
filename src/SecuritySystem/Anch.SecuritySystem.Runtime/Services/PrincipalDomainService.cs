@@ -81,7 +81,7 @@ public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
         var tryCandidates = userSources
             .ToAsyncEnumerable()
             .Where(userSource => userSource.UserType != typeof(TPrincipal))
-            .Select((userSource, ct) => userSource.ToSimple().TryGetUserAsync(name, ct));
+            .Select(async (userSource, ct) => await userSource.ToSimple().TryGetUserAsync(name, ct));
 
         var identRequest =
 

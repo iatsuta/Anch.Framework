@@ -10,7 +10,7 @@ public class PermissionRequiredContextValidator<TPermission, TPermissionRestrict
     IPermissionRestrictionSecurityContextTypeResolver<TPermissionRestriction> permissionRestrictionSecurityContextTypeResolver)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
     {
         var securityRole = permissionSecurityRoleResolver.Resolve(permissionData.Permission);
 
@@ -33,5 +33,7 @@ public class PermissionRequiredContextValidator<TPermission, TPermissionRestrict
                 throw new SecuritySystemValidationException($"{typeof(TPermission).Name} must contain the required contexts: {missedTypes}");
             }
         }
+
+        return ValueTask.CompletedTask;
     }
 }

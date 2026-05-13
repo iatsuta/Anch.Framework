@@ -35,7 +35,7 @@ public static class SecurityProviderBaseExtensions
             ISecurityProvider<TDomainObject> otherSecurityProvider) =>
             securityProvider.And(otherSecurityProvider.Negate());
 
-        public async Task CheckAccessAsync(
+        public async ValueTask CheckAccessAsync(
             TDomainObject domainObject,
             IAccessDeniedExceptionService accessDeniedExceptionService,
             CancellationToken cancellationToken = default)

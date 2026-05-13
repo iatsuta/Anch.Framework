@@ -3,7 +3,7 @@
 public class ExistsOtherwiseUsersRunAsValidator<TUser>(IEnumerable<IUserSource<TUser>> userSources, IMissedUserErrorSource missedUserErrorSource)
     : IRunAsValidator
 {
-    public async Task ValidateAsync(UserCredential value, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(UserCredential value, CancellationToken cancellationToken)
     {
         foreach (var userSource in userSources.Where(userSource => userSource.UserType != typeof(TUser)))
         {

@@ -11,7 +11,7 @@ public class PrincipalUniquePermissionValidator<TPrincipal, TPermission, TPermis
     IPermissionEqualityComparer<TPermission, TPermissionRestriction> comparer)
     : IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
     {
         var duplicates = await principalData
             .PermissionDataList

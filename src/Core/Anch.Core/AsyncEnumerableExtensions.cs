@@ -4,7 +4,7 @@ namespace Anch.Core;
 
 public static class AsyncEnumerableExtensions
 {
-    public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this ValueTask<T?> task)
+    public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this Task<T?> task)
     {
         var value = await task;
 

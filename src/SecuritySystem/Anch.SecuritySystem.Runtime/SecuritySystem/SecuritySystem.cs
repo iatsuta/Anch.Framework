@@ -12,19 +12,19 @@ public class SecuritySystem(
     ImmutableArray<IPermissionSystem> permissionSystems,
     IDomainSecurityRoleExtractor domainSecurityRoleExtractor) : ISecuritySystem
 {
-    public ValueTask<bool> HasAccessAsync(DomainSecurityRule securityRule, CancellationToken cancellationToken) =>
+    public Task<bool> HasAccessAsync(DomainSecurityRule securityRule, CancellationToken cancellationToken) =>
         this.HasAccessAsync(domainSecurityRoleExtractor.ExtractSecurityRule(securityRule), cancellationToken);
 
-    public ValueTask CheckAccessAsync(DomainSecurityRule securityRule, CancellationToken cancellationToken) =>
+    public Task CheckAccessAsync(DomainSecurityRule securityRule, CancellationToken cancellationToken) =>
         this.CheckAccess(domainSecurityRoleExtractor.ExtractSecurityRule(securityRule), cancellationToken);
 
-    private ValueTask<bool> HasAccessAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, CancellationToken cancellationToken) =>
-        permissionSystems
+    private async Task<bool> HasAccessAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, CancellationToken cancellationToken) =>
+        await permissionSystems
             .SelectMany(v => v.GetPermissionSources(securityRule))
             .ToAsyncEnumerable()
-            .AnyAsync((permissionSource, ct) => permissionSource.HasAccessAsync(ct), cancellationToken);
+            .AnyAsync(async (permissionSource, ct) => await permissionSource.HasAccessAsync(ct), cancellationToken);
 
-    private async ValueTask CheckAccess(DomainSecurityRule.RoleBaseSecurityRule securityRule, CancellationToken cancellationToken)
+    private async Task CheckAccess(DomainSecurityRule.RoleBaseSecurityRule securityRule, CancellationToken cancellationToken)
     {
         if (!await this.HasAccessAsync(securityRule, cancellationToken))
         {

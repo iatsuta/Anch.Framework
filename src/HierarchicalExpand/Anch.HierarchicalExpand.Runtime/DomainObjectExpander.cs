@@ -9,7 +9,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
 {
     private IReadOnlyDictionary<TDomainObject, TDomainObject?>? baseCache;
 
-    public async ValueTask<HashSet<TDomainObject>> GetAllParents(IEnumerable<TDomainObject> startDomainObjects, CancellationToken cancellationToken)
+    public ValueTask<HashSet<TDomainObject>> GetAllParents(IEnumerable<TDomainObject> startDomainObjects, CancellationToken cancellationToken)
     {
         var allResult = startDomainObjects.ToHashSet();
 
@@ -22,7 +22,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
                 .ToHashSet();
         }
 
-        return allResult;
+        return new(allResult);
     }
 
     public async ValueTask<HashSet<TDomainObject>> GetAllChildren(IEnumerable<TDomainObject> startDomainObjects, CancellationToken cancellationToken)
@@ -44,7 +44,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
         return allResult;
     }
 
-    private async ValueTask<IReadOnlyDictionary<TDomainObject, TDomainObject?>> GetCache(CancellationToken cancellationToken) =>
+    private async Task<IReadOnlyDictionary<TDomainObject, TDomainObject?>> GetCache(CancellationToken cancellationToken) =>
         this.baseCache ??= await queryableSource.GetQueryable<TDomainObject>().WithFetch(r => r.Fetch(hierarchicalInfo.ParentPath))
             .GenericToDictionaryAsync(d => d, hierarchicalInfo.ParentFunc, cancellationToken);
 }
