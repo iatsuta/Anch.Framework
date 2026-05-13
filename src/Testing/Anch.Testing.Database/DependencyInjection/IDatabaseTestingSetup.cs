@@ -6,7 +6,6 @@ public interface IDatabaseTestingSetup
 {
     IDatabaseTestingSetup SetParallelization(bool allow);
 
-
     IDatabaseTestingSetup SetProvider<TDatabaseTestingProvider>()
         where TDatabaseTestingProvider : IDatabaseTestingProvider, new() =>
         this.SetProvider(new TDatabaseTestingProvider());

@@ -37,9 +37,6 @@ public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 
             .AddSingleton<ITestConnectionStringProvider, TestConnectionStringProvider>()
 
-            .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
-            .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After)
-
             .AddKeyedSingleton<IInitializer, DatabaseSnapshotInitializer>(IServiceProviderPool.MainServiceProviderKey)
             .AddSingleton<IDatabaseSnapshotManager, DatabaseSnapshotManager>()
             .AddSingleton<IActualConnectionStringResolver, ActualConnectionStringResolver>();

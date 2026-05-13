@@ -1,4 +1,6 @@
-﻿namespace Anch.Testing.Database.ConnectionStringManagement;
+﻿using Anch.Testing.Database.ConnectionStringManagement;
+
+namespace Anch.Testing.Database.Sqlite;
 
 public interface IDatabaseFilePathExtractor
 {

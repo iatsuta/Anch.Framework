@@ -29,7 +29,7 @@ public class InternalServiceProviderPool(ITestEnvironment testEnvironment, IServ
             var serviceProviderIndex = new ServiceProviderIndex(Interlocked.Increment(ref this.lastIndex) - 1);
 
             var services = new ServiceCollection()
-                .AddKeyedSingleton(mainServiceProvider, IServiceProviderPool.MainServiceProviderKey)
+                .AddKeyedSingleton(IServiceProviderPool.MainServiceProviderKey, mainServiceProvider)
                 .AddSingleton(serviceProviderIndex);
 
             try

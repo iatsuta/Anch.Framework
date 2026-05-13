@@ -1,7 +1,7 @@
 ﻿using Anch.Core;
 using Anch.Testing.Database.ConnectionStringManagement;
 using Anch.Testing.Database.DependencyInjection;
-using Anch.Testing.Database.Initializers;
+using Anch.Testing.Database.Hooks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,8 +17,12 @@ public abstract class DatabaseTestEnvironment : ITestEnvironment
 
     protected virtual bool RemoveDatabaseOnFailure { get; } = true;
 
-    public IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderIndex serviceProviderIndex)
+    public IServiceProvider BuildServiceProvider(IServiceCollection baseServices, ServiceProviderIndex serviceProviderIndex)
     {
+        var services = baseServices
+            .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
+            .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After);
+
         if (serviceProviderIndex.IsMain)
         {
             return this.mainServiceProvider ??= this.BuildServiceProvider(this.InitMainServices(services), this.MainConnectionString);
