@@ -9,7 +9,7 @@ namespace Anch.Testing.Database;
 
 public abstract class DatabaseTestEnvironment : ITestEnvironment
 {
-    protected abstract TestConnectionString MainConnectionString { get; }
+    protected abstract TestConnectionString RawConnectionString { get; }
 
     protected virtual DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitMode.RebuildSnapshot;
 
@@ -34,25 +34,20 @@ public abstract class DatabaseTestEnvironment : ITestEnvironment
         }
     }
 
-    private TestConnectionString GetActualConnectionString(ServiceProviderBuildContext buildContext)
-    {
-        switch (buildContext)
+    protected virtual TestConnectionString GetActualConnectionString(ServiceProviderBuildContext buildContext) =>
+
+        buildContext switch
         {
-            case PooledServiceProviderBuildContext pooledContext:
-                return pooledContext.MainServiceProvider.GetRequiredService<IActualTestConnectionStringFactory>().Create(buildContext.Index);
-
-            case { Index.IsMain: true }:
-                return this.MainConnectionString;
-
-            default:
-                throw new InvalidOperationException("Unsupported build context.");
-        }
-    }
+            PooledServiceProviderBuildContext pooledContext => pooledContext.MainServiceProvider.GetRequiredService<IActualTestConnectionStringFactory>()
+                .Create(buildContext.Index),
+            { Index.IsMain: true } => this.RawConnectionString,
+            _ => throw new InvalidOperationException("Unsupported build context.")
+        };
 
     private IServiceCollection InitMainServices(IServiceCollection services) =>
         services.AddDatabaseTesting(dts => dts.SetSettings(new TestDatabaseSettings
             {
-                MainConnectionString = this.MainConnectionString,
+                RawConnectionString = this.RawConnectionString,
                 InitMode = this.DatabaseInitMode,
                 RemoveDatabaseOnFailure = this.RemoveDatabaseOnFailure
             })
