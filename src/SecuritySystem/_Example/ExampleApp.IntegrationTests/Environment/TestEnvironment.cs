@@ -19,9 +19,9 @@ public abstract class TestEnvironment : ConfigurationTestEnvironment
 {
     protected sealed override DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitModeHelper.DatabaseInitMode;
 
-    protected sealed override IConfiguration MainConfiguration { get; } = new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
+    protected sealed override IConfiguration RawConfiguration { get; } = new ConfigurationBuilder().AddJsonFile("testAppSettings.json", false, true).Build();
 
-    protected sealed override string GetMainConnectionStringName() => MainConnectionStringSource.DefaultName;
+    protected sealed override string ConnectionStringName { get; } = MainConnectionStringSource.DefaultName;
 
     protected sealed override void InitDatabase(IDatabaseTestingSetup dts) =>
         dts

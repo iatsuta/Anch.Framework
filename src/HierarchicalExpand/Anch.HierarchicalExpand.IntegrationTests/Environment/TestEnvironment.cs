@@ -21,7 +21,7 @@ public abstract class TestEnvironment : DatabaseTestEnvironment
 
     protected override DatabaseInitMode DatabaseInitMode { get; } = DatabaseInitModeHelper.DatabaseInitMode;
 
-    protected override TestConnectionString MainConnectionString { get; } = new("Data Source=test.db;Pooling=False");
+    protected override TestConnectionString RawConnectionString { get; } = new("Data Source=test.db;Pooling=False");
 
     protected override IServiceProvider BuildServiceProvider(IServiceCollection services, TestConnectionString actualConnectionString)
     {

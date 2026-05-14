@@ -6,5 +6,5 @@ public interface ITestConnectionStringProvider
 
     TestConnectionString FilledSnapshot { get; }
 
-    TestConnectionString Main { get; }
+    TestConnectionString Actual { get; }
 }

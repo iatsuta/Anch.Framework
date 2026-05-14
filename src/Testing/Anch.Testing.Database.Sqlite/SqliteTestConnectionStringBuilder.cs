@@ -8,7 +8,7 @@ public class SqliteTestConnectionStringBuilder(TestDatabaseSettings databaseSett
 {
     public TestConnectionString AddPostfix(string postfix)
     {
-        var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.MainConnectionString.Value };
+        var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.RawConnectionString.Value };
 
         var dataSource = builder["Data Source"].ToString();
 

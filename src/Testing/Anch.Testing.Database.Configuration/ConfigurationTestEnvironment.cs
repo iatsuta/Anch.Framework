@@ -7,12 +7,13 @@ namespace Anch.Testing.Database.Configuration;
 
 public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 {
-    private string MainConnectionStringName => field ??= this.GetMainConnectionStringName();
+    protected abstract IConfiguration RawConfiguration { get; }
 
-    protected abstract IConfiguration MainConfiguration { get; }
+    protected abstract string ConnectionStringName { get; }
 
-    protected override TestConnectionString MainConnectionString =>
-        field ??= new TestConnectionString(this.MainConfiguration.GetRequiredConnectionString(this.MainConnectionStringName));
+    protected override TestConnectionString RawConnectionString =>
+
+        field ??= new TestConnectionString(this.RawConfiguration.GetRequiredConnectionString(this.ConnectionStringName));
 
     protected override IServiceProvider BuildServiceProvider(IServiceCollection services, TestConnectionString actualConnectionString)
     {
@@ -23,20 +24,18 @@ public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 
     protected abstract IServiceProvider BuildServiceProvider(IServiceCollection services, IConfiguration configuration);
 
-    protected virtual string GetMainConnectionStringName() => "DefaultConnection";
-
     private IConfiguration GetActualConfiguration(TestConnectionString actualConnectionString)
     {
-        if (actualConnectionString == this.MainConnectionString)
+        if (actualConnectionString == this.RawConnectionString)
         {
-            return this.MainConfiguration;
+            return this.RawConfiguration;
         }
         else
         {
             return new ConfigurationBuilder()
-                .AddConfiguration(this.MainConfiguration)
+                .AddConfiguration(this.RawConfiguration)
                 .AddInMemoryCollection(new Dictionary<string, string?>
-                    { [$"ConnectionStrings:{this.MainConnectionStringName}"] = actualConnectionString.Value })
+                    { [$"ConnectionStrings:{this.ConnectionStringName}"] = actualConnectionString.Value })
                 .Build();
         }
     }

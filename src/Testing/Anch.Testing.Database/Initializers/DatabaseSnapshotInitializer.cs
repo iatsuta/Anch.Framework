@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Anch.Testing.Database.Initializers;
 
 public class DatabaseSnapshotInitializer(
-    [FromKeyedServices(TestDatabaseInitializer.EmptySchemaKey)] IInitializer emptySchemaInitializer,
-    [FromKeyedServices(TestDatabaseInitializer.TestDataKey)] IInitializer testDataInitializer,
+    [FromKeyedServices(TestDatabaseInitializer.EmptySchemaKey)]
+    IInitializer emptySchemaInitializer,
+    [FromKeyedServices(TestDatabaseInitializer.TestDataKey)]
+    IInitializer testDataInitializer,
     IDatabaseManager databaseManager,
     TestDatabaseSettings settings,
     ITestConnectionStringProvider connectionStringProvider) : IInitializer
@@ -18,7 +20,7 @@ public class DatabaseSnapshotInitializer(
         {
             case DatabaseInitMode.RebuildSnapshot:
             {
-                await this.InitializeSchema(cancellationToken);
+                await this.InitializeEmptySchema(cancellationToken);
                 await this.InitializeTestData(cancellationToken);
 
                 break;
@@ -28,7 +30,7 @@ public class DatabaseSnapshotInitializer(
             {
                 if (!await databaseManager.Exists(connectionStringProvider.EmptySnapshot, cancellationToken))
                 {
-                    await this.InitializeSchema(cancellationToken);
+                    await this.InitializeEmptySchema(cancellationToken);
                 }
 
                 if (!await databaseManager.Exists(connectionStringProvider.FilledSnapshot, cancellationToken))
@@ -47,42 +49,37 @@ public class DatabaseSnapshotInitializer(
         }
     }
 
-    protected virtual async ValueTask InitializeSchema(CancellationToken cancellationToken)
+    protected virtual async Task InternalInitializeEmptySchema(CancellationToken cancellationToken)
     {
-        try
-        {
-            await databaseManager.Remove(connectionStringProvider.Main, cancellationToken);
+        await databaseManager.Remove(connectionStringProvider.Actual, cancellationToken);
 
-            await emptySchemaInitializer.Initialize(cancellationToken);
+        await emptySchemaInitializer.Initialize(cancellationToken);
 
-            await databaseManager.Move(connectionStringProvider.Main, connectionStringProvider.EmptySnapshot, true, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            if (settings.RemoveDatabaseOnFailure)
-            {
-                try
-                {
-                    await databaseManager.Remove(connectionStringProvider.Main, cancellationToken);
-                }
-                catch (Exception cleanEx)
-                {
-                    throw new AggregateException(ex, cleanEx);
-                }
-            }
-
-            throw;
-        }
+        await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.EmptySnapshot, true, cancellationToken);
     }
-    protected virtual async ValueTask InitializeTestData(CancellationToken cancellationToken)
+
+    protected virtual async Task InternalInitializeTestData(CancellationToken cancellationToken)
+    {
+        await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.Actual, true, cancellationToken);
+
+        await testDataInitializer.Initialize(cancellationToken);
+
+        await databaseManager.Move(connectionStringProvider.Actual, connectionStringProvider.FilledSnapshot, true, cancellationToken);
+    }
+
+    private Task InitializeEmptySchema(CancellationToken cancellationToken) =>
+
+        this.SafeInitialize(() => this.InternalInitializeEmptySchema(cancellationToken), cancellationToken);
+
+    private Task InitializeTestData(CancellationToken cancellationToken) =>
+
+        this.SafeInitialize(() => this.InternalInitializeTestData(cancellationToken), cancellationToken);
+
+    private async Task SafeInitialize(Func<Task> initAction, CancellationToken cancellationToken)
     {
         try
         {
-            await databaseManager.Copy(connectionStringProvider.EmptySnapshot, connectionStringProvider.Main, true, cancellationToken);
-
-            await testDataInitializer.Initialize(cancellationToken);
-
-            await databaseManager.Move(connectionStringProvider.Main, connectionStringProvider.FilledSnapshot, true, cancellationToken);
+            await initAction();
         }
         catch (Exception ex)
         {
@@ -90,7 +87,7 @@ public class DatabaseSnapshotInitializer(
             {
                 try
                 {
-                    await databaseManager.Remove(connectionStringProvider.Main, cancellationToken);
+                    await databaseManager.Remove(connectionStringProvider.Actual, cancellationToken);
                 }
                 catch (Exception cleanEx)
                 {
