@@ -1,9 +1,7 @@
 ﻿namespace Anch.Testing.Database.ConnectionStringManagement;
 
-public class ActualTestConnectionStringFactory(
-    IActualTestConnectionStringSource actualTestConnectionStringSource,
-    ITestConnectionStringBuilder testConnectionStringBuilder) : IActualTestConnectionStringFactory
+public class ActualTestConnectionStringFactory(ITestConnectionStringFactory testConnectionStringFactory) : IActualTestConnectionStringFactory
 {
     public TestConnectionString Create(ServiceProviderIndex serviceProviderIndex) =>
-        serviceProviderIndex.IsMain ? actualTestConnectionStringSource.ActualConnectionString : testConnectionStringBuilder.AddPostfix($"_pool_{serviceProviderIndex.Index:D5}");
+        testConnectionStringFactory.Create(serviceProviderIndex.IsMain ? "" : $"_pool_{serviceProviderIndex.Index:D5}");
 }

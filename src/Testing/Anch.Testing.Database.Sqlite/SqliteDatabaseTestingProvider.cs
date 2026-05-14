@@ -12,6 +12,6 @@ public class SqliteDatabaseTestingProvider : IDatabaseTestingProvider
         services
             .AddSingleton<IDatabaseManager, SqliteDatabaseManager>()
             .AddSingleton<IDatabaseFilePathExtractor, SqliteDatabaseFilePathExtractor>()
-            .AddSingleton<ITestConnectionStringBuilder, SqliteTestConnectionStringBuilder>();
+            .AddSingleton<ITestConnectionStringFactory, SqliteTestConnectionStringFactory>();
     }
 }
