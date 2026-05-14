@@ -4,9 +4,9 @@ using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.Sqlite;
 
-public class SqliteTestConnectionStringBuilder(TestDatabaseSettings databaseSettings) : ITestConnectionStringBuilder
+public class SqliteTestConnectionStringFactory(TestDatabaseSettings databaseSettings) : ITestConnectionStringFactory
 {
-    public TestConnectionString AddPostfix(string postfix)
+    public TestConnectionString Create(string postfix)
     {
         var builder = new DbConnectionStringBuilder { ConnectionString = databaseSettings.RawConnectionString.Value };
 
