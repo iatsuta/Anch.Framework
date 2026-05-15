@@ -24,14 +24,9 @@ public abstract class DatabaseTestEnvironment : ITestEnvironment
             .AddEnvironmentHook<PrepareDatabaseEnvironmentHook>(EnvironmentHookType.Before)
             .AddEnvironmentHook<CleanDatabaseEnvironmentHook>(EnvironmentHookType.After);
 
-        if (buildContext.Index.IsMain)
-        {
-            return this.BuildServiceProvider(this.InitMainServices(services), actualConnectionString);
-        }
-        else
-        {
-            return this.BuildServiceProvider(services, actualConnectionString);
-        }
+        var fullServices = buildContext.Index.IsMain ? this.InitializeMainServices(services) : services;
+
+        return this.BuildServiceProvider(fullServices, actualConnectionString);
     }
 
     protected virtual TestConnectionString GetActualConnectionString(ServiceProviderBuildContext buildContext) =>
@@ -44,14 +39,15 @@ public abstract class DatabaseTestEnvironment : ITestEnvironment
             _ => throw new InvalidOperationException("Unsupported build context.")
         };
 
-    private IServiceCollection InitMainServices(IServiceCollection services) =>
-        services.AddDatabaseTesting(dts => dts.SetSettings(new TestDatabaseSettings
-            {
-                RawConnectionString = this.RawConnectionString,
-                InitMode = this.DatabaseInitMode,
-                RemoveDatabaseOnFailure = this.RemoveDatabaseOnFailure
-            })
-            .Pipe(this.InitDatabase));
+    protected TestDatabaseSettings DatabaseSettings => field ??= new TestDatabaseSettings
+    {
+        RawConnectionString = this.RawConnectionString,
+        InitMode = this.DatabaseInitMode,
+        RemoveDatabaseOnFailure = this.RemoveDatabaseOnFailure
+    };
+
+    protected virtual IServiceCollection InitializeMainServices(IServiceCollection services) =>
+        services.AddDatabaseTesting(dts => dts.SetSettings(this.DatabaseSettings).Pipe(this.InitDatabase));
 
     protected abstract void InitDatabase(IDatabaseTestingSetup dts);
 
