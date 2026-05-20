@@ -70,7 +70,7 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowPa
     {
         using (this.asyncLocker)
         {
-            await using (var _ = this.internalServiceProviderPool) ;
+            await using (this.internalServiceProviderPool) ;
         }
     }
 }
