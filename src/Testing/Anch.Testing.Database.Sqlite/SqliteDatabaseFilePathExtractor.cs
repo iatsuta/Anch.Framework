@@ -16,7 +16,7 @@ public class SqliteDatabaseFilePathExtractor : IDatabaseFilePathExtractor
         if (!builder.TryGetValue("Data Source", out var value))
             throw new InvalidOperationException("Data Source is missing.");
 
-        var dataSource = value?.ToString();
+        var dataSource = value.ToString();
 
         if (string.IsNullOrWhiteSpace(dataSource))
             throw new InvalidOperationException("Data Source is empty.");

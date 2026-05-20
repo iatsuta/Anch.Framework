@@ -4,7 +4,21 @@ namespace Anch.Testing.Database.Sqlite;
 
 public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : IDatabaseManager
 {
-    public ValueTask CreateEmpty(TestConnectionString connectionString, CancellationToken ct) => ValueTask.CompletedTask;
+    public ValueTask CreateEmpty(TestConnectionString connectionString, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var targetPath = pathExtractor.Extract(connectionString);
+
+        var directory = Path.GetDirectoryName(targetPath);
+
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        return ValueTask.CompletedTask;
+    }
 
     public ValueTask<bool> Exists(TestConnectionString connectionString, CancellationToken ct)
     {
@@ -29,77 +43,39 @@ public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : I
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask Copy(
+    public ValueTask Copy(TestConnectionString from, TestConnectionString to, CancellationToken ct) => this.CopyMove(from, to, false, ct);
+
+    public ValueTask Move(TestConnectionString from, TestConnectionString to, CancellationToken ct) => this.CopyMove(from, to, true, ct);
+
+
+    private ValueTask CopyMove(
         TestConnectionString from,
         TestConnectionString to,
-        bool force,
+        bool move,
         CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
 
         var sourcePath = pathExtractor.Extract(from);
-        var destinationPath = pathExtractor.Extract(to);
+        var targetPath = pathExtractor.Extract(to);
 
-        if (!File.Exists(sourcePath))
+        if (File.Exists(sourcePath))
+        {
+            File.Delete(targetPath);
+        }
+        else
         {
             throw new FileNotFoundException("Source database file not found.", sourcePath);
         }
 
-        var destinationExists = File.Exists(destinationPath);
-
-        if (destinationExists && !force)
+        if (move)
         {
-            throw new IOException($"Destination file already exists: {destinationPath}");
+            File.Move(sourcePath, targetPath, overwrite: true);
         }
-
-        var directory = Path.GetDirectoryName(destinationPath);
-
-        if (!string.IsNullOrEmpty(directory))
+        else
         {
-            Directory.CreateDirectory(directory);
+            File.Copy(sourcePath, targetPath, overwrite: true);
         }
-
-        File.Copy(sourcePath, destinationPath, overwrite: force);
-
-        return ValueTask.CompletedTask;
-    }
-
-    public ValueTask Move(
-        TestConnectionString from,
-        TestConnectionString to,
-        bool force,
-        CancellationToken ct)
-    {
-        ct.ThrowIfCancellationRequested();
-
-        var sourcePath = pathExtractor.Extract(from);
-        var destinationPath = pathExtractor.Extract(to);
-
-        if (!File.Exists(sourcePath))
-        {
-            throw new FileNotFoundException("Source database file not found.", sourcePath);
-        }
-
-        var destinationExists = File.Exists(destinationPath);
-
-        if (destinationExists)
-        {
-            if (!force)
-            {
-                throw new IOException($"Destination file already exists: {destinationPath}");
-            }
-
-            File.Delete(destinationPath);
-        }
-
-        var directory = Path.GetDirectoryName(destinationPath);
-
-        if (!string.IsNullOrEmpty(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-
-        File.Move(sourcePath, destinationPath);
 
         return ValueTask.CompletedTask;
     }
