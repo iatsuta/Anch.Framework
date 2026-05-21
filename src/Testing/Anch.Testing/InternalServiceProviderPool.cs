@@ -11,6 +11,8 @@ public class InternalServiceProviderPool(
     bool returnMainServiceProviderToPool)
     : IServiceProviderPool
 {
+    private bool disposed;
+
     private int lastIndex;
 
     private readonly ConcurrentBag<IServiceProvider> pool = returnMainServiceProviderToPool ? [mainServiceProvider] : [];
@@ -60,6 +62,11 @@ public class InternalServiceProviderPool(
 
     public async ValueTask DisposeAsync()
     {
+        if (Interlocked.Exchange(ref this.disposed, true))
+        {
+            return;
+        }
+
         using (this.parallelSemaphoreSlim)
         {
             foreach (var serviceProvider in this.pool.Except([mainServiceProvider]).Concat([mainServiceProvider]))

@@ -13,6 +13,8 @@ public class DatabaseSnapshotInitializer(
     IDatabaseManager databaseManager,
     TestDatabaseSettings settings) : IInitializer, IAsyncDisposable
 {
+    private bool disposed;
+
     public async Task Initialize(CancellationToken cancellationToken)
     {
         switch (settings.InitMode)
@@ -102,6 +104,11 @@ public class DatabaseSnapshotInitializer(
 
     public async ValueTask DisposeAsync()
     {
+        if (Interlocked.Exchange(ref this.disposed, true))
+        {
+            return;
+        }
+
         if (settings.InitMode == DatabaseInitMode.RebuildSnapshot)
         {
             await databaseManager.Remove(TestConnectionStringRole.EmptySnapshot, CancellationToken.None);
