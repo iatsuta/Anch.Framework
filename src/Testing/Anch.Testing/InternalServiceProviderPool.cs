@@ -1,5 +1,8 @@
 ﻿using System.Collections.Concurrent;
 
+using Anch.Core;
+using Anch.Threading;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing;
@@ -19,8 +22,18 @@ public class InternalServiceProviderPool(
 
     private readonly SemaphoreSlim? parallelSemaphoreSlim = parallelizationSettings.AllowParallelization ? null : new SemaphoreSlim(1, 1);
 
+    private readonly AsyncOnce mainInitialization = new(async ct =>
+    {
+        foreach (var initializer in mainServiceProvider.GetKeyedServices<IInitializer>(ITestEnvironment.MainServiceProviderKey))
+        {
+            await initializer.Initialize(ct);
+        }
+    });
+
     public async ValueTask<IServiceProvider> GetAsync(CancellationToken ct)
     {
+        await this.mainInitialization.EnsureExecutedAsync(ct);
+
         if (this.parallelSemaphoreSlim != null)
         {
             await this.parallelSemaphoreSlim.WaitAsync(ct);
