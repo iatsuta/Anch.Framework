@@ -1,13 +1,18 @@
-﻿using Anch.Core;
-using Anch.Threading;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing;
 
 public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowParallelization) : IServiceProviderPool
 {
-    private readonly AsyncLazy<IServiceProviderPool> lazyInternalServiceProviderPool = new(async ct =>
+    private readonly IServiceProviderPool internalServiceProviderPool = CreateInternal(testEnvironment, allowParallelization);
+
+    public ValueTask<IServiceProvider> GetAsync(CancellationToken ct) => this.internalServiceProviderPool.GetAsync(ct);
+
+    public ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct) => this.internalServiceProviderPool.ReleaseAsync(serviceProvider, ct);
+
+    public ValueTask DisposeAsync() => this.internalServiceProviderPool.DisposeAsync();
+
+    private static IServiceProviderPool CreateInternal(ITestEnvironment testEnvironment, bool? allowParallelization)
     {
         var serviceProviderBuildContext = ServiceProviderBuildContext.Main;
 
@@ -23,11 +28,6 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowPa
 
         var mainServiceProvider = testEnvironment.BuildServiceProvider(services, serviceProviderBuildContext);
 
-        foreach (var initializer in mainServiceProvider.GetKeyedServices<IInitializer>(ITestEnvironment.MainServiceProviderKey))
-        {
-            await initializer.Initialize(ct);
-        }
-
         var mainServiceProviderSettings = mainServiceProvider.GetService<IMainServiceProviderSettings>();
 
         return new InternalServiceProviderPool(
@@ -35,21 +35,5 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowPa
             mainServiceProvider,
             mainServiceProvider.GetRequiredService<IParallelizationSettings>(),
             mainServiceProviderSettings?.ReturnToPool ?? true);
-    });
-
-    public async ValueTask<IServiceProvider> GetAsync(CancellationToken ct)
-    {
-        var v = await this.lazyInternalServiceProviderPool.GetValueAsync(ct);
-
-        return await v.GetAsync(ct);
     }
-
-    public async ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct)
-    {
-        var v = await this.lazyInternalServiceProviderPool.GetValueAsync(ct);
-
-        await v.ReleaseAsync(serviceProvider, ct);
-    }
-
-    public ValueTask DisposeAsync() => this.lazyInternalServiceProviderPool.DisposeAsync();
 }
