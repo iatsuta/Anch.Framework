@@ -2,34 +2,38 @@
 
 namespace Anch.Testing.Tests;
 
-public class ServiceProviderTests(IServiceProvider serviceProvider)
+public class TheoryTests(IServiceProvider serviceProvider)
 {
-    [Fact]
-    public async Task Test0()
-    {
-
-    }
-
     [Theory]
     [AnchMemberData(nameof(GetTest1Cases))]
     public async Task Test1(decimal value, CancellationToken ct)
     {
+    }
 
+    [Theory]
+    [MemberData(nameof(GetTest2Cases))]
+    public async Task Test2_1(string value, CancellationToken ct)
+    {
     }
 
     [Theory]
     [AnchMemberData(nameof(GetTest2Cases))]
-    public async Task Test2(string value, CancellationToken ct)
+    public async Task Test2_2(string value, CancellationToken ct)
     {
-
     }
 
     [Theory]
     [AnchInlineData(123)]
     [AnchInlineData(234)]
-    public async Task Test3(int value, CancellationToken ct)
+    public async Task Test3_1(int value, CancellationToken ct)
     {
+    }
 
+    [Theory]
+    [InlineData(345)]
+    [InlineData(456)]
+    public async Task Test3_2(int value)
+    {
     }
 
     public IEnumerable<object[]> GetTest1Cases()
