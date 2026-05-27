@@ -35,7 +35,7 @@ public class AnchTestFramework : XunitTestFramework
                 var rootRunner =
                     new AnchTestAssemblyRunner(
                         new AnchTestCollectionRunner(
-                            new AnchTestClassRunner(), serviceProviderPool));
+                            new AnchTestClassRunner(serviceProviderPool)));
 
                 return new AnchFrameworkExecutor(new XunitTestAssembly(assembly), rootRunner, serviceProviderPool, this.CreateDiscoverer(assembly));
             });

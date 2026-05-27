@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -50,6 +51,8 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
 
             if (serviceProvider == null)
             {
+                Debugger.Launch();
+
                 return Activator.CreateInstance(testType);
             }
             else
@@ -60,9 +63,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
     }
 
     /// <inheritdoc/>
-    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(
-        MethodInfo testMethod,
-        DisposalTracker _) =>
+    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker _) =>
 
         await this.testDataCache.GetOrAdd(testMethod, async _ =>
         {
@@ -86,7 +87,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
 
             var ct = TestContext.Current.CancellationToken;
 
-            await using var scope = await this.serviceProviderPool.CreateScopeAsync(true, ct);
+            await using var scope = await this.serviceProviderPool.CreateScopeAsync(ct);
 
             if (scope.Exception != null)
             {
