@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -17,8 +16,7 @@ using Xunit.v3;
 namespace Anch.Testing.Xunit;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public class AnchMemberDataAttribute(string memberName, params object?[] arguments)
-    : MemberDataAttributeBase(memberName, arguments), IServiceProviderPoolContainer
+public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProviderPoolContainer
 {
     private IServiceProviderPool? serviceProviderPool;
 
@@ -38,6 +36,12 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
 
             return string.Join(Environment.NewLine, dataSignatures);
         });
+
+    public AnchMemberDataAttribute(string memberName, params object?[] arguments)
+        :base(memberName, arguments)
+    {
+        this.DisableDiscoveryEnumeration = true;
+    }
 
     private object? TryCreateTestInstance(MethodInfo testMethod, IServiceProvider? serviceProvider)
     {
