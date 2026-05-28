@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -17,11 +18,11 @@ namespace Anch.Testing.Xunit;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class AnchMemberDataAttribute(string memberName, params object?[] arguments)
-    : MemberDataAttributeBase(memberName, arguments), IServiceProviderPoolAttribute
+    : MemberDataAttributeBase(memberName, arguments), IServiceProviderPoolContainer
 {
     private IServiceProviderPool? serviceProviderPool;
 
-    private readonly ConcurrentDictionary<MethodInfo, object?> testInstanceCache = [];
+    private readonly ConcurrentDictionary<MethodInfo, Task<IReadOnlyCollection<ITheoryDataRow>>> testDataCache = [];
 
     static readonly Lazy<string> supportedDataSignatures;
 
@@ -38,70 +39,63 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
             return string.Join(Environment.NewLine, dataSignatures);
         });
 
-    private object? GetTestInstance(MethodInfo testMethod, IServiceProvider? serviceProvider) =>
-
-        this.testInstanceCache.GetOrAdd(testMethod, _ =>
+    private object? TryCreateTestInstance(MethodInfo testMethod, IServiceProvider? serviceProvider)
+    {
+        if (testMethod.IsStatic)
         {
-            if (testMethod.IsStatic)
+            return null;
+        }
+        else
+        {
+            var testType = testMethod.ReflectedType!;
+
+            if (serviceProvider == null)
             {
-                return null;
+                return Activator.CreateInstance(testType);
             }
             else
             {
-                var testType = testMethod.ReflectedType!;
-
-                if (serviceProvider == null)
-                {
-                    return Activator.CreateInstance(testType);
-                }
-                else
-                {
-                    return ActivatorUtilities.CreateInstance(serviceProvider, testType);
-                }
+                return ActivatorUtilities.CreateInstance(serviceProvider, testType);
             }
-        });
+        }
+    }
 
     /// <inheritdoc/>
-    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(
-        MethodInfo testMethod,
-        DisposalTracker disposalTracker)
-    {
-        if (this.MemberType is null)
-            return [];
+    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker _) =>
 
-        var accessor = this.GetPropertyAccessor(this.MemberType)
-                       ?? this.GetFieldAccessor(this.MemberType)
-                       ?? this.GetMethodAccessor(this.MemberType)
-                       ?? throw new ArgumentException(
-                           string.Format(
-                               CultureInfo.CurrentCulture,
-                               "Could not find public static member (property, field, or method) named '{0}' on '{1}'{2}",
-                               this.MemberName, this.MemberType.SafeName(), this.Arguments.Length > 0
-                                   ? string.Format(CultureInfo.CurrentCulture, " with parameter types: {0}",
-                                       string.Join(", ",
-                                           this.Arguments.Select(p => p?.GetType().SafeName() ?? "(null)")))
-                                   : ""
-                           )
-                       );
-
-        var ct = TestContext.Current.CancellationToken;
-
-        await using var scope = await this.serviceProviderPool.CreateScopeAsync(true, ct);
-
-        if (scope.Exception != null)
+        await this.testDataCache.GetOrAdd(testMethod, async _ =>
         {
-            ExceptionDispatchInfo.Capture(scope.Exception).Throw();
-        }
+            if (this.MemberType is null)
+                return [];
 
-        var testInstance = this.GetTestInstance(testMethod, scope.ServiceProvider);
+            var accessor = this.GetPropertyAccessor(this.MemberType)
+                           ?? this.GetFieldAccessor(this.MemberType)
+                           ?? this.GetMethodAccessor(this.MemberType)
+                           ?? throw new ArgumentException(
+                               string.Format(
+                                   CultureInfo.CurrentCulture,
+                                   "Could not find public static member (property, field, or method) named '{0}' on '{1}'{2}",
+                                   this.MemberName, this.MemberType.SafeName(), this.Arguments.Length > 0
+                                       ? string.Format(CultureInfo.CurrentCulture, " with parameter types: {0}",
+                                           string.Join(", ",
+                                               this.Arguments.Select(p => p?.GetType().SafeName() ?? "(null)")))
+                                       : ""
+                               )
+                           );
 
-        if (testInstance is IAsyncLifetime asyncInit)
-        {
-            await asyncInit.InitializeAsync();
-        }
+            var ct = TestContext.Current.CancellationToken;
 
-        try
-        {
+            await using var serviceProviderPoolScope = await this.serviceProviderPool.TryCreateScopeAsync(ct);
+
+            if (serviceProviderPoolScope?.Exception != null)
+            {
+                ExceptionDispatchInfo.Capture(serviceProviderPoolScope.Exception).Throw();
+            }
+
+            var testInstance = this.TryCreateTestInstance(testMethod, serviceProviderPoolScope?.ServiceProvider);
+
+            await using var __ = await (testInstance as IAsyncLifetime).TryCreateScopeAsync(ct);
+
             var returnValue =
                 accessor(testInstance)
                 ?? throw new ArgumentException(
@@ -123,15 +117,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
             }
 
             return await this.GetDataAsync(returnValue, this.MemberType);
-        }
-        finally
-        {
-            if (testInstance is IAsyncLifetime asyncDispose)
-            {
-                await asyncDispose.DisposeAsync();
-            }
-        }
-    }
+        });
 
     async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetDataAsync(
         object? returnValue,
@@ -298,7 +284,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
     public override bool SupportsDiscoveryEnumeration() =>
         !this.DisableDiscoveryEnumeration;
 
-    IServiceProviderPool? IServiceProviderPoolAttribute.ServiceProviderPool
+    IServiceProviderPool? IServiceProviderPoolContainer.ServiceProviderPool
     {
         get => this.serviceProviderPool;
         set => this.serviceProviderPool = value;

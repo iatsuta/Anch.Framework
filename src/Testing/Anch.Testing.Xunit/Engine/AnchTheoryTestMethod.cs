@@ -5,8 +5,27 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProviderPool? serviceProviderPool) : IXunitTestMethod, IXunitSerializable
+public class AnchTheoryTestMethod(IXunitTestMethod baseMethod) : IXunitTestMethod, IXunitSerializable, IServiceProviderPoolContainer
 {
+    private IReadOnlyCollection<IDataAttribute>? dataAttributes;
+
+    public AnchTheoryTestMethod() : this(new XunitTestMethod())
+    {
+    }
+
+    public IServiceProviderPool? ServiceProviderPool
+    {
+        get => field;
+        set
+        {
+            if (field != value)
+            {
+                this.dataAttributes = null;
+                field = value;
+            }
+        }
+    }
+
     public int? MethodArity => baseMethod.MethodArity;
 
     public string MethodName => baseMethod.MethodName;
@@ -17,13 +36,13 @@ public class AnchTheoryTestMethod(IXunitTestMethod baseMethod, IServiceProviderP
 
     public IReadOnlyCollection<IBeforeAfterTestAttribute> BeforeAfterTestAttributes => baseMethod.BeforeAfterTestAttributes;
 
-    public IReadOnlyCollection<IDataAttribute> DataAttributes => field ??=
+    public IReadOnlyCollection<IDataAttribute> DataAttributes => this.dataAttributes ??=
     [
         .. baseMethod.DataAttributes.Select(attr =>
         {
-            if (attr is IServiceProviderPoolAttribute serviceProviderPoolAttribute)
+            if (attr is IServiceProviderPoolContainer serviceProviderPoolContainer)
             {
-                serviceProviderPoolAttribute.ServiceProviderPool = serviceProviderPool;
+                serviceProviderPoolContainer.ServiceProviderPool = this.ServiceProviderPool;
             }
 
             return attr;

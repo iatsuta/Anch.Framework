@@ -3,10 +3,10 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner, IServiceProviderPool? serviceProviderPool) :
-    XunitTestCollectionRunner
+public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner) : XunitTestCollectionRunner
 {
-    protected override async ValueTask<RunSummary> RunTestClass(XunitTestCollectionRunnerContext ctxt, IXunitTestClass? testClass, IReadOnlyCollection<IXunitTestCase> testCases)
+    protected override async ValueTask<RunSummary> RunTestClass(XunitTestCollectionRunnerContext ctxt, IXunitTestClass? testClass,
+        IReadOnlyCollection<IXunitTestCase> testCases)
     {
         Guard.ArgumentNotNull(ctxt);
 
@@ -18,21 +18,7 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner,
                 ctxt.CancellationTokenSource,
                 testCases,
                 "Test case '{0}' does not have an associated class and cannot be run by XunitTestClassRunner",
-                sendTestClassMessages: true
-            );
-
-        await using var scope = await serviceProviderPool.CreateScopeAsync(false, ctxt.CancellationTokenSource.Token);
-
-        if (scope.Exception != null)
-        {
-            return XunitRunnerHelper.FailTestCases(
-                ctxt.MessageBus,
-                ctxt.CancellationTokenSource,
-                testCases,
-                scope.Exception,
-                sendTestClassMessages: true
-            );
-        }
+                sendTestClassMessages: true);
 
         return await commonTestClassRunner.Run(
             testClass,
@@ -42,7 +28,6 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner,
             ctxt.TestCaseOrderer,
             ctxt.Aggregator.Clone(),
             ctxt.CancellationTokenSource,
-            ctxt.CollectionFixtureMappings,
-            scope.ServiceProvider);
+            ctxt.CollectionFixtureMappings);
     }
 }

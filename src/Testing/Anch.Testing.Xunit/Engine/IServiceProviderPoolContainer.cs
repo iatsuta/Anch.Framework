@@ -1,6 +1,6 @@
 ﻿namespace Anch.Testing.Xunit.Engine;
 
-public interface IServiceProviderPoolAttribute
+public interface IServiceProviderPoolContainer
 {
     IServiceProviderPool? ServiceProviderPool { get; set; }
 }

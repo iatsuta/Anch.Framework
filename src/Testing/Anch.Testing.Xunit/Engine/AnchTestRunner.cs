@@ -7,9 +7,40 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchTestRunner : XunitTestRunner
+public class AnchTestRunner(IServiceProviderPool? serviceProviderPool) : XunitTestRunnerBase<XunitTestRunnerContext, IXunitTest>
 {
-    public new static AnchTestRunner Instance { get; } = new();
+    public async ValueTask<RunSummary> Run(
+        IXunitTest test,
+        IMessageBus messageBus,
+        object?[] constructorArguments,
+        ExplicitOption explicitOption,
+        ExceptionAggregator aggregator,
+        CancellationTokenSource cancellationTokenSource,
+        IReadOnlyCollection<IBeforeAfterTestAttribute> beforeAfterAttributes)
+    {
+        await using var serviceProviderPoolScope = await serviceProviderPool.TryCreateScopeAsync(cancellationTokenSource.Token);
+
+        if (serviceProviderPoolScope?.Exception == null)
+        {
+            await using var ctxt = new XunitTestRunnerContext(
+                test,
+                messageBus,
+                explicitOption,
+                aggregator,
+                cancellationTokenSource,
+                beforeAfterAttributes,
+                constructorArguments.Select(arg => arg == HandledServiceProvider.Instance ? serviceProviderPoolScope?.ServiceProvider : arg).ToArray()
+            );
+
+            await ctxt.InitializeAsync();
+
+            return await this.Run(ctxt);
+        }
+        else
+        {
+            return XunitRunnerHelper.FailTest(messageBus, cancellationTokenSource, test, serviceProviderPoolScope.Exception);
+        }
+    }
 
     protected override object? InvokeTestMethod(XunitTestRunnerContext ctxt, object? testClassInstance)
     {
@@ -22,7 +53,6 @@ public class AnchTestRunner : XunitTestRunner
             return base.InvokeTestMethod(ctxt, testClassInstance);
         }
     }
-
 
     protected override ValueTask<TimeSpan> InvokeTest(
         XunitTestRunnerContext ctxt,

@@ -1,43 +1,36 @@
-﻿using Xunit.Internal;
+﻿using System.Diagnostics;
+
+using Xunit.Internal;
 using Xunit.Sdk;
 using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchTestMethodRunner : XunitTestMethodRunnerBase<AnchTestMethodRunnerContext, IXunitTestMethod, IXunitTestCase>
+public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
+    : XunitTestMethodRunnerBase<XunitTestMethodRunnerContext, IXunitTestMethod, IXunitTestCase>
 {
-    public static AnchTestMethodRunner Instance { get; } = new();
-
-    protected override async ValueTask<RunSummary> RunTestCase(AnchTestMethodRunnerContext ctxt, IXunitTestCase testCase)
+    protected override async ValueTask<RunSummary> RunTestCase(XunitTestMethodRunnerContext ctxt, IXunitTestCase testCase)
     {
         Guard.ArgumentNotNull(ctxt);
         Guard.ArgumentNotNull(testCase);
 
-        if (ctxt.ServiceProvider != null)
+        if (testCase is ISelfExecutingXunitTestCase selfExecutingTestCase)
         {
-            await ctxt.ServiceProvider.RunEnvironmentHooks(EnvironmentHookType.Before, ctxt.CancellationTokenSource.Token);
+            return await selfExecutingTestCase.Run(ctxt.ExplicitOption, ctxt.MessageBus, ctxt.ConstructorArguments, ctxt.Aggregator.Clone(),
+                ctxt.CancellationTokenSource);
         }
-
-        try
+        else
         {
-            if (testCase is ISelfExecutingXunitTestCase selfExecutingTestCase)
-                return await selfExecutingTestCase.Run(ctxt.ExplicitOption, ctxt.MessageBus, ctxt.ConstructorArguments, ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource);
+            var actualTestCase = testCase.WithServiceProviderPool(serviceProviderPool);
 
             return await AnchRunnerHelper.RunXunitTestCase(
-                testCase,
+                actualTestCase,
                 ctxt.MessageBus,
                 ctxt.CancellationTokenSource,
                 ctxt.Aggregator.Clone(),
                 ctxt.ExplicitOption,
-                ctxt.ConstructorArguments
-            );
-        }
-        finally
-        {
-            if (ctxt.ServiceProvider != null)
-            {
-                await ctxt.ServiceProvider.RunEnvironmentHooks(EnvironmentHookType.After, ctxt.CancellationTokenSource.Token);
-            }
+                ctxt.ConstructorArguments,
+                serviceProviderPool);
         }
     }
 
@@ -48,23 +41,20 @@ public class AnchTestMethodRunner : XunitTestMethodRunnerBase<AnchTestMethodRunn
         IMessageBus messageBus,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
-        object?[] constructorArguments,
-        IServiceProvider? serviceProvider)
+        object?[] constructorArguments)
     {
         Guard.ArgumentNotNull(testCases);
         Guard.ArgumentNotNull(messageBus);
         Guard.ArgumentNotNull(constructorArguments);
 
-        await using var ctxt = new AnchTestMethodRunnerContext(
+        await using var ctxt = new XunitTestMethodRunnerContext(
             testMethod,
             testCases,
             explicitOption,
             messageBus,
             aggregator,
             cancellationTokenSource,
-            constructorArguments,
-            serviceProvider
-        );
+            constructorArguments);
 
         await ctxt.InitializeAsync();
 

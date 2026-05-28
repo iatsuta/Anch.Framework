@@ -61,7 +61,8 @@ public static class AnchRunnerHelper
         CancellationTokenSource cancellationTokenSource,
         ExceptionAggregator aggregator,
         ExplicitOption explicitOption,
-        object?[] constructorArguments)
+        object?[] constructorArguments,
+        IServiceProviderPool? serviceProviderPool)
     {
         Guard.ArgumentNotNull(testCase);
 
@@ -97,7 +98,7 @@ public static class AnchRunnerHelper
                 );
         }
 
-        return await AnchTestCaseRunner.Instance.Run(
+        return await new AnchTestCaseRunner(serviceProviderPool).Run(
             testCase,
             tests,
             messageBus,

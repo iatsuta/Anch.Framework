@@ -10,6 +10,10 @@ public class AnchTestFramework : XunitTestFramework
 {
     private readonly ConcurrentDictionary<Assembly, IServiceProviderPool?> serviceProviderPoolCache = [];
 
+    private readonly ConcurrentDictionary<Assembly, ITestFrameworkExecutor> executorCache = [];
+
+    private readonly ConcurrentDictionary<Assembly, ITestFrameworkDiscoverer> discovererCache = [];
+
     private IServiceProviderPool? GetServiceProviderPool(Assembly assembly) =>
 
         this.serviceProviderPoolCache.GetOrAdd(assembly,
@@ -22,20 +26,23 @@ public class AnchTestFramework : XunitTestFramework
                     : null;
             });
 
-    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly)
-    {
-        var serviceProviderPool = this.GetServiceProviderPool(assembly);
+    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly) =>
+        this.executorCache.GetOrAdd(assembly,
+            _ =>
+            {
+                var serviceProviderPool = this.GetServiceProviderPool(assembly);
 
-        var rootRunner =
-            new AnchTestAssemblyRunner(
-                new AnchTestCollectionRunner(
-                    new AnchTestClassRunner(), serviceProviderPool));
+                var rootRunner =
+                    new AnchTestAssemblyRunner(
+                        new AnchTestCollectionRunner(
+                            new AnchTestClassRunner(serviceProviderPool)));
 
-        return new AnchFrameworkExecutor(new XunitTestAssembly(assembly), rootRunner, serviceProviderPool);
-    }
+                return new AnchFrameworkExecutor(new XunitTestAssembly(assembly), rootRunner, serviceProviderPool, this.CreateDiscoverer(assembly));
+            });
 
     protected override ITestFrameworkDiscoverer CreateDiscoverer(Assembly assembly) =>
-
-        new AnchFrameworkDiscoverer(new XunitTestAssembly(assembly, null, assembly.GetName().Version),
-            this.GetServiceProviderPool(assembly));
+        this.discovererCache.GetOrAdd(assembly,
+            _ =>
+                new AnchFrameworkDiscoverer(new XunitTestAssembly(assembly, null, assembly.GetName().Version),
+                    this.GetServiceProviderPool(assembly)));
 }
