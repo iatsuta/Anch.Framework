@@ -5,14 +5,13 @@ namespace Anch.SecuritySystem.Testing;
 
 public class RootUserCredentialManager(
     AdministratorsRoleList administratorsRoleList,
-    ITestingEvaluator<UserCredentialManager> baseEvaluator,
+    ITestingEvaluator<IServiceProxyFactory> baseEvaluator,
     RootImpersonateServiceState rootImpersonateServiceState,
     Tuple<UserCredential?> userCredential,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null)
 {
     private ITestingEvaluator<UserCredentialManager> ManagerEvaluator { get; } =
-
-        baseEvaluator.Select(service => userCredential.Item1 == null ? service : service.ReplaceCurrentUser(userCredential.Item1));
+        baseEvaluator.Select(service => service.Create<UserCredentialManager>(userCredential));
 
     public void LoginAs() =>
 

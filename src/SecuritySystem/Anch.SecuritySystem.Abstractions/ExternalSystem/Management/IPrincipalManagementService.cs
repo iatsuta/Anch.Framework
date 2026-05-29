@@ -6,7 +6,7 @@ public interface IPrincipalManagementService
 {
     Type PrincipalType { get; }
 
-    Task<PrincipalData> CreatePrincipalAsync(string principalName, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default);
+    Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default);
 
     Task<PrincipalData> UpdatePrincipalNameAsync(UserCredential userCredential, string principalName, CancellationToken cancellationToken);
 

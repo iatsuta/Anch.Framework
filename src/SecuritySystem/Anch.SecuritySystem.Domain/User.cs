@@ -1,3 +1,3 @@
-﻿namespace Anch.SecuritySystem.UserSource;
+﻿namespace Anch.SecuritySystem;
 
 public record User(string Name, SecurityIdentity Identity);

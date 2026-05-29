@@ -15,6 +15,9 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
             case UserCredential.NamedUserCredential { Name: var name }:
                 return name;
 
+            case UserCredential.FullUserCredential { User.Name: var name }:
+                return name;
+
             case UserCredential.IdentUserCredential { Identity: var identity }:
                 {
                     var request =

@@ -33,8 +33,8 @@ public class GeneralPrincipalManagementService(
 
     public Type PrincipalType => this.InnerService.PrincipalType;
 
-    public Task<PrincipalData> CreatePrincipalAsync(string principalName, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default) =>
-        this.InnerService.CreatePrincipalAsync(principalName, managedPermissions, cancellationToken);
+    public Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default) =>
+        this.InnerService.CreatePrincipalAsync(userCredential, managedPermissions, cancellationToken);
 
     public Task<PrincipalData> UpdatePrincipalNameAsync(UserCredential userCredential, string principalName, CancellationToken cancellationToken) =>
         this.InnerService.UpdatePrincipalNameAsync(userCredential, principalName, cancellationToken);
@@ -66,11 +66,11 @@ public class GeneralPrincipalManagementService<TPrincipal, TPermission, TPermiss
     public Type PrincipalType { get; } = typeof(TPrincipal);
 
     public async Task<PrincipalData> CreatePrincipalAsync(
-        string principalName,
+        UserCredential userCredential,
         IEnumerable<ManagedPermission> managedPermissions,
         CancellationToken cancellationToken)
     {
-        var principal = await principalDomainService.GetOrCreateAsync(principalName, cancellationToken);
+        var principal = await principalDomainService.GetOrCreateAsync(userCredential, cancellationToken);
 
         var result = await this.UpdatePermissionsAsync(principal, [], managedPermissions, cancellationToken);
 

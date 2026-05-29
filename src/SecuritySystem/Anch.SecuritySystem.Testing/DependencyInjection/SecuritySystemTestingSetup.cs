@@ -36,8 +36,6 @@ public class SecuritySystemTestingSetup : ISecuritySystemTestingSetup, IServiceI
             .Replace(ServiceDescriptor.KeyedScoped<ICurrentUser, TestingRawCurrentUser>(ICurrentUser.RawKey))
             .Replace(ServiceDescriptor.KeyedSingleton<ICurrentUser, TestingDefaultCurrentUser>(ICurrentUser.DefaultKey))
 
-            .AddScoped(typeof(UserCredentialManager))
-
             .AddSingleton<RootAuthManager>()
             .AddSingleton(AdministratorsRoleList.Default)
             .AddSingleton(this.getTestRootUserInfoFunc)

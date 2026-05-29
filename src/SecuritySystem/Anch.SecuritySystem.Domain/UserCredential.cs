@@ -12,6 +12,11 @@ public abstract record UserCredential
         public override string ToString() => this.Identity.GetId().ToString()!;
     }
 
+    public record FullUserCredential(User User) : UserCredential
+    {
+        public override string ToString() => this.User.Name;
+    }
+
 
     public static implicit operator UserCredential(string? name)
     {
@@ -21,6 +26,11 @@ public abstract record UserCredential
     public static implicit operator UserCredential(SecurityIdentity identity)
     {
         return new IdentUserCredential(identity);
+    }
+
+    public static implicit operator UserCredential(User user)
+    {
+        return new FullUserCredential(user);
     }
 
     public static implicit operator UserCredential(Guid id)

@@ -1,6 +1,4 @@
-﻿using Anch.SecuritySystem.UserSource;
-
-namespace Anch.SecuritySystem.Services;
+﻿namespace Anch.SecuritySystem.Services;
 
 public interface IRunAsManager
 {

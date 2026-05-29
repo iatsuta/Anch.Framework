@@ -6,7 +6,7 @@ public class FakePrincipalManagementService : IPrincipalManagementService
 {
     public Type PrincipalType => throw new InvalidOperationException();
 
-    public Task<PrincipalData> CreatePrincipalAsync(string principalName, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default)
+    public Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default)
     {
         throw new InvalidOperationException();
     }

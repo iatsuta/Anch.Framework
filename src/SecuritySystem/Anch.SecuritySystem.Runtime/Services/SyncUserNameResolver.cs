@@ -12,6 +12,8 @@ public class SyncUserNameResolver(
         {
             UserCredential.NamedUserCredential namedUserCredential => namedUserCredential.Name,
 
+            UserCredential.FullUserCredential fullUserCredential => fullUserCredential.User.Name,
+
             _ => defaultCancellationTokenSource.RunSync(ct => userNameResolver.GetUserNameAsync(userCredential, ct))
         };
     }

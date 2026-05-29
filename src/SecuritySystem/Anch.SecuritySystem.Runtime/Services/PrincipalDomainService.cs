@@ -28,8 +28,8 @@ public class PrincipalDomainService<TPrincipal>(
 
     private IPrincipalDomainService<TPrincipal> InnerService => this.lazyInnerService.Value;
 
-    public Task<TPrincipal> GetOrCreateAsync(string name, CancellationToken cancellationToken) =>
-        this.InnerService.GetOrCreateAsync(name, cancellationToken);
+    public Task<TPrincipal> GetOrCreateAsync(UserCredential userCredential, CancellationToken cancellationToken) =>
+        this.InnerService.GetOrCreateAsync(userCredential, cancellationToken);
 
     public Task RemoveAsync(TPrincipal principal, bool force, CancellationToken cancellationToken) =>
         this.InnerService.RemoveAsync(principal, force, cancellationToken);
@@ -42,23 +42,59 @@ public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
     IEnumerable<IUserSource> userSources,
     ISecurityIdentityConverter<TPrincipalIdent> identityConverter,
     IIdentityInfo<TPrincipal, TPrincipalIdent> identityInfo,
+    IUserFilterFactory<TPrincipal> principalFilterFactory,
     IVisualIdentityInfo<TPrincipal> visualIdentityInfo) : IPrincipalDomainService<TPrincipal>
     where TPrincipal : class, new()
     where TPrincipalIdent : notnull
     where TPermission : class
 {
-    public async Task<TPrincipal> GetOrCreateAsync(string name, CancellationToken cancellationToken)
+    public async Task<TPrincipal> GetOrCreateAsync(UserCredential userCredential, CancellationToken cancellationToken)
     {
         var principal = await queryableSource.GetQueryable<TPrincipal>()
-            .GenericSingleOrDefaultAsync(visualIdentityInfo.Name.Path.Select(ExpressionHelper.GetEqualityWithExpr(name)), cancellationToken);
+            .GenericSingleOrDefaultAsync(principalFilterFactory.CreateFilter(userCredential), cancellationToken);
 
         if (principal is null)
         {
             principal = new TPrincipal();
 
-            visualIdentityInfo.Name.Setter(principal, name);
+            switch (userCredential)
+            {
+                case UserCredential.FullUserCredential { User: { Name: var userName, Identity: var userIdentity } }:
+                {
+                    visualIdentityInfo.Name.Setter(principal, userName);
 
-            await this.TryInitIdent(principal, cancellationToken);
+                    identityInfo.Id.Setter(principal, identityConverter.Convert(userIdentity).Id);
+
+                    break;
+                }
+
+                case UserCredential.NamedUserCredential { Name: var userName }:
+                {
+                    visualIdentityInfo.Name.Setter(principal, userName);
+
+                    if (await this.TryExtractIdent(userName, cancellationToken) is { } userIdent)
+                    {
+                        identityInfo.Id.Setter(principal, userIdent);
+                    }
+
+                    break;
+                }
+
+                case UserCredential.IdentUserCredential { Identity: var userIdentity }:
+                {
+                    if (await this.TryExtractName(userIdentity, cancellationToken) is { } userName)
+                    {
+                        visualIdentityInfo.Name.Setter(principal, userName);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"User with identity = '{userIdentity}' not found");
+                    }
+
+                    identityInfo.Id.Setter(principal, identityConverter.Convert(userIdentity).Id);
+                    break;
+                }
+            }
 
             await genericRepository.SaveAsync(principal, cancellationToken);
         }
@@ -66,22 +102,12 @@ public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
         return principal;
     }
 
-    private async Task TryInitIdent(TPrincipal principal, CancellationToken cancellationToken)
-    {
-        var ident = await this.TryExtractIdent(visualIdentityInfo.Name.Getter(principal), cancellationToken);
-
-        if (ident is not null)
-        {
-            identityInfo.Id.Setter(principal, ident);
-        }
-    }
-
-    private async Task<TPrincipalIdent?> TryExtractIdent(string name, CancellationToken cancellationToken)
+    private async Task<TPrincipalIdent?> TryExtractIdent(string userName, CancellationToken cancellationToken)
     {
         var tryCandidates = userSources
             .ToAsyncEnumerable()
             .Where(userSource => userSource.UserType != typeof(TPrincipal))
-            .Select(async (userSource, ct) => await userSource.ToSimple().TryGetUserAsync(name, ct));
+            .Select(async (userSource, ct) => await userSource.ToSimple().TryGetUserAsync(userName, ct));
 
         var identRequest =
 
@@ -89,13 +115,35 @@ public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
 
             where tryUser is not null
 
-            let ident = identityConverter.TryConvert(tryUser.Identity)
+            let userIdentity = identityConverter.TryConvert(tryUser.Identity)
 
-            where ident is not null
+            where userIdentity is not null
 
-            select ident.Id;
+            select userIdentity.Id;
 
         return await identRequest.SingleOrDefaultAsync(cancellationToken);
+    }
+
+    private async Task<string?> TryExtractName(SecurityIdentity userIdentity, CancellationToken cancellationToken)
+    {
+        var tryCandidates = userSources
+            .ToAsyncEnumerable()
+            .Where(userSource => userSource.UserType != typeof(TPrincipal))
+            .Select(async (userSource, ct) => await userSource.ToSimple().TryGetUserAsync(userIdentity, ct));
+
+        var nameRequest =
+
+            from tryUser in tryCandidates
+
+            where tryUser is not null
+
+            let userName = tryUser.Name
+
+            where userName is not null
+
+            select userName;
+
+        return await nameRequest.SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task RemoveAsync(TPrincipal principal, bool force, CancellationToken cancellationToken)
