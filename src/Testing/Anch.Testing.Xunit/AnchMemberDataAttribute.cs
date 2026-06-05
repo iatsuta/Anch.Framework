@@ -93,7 +93,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
 
             if (serviceProviderPoolScope?.Exception != null)
             {
-                ExceptionDispatchInfo.Capture(serviceProviderPoolScope.Exception).Throw();
+                ExceptionDispatchInfo.Throw(serviceProviderPoolScope.Exception);
             }
 
             var testInstance = this.TryCreateTestInstance(testMethod, serviceProviderPoolScope?.ServiceProvider);

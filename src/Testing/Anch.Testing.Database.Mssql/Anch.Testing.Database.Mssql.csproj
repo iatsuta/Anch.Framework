@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Testing.Database.Mssql</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MartinCostello.SqlLocalDb" />
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Testing.Database\Anch.Testing.Database.csproj" />
+  </ItemGroup>
+
+</Project>

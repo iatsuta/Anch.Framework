@@ -11,6 +11,8 @@ public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 
     protected abstract string ConnectionStringName { get; }
 
+    protected virtual bool RegisteredConfiguration { get; } = true;
+
     protected override TestConnectionString RawConnectionString =>
 
         field ??= new TestConnectionString(this.RawConfiguration.GetRequiredConnectionString(this.ConnectionStringName));
@@ -19,7 +21,12 @@ public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
     {
         var actualConfiguration = this.GetActualConfiguration(actualConnectionString);
 
-        return this.BuildServiceProvider(services.AddSingleton(actualConfiguration), actualConfiguration);
+        if (this.RegisteredConfiguration)
+        {
+            services.AddSingleton(actualConfiguration);
+        }
+
+        return this.BuildServiceProvider(services, actualConfiguration);
     }
 
     protected abstract IServiceProvider BuildServiceProvider(IServiceCollection services, IConfiguration configuration);

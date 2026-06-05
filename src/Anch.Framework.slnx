@@ -50,6 +50,7 @@
   <Folder Name="/Testing/">
     <Project Path="Testing/Anch.Testing.Abstractions/Anch.Testing.Abstractions.csproj" />
     <Project Path="Testing/Anch.Testing.Database.Configuration/Anch.Testing.Database.Configuration.csproj" />
+    <Project Path="Testing/Anch.Testing.Database.Mssql/Anch.Testing.Database.Mssql.csproj" />
     <Project Path="Testing/Anch.Testing.Database.Sqlite/Anch.Testing.Database.Sqlite.csproj" />
     <Project Path="Testing/Anch.Testing.Database/Anch.Testing.Database.csproj" />
     <Project Path="Testing/Anch.Testing.Tests/Anch.Testing.Tests.csproj" />

@@ -53,7 +53,14 @@ public class InternalServiceProviderPool(
 
             try
             {
-                return testEnvironment.BuildServiceProvider(services, new PooledServiceProviderBuildContext(serviceProviderIndex, mainServiceProvider));
+                serviceProvider = testEnvironment.BuildServiceProvider(services, new PooledServiceProviderBuildContext(serviceProviderIndex, mainServiceProvider));
+
+                foreach (var initializer in serviceProvider.GetKeyedServices<IInitializer>(ITestEnvironment.PooledServiceProviderKey))
+                {
+                    await initializer.Initialize(ct);
+                }
+
+                return serviceProvider;
             }
             catch (Exception)
             {

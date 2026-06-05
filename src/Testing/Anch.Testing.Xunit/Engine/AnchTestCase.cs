@@ -79,5 +79,5 @@ public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMeth
 
     ITestCollection ITestCase.TestCollection => baseTestCase.TestCollection;
 
-    ITestMethod? ITestCase.TestMethod => baseTestCase.TestMethod;
+    ITestMethod? ITestCase.TestMethod => testMethod;
 }
