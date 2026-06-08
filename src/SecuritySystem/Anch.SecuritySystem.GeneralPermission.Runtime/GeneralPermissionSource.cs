@@ -65,10 +65,10 @@ public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestric
 {
     public async Task<bool> HasAccessAsync(CancellationToken ct) => await this.GetPermissionQuery().GenericAnyAsync(ct);
 
-    public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) => this.GetPermissionsInternalAsync(securityContextTypes);
+    public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) => this.GetPermissionsInternalAsync(securityContextTypes, CancellationToken.None);
 
     private async IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsInternalAsync(ImmutableArray<Type> securityContextTypes,
-        [EnumeratorCancellation] CancellationToken ct = default)
+        [EnumeratorCancellation] CancellationToken ct)
     {
         var permissionIdents = await availablePermissionSource
             .GetQueryable(securityRule)
