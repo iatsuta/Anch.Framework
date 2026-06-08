@@ -32,9 +32,9 @@ public class GeneralPrincipalSourceService<TPrincipal, TPermission>(
             .GenericAsAsyncEnumerable();
     }
 
-    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken ct)
     {
-        var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken);
+        var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(ct);
 
         if (principal is null)
         {
@@ -42,7 +42,7 @@ public class GeneralPrincipalSourceService<TPrincipal, TPermission>(
         }
         else
         {
-            return await principalConverter.ToManagedPrincipalAsync(principal, cancellationToken);
+            return await principalConverter.ToManagedPrincipalAsync(principal, ct);
         }
     }
 

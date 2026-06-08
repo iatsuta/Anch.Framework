@@ -2,9 +2,9 @@
 
 public class ExistUserRunAsValidator<TUser>(IMissedUserErrorSource missedUserErrorSource, IUserSource<TUser> userSource) : IRunAsValidator
 {
-    public async ValueTask ValidateAsync(UserCredential value, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(UserCredential value, CancellationToken ct)
     {
-        var user = await userSource.TryGetUserAsync(value, cancellationToken);
+        var user = await userSource.TryGetUserAsync(value, ct);
 
         if (user is null)
         {

@@ -9,12 +9,12 @@ public class OverrideAccessDeniedResultSecurityProvider<TDomainObject>(
 {
     public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => baseProvider.Inject(queryable);
 
-    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        baseProvider.HasAccessAsync(domainObject, cancellationToken);
+    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
+        baseProvider.HasAccessAsync(domainObject, ct);
 
-    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        baseProvider.GetAccessorDataAsync(domainObject, cancellationToken);
+    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) =>
+        baseProvider.GetAccessorDataAsync(domainObject, ct);
 
-    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        (await baseProvider.GetAccessResultAsync(domainObject, cancellationToken)).TryOverrideAccessDeniedResult(selector);
+    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct) =>
+        (await baseProvider.GetAccessResultAsync(domainObject, ct)).TryOverrideAccessDeniedResult(selector);
 }

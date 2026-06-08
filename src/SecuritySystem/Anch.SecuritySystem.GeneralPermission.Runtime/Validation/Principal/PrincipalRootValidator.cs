@@ -11,16 +11,16 @@ public class PrincipalRootValidator<TPrincipal, TPermission, TPermissionRestrict
     IPermissionValidator<TPermission, TPermissionRestriction> permissionRootValidator)
     : IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction>
 {
-    public async ValueTask ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken ct)
     {
         foreach (var validator in validators)
         {
-            await validator.ValidateAsync(principalData, cancellationToken);
+            await validator.ValidateAsync(principalData, ct);
         }
 
         foreach (var permission in principalData.PermissionDataList)
         {
-            await permissionRootValidator.ValidateAsync(permission, cancellationToken);
+            await permissionRootValidator.ValidateAsync(permission, ct);
         }
     }
 }

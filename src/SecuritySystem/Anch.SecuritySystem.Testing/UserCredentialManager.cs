@@ -15,20 +15,20 @@ public class UserCredentialManager(
 
     private UserCredential ActualCredential => userCredential.Item1 ?? currentUser.Name;
 
-    public async Task<SecurityIdentity> CreatePrincipalAsync(CancellationToken cancellationToken = default)
+    public async Task<SecurityIdentity> CreatePrincipalAsync(CancellationToken ct)
     {
-        var principalData = await principalManagementService.CreatePrincipalAsync(this.ActualCredential, [], cancellationToken);
+        var principalData = await principalManagementService.CreatePrincipalAsync(this.ActualCredential, [], ct);
 
         return securityIdentityManager.Extract(principalData);
     }
 
-    public async Task<SecurityIdentity> AddUserRoleAsync(ManagedPermission[] newPermissions, CancellationToken cancellationToken = default)
+    public async Task<SecurityIdentity> AddUserRoleAsync(ManagedPermission[] newPermissions, CancellationToken ct)
     {
-        var existsPrincipal = await this.principalSourceService.TryGetPrincipalAsync(this.ActualCredential, cancellationToken);
+        var existsPrincipal = await this.principalSourceService.TryGetPrincipalAsync(this.ActualCredential, ct);
 
         if (existsPrincipal == null)
         {
-            var newPrincipalData = await principalManagementService.CreatePrincipalAsync(this.ActualCredential, newPermissions, cancellationToken);
+            var newPrincipalData = await principalManagementService.CreatePrincipalAsync(this.ActualCredential, newPermissions, ct);
 
             return securityIdentityManager.Extract(newPrincipalData);
         }
@@ -39,24 +39,24 @@ public class UserCredentialManager(
             await principalManagementService.UpdatePermissionsAsync(
                 updatedPrincipal.Header.Identity,
                 updatedPrincipal.Permissions,
-                cancellationToken);
+                ct);
 
             return updatedPrincipal.Header.Identity;
         }
     }
 
-    public async Task RemovePermissionsAsync(CancellationToken cancellationToken = default)
+    public async Task RemovePermissionsAsync(CancellationToken ct)
     {
-        var principal = await this.principalSourceService.TryGetPrincipalAsync(this.ActualCredential, cancellationToken);
+        var principal = await this.principalSourceService.TryGetPrincipalAsync(this.ActualCredential, ct);
 
         if (principal is { Header.IsVirtual: false })
         {
-            await principalManagementService.RemovePrincipalAsync(principal.Header.Identity, true, cancellationToken);
+            await principalManagementService.RemovePrincipalAsync(principal.Header.Identity, true, ct);
         }
     }
 
-    public async Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken cancellationToken = default)
+    public async Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken ct)
     {
-        return await this.principalSourceService.GetPrincipalAsync(this.ActualCredential, cancellationToken);
+        return await this.principalSourceService.GetPrincipalAsync(this.ActualCredential, ct);
     }
 }

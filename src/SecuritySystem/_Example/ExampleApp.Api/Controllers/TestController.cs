@@ -18,13 +18,13 @@ public class TestController(
     IRepositoryFactory<Employee> employeeRepositoryFactory) : ControllerBase
 {
     [HttpGet]
-    public async Task<List<TestObjectDto>> GetTestObjects(CancellationToken cancellationToken = default)
+    public async Task<List<TestObjectDto>> GetTestObjects(CancellationToken ct)
     {
         return await testObjectRepositoryFactory
             .Create(SecurityRule.View)
             .GetQueryable()
             .Select(testObj => new TestObjectDto(testObj.Id, testObj.BusinessUnit.Name))
-            .GenericToListAsync(cancellationToken);
+            .GenericToListAsync(ct);
     }
 
     [HttpGet]
@@ -34,21 +34,21 @@ public class TestController(
     }
 
     [HttpGet]
-    public async Task<string> GetCurrentUserLoginByEmployee(CancellationToken cancellationToken = default)
+    public async Task<string> GetCurrentUserLoginByEmployee(CancellationToken ct)
     {
         return await employeeRepositoryFactory.Create(SecurityRule.View)
             .GetQueryable()
             .Select(employee => employee.Login)
-            .GenericSingleAsync(cancellationToken);
+            .GenericSingleAsync(ct);
     }
 
     [HttpGet]
-    public async Task<List<BuDto>> GetBuList(CancellationToken cancellationToken = default)
+    public async Task<List<BuDto>> GetBuList(CancellationToken ct)
     {
         return await buRepositoryFactory
             .Create(SecurityRule.View)
             .GetQueryable()
             .Select(bu => new BuDto(bu.Id, bu.Name, bu.Parent == null ? null : bu.Parent.Id))
-            .GenericToListAsync(cancellationToken);
+            .GenericToListAsync(ct);
     }
 }

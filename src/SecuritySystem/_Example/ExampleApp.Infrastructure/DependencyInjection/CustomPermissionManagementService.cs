@@ -38,31 +38,31 @@ public class CustomPermissionManagementService(
     public override async Task<PermissionData<AuthGeneral.Permission, AuthGeneral.PermissionRestriction>> CreatePermissionAsync(
         AuthGeneral.Principal dbPrincipal,
         ManagedPermission managedPermission,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var baseResult = await base.CreatePermissionAsync(dbPrincipal, managedPermission, cancellationToken);
+        var baseResult = await base.CreatePermissionAsync(dbPrincipal, managedPermission, ct);
 
         if (managedPermission.ExtendedData.TryGetValue(ExtendedKey, out var extendedValue))
         {
             baseResult.Permission.ExtendedValue = (string)extendedValue;
 
-            await genericRepository.SaveAsync(baseResult.Permission, cancellationToken);
+            await genericRepository.SaveAsync(baseResult.Permission, ct);
         }
 
         return baseResult;
     }
 
-    public override async Task<ManagedPermission> ToManagedPermissionAsync(AuthGeneral.Permission dbPermission, CancellationToken cancellationToken)
+    public override async Task<ManagedPermission> ToManagedPermissionAsync(AuthGeneral.Permission dbPermission, CancellationToken ct)
     {
-        var baseResult = await base.ToManagedPermissionAsync(dbPermission, cancellationToken);
+        var baseResult = await base.ToManagedPermissionAsync(dbPermission, ct);
 
         return baseResult.WithExtendedData(ExtendedKey, dbPermission.ExtendedValue);
     }
 
     public override async Task<(PermissionData<AuthGeneral.Permission, AuthGeneral.PermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
-        AuthGeneral.Permission dbPermission, ManagedPermission managedPermission, CancellationToken cancellationToken)
+        AuthGeneral.Permission dbPermission, ManagedPermission managedPermission, CancellationToken ct)
     {
-        var baseResult = await base.UpdatePermission(dbPermission, managedPermission, cancellationToken);
+        var baseResult = await base.UpdatePermission(dbPermission, managedPermission, ct);
 
         if (managedPermission.ExtendedData.TryGetValue(ExtendedKey, out var extendedValue) && (string)extendedValue != dbPermission.ExtendedValue)
         {

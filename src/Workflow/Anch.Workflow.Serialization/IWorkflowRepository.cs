@@ -7,12 +7,12 @@ public interface IWorkflowRepository
 {
     public const string RootKey = "Root";
 
-    ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken cancellationToken = default);
+    ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken ct);
 
 
-    ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken ct);
 
-    ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken cancellationToken = default);
+    ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken ct);
 
 
     IAsyncEnumerable<WaitEventInfo> GetWaitEvents(PushEventInfo pushEventInfo);

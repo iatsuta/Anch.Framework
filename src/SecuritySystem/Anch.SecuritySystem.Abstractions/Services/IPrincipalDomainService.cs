@@ -2,7 +2,7 @@
 
 public interface IPrincipalDomainService<TPrincipal>
 {
-    Task<TPrincipal> GetOrCreateAsync(UserCredential userCredential, CancellationToken cancellationToken = default);
+    Task<TPrincipal> GetOrCreateAsync(UserCredential userCredential, CancellationToken ct);
 
-    Task RemoveAsync(TPrincipal principal, bool force = false, CancellationToken cancellationToken = default);
+    Task RemoveAsync(TPrincipal principal, bool force, CancellationToken ct);
 }

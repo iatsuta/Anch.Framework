@@ -10,7 +10,7 @@ public class PermissionRequiredContextValidator<TPermission, TPermissionRestrict
     IPermissionRestrictionSecurityContextTypeResolver<TPermissionRestriction> permissionRestrictionSecurityContextTypeResolver)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
-    public ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
         var securityRole = permissionSecurityRoleResolver.Resolve(permissionData.Permission);
 

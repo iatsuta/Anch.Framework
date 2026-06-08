@@ -34,9 +34,9 @@ public sealed class NHibAutoCommitSession : IAsyncDisposable, IDisposable
 
     public void Dispose() => this.DisposeAsync().GetAwaiter().GetResult();
 
-    public ValueTask DisposeAsync() => this.CloseAsync();
+    public ValueTask DisposeAsync() => this.CloseAsync(CancellationToken.None);
 
-    public async ValueTask CloseAsync(CancellationToken cancellationToken = default)
+    public async ValueTask CloseAsync(CancellationToken ct)
     {
         if (this.closed)
         {
@@ -49,9 +49,9 @@ public sealed class NHibAutoCommitSession : IAsyncDisposable, IDisposable
         {
             using (this.nhibTransaction)
             {
-                await this.NativeSession.FlushAsync(cancellationToken);
+                await this.NativeSession.FlushAsync(ct);
 
-                await this.nhibTransaction.CommitAsync(cancellationToken);
+                await this.nhibTransaction.CommitAsync(ct);
             }
         }
     }

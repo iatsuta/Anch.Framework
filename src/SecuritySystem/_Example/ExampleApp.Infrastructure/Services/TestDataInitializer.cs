@@ -8,29 +8,29 @@ namespace ExampleApp.Infrastructure.Services;
 
 public class TestDataInitializer(IServiceProvider rootServiceProvider) : ITestDataInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
-        await this.Initialize<ISecurityContextInitializer>(cancellationToken);
-        await this.Initialize<ISecurityRoleInitializer>(cancellationToken);
+        await this.Initialize<ISecurityContextInitializer>(ct);
+        await this.Initialize<ISecurityRoleInitializer>(ct);
 
-        await this.Initialize(ExampleDataInitializer.Key, cancellationToken);
+        await this.Initialize(ExampleDataInitializer.Key, ct);
 
-        await this.Initialize<IAncestorDenormalizer>(cancellationToken);
-        await this.Initialize<IDeepLevelDenormalizer>(cancellationToken);
+        await this.Initialize<IAncestorDenormalizer>(ct);
+        await this.Initialize<IDeepLevelDenormalizer>(ct);
     }
 
-    private async Task Initialize<TInitializer>(CancellationToken cancellationToken)
+    private async Task Initialize<TInitializer>(CancellationToken ct)
         where TInitializer : class, IInitializer
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        await scope.ServiceProvider.GetRequiredService<TInitializer>().Initialize(cancellationToken);
+        await scope.ServiceProvider.GetRequiredService<TInitializer>().Initialize(ct);
     }
 
-    private async Task Initialize(object key, CancellationToken cancellationToken)
+    private async Task Initialize(object key, CancellationToken ct)
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        await scope.ServiceProvider.GetRequiredKeyedService<IInitializer>(key).Initialize(cancellationToken);
+        await scope.ServiceProvider.GetRequiredKeyedService<IInitializer>(key).Initialize(ct);
     }
 }

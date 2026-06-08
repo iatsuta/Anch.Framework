@@ -13,9 +13,9 @@ public class GetBusinessRolesHandler(
     [WithoutRunAs] ISecuritySystem securitySystem)
     : BaseReadHandler, IGetBusinessRolesHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken))
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct))
         {
             return Array.Empty<EntityDto>();
         }
@@ -39,7 +39,7 @@ public class GetBusinessRolesHandler(
                         ?? defaultContexts
                 })
                 .OrderBy(x => x.Name)
-                .ToArrayAsync(cancellationToken);
+                .ToArrayAsync(ct);
         }
     }
 }

@@ -30,15 +30,15 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
             var dataSignatures = new List<string>(18);
 
             foreach (var enumerable in new[] { "IEnumerable<{0}>", "IAsyncEnumerable<{0}>" })
-            foreach (var dataType in new[] { "ITheoryDataRow", "object[]", "Tuple<...>" })
-            foreach (var wrapper in new[] { "- {0}", "- Task<{0}>", "- ValueTask<{0}>" })
-                dataSignatures.Add(string.Format(CultureInfo.CurrentCulture, wrapper, string.Format(CultureInfo.CurrentCulture, enumerable, dataType)));
+                foreach (var dataType in new[] { "ITheoryDataRow", "object[]", "Tuple<...>" })
+                    foreach (var wrapper in new[] { "- {0}", "- Task<{0}>", "- ValueTask<{0}>" })
+                        dataSignatures.Add(string.Format(CultureInfo.CurrentCulture, wrapper, string.Format(CultureInfo.CurrentCulture, enumerable, dataType)));
 
             return string.Join(Environment.NewLine, dataSignatures);
         });
 
     public AnchMemberDataAttribute(string memberName, params object?[] arguments)
-        :base(memberName, arguments)
+        : base(memberName, arguments)
     {
         this.DisableDiscoveryEnumeration = true;
     }

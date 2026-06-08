@@ -6,7 +6,7 @@ namespace Anch.SecuritySystem.DiTests.Environment;
 
 public class TestPermissionSource(TestPermissionStorge storge, DomainSecurityRule.ExpandedRoleGroupSecurityRule securityRule) : IPermissionSource
 {
-    public Task<bool> HasAccessAsync(CancellationToken cancellationToken)
+    public Task<bool> HasAccessAsync(CancellationToken ct)
     {
         throw new NotImplementedException();
     }

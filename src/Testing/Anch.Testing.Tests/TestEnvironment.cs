@@ -11,6 +11,6 @@ public class TestEnvironment : ITestEnvironment
 {
     public IServiceProvider BuildServiceProvider(IServiceCollection services, ServiceProviderBuildContext buildContext)
     {
-        return services.BuildServiceProvider(new ServiceProviderOptions{ ValidateScopes = true, ValidateOnBuild = true });
+        return services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
     }
 }

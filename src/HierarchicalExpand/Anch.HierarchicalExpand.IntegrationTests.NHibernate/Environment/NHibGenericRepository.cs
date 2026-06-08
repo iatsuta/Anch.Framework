@@ -8,11 +8,11 @@ public class NHibGenericRepository(
     IServiceProvider serviceProvider,
     NHibAutoCommitSession session) : IGenericRepository
 {
-    public Task SaveAsync<TDomainObject>(TDomainObject domainObject, CancellationToken cancellationToken)
+    public Task SaveAsync<TDomainObject>(TDomainObject domainObject, CancellationToken ct)
         where TDomainObject : class =>
-        serviceProvider.GetRequiredService<IDomainObjectSaveStrategy<TDomainObject>>().SaveAsync(session.NativeSession, domainObject, cancellationToken);
+        serviceProvider.GetRequiredService<IDomainObjectSaveStrategy<TDomainObject>>().SaveAsync(session.NativeSession, domainObject, ct);
 
 
-    public Task RemoveAsync<TDomainObject>(TDomainObject domainObject, CancellationToken cancellationToken)
-        where TDomainObject : class => session.NativeSession.DeleteAsync(domainObject, cancellationToken);
+    public Task RemoveAsync<TDomainObject>(TDomainObject domainObject, CancellationToken ct)
+        where TDomainObject : class => session.NativeSession.DeleteAsync(domainObject, ct);
 }

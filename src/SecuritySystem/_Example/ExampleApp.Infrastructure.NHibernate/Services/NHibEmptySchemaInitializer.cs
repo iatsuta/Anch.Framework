@@ -11,11 +11,11 @@ public class NHibEmptySchemaInitializer(
     IServiceProvider rootServiceProvider,
     IEnumerable<IViewCreationScriptProvider> viewCreationScriptProviders) : IEmptySchemaInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         var schemaExport = new SchemaExport(nhibConfiguration);
 
-        await schemaExport.CreateAsync(false, true, cancellationToken);
+        await schemaExport.CreateAsync(false, true, ct);
 
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
@@ -23,7 +23,7 @@ public class NHibEmptySchemaInitializer(
 
         foreach (var createViewScript in viewCreationScriptProviders.SelectMany(v => v.GetScripts()))
         {
-            await session.NativeSession.CreateSQLQuery(createViewScript).ExecuteUpdateAsync(cancellationToken);
+            await session.NativeSession.CreateSQLQuery(createViewScript).ExecuteUpdateAsync(ct);
         }
     }
 }

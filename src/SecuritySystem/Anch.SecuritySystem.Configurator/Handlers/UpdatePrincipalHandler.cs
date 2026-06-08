@@ -13,16 +13,16 @@ public class UpdatePrincipalHandler(
     IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null)
     : BaseWriteHandler, IUpdatePrincipalHandler
 {
-    public async Task Execute(HttpContext context, CancellationToken cancellationToken)
+    public async Task Execute(HttpContext context, CancellationToken ct)
     {
-        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 
         var principalName = await this.ParseRequestBodyAsync<string>(context);
 
         var principal = await principalManagementService.UpdatePrincipalNameAsync(context.ExtractSecurityIdentity(), principalName,
-            cancellationToken);
+            ct);
 
         if (configuratorIntegrationEvents != null)
-            await configuratorIntegrationEvents.PrincipalChangedAsync(principal, cancellationToken);
+            await configuratorIntegrationEvents.PrincipalChangedAsync(principal, ct);
     }
 }

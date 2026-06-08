@@ -28,7 +28,7 @@ public class RootAuthManager(
     }
 
     public async Task<List<TypedSecurityIdentity<TIdent>>> GetIdentityListAsync<TDomainObject, TIdent>(SecurityRule securityRule,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
         where TIdent : notnull
         where TDomainObject : class
     {
@@ -41,13 +41,13 @@ public class RootAuthManager(
             var queryableSource = serviceProvider.GetRequiredService<IQueryableSource>();
 
             var idents = await queryableSource.GetQueryable<TDomainObject>().Pipe(securityProvider.Inject).Select(identityInfo.Id.Path)
-                .GenericToListAsync(cancellationToken);
+                .GenericToListAsync(ct);
 
             return idents.Select(TypedSecurityIdentity.Create).ToList();
         });
     }
 
-    public async Task<TypedSecurityIdentity<TIdent>> GetSecurityContextIdentityAsync<TSecurityContext, TIdent>(string name, CancellationToken cancellationToken)
+    public async Task<TypedSecurityIdentity<TIdent>> GetSecurityContextIdentityAsync<TSecurityContext, TIdent>(string name, CancellationToken ct)
         where TSecurityContext : class, ISecurityContext
         where TIdent : notnull
     {
@@ -59,7 +59,7 @@ public class RootAuthManager(
         return await queryableSourceEvaluator.EvaluateAsync(TestingScopeMode.Read, async queryableSource =>
         {
             var securityContextId = await queryableSource.GetQueryable<TSecurityContext>().Where(filter).Select(identityInfo.Id.Path)
-                .GenericSingleAsync(cancellationToken);
+                .GenericSingleAsync(ct);
 
             return TypedSecurityIdentity.Create(securityContextId);
         });
@@ -67,12 +67,12 @@ public class RootAuthManager(
 
     public Task<TypedSecurityIdentity<TIdent>> SaveSecurityContextAsync<TSecurityContext, TIdent>(
         Func<TSecurityContext> createFunc,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
         where TSecurityContext : class, ISecurityContext
-        where TIdent : notnull => this.SaveSecurityContextAsync<TSecurityContext, TIdent>(async _ => createFunc(), cancellationToken);
+        where TIdent : notnull => this.SaveSecurityContextAsync<TSecurityContext, TIdent>(async _ => createFunc(), ct);
 
     public async Task<TypedSecurityIdentity<TIdent>> SaveSecurityContextAsync<TSecurityContext, TIdent>(Func<IServiceProvider, Task<TSecurityContext>> createFunc,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
         where TSecurityContext : class, ISecurityContext
         where TIdent : notnull
     {
@@ -84,7 +84,7 @@ public class RootAuthManager(
 
             var genericRepository = sp.GetRequiredService<IGenericRepository>();
 
-            await genericRepository.SaveAsync(securityContext, cancellationToken);
+            await genericRepository.SaveAsync(securityContext, ct);
 
             return identityInfo.Id.Getter(securityContext);
         });
@@ -96,19 +96,19 @@ public class RootAuthManager(
                 var queryableSource = serviceProvider.GetRequiredService<IQueryableSource>();
 
                 var securityContext = await queryableSource.GetQueryable<TSecurityContext>()
-                    .Where(identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(id))).GenericSingleAsync(cancellationToken);
+                    .Where(identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(id))).GenericSingleAsync(ct);
 
                 {
                     var ancestorDenormalizer = serviceProvider.GetRequiredService<IAncestorDenormalizer<TSecurityContext>>();
 
-                    await ancestorDenormalizer.SyncAsync([securityContext], [], cancellationToken);
+                    await ancestorDenormalizer.SyncAsync([securityContext], [], ct);
                 }
 
                 if (rootServiceProvider.GetService(typeof(DeepLevelInfo<TSecurityContext>)) != null)
                 {
                     var deepLevelDenormalizer = serviceProvider.GetRequiredService<IDeepLevelDenormalizer<TSecurityContext>>();
 
-                    await deepLevelDenormalizer.UpdateDeepLevels([securityContext], cancellationToken);
+                    await deepLevelDenormalizer.UpdateDeepLevels([securityContext], ct);
                 }
             });
         }

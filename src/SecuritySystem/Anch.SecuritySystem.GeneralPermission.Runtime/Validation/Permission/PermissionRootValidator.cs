@@ -11,16 +11,16 @@ public class PermissionRootValidator<TPermission, TPermissionRestriction>(
     IPermissionRestrictionValidator<TPermissionRestriction> permissionRestrictionRootValidator)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
-    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
         foreach (var validator in validators)
         {
-            await validator.ValidateAsync(permissionData, cancellationToken);
+            await validator.ValidateAsync(permissionData, ct);
         }
 
         foreach (var restriction in permissionData.Restrictions)
         {
-            await permissionRestrictionRootValidator.ValidateAsync(restriction, cancellationToken);
+            await permissionRestrictionRootValidator.ValidateAsync(restriction, ct);
         }
     }
 }

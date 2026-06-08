@@ -17,31 +17,31 @@ public class UpdatePermissionsHandler(
     IPrincipalManagementService principalManagementService,
     IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null) : BaseWriteHandler, IUpdatePermissionsHandler
 {
-    public async Task Execute(HttpContext context, CancellationToken cancellationToken)
+    public async Task Execute(HttpContext context, CancellationToken ct)
     {
-        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 
         var permissions = await this.ParseRequestBodyAsync<List<RequestBodyDto>>(context);
 
         var managedPermissions = permissions.Select(this.ToManagedPermission).ToList();
 
-        var mergeResult = await principalManagementService.UpdatePermissionsAsync(context.ExtractSecurityIdentity(), managedPermissions, cancellationToken);
+        var mergeResult = await principalManagementService.UpdatePermissionsAsync(context.ExtractSecurityIdentity(), managedPermissions, ct);
 
         if (configuratorIntegrationEvents != null)
         {
             foreach (var permission in mergeResult.AddingItems)
             {
-                await configuratorIntegrationEvents.PermissionCreatedAsync(permission, cancellationToken);
+                await configuratorIntegrationEvents.PermissionCreatedAsync(permission, ct);
             }
 
             foreach (var (permission, _) in mergeResult.CombineItems)
             {
-                await configuratorIntegrationEvents.PermissionChangedAsync(permission, cancellationToken);
+                await configuratorIntegrationEvents.PermissionChangedAsync(permission, ct);
             }
 
             foreach (var permission in mergeResult.RemovingItems)
             {
-                await configuratorIntegrationEvents.PermissionRemovedAsync(permission, cancellationToken);
+                await configuratorIntegrationEvents.PermissionRemovedAsync(permission, ct);
             }
         }
     }

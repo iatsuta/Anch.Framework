@@ -13,7 +13,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
     IEnumerable<IPermissionSystem> permissionSystems) :
     ISecurityFilterFactory<TDomainObject>
 {
-    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken ct)
     {
         var securityFilterInfoList = await permissionSystems
             .ToAsyncEnumerable()
@@ -24,7 +24,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
                 var factory = serviceProxyFactory.Create<ISecurityFilterFactory<TDomainObject>>(factoryType, permissionSystem);
 
                 return await factory.CreateFilterAsync(securityRule, securityPath, ct);
-            }).ToListAsync(cancellationToken);
+            }).ToListAsync(ct);
 
         return new SecurityFilterInfo<TDomainObject>(
             q => securityFilterInfoList
@@ -50,7 +50,7 @@ public class SecurityFilterBuilderFactory<TDomainObject, TPermission>(
     public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var securityContextRestrictions = securityRule.GetSafeSecurityContextRestrictions().ToList();
 
