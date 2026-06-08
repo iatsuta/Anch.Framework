@@ -2,15 +2,15 @@
 
 public interface IConfiguratorIntegrationEvents
 {
-    Task PrincipalCreatedAsync(object principal, CancellationToken cancellationToken = default);
+    Task PrincipalCreatedAsync(object principal, CancellationToken ct);
 
-    Task PrincipalChangedAsync(object principal, CancellationToken cancellationToken = default);
+    Task PrincipalChangedAsync(object principal, CancellationToken ct);
 
-    Task PrincipalRemovedAsync(object principal, CancellationToken cancellationToken = default);
+    Task PrincipalRemovedAsync(object principal, CancellationToken ct);
 
-    Task PermissionCreatedAsync(object permission, CancellationToken cancellationToken = default);
+    Task PermissionCreatedAsync(object permission, CancellationToken ct);
 
-    Task PermissionChangedAsync(object permission, CancellationToken cancellationToken = default);
+    Task PermissionChangedAsync(object permission, CancellationToken ct);
 
-    Task PermissionRemovedAsync(object permission, CancellationToken cancellationToken = default);
+    Task PermissionRemovedAsync(object permission, CancellationToken ct);
 }

@@ -2,5 +2,5 @@
 
 public interface IInitializer
 {
-    Task Initialize(CancellationToken cancellationToken = default);
+    Task Initialize(CancellationToken ct);
 }

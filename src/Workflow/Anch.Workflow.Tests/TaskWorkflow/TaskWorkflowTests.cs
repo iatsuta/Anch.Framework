@@ -19,7 +19,7 @@ public class TaskWorkflowTests : SingleScopeWorkflowTestBase<TaskWorkflowObject,
 
         var approveEvent = await this.RootRepository.GetWaitEvents().Where(ei => ei.Header == TaskWorkflow.ApproveEventHeader).SingleAsync(ct);
 
-        await this.TillTheEndWorkflowExecutor.PushEvent(approveEvent.Header, approveEvent.TargetState, cancellationToken: ct);
+        await this.TillTheEndWorkflowExecutor.PushEvent(approveEvent.Header, approveEvent.TargetState, null, ct);
 
         // Assert
         Assert.Equal(TaskApproveStatus.Approving, preWfObjStatus);

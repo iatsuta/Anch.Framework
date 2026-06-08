@@ -11,9 +11,9 @@ public class AnchTestAssemblyRunnerContext(
     IReadOnlyCollection<IXunitTestCase> testCases,
     IMessageSink executionMessageSink,
     ITestFrameworkExecutionOptions executionOptions,
-    CancellationToken cancellationToken,
+    CancellationToken ct,
     AnchTestCollectionRunner commonTestCollectionRunner)
-    : XunitTestAssemblyRunnerContext(testAssembly, testCases, executionMessageSink, executionOptions, cancellationToken)
+    : XunitTestAssemblyRunnerContext(testAssembly, testCases, executionMessageSink, executionOptions, ct)
 {
     private static readonly Func<XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>, SemaphoreSlim?> GetParallelSemaphore = CreateSemaphoreSlimGetter();
 

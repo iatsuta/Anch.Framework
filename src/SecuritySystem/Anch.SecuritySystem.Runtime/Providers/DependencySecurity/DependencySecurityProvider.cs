@@ -19,30 +19,30 @@ public class DependencySecurityProvider<TDomainObject, TBaseDomainObject>(
         return queryable.Where(relativePath.CreateCondition(domainObj => baseDomainObjSecurityQ.Contains(domainObj)));
     }
 
-    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct)
     {
         var result = await relativePath
             .GetRelativeObjects(domainObject)
             .ToAsyncEnumerable()
-            .Select(async (relativeObject, ct) => await baseSecurityProvider.GetAccessResultAsync(relativeObject, ct))
-            .ToArrayAsync(cancellationToken);
+            .Select(async (relativeObject, lct) => await baseSecurityProvider.GetAccessResultAsync(relativeObject, lct))
+            .ToArrayAsync(ct);
 
         return result.Or().TryOverrideDomainObject(domainObject);
     }
 
-    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
+    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
         await relativePath
             .GetRelativeObjects(domainObject)
             .ToAsyncEnumerable()
-            .AnyAsync(async (relativeObject, ct) => await baseSecurityProvider.HasAccessAsync(relativeObject, ct), cancellationToken);
+            .AnyAsync(async (relativeObject, lct) => await baseSecurityProvider.HasAccessAsync(relativeObject, lct), ct);
 
-    public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct)
     {
         var result = await relativePath
             .GetRelativeObjects(domainObject)
             .ToAsyncEnumerable()
-            .Select(async (relativeObject, ct) => await baseSecurityProvider.GetAccessorDataAsync(relativeObject, ct))
-            .ToArrayAsync(cancellationToken);
+            .Select(async (relativeObject, lct) => await baseSecurityProvider.GetAccessorDataAsync(relativeObject, lct))
+            .ToArrayAsync(ct);
 
         return result.Or();
     }

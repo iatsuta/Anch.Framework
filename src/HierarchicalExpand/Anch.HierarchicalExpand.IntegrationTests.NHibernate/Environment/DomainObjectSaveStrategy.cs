@@ -9,12 +9,12 @@ public class DomainObjectSaveStrategy<TDomainObject>(IServiceProxyFactory servic
 {
     private readonly IDomainObjectSaveStrategy<TDomainObject> innerService = serviceProxyFactory.Create<IDomainObjectSaveStrategy<TDomainObject>>();
 
-    public Task SaveAsync(ISession session, TDomainObject domainObject, CancellationToken cancellationToken) => this.innerService.SaveAsync(session, domainObject, cancellationToken);
+    public Task SaveAsync(ISession session, TDomainObject domainObject, CancellationToken ct) => this.innerService.SaveAsync(session, domainObject, ct);
 }
 
 public class DomainObjectSaveStrategy<TDomainObject, TIdent>(IIdentityInfo<TDomainObject, TIdent> identityInfo) : IDomainObjectSaveStrategy<TDomainObject>
 {
-    public Task SaveAsync(ISession session, TDomainObject domainObject, CancellationToken cancellationToken)
+    public Task SaveAsync(ISession session, TDomainObject domainObject, CancellationToken ct)
     {
         if (!session.Contains(domainObject))
         {
@@ -22,10 +22,10 @@ public class DomainObjectSaveStrategy<TDomainObject, TIdent>(IIdentityInfo<TDoma
 
             if (!EqualityComparer<TIdent>.Default.Equals(id, default))
             {
-                return session.SaveAsync(domainObject, id, cancellationToken);
+                return session.SaveAsync(domainObject, id, ct);
             }
         }
 
-        return session.SaveOrUpdateAsync(domainObject, cancellationToken);
+        return session.SaveOrUpdateAsync(domainObject, ct);
     }
 }

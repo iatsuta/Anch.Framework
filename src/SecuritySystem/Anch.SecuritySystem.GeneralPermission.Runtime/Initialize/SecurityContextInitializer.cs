@@ -12,7 +12,7 @@ namespace Anch.SecuritySystem.GeneralPermission.Initialize;
 public class SecurityContextInitializer(IServiceProvider serviceProvider, IEnumerable<GeneralPermissionRestrictionBindingInfo> bindings)
     : ISecurityContextInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         foreach (var binding in bindings)
         {
@@ -20,7 +20,7 @@ public class SecurityContextInitializer(IServiceProvider serviceProvider, IEnume
                 (ISecurityContextInitializer)serviceProvider.GetRequiredService(
                     typeof(ISecurityContextInitializer<>).MakeGenericType(binding.SecurityContextTypeType));
 
-            await initializer.Initialize(cancellationToken);
+            await initializer.Initialize(ct);
         }
     }
 }
@@ -36,9 +36,9 @@ public class SecurityContextInitializer<TSecurityContextType>(
     : ISecurityContextInitializer<TSecurityContextType>
     where TSecurityContextType : class, new()
 {
-    public async Task<MergeResult<TSecurityContextType, SecurityContextInfo>> Initialize(CancellationToken cancellationToken)
+    public async Task<MergeResult<TSecurityContextType, SecurityContextInfo>> Initialize(CancellationToken ct)
     {
-        var dbSecurityContextTypes = await queryableSource.GetQueryable<TSecurityContextType>().GenericToListAsync(cancellationToken);
+        var dbSecurityContextTypes = await queryableSource.GetQueryable<TSecurityContextType>().GenericToListAsync(ct);
 
         var mergeResult = dbSecurityContextTypes.GetMergeResult<TSecurityContextType, SecurityContextInfo, TypedSecurityIdentity>(securityContextInfoSource.SecurityContextInfoList,
             securityIdentityManager.GetIdentity,
@@ -59,7 +59,7 @@ public class SecurityContextInitializer<TSecurityContextType>(
                             logger.LogDebug("SecurityContextType removed: {Name} {Id}", visualIdentityInfo.Name.Getter(removingItem),
                                 securityIdentityManager.GetIdentity(removingItem));
 
-                            await genericRepository.RemoveAsync(removingItem, cancellationToken);
+                            await genericRepository.RemoveAsync(removingItem, ct);
                         }
 
                         break;
@@ -77,7 +77,7 @@ public class SecurityContextInitializer<TSecurityContextType>(
             logger.LogDebug("SecurityContextType created: {Name} {Id}", visualIdentityInfo.Name.Getter(securityContextType),
                 securityIdentityManager.GetIdentity(securityContextType));
 
-            await genericRepository.SaveAsync(securityContextType, cancellationToken);
+            await genericRepository.SaveAsync(securityContextType, ct);
         }
 
         foreach (var (securityContextType, securityContextInfo) in mergeResult.CombineItems)
@@ -88,12 +88,12 @@ public class SecurityContextInitializer<TSecurityContextType>(
 
                 logger.LogDebug("SecurityContextType updated: {Name} {Id}", securityContextInfo.Name, securityIdentityManager.GetIdentity(securityContextType));
 
-                await genericRepository.SaveAsync(securityContextType, cancellationToken);
+                await genericRepository.SaveAsync(securityContextType, ct);
             }
         }
 
         return mergeResult;
     }
 
-    async Task IInitializer.Initialize(CancellationToken cancellationToken) => await this.Initialize(cancellationToken);
+    async Task IInitializer.Initialize(CancellationToken ct) => await this.Initialize(ct);
 }

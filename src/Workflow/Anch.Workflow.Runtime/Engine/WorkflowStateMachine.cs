@@ -25,22 +25,22 @@
 
 //    private TState CodeState => field ??= (TState)this.StateFactory.CreateState(serviceProvider, this.Source);
 
-//    public async ValueTask Save(CancellationToken cancellationToken) =>
+//    public async ValueTask Save(CancellationToken ct) =>
 
-//        await storage.SaveWorkflowInstance(this.WorkflowInstance, cancellationToken);
+//        await storage.SaveWorkflowInstance(this.WorkflowInstance, ct);
 
 
 
-//    protected virtual IExecutionContext CreateExecutionContext(CancellationToken cancellationToken, WaitEventInfo? callbackEventInfo = null) =>
+//    protected virtual IExecutionContext CreateExecutionContext(CancellationToken ct, WaitEventInfo? callbackEventInfo = null) =>
 
 //        new ExecutionContext
 //        {
 //            StateInstance = stateInstance,
-//            CancellationToken = cancellationToken,
+//            CancellationToken = ct,
 //            CallbackEventInfo = callbackEventInfo
 //        };
 
-//    public async ValueTask<WorkflowProcessResult> ProcessCurrentState(CancellationToken cancellationToken)
+//    public async ValueTask<WorkflowProcessResult> ProcessCurrentState(CancellationToken ct)
 //    {
 //        if (!stateInstance.IsActual)
 //        {
@@ -49,16 +49,16 @@
 
 //        this.WorkflowInstance.SetStatus(WorkflowStatus.Runnable);
 
-//        await this.Save(cancellationToken);
+//        await this.Save(ct);
 
 //        if (!stateInstance.InputProcessed)
 //        {
 //            stateInstance.InputProcessed = true;
 
-//            await this.StateFactory.BindInput(this.CodeState, serviceProvider, this.Source, cancellationToken);
+//            await this.StateFactory.BindInput(this.CodeState, serviceProvider, this.Source, ct);
 //        }
 
-//        var executionContext = this.CreateExecutionContext(cancellationToken);
+//        var executionContext = this.CreateExecutionContext(ct);
 
 //        var executionResult = await this.CodeState.Run(executionContext);
 
@@ -70,7 +70,7 @@
 //        {
 //            stateInstance.OutputProcessed = true;
 
-//            await this.StateFactory.BindOutput(this.CodeState, serviceProvider, this.Source, cancellationToken);
+//            await this.StateFactory.BindOutput(this.CodeState, serviceProvider, this.Source, ct);
 
 //            var leaveResult = await this.CodeState.LeavePolicy.Leave(serviceProvider, executionContext);
 
@@ -82,7 +82,7 @@
 //        }
 //    }
 
-//    public virtual async ValueTask<WorkflowProcessResult> ProcessExecutionResult(IExecutionResult executionResult, CancellationToken cancellationToken)
+//    public virtual async ValueTask<WorkflowProcessResult> ProcessExecutionResult(IExecutionResult executionResult, CancellationToken ct)
 //    {
 //        switch (executionResult)
 //        {
@@ -92,7 +92,7 @@
 //                {
 //                    return workflowProcessExecutionResult.WorkflowProcessResult +
 
-//                           await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
+//                           await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), ct);
 //                }
 //                else
 //                {
@@ -110,10 +110,10 @@
 //                return WorkflowProcessResult.Empty;
 
 //            case Done:
-//                return await this.ProcessExecutionResult(new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
+//                return await this.ProcessExecutionResult(new PushEventResult(EventHeader.StateDone, stateInstance), ct);
 
 //            case PushEventResult pushEventResult:
-//                return await this.ProcessExecutionResult(pushEventResult, cancellationToken);
+//                return await this.ProcessExecutionResult(pushEventResult, ct);
 
 //            case MultiExecutionResult multiExecutionResult:
 //                return new WorkflowProcessResult([],
@@ -124,12 +124,12 @@
 //        }
 //    }
 
-//    private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(PushEventResult pushEventResult, CancellationToken cancellationToken)
+//    private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(PushEventResult pushEventResult, CancellationToken ct)
 //    {
-//        return await this.ProcessExecutionResult(pushEventResult.ToEventInfo(this.WorkflowInstance), cancellationToken);
+//        return await this.ProcessExecutionResult(pushEventResult.ToEventInfo(this.WorkflowInstance), ct);
 //    }
 
-//    private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(PushEventInfo pushEventInfo, CancellationToken cancellationToken)
+//    private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(PushEventInfo pushEventInfo, CancellationToken ct)
 //    {
 //        if (pushEventInfo.TargetState == null && pushEventInfo.Header.IsGlobal)
 //        {
@@ -145,23 +145,23 @@
 //                this.WorkflowInstance.SetStatus(WorkflowStatus.Terminated);
 //            }
 
-//            return await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep).PushEvent(pushEventInfo, cancellationToken);
+//            return await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep).PushEvent(pushEventInfo, ct);
 //        }
 //        else if (pushEventInfo.TargetState.Maybe(s => s.Workflow != this.WorkflowInstance))
 //        {
-//            return await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep).PushEvent(pushEventInfo, cancellationToken);
+//            return await host.CreateExecutor(WorkflowExecutionPolicy.SingleStep).PushEvent(pushEventInfo, ct);
 //        }
 //        else
 //        {
 //            var transition = stateInstance.Definition.Transitions.Single(tr => tr.Event.Header == pushEventInfo.Header);
 
-//            return await this.SwitchState(transition.To, cancellationToken);
+//            return await this.SwitchState(transition.To, ct);
 //        }
 //    }
 
-//    public async ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken cancellationToken)
+//    public async ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken ct)
 //    {
-//        var executionContext = this.CreateExecutionContext(releasedEventInfo.TargetState, cancellationToken, releasedEventInfo);
+//        var executionContext = this.CreateExecutionContext(releasedEventInfo.TargetState, ct, releasedEventInfo);
 
 //        return await this.ProcessCurrentState(executionContext);
 //    }

@@ -2,6 +2,6 @@
 
 public static class SecuritySystemExtensions
 {
-    public static Task<bool> IsSecurityAdministratorAsync(this ISecuritySystem securitySystem, CancellationToken cancellationToken) =>
-        securitySystem.HasAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+    public static Task<bool> IsSecurityAdministratorAsync(this ISecuritySystem securitySystem, CancellationToken ct) =>
+        securitySystem.HasAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 }

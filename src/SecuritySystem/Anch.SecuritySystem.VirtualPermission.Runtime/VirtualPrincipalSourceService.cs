@@ -64,9 +64,9 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
             ? _ => true
             : principalVisualIdentityInfo.Name.Path.Select(principalName => principalName.Contains(nameFilter));
 
-    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken ct)
     {
-        var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken);
+        var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(ct);
 
         if (principal == null)
         {
@@ -84,7 +84,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
                     .Where(bindingInfo.Principal.Path.Select<TPermission, TPrincipal, bool>(p => p == principal))
                     .GenericAsAsyncEnumerable()
                     .Select<TPermission, ManagedPermission>(permission => this.ToManagedPermission(permission, itemBindingInfo.SecurityRole)))
-                .ToImmutableArrayAsync(cancellationToken);
+                .ToImmutableArrayAsync(ct);
 
             return new ManagedPrincipal(header, managedPermissions);
         }

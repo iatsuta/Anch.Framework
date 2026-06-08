@@ -12,7 +12,7 @@ namespace Anch.SecuritySystem.GeneralPermission.Initialize;
 public class SecurityRoleInitializer(IServiceProvider serviceProvider, IEnumerable<GeneralPermissionBindingInfo> bindings)
     : ISecurityRoleInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         foreach (var binding in bindings)
         {
@@ -20,7 +20,7 @@ public class SecurityRoleInitializer(IServiceProvider serviceProvider, IEnumerab
                 (ISecurityRoleInitializer)serviceProvider.GetRequiredService(
                     typeof(ISecurityRoleInitializer<>).MakeGenericType(binding.SecurityRoleType));
 
-            await initializer.Initialize(cancellationToken);
+            await initializer.Initialize(ct);
         }
     }
 }
@@ -37,16 +37,16 @@ public class SecurityRoleInitializer<TPermission, TSecurityRole>(
     : ISecurityRoleInitializer<TSecurityRole>
     where TSecurityRole : class, new()
 {
-    public async Task<MergeResult<TSecurityRole, FullSecurityRole>> Initialize(CancellationToken cancellationToken)
+    public async Task<MergeResult<TSecurityRole, FullSecurityRole>> Initialize(CancellationToken ct)
     {
-        return await this.Initialize(securityRoleSource.GetRealRoles(), cancellationToken);
+        return await this.Initialize(securityRoleSource.GetRealRoles(), ct);
     }
 
     public async Task<MergeResult<TSecurityRole, FullSecurityRole>> Initialize(
         IEnumerable<FullSecurityRole> securityRoles,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var dbRoles = await queryableSource.GetQueryable<TSecurityRole>().GenericToListAsync(cancellationToken);
+        var dbRoles = await queryableSource.GetQueryable<TSecurityRole>().GenericToListAsync(ct);
 
         var mergeResult = dbRoles.GetMergeResult<TSecurityRole, FullSecurityRole, TypedSecurityIdentity>(securityRoles, securityIdentityManager.GetIdentity, fsr => fsr.Identity);
 
@@ -64,7 +64,7 @@ public class SecurityRoleInitializer<TPermission, TSecurityRole>(
                         {
                             logger.LogDebug("Role removed: {Name} {Id}", visualIdentityInfo.Name.Getter(removingItem), securityIdentityManager.GetIdentity(removingItem));
 
-                            await genericRepository.RemoveAsync(removingItem, cancellationToken);
+                            await genericRepository.RemoveAsync(removingItem, ct);
                         }
 
                         break;
@@ -82,7 +82,7 @@ public class SecurityRoleInitializer<TPermission, TSecurityRole>(
 
             logger.LogDebug("Role created: {Name} {Id}", securityRole.Name, securityRole.Identity);
 
-            await genericRepository.SaveAsync(dbSecurityRole, cancellationToken);
+            await genericRepository.SaveAsync(dbSecurityRole, ct);
         }
 
         foreach (var (dbSecurityRole, securityRole) in mergeResult.CombineItems)
@@ -98,12 +98,12 @@ public class SecurityRoleInitializer<TPermission, TSecurityRole>(
 
                 logger.LogDebug("Role updated: {Name} {Description} {Id}", newName, newDescription, securityIdentityManager.GetIdentity(dbSecurityRole));
 
-                await genericRepository.SaveAsync(dbSecurityRole, cancellationToken);
+                await genericRepository.SaveAsync(dbSecurityRole, ct);
             }
         }
 
         return mergeResult;
     }
 
-    async Task IInitializer.Initialize(CancellationToken cancellationToken) => await this.Initialize(cancellationToken);
+    async Task IInitializer.Initialize(CancellationToken ct) => await this.Initialize(ct);
 }

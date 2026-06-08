@@ -12,7 +12,7 @@ public class AllowedFilterPermissionRestrictionValidator<TPermissionRestriction,
     IIdentityInfoSource identityInfoSource) : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         var permission = restrictionBindingInfo.Permission.Getter(permissionRestriction);
 

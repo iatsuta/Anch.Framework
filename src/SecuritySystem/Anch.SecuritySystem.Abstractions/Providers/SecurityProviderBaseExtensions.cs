@@ -38,9 +38,9 @@ public static class SecurityProviderBaseExtensions
         public async ValueTask CheckAccessAsync(
             TDomainObject domainObject,
             IAccessDeniedExceptionService accessDeniedExceptionService,
-            CancellationToken cancellationToken = default)
+            CancellationToken ct)
         {
-            switch (await securityProvider.GetAccessResultAsync(domainObject, cancellationToken))
+            switch (await securityProvider.GetAccessResultAsync(domainObject, ct))
             {
                 case AccessResult.AccessDeniedResult accessDenied:
                     throw accessDeniedExceptionService.GetAccessDeniedException(accessDenied);
@@ -80,25 +80,25 @@ public static class SecurityProviderBaseExtensions
                 ? securityProvider.Inject(queryable).Pipe(otherSecurityProvider.Inject)
                 : securityProvider.Inject(queryable).Union(otherSecurityProvider.Inject(queryable));
 
-        public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
+        public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct) =>
             isAnd
-                ? (await securityProvider.GetAccessResultAsync(domainObject, cancellationToken)).And(
-                    await otherSecurityProvider.GetAccessResultAsync(domainObject, cancellationToken))
-                : (await securityProvider.GetAccessResultAsync(domainObject, cancellationToken)).Or(
-                    await otherSecurityProvider.GetAccessResultAsync(domainObject, cancellationToken));
+                ? (await securityProvider.GetAccessResultAsync(domainObject, ct)).And(
+                    await otherSecurityProvider.GetAccessResultAsync(domainObject, ct))
+                : (await securityProvider.GetAccessResultAsync(domainObject, ct)).Or(
+                    await otherSecurityProvider.GetAccessResultAsync(domainObject, ct));
 
-        public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
+        public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
             isAnd
-                ? await securityProvider.HasAccessAsync(domainObject, cancellationToken) &&
-                  await otherSecurityProvider.HasAccessAsync(domainObject, cancellationToken)
-                : await securityProvider.HasAccessAsync(domainObject, cancellationToken) ||
-                  await otherSecurityProvider.HasAccessAsync(domainObject, cancellationToken);
+                ? await securityProvider.HasAccessAsync(domainObject, ct) &&
+                  await otherSecurityProvider.HasAccessAsync(domainObject, ct)
+                : await securityProvider.HasAccessAsync(domainObject, ct) ||
+                  await otherSecurityProvider.HasAccessAsync(domainObject, ct);
 
-        public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+        public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct)
         {
-            var left = await securityProvider.GetAccessorDataAsync(domainObject, cancellationToken);
+            var left = await securityProvider.GetAccessorDataAsync(domainObject, ct);
 
-            var right = await otherSecurityProvider.GetAccessorDataAsync(domainObject, cancellationToken);
+            var right = await otherSecurityProvider.GetAccessorDataAsync(domainObject, ct);
 
             return isAnd
                 ? new SecurityAccessorData.AndSecurityAccessorData(left, right)
@@ -112,9 +112,9 @@ public static class SecurityProviderBaseExtensions
         public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) =>
             queryable.Except(securityProvider.Inject(queryable));
 
-        public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+        public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct)
         {
-            switch (await securityProvider.GetAccessResultAsync(domainObject, cancellationToken))
+            switch (await securityProvider.GetAccessResultAsync(domainObject, ct))
             {
                 case AccessResult.AccessDeniedResult:
                     return AccessResult.AccessGrantedResult.Default;
@@ -127,12 +127,12 @@ public static class SecurityProviderBaseExtensions
             }
         }
 
-        public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-            !await securityProvider.HasAccessAsync(domainObject, cancellationToken);
+        public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
+            !await securityProvider.HasAccessAsync(domainObject, ct);
 
-        public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+        public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct)
         {
-            var baseResult = await securityProvider.GetAccessorDataAsync(domainObject, cancellationToken);
+            var baseResult = await securityProvider.GetAccessorDataAsync(domainObject, ct);
 
             return new SecurityAccessorData.NegateSecurityAccessorData(baseResult);
         }

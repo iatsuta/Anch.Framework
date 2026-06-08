@@ -8,7 +8,7 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 
 public class RunAsHandler(IRunAsManager? runAsManager = null) : BaseWriteHandler, IRunAsHandler
 {
-    public async Task Execute(HttpContext context, CancellationToken cancellationToken) =>
+    public async Task Execute(HttpContext context, CancellationToken ct) =>
         await runAsManager.FromMaybe(() => "RunAs not supported")
-                          .StartRunAsUserAsync(await this.ParseRequestBodyAsync<string>(context), cancellationToken);
+                          .StartRunAsUserAsync(await this.ParseRequestBodyAsync<string>(context), ct);
 }

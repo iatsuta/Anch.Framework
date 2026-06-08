@@ -23,7 +23,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction>(
             restrictionBindingInfo);
     });
 
-    public ValueTask ValidateAsync(TPermissionRestriction value, CancellationToken cancellationToken) => this.lazyInnerService.Value.ValidateAsync(value, cancellationToken);
+    public ValueTask ValidateAsync(TPermissionRestriction value, CancellationToken ct) => this.lazyInnerService.Value.ValidateAsync(value, ct);
 }
 
 public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
@@ -33,7 +33,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, T
     : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         var permission = restrictionBindingInfo.Permission.Getter(permissionRestriction);
 

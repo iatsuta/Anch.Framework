@@ -16,29 +16,29 @@ public class WorkflowExecutor(
     WorkflowExecutionPolicy executionPolicy)
     : IWorkflowExecutor
 {
-    public ValueTask<WorkflowProcessResult> Start<TSource, TWorkflow>(TSource source, CancellationToken cancellationToken)
+    public ValueTask<WorkflowProcessResult> Start<TSource, TWorkflow>(TSource source, CancellationToken ct)
         where TSource : notnull
         where TWorkflow : IWorkflow<TSource> =>
 
-        this.Start(source, serviceProvider.GetRequiredService<TWorkflow>(), cancellationToken);
+        this.Start(source, serviceProvider.GetRequiredService<TWorkflow>(), ct);
 
-    public ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken)
+    public ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken ct)
         where TSource : notnull =>
-        this.Start(source, workflow.Definition, cancellationToken);
+        this.Start(source, workflow.Definition, ct);
 
-    public async ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflowDefinition, CancellationToken cancellationToken)
+    public async ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflowDefinition, CancellationToken ct)
         where TSource : notnull
     {
         var machine = workflowMachineFactory.Create(source, workflowDefinition);
 
-        var preResult = await machine.ProcessWorkflow(cancellationToken);
+        var preResult = await machine.ProcessWorkflow(ct);
 
-        return await this.ProcessUnprocessed(preResult, true, cancellationToken);
+        return await this.ProcessUnprocessed(preResult, true, ct);
     }
 
-    public async ValueTask<WorkflowProcessResult> PushEvent(PushEventInfo pushEventInfo, CancellationToken cancellationToken)
+    public async ValueTask<WorkflowProcessResult> PushEvent(PushEventInfo pushEventInfo, CancellationToken ct)
     {
-        var waitEvents = await workflowRootRepository.GetWaitEvents(pushEventInfo).ToListAsync(cancellationToken);
+        var waitEvents = await workflowRootRepository.GetWaitEvents(pushEventInfo).ToListAsync(ct);
 
         foreach (var waitEventInfo in waitEvents)
         {
@@ -46,28 +46,28 @@ public class WorkflowExecutor(
         }
 
         var preResult = await waitEvents
-            .AggregateAsync((waitEventInfo, ct) => workflowMachineFactory
+            .AggregateAsync((waitEventInfo, lct) => workflowMachineFactory
                 .Create(waitEventInfo.TargetState.Workflow)
-                .PushReleasedEvent(waitEventInfo with { Data = pushEventInfo.Data }, ct), cancellationToken);
+                .PushReleasedEvent(waitEventInfo with { Data = pushEventInfo.Data }, lct), ct);
 
-        return await this.ProcessUnprocessed(preResult, true, cancellationToken);
+        return await this.ProcessUnprocessed(preResult, true, ct);
     }
 
-    public ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken cancellationToken) =>
+    public ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken ct) =>
 
-        this.ProcessUnprocessed(workflowProcessResult, false, cancellationToken);
+        this.ProcessUnprocessed(workflowProcessResult, false, ct);
 
-    public async ValueTask<WorkflowProcessResult> Terminate(WorkflowInstance workflowInstance, CancellationToken cancellationToken)
+    public async ValueTask<WorkflowProcessResult> Terminate(WorkflowInstance workflowInstance, CancellationToken ct)
     {
-        var terminateResult = await workflowMachineFactory.Create(workflowInstance).Terminate(cancellationToken);
+        var terminateResult = await workflowMachineFactory.Create(workflowInstance).Terminate(ct);
 
-        return await this.ProcessUnprocessed(terminateResult, true, cancellationToken);
+        return await this.ProcessUnprocessed(terminateResult, true, ct);
     }
 
     private async ValueTask<WorkflowProcessResult> ProcessUnprocessed(
         WorkflowProcessResult preWorkflowProcessResult,
         bool preFirstStepProcessed,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var workflowProcessResult = preWorkflowProcessResult;
         var firstStepProcessed = preFirstStepProcessed;
@@ -77,7 +77,7 @@ public class WorkflowExecutor(
             var modified = workflowProcessResult.Modified;
             var tailUnprocessed = workflowProcessResult.Unprocessed.Pop(out var current);
 
-            var stepResult = await this.ProcessStep(current, cancellationToken);
+            var stepResult = await this.ProcessStep(current, ct);
 
             firstStepProcessed = true;
 
@@ -87,7 +87,7 @@ public class WorkflowExecutor(
         return workflowProcessResult;
     }
 
-    private async ValueTask<WorkflowProcessResult> ProcessStep(UnprocessedStateResultBase unprocessedStateResultBase, CancellationToken cancellationToken)
+    private async ValueTask<WorkflowProcessResult> ProcessStep(UnprocessedStateResultBase unprocessedStateResultBase, CancellationToken ct)
     {
         switch (unprocessedStateResultBase)
         {
@@ -95,14 +95,14 @@ public class WorkflowExecutor(
                 {
                     var machine = workflowMachineFactory.Create(unprocessedStateResult.StateInstance.Workflow);
 
-                    return await machine.ProcessWorkflow(unprocessedStateResult.ExecutionResult, cancellationToken);
+                    return await machine.ProcessWorkflow(unprocessedStateResult.ExecutionResult, ct);
                 }
 
             case UnprocessedCurrentStateResult unprocessedCurrentStateResult:
                 {
                     var machine = workflowMachineFactory.Create(unprocessedCurrentStateResult.WorkflowInstance);
 
-                    return await machine.ProcessWorkflow(cancellationToken);
+                    return await machine.ProcessWorkflow(ct);
                 }
 
             default:

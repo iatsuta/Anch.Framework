@@ -11,7 +11,7 @@ namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 public class AccessorsFilterBuilderFactory<TDomainObject>(IServiceProxyFactory serviceProxyFactory, IEnumerable<IPermissionSystem> permissionSystems) :
     IAccessorsFilterFactory<TDomainObject>
 {
-    public async Task<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
+    public async Task<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken ct)
     {
         var accessorsFilterInfoList = await permissionSystems
             .ToAsyncEnumerable()
@@ -22,7 +22,7 @@ public class AccessorsFilterBuilderFactory<TDomainObject>(IServiceProxyFactory s
             var factory = serviceProxyFactory.Create<IAccessorsFilterFactory<TDomainObject>>(factoryType, permissionSystem);
 
             return await factory.CreateFilterAsync(securityRule, securityPath, ct);
-        }).ToListAsync(cancellationToken);
+        }).ToListAsync(ct);
 
         return new(domainObject => accessorsFilterInfoList
             .ToAsyncEnumerable()
@@ -42,7 +42,7 @@ public class AccessorsFilterBuilderFactory<TDomainObject, TPermission>(
     public async Task<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var securityContextRestrictions = securityRule.GetSafeSecurityContextRestrictions().ToList();
 

@@ -10,9 +10,9 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 public class GetOperationsHandler([WithoutRunAs] ISecuritySystem securitySystem, ISecurityRoleSource roleSource, ISecurityOperationInfoSource operationInfoSource)
     : BaseReadHandler, IGetOperationsHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken)) return new List<string>();
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct)) return new List<string>();
 
         var operations = roleSource.SecurityRoles
                                    .SelectMany(x => x.Information.Operations)

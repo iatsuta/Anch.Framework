@@ -7,7 +7,7 @@ namespace Anch.GenericQueryable.IntegrationTests.Environment;
 
 public class TestDataInitializer(IServiceProvider rootServiceProvider) : ITestDataInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
         var serviceProvider = scope.ServiceProvider;
@@ -15,8 +15,8 @@ public class TestDataInitializer(IServiceProvider rootServiceProvider) : ITestDa
 
         var fetchObj = new FetchObject();
 
-        await genericRepository.SaveAsync(fetchObj, cancellationToken);
-        await genericRepository.SaveAsync(new TestObject { Id = this.TestObjId, FetchObject = fetchObj }, cancellationToken);
+        await genericRepository.SaveAsync(fetchObj, ct);
+        await genericRepository.SaveAsync(new TestObject { Id = this.TestObjId, FetchObject = fetchObj }, ct);
     }
 
     public Guid TestObjId { get; } = new("{16129B46-C49C-40D0-A787-419501DCF223}");

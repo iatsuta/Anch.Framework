@@ -10,14 +10,14 @@ namespace Anch.SecuritySystem.Providers;
 /// <typeparam name="TDomainObject"></typeparam>
 public interface ISecurityProvider<TDomainObject> : IQueryableInjector<TDomainObject>
 {
-    async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken = default) =>
-        await this.HasAccessAsync(domainObject, cancellationToken)
+    async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct) =>
+        await this.HasAccessAsync(domainObject, ct)
             ? AccessResult.AccessGrantedResult.Default
             : AccessResult.AccessDeniedResult.Create(domainObject);
 
-    async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken = default) =>
-        await this.Inject(new[] { domainObject }.AsQueryable()).GenericContainsAsync(domainObject, cancellationToken);
+    async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
+        await this.Inject(new[] { domainObject }.AsQueryable()).GenericContainsAsync(domainObject, ct);
 
-    async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken = default) =>
-        await this.HasAccessAsync(domainObject, cancellationToken) ? SecurityAccessorData.Infinity : SecurityAccessorData.Empty;
+    async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) =>
+        await this.HasAccessAsync(domainObject, ct) ? SecurityAccessorData.Infinity : SecurityAccessorData.Empty;
 }

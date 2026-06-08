@@ -10,20 +10,20 @@ public class WorkflowRootRepository(
     IWorkflowSource workflowSource,
     [FromKeyedServices(IWorkflowRepositoryFactory.CacheKey)] IWorkflowRepositoryFactory repositoryFactory) : IWorkflowRepository
 {
-    public ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken cancellationToken) =>
-        repositoryFactory.Create(workflowInstance.Definition.Identity).SaveWorkflowInstance(workflowInstance, cancellationToken);
+    public ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken ct) =>
+        repositoryFactory.Create(workflowInstance.Definition.Identity).SaveWorkflowInstance(workflowInstance, ct);
 
-    public ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken cancellationToken) =>
-
-        this.GetActualRepositories(identity.Definition)
-            .Select((rep, ct) => rep.TryGetWorkflowInstance(identity, ct))
-            .FirstOrDefaultAsync(wfInstance => wfInstance != null, cancellationToken);
-
-    public ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken cancellationToken) =>
+    public ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken ct) =>
 
         this.GetActualRepositories(identity.Definition)
-            .Select((rep, ct) => rep.TryGetStateInstance(identity, ct))
-            .FirstOrDefaultAsync(stateInstance => stateInstance != null, cancellationToken);
+            .Select((rep, lct) => rep.TryGetWorkflowInstance(identity, lct))
+            .FirstOrDefaultAsync(wfInstance => wfInstance != null, ct);
+
+    public ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken ct) =>
+
+        this.GetActualRepositories(identity.Definition)
+            .Select((rep, lct) => rep.TryGetStateInstance(identity, lct))
+            .FirstOrDefaultAsync(stateInstance => stateInstance != null, ct);
 
     public IAsyncEnumerable<WorkflowInstance> GetWorkflowInstances() =>
 

@@ -6,12 +6,12 @@ public interface IPrincipalManagementService
 {
     Type PrincipalType { get; }
 
-    Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken cancellationToken = default);
+    Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken ct);
 
-    Task<PrincipalData> UpdatePrincipalNameAsync(UserCredential userCredential, string principalName, CancellationToken cancellationToken);
+    Task<PrincipalData> UpdatePrincipalNameAsync(UserCredential userCredential, string principalName, CancellationToken ct);
 
-    Task<PrincipalData> RemovePrincipalAsync(UserCredential userCredential, bool force, CancellationToken cancellationToken = default);
+    Task<PrincipalData> RemovePrincipalAsync(UserCredential userCredential, bool force, CancellationToken ct);
 
     Task<MergeResult<PermissionData, PermissionData>> UpdatePermissionsAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct);
 }

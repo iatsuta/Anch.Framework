@@ -7,10 +7,10 @@ public class SecurityRepository<TDomainObject>(IQueryableSource queryableSource,
     : ISecurityRepository<TDomainObject>
     where TDomainObject : class
 {
-    public async Task<TDomainObject> GetObjectAsync(SecurityIdentity securityIdentity, CancellationToken cancellationToken)
+    public async Task<TDomainObject> GetObjectAsync(SecurityIdentity securityIdentity, CancellationToken ct)
     {
         var result = await queryableSource.GetQueryable<TDomainObject>().Where(filterFactory.CreateFilter(securityIdentity))
-            .GenericSingleOrDefaultAsync(cancellationToken);
+            .GenericSingleOrDefaultAsync(ct);
 
         return result ?? throw new ArgumentOutOfRangeException(nameof(securityIdentity),
             $"{typeof(TDomainObject).Name} with {nameof(securityIdentity)} '{securityIdentity}' not found");

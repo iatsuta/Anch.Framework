@@ -13,13 +13,13 @@ public class DeletePrincipalHandler(
     IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null)
     : BaseWriteHandler, IDeletePrincipalHandler
 {
-    public async Task Execute(HttpContext context, CancellationToken cancellationToken)
+    public async Task Execute(HttpContext context, CancellationToken ct)
     {
-        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 
-        var principal = await principalManagementService.RemovePrincipalAsync(context.ExtractSecurityIdentity(), false, cancellationToken);
+        var principal = await principalManagementService.RemovePrincipalAsync(context.ExtractSecurityIdentity(), false, ct);
 
         if (configuratorIntegrationEvents != null)
-            await configuratorIntegrationEvents.PrincipalRemovedAsync(principal, cancellationToken);
+            await configuratorIntegrationEvents.PrincipalRemovedAsync(principal, ct);
     }
 }

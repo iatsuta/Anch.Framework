@@ -36,7 +36,7 @@ public class GeneralPermissionSource<TPermission>(
 
     private IPermissionSource<TPermission> InnerService => this.lazyInnerService.Value;
 
-    public Task<bool> HasAccessAsync(CancellationToken cancellationToken) => this.InnerService.HasAccessAsync(cancellationToken);
+    public Task<bool> HasAccessAsync(CancellationToken ct) => this.InnerService.HasAccessAsync(ct);
 
     public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) =>
         this.InnerService.GetPermissionsAsync(securityContextTypes);
@@ -63,24 +63,24 @@ public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestric
     where TSecurityContextObjectIdent : notnull
     where TPermissionIdent : notnull
 {
-    public async Task<bool> HasAccessAsync(CancellationToken cancellationToken) => await this.GetPermissionQuery().GenericAnyAsync(cancellationToken);
+    public async Task<bool> HasAccessAsync(CancellationToken ct) => await this.GetPermissionQuery().GenericAnyAsync(ct);
 
-    public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) => this.GetPermissionsInternalAsync(securityContextTypes);
+    public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) => this.GetPermissionsInternalAsync(securityContextTypes, CancellationToken.None);
 
     private async IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsInternalAsync(ImmutableArray<Type> securityContextTypes,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        [EnumeratorCancellation] CancellationToken ct)
     {
         var permissionIdents = await availablePermissionSource
             .GetQueryable(securityRule)
             .Select(permissionIdentityInfo.Id.Path)
-            .GenericToArrayAsync(cancellationToken);
+            .GenericToArrayAsync(ct);
 
         var containsPermissionFilter = permissionIdentityInfo.CreateFilter(permissionIdents);
 
         var permissionRestrictions = await queryableSource
             .GetQueryable<TPermissionRestriction>()
             .Where(restrictionBindingInfo.Permission.Path.Select(containsPermissionFilter))
-            .GenericToArrayAsync(cancellationToken);
+            .GenericToArrayAsync(ct);
 
         var resultE = permissionIdents.GroupJoin<TPermissionIdent, TPermissionRestriction, TPermissionIdent, Dictionary<Type, Array>>(permissionRestrictions, id => id, restrictionBindingInfo.Permission.Getter.Composite(permissionIdentityInfo.Id.Getter),
             (_, restrictions) => rawPermissionConverter.ConvertPermission(securityRule, restrictions, securityContextTypes));

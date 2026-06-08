@@ -6,7 +6,7 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 
 public class GetModulesHandler(IEnumerable<IConfiguratorModule> modules) : BaseReadHandler, IGetModulesHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
         return modules.Select(module => module.Name).ToList();
     }

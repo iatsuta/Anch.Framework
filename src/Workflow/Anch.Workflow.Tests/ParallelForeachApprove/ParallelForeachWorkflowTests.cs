@@ -29,11 +29,11 @@ public class ParallelForeachApproveWorkflowTests : SingleScopeWorkflowTestBase<P
 
         var exampleApproveEvent = waitApproveEvents.First();
 
-        await this.TillTheEndWorkflowExecutor.PushEvent(exampleApproveEvent.Header, exampleApproveEvent.TargetState, cancellationToken: ct);
+        await this.TillTheEndWorkflowExecutor.PushEvent(exampleApproveEvent.Header, exampleApproveEvent.TargetState, null, ct);
 
         var exampleRejectEvent = waitRejectEvents.First(e => e.TargetState.Workflow.Source != exampleApproveEvent.TargetState.Workflow.Source);
 
-        await this.TillTheEndWorkflowExecutor.PushEvent(exampleRejectEvent.Header, exampleRejectEvent.TargetState, cancellationToken: ct);
+        await this.TillTheEndWorkflowExecutor.PushEvent(exampleRejectEvent.Header, exampleRejectEvent.TargetState, null, ct);
 
         // Assert
 
@@ -81,7 +81,7 @@ public class ParallelForeachApproveWorkflowTests : SingleScopeWorkflowTestBase<P
 
         foreach (var waitApproveEvent in waitApproveEvents)
         {
-            await this.TillTheEndWorkflowExecutor.PushEvent(waitApproveEvent.Header, waitApproveEvent.TargetState, cancellationToken: ct);
+            await this.TillTheEndWorkflowExecutor.PushEvent(waitApproveEvent.Header, waitApproveEvent.TargetState, null, ct);
         }
 
         // Assert

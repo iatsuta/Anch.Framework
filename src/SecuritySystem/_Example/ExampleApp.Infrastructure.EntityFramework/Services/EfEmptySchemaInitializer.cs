@@ -9,22 +9,22 @@ public class EfEmptySchemaInitializer(
     IServiceProvider rootServiceProvider,
     IEnumerable<IViewCreationScriptProvider> viewCreationScriptProviders) : IEmptySchemaInitializer
 {
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        await dbContext.Database.EnsureDeletedAsync(cancellationToken);
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        await dbContext.Database.EnsureDeletedAsync(ct);
+        await dbContext.Database.EnsureCreatedAsync(ct);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
 
         foreach (var createViewScript in viewCreationScriptProviders.SelectMany(v => v.GetScripts()))
         {
-            await dbContext.Database.ExecuteSqlRawAsync(createViewScript, cancellationToken);
+            await dbContext.Database.ExecuteSqlRawAsync(createViewScript, ct);
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(ct);
     }
 }

@@ -29,18 +29,18 @@ public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject,
         return queryable.Where(filterExpr);
     }
 
-    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        return (await baseSecurityProvider.GetAccessResultAsync(this.GetBaseObject(domainObject), cancellationToken)).TryOverrideDomainObject(domainObject);
+        return (await baseSecurityProvider.GetAccessResultAsync(this.GetBaseObject(domainObject), ct)).TryOverrideDomainObject(domainObject);
     }
 
-    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
+    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
 
-        (this.availableIdentsCache ??= await this.GetAvailableIdentsQ().GenericToHashSetAsync(cancellationToken))
+        (this.availableIdentsCache ??= await this.GetAvailableIdentsQ().GenericToHashSetAsync(ct))
         .Contains(domainIdentityInfo.Id.Getter(domainObject));
 
-    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        baseSecurityProvider.GetAccessorDataAsync(this.GetBaseObject(domainObject), cancellationToken);
+    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) =>
+        baseSecurityProvider.GetAccessorDataAsync(this.GetBaseObject(domainObject), ct);
 
     private TBaseDomainObject GetBaseObject(TDomainObject domainObject)
     {

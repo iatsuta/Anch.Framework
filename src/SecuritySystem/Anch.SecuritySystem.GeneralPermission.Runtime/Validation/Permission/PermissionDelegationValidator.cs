@@ -23,7 +23,7 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
     where TPrincipal : class
     where TPermission : class
 {
-    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
         if (permissionBindingInfo.DelegatedFrom == null)
         {
@@ -41,7 +41,7 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
                 throw new SecuritySystemValidationException("Invalid delegation target: the permission cannot be delegated to its original principal");
             }
 
-            var delegatedFromData = await permissionRestrictionLoader.ToPermissionData(delegatedFrom, cancellationToken);
+            var delegatedFromData = await permissionRestrictionLoader.ToPermissionData(delegatedFrom, ct);
 
             this.ValidatePermissionDelegatedFrom(permissionData, delegatedFromData);
         }
@@ -49,11 +49,11 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
         var subPermissions = await queryableSource
             .GetQueryable<TPermission>()
             .Where(permissionBindingInfo.DelegatedFrom.Path.Select(p => p == permission))
-            .GenericToListAsync(cancellationToken);
+            .GenericToListAsync(ct);
 
         foreach (var subPermission in subPermissions)
         {
-            var subPermissionData = await permissionRestrictionLoader.ToPermissionData(subPermission, cancellationToken);
+            var subPermissionData = await permissionRestrictionLoader.ToPermissionData(subPermission, ct);
 
             this.ValidatePermissionDelegatedFrom(subPermissionData, permissionData);
         }
