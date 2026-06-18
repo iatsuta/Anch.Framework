@@ -2,5 +2,5 @@
 
 public interface IRuntimePermissionOptimizationService
 {
-    IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<Dictionary<Type, Array>> permissions);
+    IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<IReadOnlyDictionary<Type, Array>> permissions);
 }
