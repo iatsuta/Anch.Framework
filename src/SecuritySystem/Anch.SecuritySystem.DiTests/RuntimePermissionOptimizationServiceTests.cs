@@ -25,7 +25,7 @@ public class RuntimePermissionOptimizationServiceTests
 
     public static TheoryData<TestCase> GetTestCasesData()
     {
-        return new(GetOldTestCases().Concat(GetNewTestCases()));
+        return new(GetOldTestCases().Concat(GetNewTestCases()).Concat(GetComplexTestCases()));
     }
 
     private static IEnumerable<TestCase> GetNewTestCases()
@@ -247,6 +247,195 @@ public class RuntimePermissionOptimizationServiceTests
                     })
                 ],
                 null);
+        }
+    }
+
+
+    private static IEnumerable<TestCase> GetComplexTestCases()
+    {
+        // X1 — three permissions sharing C2, differing on C1 → all merge into one on C1
+        {
+            var a = Guid.NewGuid();
+            var b = Guid.NewGuid();
+            var c = Guid.NewGuid();
+            var x = Guid.NewGuid();
+
+            yield return new TestCase("X1_three_way_merge",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { b } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { c } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a, b, c } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ]);
+        }
+
+        // X2 — two share C2=x (merge C1), a third with C2=y cannot join → two permissions remain
+        {
+            var a = Guid.NewGuid();
+            var b = Guid.NewGuid();
+            var x = Guid.NewGuid();
+            var y = Guid.NewGuid();
+
+            yield return new TestCase("X2_merge_plus_leftover",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { b } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { y } } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a, b } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { y } } })
+                ]);
+        }
+
+        // X3 — same C1=a, different C2 → merge on C2
+        {
+            var a = Guid.NewGuid();
+            var x = Guid.NewGuid();
+            var y = Guid.NewGuid();
+
+            yield return new TestCase("X3_merge_on_second_axis",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { y } } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x, y } } })
+                ]);
+        }
+
+        // X4 — three contexts, same C1 and C3, merge the middle axis C2
+        {
+            var a = Guid.NewGuid();
+            var x = Guid.NewGuid();
+            var y = Guid.NewGuid();
+            var m = Guid.NewGuid();
+
+            yield return new TestCase("X4_three_contexts_merge_middle",
+                [
+                    new TestPermission(new()
+                    {
+                        { typeof(TestSecurityContext1), new[] { a } },
+                        { typeof(TestSecurityContext2), new[] { x } },
+                        { typeof(TestSecurityContext3), new[] { m } }
+                    }),
+                    new TestPermission(new()
+                    {
+                        { typeof(TestSecurityContext1), new[] { a } },
+                        { typeof(TestSecurityContext2), new[] { y } },
+                        { typeof(TestSecurityContext3), new[] { m } }
+                    })
+                ],
+                [
+                    new TestPermission(new()
+                    {
+                        { typeof(TestSecurityContext1), new[] { a } },
+                        { typeof(TestSecurityContext2), new[] { x, y } },
+                        { typeof(TestSecurityContext3), new[] { m } }
+                    })
+                ]);
+        }
+
+        // X5 — a global permission (only empty arrays) is hidden among real ones → absorbs everything
+        {
+            var a = Guid.NewGuid();
+            var x = Guid.NewGuid();
+            var z = Guid.NewGuid();
+
+            yield return new TestCase("X5_hidden_global",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new()
+                    {
+                        { typeof(TestSecurityContext1), Array.Empty<Guid>() },
+                        { typeof(TestSecurityContext2), Array.Empty<Guid>() }
+                    }),
+                    new TestPermission(new() { { typeof(TestSecurityContext3), new[] { z } } })
+                ],
+                [
+                    TestPermission.Unrestricted
+                ]);
+        }
+
+        // X6 — C1=a granted unconditionally absorbs the same C1=a granted together with a C2 restriction
+        {
+            var a = Guid.NewGuid();
+            var x = Guid.NewGuid();
+
+            yield return new TestCase("X6_unconditional_absorbs_conditional",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } } })
+                ]);
+        }
+
+        // X7 — absorption of one branch (C1=a) while another (C1=b, C2=x) survives
+        {
+            var a = Guid.NewGuid();
+            var b = Guid.NewGuid();
+            var x = Guid.NewGuid();
+
+            yield return new TestCase("X7_absorb_one_keep_other",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { b } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { b } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ]);
+        }
+
+        // X8 — duplicate permission collapses, the distinct C1 still merges
+        {
+            var a = Guid.NewGuid();
+            var b = Guid.NewGuid();
+            var x = Guid.NewGuid();
+
+            yield return new TestCase("X8_duplicates_and_merge",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { b } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a, b } }, { typeof(TestSecurityContext2), new[] { x } } })
+                ]);
+        }
+
+        // X9 — fully disjoint contexts, nothing to merge or absorb → stays as is
+        {
+            var a = Guid.NewGuid();
+            var x = Guid.NewGuid();
+            var z = Guid.NewGuid();
+
+            yield return new TestCase("X9_disjoint_no_optimization",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), new[] { x } } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext3), new[] { z } } })
+                ],
+                null);
+        }
+
+        // X10 — empty arrays are normalized away, then the remaining C1 values merge
+        {
+            var a = Guid.NewGuid();
+            var b = Guid.NewGuid();
+
+            yield return new TestCase("X10_normalize_then_merge",
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a } }, { typeof(TestSecurityContext2), Array.Empty<Guid>() } }),
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { b } }, { typeof(TestSecurityContext2), Array.Empty<Guid>() } })
+                ],
+                [
+                    new TestPermission(new() { { typeof(TestSecurityContext1), new[] { a, b } } })
+                ]);
         }
     }
 
