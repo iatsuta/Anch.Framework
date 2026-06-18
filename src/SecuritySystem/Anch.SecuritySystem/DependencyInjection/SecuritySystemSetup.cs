@@ -483,7 +483,11 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
                 nameof(DomainSecurityRule.AccessDenied),
                 typeof(AccessDeniedSecurityProvider<>))
             .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.Disabled), typeof(DisabledSecurityProvider<>))
+
             .AddSingleton(typeof(ISecurityProvider<>), typeof(DisabledSecurityProvider<>))
+
+            .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.View), typeof(ViewSecurityProvider<>))
+            .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.Edit), typeof(EditSecurityProvider<>))
             .AddScoped(typeof(IDomainSecurityService<>), typeof(DomainSecurityService<>))
 
             .AddScoped<ISecuritySystemFactory, SecuritySystemFactory>()

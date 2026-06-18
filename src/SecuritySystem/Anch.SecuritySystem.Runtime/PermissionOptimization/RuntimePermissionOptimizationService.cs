@@ -2,9 +2,17 @@
 
 public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizationService
 {
-    public IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<Dictionary<Type, Array>> permissions)
+    public IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<IReadOnlyDictionary<Type, Array>> permissions)
     {
-        var cachedPermissions = permissions.ToList();
+        // An empty restriction array means "no restriction on this context" — access is granted for
+        // any value of that context, which is equivalent to the context being absent from the
+        // permission. Drop such entries so the rest of the algorithm only deals with real
+        // (non-empty) restrictions.
+        var cachedPermissions = permissions
+            .Select(permission => permission
+                .Where(pair => pair.Value.Length > 0)
+                .ToDictionary(pair => pair.Key, pair => pair.Value))
+            .ToList();
 
         var orderedTypes = cachedPermissions
             .SelectMany(p => p)
@@ -13,26 +21,33 @@ public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizati
             .Select(g => g.Key)
             .ToList();
 
+        // No permission restricts anything → every permission is the unrestricted global one.
         if (orderedTypes.Count == 0)
-            return cachedPermissions;
+            return cachedPermissions.Count > 0 ? [new Dictionary<Type, Array>()] : [];
 
         IEnumerable<Dictionary<Type, HashSet<object>>>? current = null;
 
         foreach (var type in orderedTypes)
         {
-            var grouped = GetGroupable(current, cachedPermissions, type)
+            var groupings = GetGroupable(current, cachedPermissions, type)
                 .GroupBy(item => item.Key)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.SelectMany(i => i.Value ?? Enumerable.Empty<object>())
-                          .ToHashSet()
-                );
+                .ToList();
+
+            // The empty group key means "no restrictions on any other context"; a null value means
+            // "no restriction on the current type". A permission that is both restricts nothing at
+            // all — the global permission. It grants full access and absorbs every other permission,
+            // so the result collapses to a single unrestricted permission.
+            if (groupings.Any(g => g.Key.Equals(GroupKey.Empty) && g.Any(item => item.Value is null)))
+                return [new Dictionary<Type, Array>()];
+
+            var grouped = groupings.ToDictionary(
+                g => g.Key,
+                g => g.SelectMany(i => i.Value ?? Enumerable.Empty<object>())
+                      .ToHashSet()
+            );
 
             if (grouped.TryGetValue(GroupKey.Empty, out var baseSet))
             {
-                if (baseSet.Count == 0)
-                    return [new Dictionary<Type, Array>()];
-
                 grouped.Remove(GroupKey.Empty);
 
                 var toRemove = RefineGroupedPermissions(grouped, baseSet);
@@ -89,7 +104,7 @@ public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizati
     private static Type GetElementType(Dictionary<Type, HashSet<object>> d, Type key)
     {
         if (d.TryGetValue(key, out var set) && set.Count > 0)
-            return set.First()!.GetType();
+            return set.First().GetType();
         return typeof(object);
     }
 

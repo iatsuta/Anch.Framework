@@ -65,7 +65,8 @@ public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestric
 {
     public async Task<bool> HasAccessAsync(CancellationToken ct) => await this.GetPermissionQuery().GenericAnyAsync(ct);
 
-    public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) => this.GetPermissionsInternalAsync(securityContextTypes, CancellationToken.None);
+    public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes) =>
+        this.GetPermissionsInternalAsync(securityContextTypes, CancellationToken.None);
 
     private async IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsInternalAsync(ImmutableArray<Type> securityContextTypes,
         [EnumeratorCancellation] CancellationToken ct)
@@ -82,7 +83,8 @@ public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestric
             .Where(restrictionBindingInfo.Permission.Path.Select(containsPermissionFilter))
             .GenericToArrayAsync(ct);
 
-        var resultE = permissionIdents.GroupJoin<TPermissionIdent, TPermissionRestriction, TPermissionIdent, Dictionary<Type, Array>>(permissionRestrictions, id => id, restrictionBindingInfo.Permission.Getter.Composite(permissionIdentityInfo.Id.Getter),
+        var resultE = permissionIdents.GroupJoin<TPermissionIdent, TPermissionRestriction, TPermissionIdent, Dictionary<Type, Array>>(permissionRestrictions,
+            id => id, restrictionBindingInfo.Permission.Getter.Composite(permissionIdentityInfo.Id.Getter),
             (_, restrictions) => rawPermissionConverter.ConvertPermission(securityRule, restrictions, securityContextTypes));
 
         foreach (var item in resultE)
