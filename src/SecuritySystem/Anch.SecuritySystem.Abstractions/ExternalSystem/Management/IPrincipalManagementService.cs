@@ -4,6 +4,9 @@ namespace Anch.SecuritySystem.ExternalSystem.Management;
 
 public interface IPrincipalManagementService
 {
+    public const string ElementKey = "Element";
+
+
     Type PrincipalType { get; }
 
     Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken ct);

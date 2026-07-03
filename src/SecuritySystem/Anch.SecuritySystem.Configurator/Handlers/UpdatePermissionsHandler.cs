@@ -14,8 +14,7 @@ public class UpdatePermissionsHandler(
     ISecurityRoleSource securityRoleSource,
     ISecurityContextInfoSource securityContextInfoSource,
     IDomainObjectIdentsParser domainObjectIdentsParser,
-    IPrincipalManagementService principalManagementService,
-    IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null) : BaseWriteHandler, IUpdatePermissionsHandler
+    IPrincipalManagementService principalManagementService) : BaseWriteHandler, IUpdatePermissionsHandler
 {
     public async Task Execute(HttpContext context, CancellationToken ct)
     {
@@ -25,25 +24,7 @@ public class UpdatePermissionsHandler(
 
         var managedPermissions = permissions.Select(this.ToManagedPermission).ToList();
 
-        var mergeResult = await principalManagementService.UpdatePermissionsAsync(context.ExtractSecurityIdentity(), managedPermissions, ct);
-
-        if (configuratorIntegrationEvents != null)
-        {
-            foreach (var permission in mergeResult.AddingItems)
-            {
-                await configuratorIntegrationEvents.PermissionCreatedAsync(permission, ct);
-            }
-
-            foreach (var (permission, _) in mergeResult.CombineItems)
-            {
-                await configuratorIntegrationEvents.PermissionChangedAsync(permission, ct);
-            }
-
-            foreach (var permission in mergeResult.RemovingItems)
-            {
-                await configuratorIntegrationEvents.PermissionRemovedAsync(permission, ct);
-            }
-        }
+        await principalManagementService.UpdatePermissionsAsync(context.ExtractSecurityIdentity(), managedPermissions, ct);
     }
 
     private ManagedPermission ToManagedPermission(RequestBodyDto permission)

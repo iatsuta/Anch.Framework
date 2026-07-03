@@ -8,45 +8,6 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
-public class GeneralPrincipalManagementService(
-    IServiceProxyFactory serviceProxyFactory,
-    IEnumerable<PermissionBindingInfo> bindingInfoList,
-    IGeneralPermissionRestrictionBindingInfoSource restrictionBindingInfoSource)
-    : IPrincipalManagementService
-{
-    private readonly Lazy<IPrincipalManagementService> lazyInnerService = new(() =>
-    {
-        var bindingInfo = bindingInfoList.Single(
-            bi => !bi.IsReadonly,
-            () => new SecuritySystemException("No writable management service was found"),
-            () => new SecuritySystemException("Multiple writable management services were found"));
-
-        var restrictionBindingInfo = restrictionBindingInfoSource.GetForPermission(bindingInfo.PermissionType);
-
-        var innerServiceType = typeof(GeneralPrincipalManagementService<,,>)
-            .MakeGenericType(bindingInfo.PrincipalType, bindingInfo.PermissionType, restrictionBindingInfo.PermissionRestrictionType);
-
-        return serviceProxyFactory.Create<IPrincipalManagementService>(innerServiceType);
-    });
-
-    private IPrincipalManagementService InnerService => this.lazyInnerService.Value;
-
-    public Type PrincipalType => this.InnerService.PrincipalType;
-
-    public Task<PrincipalData> CreatePrincipalAsync(UserCredential userCredential, IEnumerable<ManagedPermission> managedPermissions, CancellationToken ct) =>
-        this.InnerService.CreatePrincipalAsync(userCredential, managedPermissions, ct);
-
-    public Task<PrincipalData> UpdatePrincipalNameAsync(UserCredential userCredential, string principalName, CancellationToken ct) =>
-        this.InnerService.UpdatePrincipalNameAsync(userCredential, principalName, ct);
-
-    public Task<PrincipalData> RemovePrincipalAsync(UserCredential userCredential, bool force, CancellationToken ct) =>
-        this.InnerService.RemovePrincipalAsync(userCredential, force, ct);
-
-    public Task<MergeResult<PermissionData, PermissionData>> UpdatePermissionsAsync(UserCredential userCredential,
-        IEnumerable<ManagedPermission> managedPermissions, CancellationToken ct) =>
-        this.InnerService.UpdatePermissionsAsync(userCredential, managedPermissions, ct);
-}
-
 public class GeneralPrincipalManagementService<TPrincipal, TPermission, TPermissionRestriction>(
     IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction> principalValidator,
     IGenericRepository genericRepository,

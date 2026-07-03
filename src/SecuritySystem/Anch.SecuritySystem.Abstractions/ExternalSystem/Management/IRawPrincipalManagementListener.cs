@@ -1,0 +1,3 @@
+﻿namespace Anch.SecuritySystem.ExternalSystem.Management;
+
+public interface IRawPrincipalManagementListener : IPrincipalManagementListenerBase<PrincipalData, PermissionData>;

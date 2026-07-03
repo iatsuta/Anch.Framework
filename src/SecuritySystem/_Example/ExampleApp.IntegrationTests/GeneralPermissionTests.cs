@@ -7,6 +7,7 @@ using Anch.Testing.Xunit;
 
 using ExampleApp.Application;
 using ExampleApp.Domain;
+using ExampleApp.Infrastructure.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,21 @@ namespace ExampleApp.IntegrationTests;
 
 public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
+    [AnchFact]
+    public async Task SetRoleAsync_ShouldNotifyPrincipalCreated(CancellationToken ct)
+    {
+        // Arrange
+        var testPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
+        var listenerState = rootServiceProvider.GetRequiredService<ExamplePrincipalManagementListenerState>();
+
+        // Act
+        var principalIdentity = await this.AuthManager.For("TestPrincipal").SetRoleAsync(testPermission, ct);
+
+        // Assert
+        Assert.Single(listenerState.CreatedPrincipals);
+        Assert.Contains((Guid)principalIdentity.GetId(), listenerState.CreatedPrincipals);
+    }
+
     [AnchFact]
     public async Task SetRoleAsync_ShouldPreservePermissionIdentity(CancellationToken ct)
     {

@@ -42,6 +42,7 @@ public abstract class TestEnvironment : ConfigurationTestEnvironment
             .AddSecuritySystemTesting()
 
             .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<RootImpersonateServiceState>().Reset())
+            .AddEnvironmentHook(EnvironmentHookType.After, sp => sp.GetRequiredService<ExamplePrincipalManagementListenerState>().CreatedPrincipals.Clear())
 
             .AddValidator<DuplicateServiceUsageValidator>()
             .Validate()

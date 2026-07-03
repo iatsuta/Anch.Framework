@@ -47,7 +47,8 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
     private Action<IServiceCollection> registerRawCurrentUserAction = sc => sc.AddKeyedScoped<ICurrentUser, RawCurrentUser>(ICurrentUser.RawKey);
 
     private Action<IServiceCollection> registerDefaultCurrentUserAction =
-        sc => sc.AddKeyedSingleton<ICurrentUser>(ICurrentUser.DefaultKey, (_, __) => FixedCurrentUser.CurrentMachine); // TODO: remove factory after fix https://github.com/dotnet/runtime/issues/126960
+        sc => sc.AddKeyedSingleton<ICurrentUser>(ICurrentUser.DefaultKey,
+            (_, __) => FixedCurrentUser.CurrentMachine); // TODO: remove factory after fix https://github.com/dotnet/runtime/issues/126960
 
     private Action<IServiceCollection>? registerGenericRepositoryAction;
 
@@ -58,8 +59,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
     private Type clientDomainModeSecurityRuleSource = typeof(ClientDomainModeSecurityRuleSource);
 
     private Type securityAccessorInfinityStorageType = typeof(FakeSecurityAccessorInfinityStorage);
-
-    private Type principalManagementServiceType = typeof(FakePrincipalManagementService);
 
 
     private readonly List<Action<IHierarchicalExpandSetup>> hierarchicalSetupActions = [];
@@ -241,10 +240,18 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
         return this;
     }
 
-    public ISecuritySystemSetup SetPrincipalManagementService<TPrincipalManagementService>()
+    public ISecuritySystemSetup AddPrincipalManagementListener<TPrincipalManagementListener>()
+        where TPrincipalManagementListener : class, IPrincipalManagementListener
+    {
+        this.registerActions.Add(sc => sc.AddScoped<IPrincipalManagementListener, TPrincipalManagementListener>());
+
+        return this;
+    }
+
+    public ISecuritySystemSetup AddPrincipalManagementService<TPrincipalManagementService>()
         where TPrincipalManagementService : class, IPrincipalManagementService
     {
-        this.principalManagementServiceType = typeof(TPrincipalManagementService);
+        this.registerActions.Add(sc => sc.AddKeyedScoped<IPrincipalManagementService, TPrincipalManagementService>(IPrincipalManagementService.ElementKey));
 
         return this;
     }
@@ -375,8 +382,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         services.AddScoped(typeof(ISecurityAccessorInfinityStorage), this.securityAccessorInfinityStorageType);
 
-        services.AddScoped(typeof(IPrincipalManagementService), this.principalManagementServiceType);
-
         services.AddSingleton(this.defaultSecurityRuleCredential);
 
         services.AddSingleton(typeof(IClientDomainModeSecurityRuleSource), this.clientDomainModeSecurityRuleSource);
@@ -407,6 +412,9 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddScoped<IUserNameResolver, UserNameResolver>()
             .AddScoped<ISyncUserNameResolver, SyncUserNameResolver>()
 
+            .AddScoped<IRawPrincipalManagementListener, RootPrincipalManagementListener>()
+            .AddScoped<IPrincipalManagementService, RootPrincipalManagementService>()
+
             .AddSingleton(typeof(IManagedPrincipalHeaderConverterFactory<>), typeof(ManagedPrincipalHeaderConverterFactory<>))
             .AddSingleton(typeof(IManagedPrincipalHeaderConverter<>), typeof(ManagedPrincipalHeaderConverter<>))
             .AddScoped(typeof(IPrincipalDomainService<>), typeof(PrincipalDomainService<>))
@@ -434,7 +442,8 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddScoped(typeof(IUserQueryableSource<>), typeof(UserQueryableSource<>))
             .AddScoped(typeof(IUserNameResolver<>), typeof(UserNameResolver<>))
             .AddScoped(typeof(IUserFilterFactory<>), typeof(UserFilterFactory<>))
-            .AddKeyedScoped(typeof(ICurrentUserSource<>), nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential), typeof(WithoutRunAsCurrentUserSource<>))
+            .AddKeyedScoped(typeof(ICurrentUserSource<>), nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential),
+                typeof(WithoutRunAsCurrentUserSource<>))
             .AddSingleton<SecurityAdministratorRuleFactory>()
 
             .AddSingleton(typeof(IUserCredentialMatcher<>), typeof(UserCredentialMatcher<>))

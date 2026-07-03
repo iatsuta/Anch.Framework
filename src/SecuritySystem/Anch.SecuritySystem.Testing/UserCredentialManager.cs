@@ -55,8 +55,6 @@ public class UserCredentialManager(
         }
     }
 
-    public async Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken ct)
-    {
-        return await this.principalSourceService.GetPrincipalAsync(this.ActualCredential, ct);
-    }
+    public async Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken ct) =>
+        await this.principalSourceService.GetPrincipalAsync(this.ActualCredential, ct);
 }
