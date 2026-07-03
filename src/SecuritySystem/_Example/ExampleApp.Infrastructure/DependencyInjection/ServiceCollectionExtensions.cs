@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
                 .AddHttpContextAccessor()
                 .AddSingleton<ITestDataInitializer, TestDataInitializer>()
                 .AddKeyedScoped<IInitializer, ExampleDataInitializer>(ExampleDataInitializer.Key)
+                .AddSingleton<ExamplePrincipalManagementListenerState>()
                 .AddSecuritySystem()
                 .AddRepository();
         }
@@ -158,6 +159,8 @@ public static class ServiceCollectionExtensions
                                 .SetPermissionComment(v => v.Comment)
                                 .SetPermissionDelegation(v => v.DelegatedFrom)
                                 .SetCustomPermissionManagementService<CustomPermissionManagementService>())
+
+                        .AddPrincipalManagementListener<ExamplePrincipalManagementListener>()
 
                         .AddNotification());
         }

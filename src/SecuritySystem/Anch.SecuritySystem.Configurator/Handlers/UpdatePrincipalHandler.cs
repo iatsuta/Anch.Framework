@@ -9,8 +9,7 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 
 public class UpdatePrincipalHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
-    IPrincipalManagementService principalManagementService,
-    IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null)
+    IPrincipalManagementService principalManagementService)
     : BaseWriteHandler, IUpdatePrincipalHandler
 {
     public async Task Execute(HttpContext context, CancellationToken ct)
@@ -19,10 +18,6 @@ public class UpdatePrincipalHandler(
 
         var principalName = await this.ParseRequestBodyAsync<string>(context);
 
-        var principal = await principalManagementService.UpdatePrincipalNameAsync(context.ExtractSecurityIdentity(), principalName,
-            ct);
-
-        if (configuratorIntegrationEvents != null)
-            await configuratorIntegrationEvents.PrincipalChangedAsync(principal, ct);
+        await principalManagementService.UpdatePrincipalNameAsync(context.ExtractSecurityIdentity(), principalName, ct);
     }
 }

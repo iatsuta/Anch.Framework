@@ -9,8 +9,7 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 
 public class CreatePrincipalHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
-    IPrincipalManagementService principalManagementService,
-    IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null)
+    IPrincipalManagementService principalManagementService)
     : BaseWriteHandler, ICreatePrincipalHandler
 {
     public async Task Execute(HttpContext context, CancellationToken ct)
@@ -19,9 +18,6 @@ public class CreatePrincipalHandler(
 
         var name = await this.ParseRequestBodyAsync<string>(context);
 
-        var principal = await principalManagementService.CreatePrincipalAsync(name, [], ct);
-
-        if (configuratorIntegrationEvents != null)
-            await configuratorIntegrationEvents.PrincipalCreatedAsync(principal, ct);
+        await principalManagementService.CreatePrincipalAsync(name, [], ct);
     }
 }
