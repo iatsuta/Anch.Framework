@@ -10,7 +10,7 @@ public class RootPrincipalManagementService(
     IEnumerable<IRawPrincipalManagementListener> listeners)
     : IPrincipalManagementService
 {
-    private IPrincipalManagementService ActualService => principalManagementServices.Single(
+    private IPrincipalManagementService ActualService => field ??= principalManagementServices.Single(
         () => new SecuritySystemException("No writable management service was found"),
         () => new SecuritySystemException("Multiple writable management services were found"));
 
