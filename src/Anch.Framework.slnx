@@ -53,6 +53,7 @@
     <Project Path="Testing/Anch.Testing.Database.Sqlite/Anch.Testing.Database.Sqlite.csproj" />
     <Project Path="Testing/Anch.Testing.Database/Anch.Testing.Database.csproj" />
     <Project Path="Testing/Anch.Testing.Tests/Anch.Testing.Tests.csproj" />
+    <Project Path="Testing/Anch.Testing.Tunit/Anch.Testing.Tunit.csproj" />
     <Project Path="Testing/Anch.Testing.Xunit/Anch.Testing.Xunit.csproj" />
     <Project Path="Testing/Anch.Testing/Anch.Testing.csproj" />
   </Folder>
