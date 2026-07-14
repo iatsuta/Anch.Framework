@@ -16,51 +16,51 @@ public class RootPrincipalManagementListener(IServiceProxyFactory serviceProxyFa
                 typeof(SafePrincipalManagementListener<,,>).MakeGenericType(l.PrincipalType, l.PermissionType, l.PermissionRestrictionType), l))
     ];
 
-    public async Task PrincipalCreatedAsync(PrincipalData principal, CancellationToken ct)
+    public async Task PrincipalCreatedAsync(PrincipalData principalData, CancellationToken ct)
     {
         foreach (var listener in this.safeListeners)
         {
-            await listener.PrincipalCreatedAsync(principal, ct);
+            await listener.PrincipalCreatedAsync(principalData, ct);
         }
     }
 
-    public async Task PrincipalChangedAsync(PrincipalData principal, CancellationToken ct)
+    public async Task PrincipalChangedAsync(PrincipalData principalData, CancellationToken ct)
     {
         foreach (var listener in this.safeListeners)
         {
-            await listener.PrincipalChangedAsync(principal, ct);
+            await listener.PrincipalChangedAsync(principalData, ct);
         }
     }
 
-    public async Task PrincipalRemovedAsync(PrincipalData principal, CancellationToken ct)
+    public async Task PrincipalRemovedAsync(PrincipalData principalData, CancellationToken ct)
     {
         foreach (var listener in this.safeListeners)
         {
-            await listener.PrincipalRemovedAsync(principal, ct);
+            await listener.PrincipalRemovedAsync(principalData, ct);
         }
     }
 
-    public async Task PermissionCreatedAsync(PermissionData permission, CancellationToken ct)
+    public async Task PermissionCreatedAsync(PermissionData permissionData, CancellationToken ct)
     {
         foreach (var listener in this.safeListeners)
         {
-            await listener.PermissionCreatedAsync(permission, ct);
+            await listener.PermissionCreatedAsync(permissionData, ct);
         }
     }
 
-    public async Task PermissionChangedAsync(PermissionData permission, CancellationToken ct)
+    public async Task PermissionChangedAsync(PermissionData permissionData, CancellationToken ct)
     {
         foreach (var listener in this.safeListeners)
         {
-            await listener.PermissionChangedAsync(permission, ct);
+            await listener.PermissionChangedAsync(permissionData, ct);
         }
     }
 
-    public async Task PermissionRemovedAsync(PermissionData permission, CancellationToken ct)
+    public async Task PermissionRemovedAsync(PermissionData permissionData, CancellationToken ct)
     {
         foreach (var listener in this.safeListeners)
         {
-            await listener.PermissionRemovedAsync(permission, ct);
+            await listener.PermissionRemovedAsync(permissionData, ct);
         }
     }
 }

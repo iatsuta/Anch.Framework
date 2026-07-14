@@ -4,51 +4,51 @@ public class SafePrincipalManagementListener<TPrincipal, TPermission, TPermissio
     IPrincipalManagementListener<TPrincipal, TPermission, TPermissionRestriction> listener)
     : IRawPrincipalManagementListener
 {
-    public async Task PrincipalCreatedAsync(PrincipalData principal, CancellationToken ct)
+    public async Task PrincipalCreatedAsync(PrincipalData principalData, CancellationToken ct)
     {
-        if (principal is PrincipalData<TPrincipal, TPermission, TPermissionRestriction> typedPrincipal)
+        if (principalData is PrincipalData<TPrincipal, TPermission, TPermissionRestriction> typedPrincipalData)
         {
-            await listener.PrincipalCreatedAsync(typedPrincipal, ct);
+            await listener.PrincipalCreatedAsync(typedPrincipalData, ct);
         }
     }
 
-    public async Task PrincipalChangedAsync(PrincipalData principal, CancellationToken ct)
+    public async Task PrincipalChangedAsync(PrincipalData principalData, CancellationToken ct)
     {
-        if (principal is PrincipalData<TPrincipal, TPermission, TPermissionRestriction> typedPrincipal)
+        if (principalData is PrincipalData<TPrincipal, TPermission, TPermissionRestriction> typedPrincipalData)
         {
-            await listener.PrincipalChangedAsync(typedPrincipal, ct);
+            await listener.PrincipalChangedAsync(typedPrincipalData, ct);
         }
     }
 
-    public async Task PrincipalRemovedAsync(PrincipalData principal, CancellationToken ct)
+    public async Task PrincipalRemovedAsync(PrincipalData principalData, CancellationToken ct)
     {
-        if (principal is PrincipalData<TPrincipal, TPermission, TPermissionRestriction> typedPrincipal)
+        if (principalData is PrincipalData<TPrincipal, TPermission, TPermissionRestriction> typedPrincipalData)
         {
-            await listener.PrincipalRemovedAsync(typedPrincipal, ct);
+            await listener.PrincipalRemovedAsync(typedPrincipalData, ct);
         }
     }
 
-    public async Task PermissionCreatedAsync(PermissionData permission, CancellationToken ct)
+    public async Task PermissionCreatedAsync(PermissionData permissionData, CancellationToken ct)
     {
-        if (permission is PermissionData<TPermission, TPermissionRestriction> typedPermission)
+        if (permissionData is PermissionData<TPermission, TPermissionRestriction> typedPermissionData)
         {
-            await listener.PermissionCreatedAsync(typedPermission, ct);
+            await listener.PermissionCreatedAsync(typedPermissionData, ct);
         }
     }
 
-    public async Task PermissionChangedAsync(PermissionData permission, CancellationToken ct)
+    public async Task PermissionChangedAsync(PermissionData permissionData, CancellationToken ct)
     {
-        if (permission is PermissionData<TPermission, TPermissionRestriction> typedPermission)
+        if (permissionData is PermissionData<TPermission, TPermissionRestriction> typedPermissionData)
         {
-            await listener.PermissionChangedAsync(typedPermission, ct);
+            await listener.PermissionChangedAsync(typedPermissionData, ct);
         }
     }
 
-    public async Task PermissionRemovedAsync(PermissionData permission, CancellationToken ct)
+    public async Task PermissionRemovedAsync(PermissionData permissionData, CancellationToken ct)
     {
-        if (permission is PermissionData<TPermission, TPermissionRestriction> typedPermission)
+        if (permissionData is PermissionData<TPermission, TPermissionRestriction> typedPermissionData)
         {
-            await listener.PermissionRemovedAsync(typedPermission, ct);
+            await listener.PermissionRemovedAsync(typedPermissionData, ct);
         }
     }
 }
