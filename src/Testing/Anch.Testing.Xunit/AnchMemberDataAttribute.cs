@@ -22,20 +22,8 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
 
     private readonly ConcurrentDictionary<MethodInfo, Task<IReadOnlyCollection<ITheoryDataRow>>> testDataCache = [];
 
-    static readonly Lazy<string> supportedDataSignatures;
+    private static readonly Func<Lazy<string>> GetSupportedDataSignatures = PrivateMemberAccessor.GetStaticField<Lazy<string>>(typeof(MemberDataAttributeBase), "supportedDataSignatures");
 
-    static AnchMemberDataAttribute() =>
-        supportedDataSignatures = new(() =>
-        {
-            var dataSignatures = new List<string>(18);
-
-            foreach (var enumerable in new[] { "IEnumerable<{0}>", "IAsyncEnumerable<{0}>" })
-                foreach (var dataType in new[] { "ITheoryDataRow", "object[]", "Tuple<...>" })
-                    foreach (var wrapper in new[] { "- {0}", "- Task<{0}>", "- ValueTask<{0}>" })
-                        dataSignatures.Add(string.Format(CultureInfo.CurrentCulture, wrapper, string.Format(CultureInfo.CurrentCulture, enumerable, dataType)));
-
-            return string.Join(Environment.NewLine, dataSignatures);
-        });
 
     public AnchMemberDataAttribute(string memberName, params object?[] arguments)
         : base(memberName, arguments)
@@ -161,7 +149,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
                 "Member '{0}' on '{1}' must return data in one of the following formats:{2}{3}", this.MemberName,
                 type.SafeName(),
                 Environment.NewLine,
-                supportedDataSignatures.Value
+                GetSupportedDataSignatures().Value
             )
         );
     }
