@@ -2,15 +2,15 @@
 
 public interface IPrincipalManagementListenerBase<in TPrincipalData, in TPermissionData>
 {
-    Task PrincipalCreatedAsync(TPrincipalData principal, CancellationToken ct);
+    Task PrincipalCreatedAsync(TPrincipalData principalData, CancellationToken ct);
 
-    Task PrincipalChangedAsync(TPrincipalData principal, CancellationToken ct);
+    Task PrincipalChangedAsync(TPrincipalData principalData, CancellationToken ct);
 
-    Task PrincipalRemovedAsync(TPrincipalData principal, CancellationToken ct);
+    Task PrincipalRemovedAsync(TPrincipalData principalData, CancellationToken ct);
 
-    Task PermissionCreatedAsync(TPermissionData permission, CancellationToken ct);
+    Task PermissionCreatedAsync(TPermissionData permissionData, CancellationToken ct);
 
-    Task PermissionChangedAsync(TPermissionData permission, CancellationToken ct);
+    Task PermissionChangedAsync(TPermissionData permissionData, CancellationToken ct);
 
-    Task PermissionRemovedAsync(TPermissionData permission, CancellationToken ct);
+    Task PermissionRemovedAsync(TPermissionData permissionData, CancellationToken ct);
 }
