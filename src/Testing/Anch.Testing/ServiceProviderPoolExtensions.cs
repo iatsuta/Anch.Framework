@@ -10,18 +10,23 @@ public static class ServiceProviderPoolExtensions
         }
         else
         {
-            try
-            {
-                var serviceProvider = await serviceProviderPool.GetAsync(ct);
+            return await serviceProviderPool.CreateScopeAsync(ct);
+        }
+    }
 
-                await serviceProvider.RunEnvironmentHooks(EnvironmentHookType.Before, ct);
+    public static async ValueTask<ServiceProviderPoolScope> CreateScopeAsync(this IServiceProviderPool serviceProviderPool, CancellationToken ct)
+    {
+        try
+        {
+            var serviceProvider = await serviceProviderPool.GetAsync(ct);
 
-                return new ServiceProviderPoolScope(serviceProviderPool, serviceProvider, null, ct);
-            }
-            catch (Exception ex)
-            {
-                return new ServiceProviderPoolScope(serviceProviderPool, null, ex, ct);
-            }
+            await serviceProvider.RunEnvironmentHooks(EnvironmentHookType.Before, ct);
+
+            return new ServiceProviderPoolScope(serviceProviderPool, serviceProvider, null, ct);
+        }
+        catch (Exception ex)
+        {
+            return new ServiceProviderPoolScope(serviceProviderPool, null, ex, ct);
         }
     }
 
