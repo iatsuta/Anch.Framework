@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-
-using Xunit.Sdk;
+﻿using Xunit.Sdk;
 using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
@@ -15,21 +12,8 @@ public class AnchTestAssemblyRunnerContext(
     AnchTestCollectionRunner commonTestCollectionRunner)
     : XunitTestAssemblyRunnerContext(testAssembly, testCases, executionMessageSink, executionOptions, ct)
 {
-    private static readonly Func<XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>, SemaphoreSlim?> GetParallelSemaphore = CreateSemaphoreSlimGetter();
-
-    private static Func<XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>, SemaphoreSlim?> CreateSemaphoreSlimGetter()
-    {
-        var instanceParam = Expression.Parameter(typeof(XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>), "instance");
-
-        var field = typeof(XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>)
-                        .GetField("parallelSemaphore", BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?? throw new InvalidOperationException("Field not found");
-
-        var fieldAccess = Expression.Field(instanceParam, field);
-
-        return Expression.Lambda<Func<XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>, SemaphoreSlim?>>(fieldAccess, instanceParam)
-            .Compile();
-    }
+    private static readonly Func<XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>, SemaphoreSlim?> GetParallelSemaphore =
+        PrivateMemberAccessor.GetInstanceField<XunitTestAssemblyRunnerBaseContext<IXunitTestAssembly, IXunitTestCase>, SemaphoreSlim?>("parallelSemaphore");
 
     public new async ValueTask<RunSummary> RunTestCollection(
         IXunitTestCollection testCollection,
