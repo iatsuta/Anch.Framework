@@ -19,8 +19,7 @@ public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleH
         {
             return this.cache
                 .GetOrAddAs(fetchRuleHeader.GetType(), _ => this.headersDict
-                    .GetValueOrDefault(typeof(TSource))
-                    .EmptyIfNull()
+                    .GetValueOrDefault(typeof(TSource), ImmutableArray<FetchRuleHeaderInfo>.Empty)
                     .Cast<FetchRuleHeaderInfo<TSource>>()
                     .ToFrozenDictionary(info => info.Header, info => info.Implementation))
                 .GetValueOrDefault(fetchRuleHeader);
