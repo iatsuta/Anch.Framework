@@ -39,9 +39,11 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
         }
     }
 }
+
 public class UserNameResolver<TUser>(
     ICurrentUser currentUser,
-    [FromKeyedServices(ICurrentUser.ImpersonatedKey)] ICurrentUser impersonatedCurrentUser,
+    [FromKeyedServices(ICurrentUser.ImpersonatedKey)]
+    ICurrentUser impersonatedCurrentUser,
     IUserSource<TUser> userSource) : IUserNameResolver<TUser>
 {
     private readonly IUserSource<User> simpleUserSource = userSource.ToSimple();
@@ -50,6 +52,10 @@ public class UserNameResolver<TUser>(
     {
         return credential switch
         {
+            SecurityRuleCredential.CustomUserSecurityRuleCredential { UserCredential: UserCredential.NamedUserCredential { Name: var name } } => name,
+
+            SecurityRuleCredential.CustomUserSecurityRuleCredential { UserCredential: UserCredential.FullUserCredential { User.Name: var name } } => name,
+
             SecurityRuleCredential.CustomUserSecurityRuleCredential customUserSecurityRuleCredential =>
 
                 (await this.simpleUserSource.GetUserAsync(customUserSecurityRuleCredential.UserCredential, ct)).Name,

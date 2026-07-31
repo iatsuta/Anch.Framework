@@ -37,7 +37,7 @@ public class VirtualPermissionSystem<TPermission>(
 
             where expandedRolesSecurityRule.SecurityRoles.Contains(itemBindingInfo.SecurityRole)
 
-            select this.CreatePermissionSource(expandedRolesSecurityRule, itemBindingInfo);
+            select this.CreatePermissionSource(expandedRolesSecurityRule.ForceApply(securityRule.CustomCredential), itemBindingInfo);
     }
 
     public IAsyncEnumerable<SecurityRole> GetAvailableSecurityRoles() =>

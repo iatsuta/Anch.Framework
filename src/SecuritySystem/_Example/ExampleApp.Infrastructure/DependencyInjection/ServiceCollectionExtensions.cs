@@ -120,6 +120,9 @@ public static class ServiceCollectionExtensions
                         .AddSecurityRole(ExampleSecurityRole.DefaultRole,
                             new SecurityRoleInfo(new Guid("{C6BE7D52-7F34-430C-9EEF-9CE6FD4D1FE5}")))
 
+                        .AddSecurityRole(ExampleSecurityRole.OtherRole,
+                            new SecurityRoleInfo(new Guid("{E0921742-1C93-4C62-BE64-95B9E4B9ECA8}")))
+
                         .AddSecurityRole(ExampleSecurityRole.NotificationRole,
                             new SecurityRoleInfo(new Guid("{E028CE61-C806-4603-B6B9-52E4DE302273}")))
 
