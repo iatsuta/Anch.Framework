@@ -1,0 +1,3 @@
+﻿namespace ExampleApp.IntegrationTests;
+
+public class CustomCredentialTestsImpl(IServiceProvider rootServiceProvider) : CustomCredentialTests(rootServiceProvider);

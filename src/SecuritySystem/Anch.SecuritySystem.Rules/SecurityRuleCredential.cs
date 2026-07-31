@@ -9,4 +9,9 @@ public abstract record SecurityRuleCredential
     public record AnyUserCredential : SecurityRuleCredential;
 
     public record CustomUserSecurityRuleCredential(UserCredential UserCredential) : SecurityRuleCredential;
+
+    public static implicit operator SecurityRuleCredential(UserCredential userCredential)
+    {
+        return new CustomUserSecurityRuleCredential(userCredential);
+    }
 }
