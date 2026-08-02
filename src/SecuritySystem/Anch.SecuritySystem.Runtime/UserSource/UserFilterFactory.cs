@@ -32,33 +32,33 @@ public class UserFilterFactory<TUser, TIdent>(
                 return visualIdentityInfo.Name.Path.Select(objName => objName == name);
 
             case UserCredential.IdentUserCredential { Identity: var identity }:
-            {
-                var convertedIdentity = identityConverter.TryConvert(identity);
+                {
+                    var convertedIdentity = identityConverter.TryConvert(identity);
 
-                if (convertedIdentity is null)
-                {
-                    return _ => false;
+                    if (convertedIdentity is null)
+                    {
+                        return _ => false;
+                    }
+                    else
+                    {
+                        return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id));
+                    }
                 }
-                else
-                {
-                    return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id));
-                }
-            }
 
             case UserCredential.FullUserCredential { User: { Identity: var identity, Name: var name } }:
-            {
-                var convertedIdentity = identityConverter.TryConvert(identity);
+                {
+                    var convertedIdentity = identityConverter.TryConvert(identity);
 
-                if (convertedIdentity is null)
-                {
-                    return _ => false;
+                    if (convertedIdentity is null)
+                    {
+                        return _ => false;
+                    }
+                    else
+                    {
+                        return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id))
+                            .BuildAnd(visualIdentityInfo.Name.Path.Select(objName => objName == name));
+                    }
                 }
-                else
-                {
-                    return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id))
-                        .BuildAnd(visualIdentityInfo.Name.Path.Select(objName => objName == name));
-                }
-            }
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(userCredential));

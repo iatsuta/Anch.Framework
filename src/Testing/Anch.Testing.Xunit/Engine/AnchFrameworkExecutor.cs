@@ -15,7 +15,7 @@ public class AnchFrameworkExecutor(
 
     public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases, IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         SetEnvironment(EnvironmentVariables.AssertEquivalentMaxDepth, executionOptions.AssertEquivalentMaxDepth());
         SetEnvironment(EnvironmentVariables.PrintMaxEnumerableLength, executionOptions.PrintMaxEnumerableLength());
@@ -25,7 +25,7 @@ public class AnchFrameworkExecutor(
 
         try
         {
-            await commonXunitTestAssemblyRunner.Run(this.TestAssembly, testCases, executionMessageSink, executionOptions, cancellationToken);
+            await commonXunitTestAssemblyRunner.Run(this.TestAssembly, testCases, executionMessageSink, executionOptions, ct);
         }
         finally
         {

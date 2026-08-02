@@ -32,48 +32,48 @@ public class RunAsManager<TUser>(
 
     public User? RunAsUser => this.NativeRunAsUser?.Pipe(toDefaultUserConverter.ConvertFunc);
 
-    public async Task StartRunAsUserAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task StartRunAsUserAsync(UserCredential userCredential, CancellationToken ct)
     {
-        await this.CheckAccessAsync(cancellationToken);
+        await this.CheckAccessAsync(ct);
 
         if (this.NativeRunAsUser is not null && userCredentialMatcher.IsMatch(userCredential, this.NativeRunAsUser))
         {
         }
         else if (userCredential == impersonatedCurrentUser.Name)
         {
-            await this.FinishRunAsUserAsync(cancellationToken);
+            await this.FinishRunAsUserAsync(ct);
         }
         else
         {
             foreach (var runAsValidator in validators)
             {
-                await runAsValidator.ValidateAsync(userCredential, cancellationToken);
+                await runAsValidator.ValidateAsync(userCredential, ct);
             }
 
-            await this.PersistRunAs(userCredential, cancellationToken);
+            await this.PersistRunAs(userCredential, ct);
         }
     }
 
-    public async Task FinishRunAsUserAsync(CancellationToken cancellationToken)
+    public async Task FinishRunAsUserAsync(CancellationToken ct)
     {
-        await this.CheckAccessAsync(cancellationToken);
+        await this.CheckAccessAsync(ct);
 
-        await this.PersistRunAs(null, cancellationToken);
+        await this.PersistRunAs(null, ct);
     }
 
-    private async Task PersistRunAs(UserCredential? userCredential, CancellationToken cancellationToken)
+    private async Task PersistRunAs(UserCredential? userCredential, CancellationToken ct)
     {
-        var newRunAsUser = userCredential is null ? null : await userSource.GetUserAsync(userCredential, cancellationToken);
+        var newRunAsUser = userCredential is null ? null : await userSource.GetUserAsync(userCredential, ct);
 
         if (this.NativeRunAsUser != newRunAsUser)
         {
             userSourceRunAsInfo.RunAs.Setter(this.NativeCurrentUser, newRunAsUser);
 
-            await genericRepository.SaveAsync(this.NativeCurrentUser, cancellationToken);
+            await genericRepository.SaveAsync(this.NativeCurrentUser, ct);
         }
     }
 
-    private Task CheckAccessAsync(CancellationToken cancellationToken) =>
+    private Task CheckAccessAsync(CancellationToken ct) =>
         securitySystemFactory.Create(new SecurityRuleCredential.CurrentUserWithoutRunAsCredential())
-            .CheckAccessAsync(SecurityRole.Administrator, cancellationToken);
+            .CheckAccessAsync(SecurityRole.Administrator, ct);
 }

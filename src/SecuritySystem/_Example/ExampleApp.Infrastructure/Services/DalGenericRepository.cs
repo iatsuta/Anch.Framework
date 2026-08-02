@@ -6,15 +6,15 @@ namespace ExampleApp.Infrastructure.Services;
 
 public class DalGenericRepository(IServiceProvider serviceProvider) : IGenericRepository
 {
-    public Task SaveAsync<TDomainObject>(TDomainObject data, CancellationToken cancellationToken)
+    public Task SaveAsync<TDomainObject>(TDomainObject data, CancellationToken ct)
         where TDomainObject : class
     {
-        return serviceProvider.GetRequiredService<IDal<TDomainObject>>().SaveAsync(data, cancellationToken);
+        return serviceProvider.GetRequiredService<IDal<TDomainObject>>().SaveAsync(data, ct);
     }
 
-    public Task RemoveAsync<TDomainObject>(TDomainObject data, CancellationToken cancellationToken)
+    public Task RemoveAsync<TDomainObject>(TDomainObject data, CancellationToken ct)
         where TDomainObject : class
     {
-        return serviceProvider.GetRequiredService<IDal<TDomainObject>>().RemoveAsync(data, cancellationToken);
+        return serviceProvider.GetRequiredService<IDal<TDomainObject>>().RemoveAsync(data, ct);
     }
 }

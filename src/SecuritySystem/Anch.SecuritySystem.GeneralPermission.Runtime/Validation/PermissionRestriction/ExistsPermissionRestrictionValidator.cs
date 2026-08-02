@@ -10,7 +10,7 @@ public class ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecur
     : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         var securityContextObjectId = restrictionBindingInfo.SecurityContextObjectId.Getter(permissionRestriction);
 

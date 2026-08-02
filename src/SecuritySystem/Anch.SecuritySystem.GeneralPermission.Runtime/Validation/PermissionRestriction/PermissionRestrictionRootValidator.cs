@@ -8,11 +8,11 @@ public class PermissionRestrictionRootValidator<TPermissionRestriction>(
     [FromKeyedServices(ISecurityValidator.ElementKey)]
     IEnumerable<IPermissionRestrictionValidator<TPermissionRestriction>> validators) : IPermissionRestrictionValidator<TPermissionRestriction>
 {
-    public async ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         foreach (var validator in validators)
         {
-            await validator.ValidateAsync(permissionRestriction, cancellationToken);
+            await validator.ValidateAsync(permissionRestriction, ct);
         }
     }
 }

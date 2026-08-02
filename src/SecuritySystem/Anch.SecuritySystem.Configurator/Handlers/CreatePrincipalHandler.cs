@@ -9,19 +9,15 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 
 public class CreatePrincipalHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
-    IPrincipalManagementService principalManagementService,
-    IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null)
+    IPrincipalManagementService principalManagementService)
     : BaseWriteHandler, ICreatePrincipalHandler
 {
-    public async Task Execute(HttpContext context, CancellationToken cancellationToken)
+    public async Task Execute(HttpContext context, CancellationToken ct)
     {
-        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 
         var name = await this.ParseRequestBodyAsync<string>(context);
 
-        var principal = await principalManagementService.CreatePrincipalAsync(name, [], cancellationToken);
-
-        if (configuratorIntegrationEvents != null)
-            await configuratorIntegrationEvents.PrincipalCreatedAsync(principal, cancellationToken);
+        await principalManagementService.CreatePrincipalAsync(name, [], ct);
     }
 }

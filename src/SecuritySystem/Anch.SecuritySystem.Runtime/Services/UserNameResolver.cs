@@ -8,7 +8,7 @@ namespace Anch.SecuritySystem.Services;
 
 public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNameResolver
 {
-    public async Task<string> GetUserNameAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<string> GetUserNameAsync(UserCredential userCredential, CancellationToken ct)
     {
         switch (userCredential)
         {
@@ -24,11 +24,11 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
 
                         await userSourceList
                             .ToAsyncEnumerable()
-                            .Select(async (userSource, ct) => await userSource.ToSimple().TryGetUserAsync(userCredential, ct))
+                            .Select(async (userSource, lct) => await userSource.ToSimple().TryGetUserAsync(userCredential, lct))
                             .Where(user => user != null)
                             .Select(user => user!.Name)
                             .Distinct()
-                            .ToArrayAsync(cancellationToken);
+                            .ToArrayAsync(ct);
 
                     return request.Single(
                         () => new SecuritySystemException($"{nameof(UserCredential)} with id {identity.GetId()} not found"),
@@ -39,20 +39,26 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
         }
     }
 }
+
 public class UserNameResolver<TUser>(
     ICurrentUser currentUser,
-    [FromKeyedServices(ICurrentUser.ImpersonatedKey)] ICurrentUser impersonatedCurrentUser,
+    [FromKeyedServices(ICurrentUser.ImpersonatedKey)]
+    ICurrentUser impersonatedCurrentUser,
     IUserSource<TUser> userSource) : IUserNameResolver<TUser>
 {
     private readonly IUserSource<User> simpleUserSource = userSource.ToSimple();
 
-    public async Task<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken cancellationToken)
+    public async Task<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken ct)
     {
         return credential switch
         {
+            SecurityRuleCredential.CustomUserSecurityRuleCredential { UserCredential: UserCredential.NamedUserCredential { Name: var name } } => name,
+
+            SecurityRuleCredential.CustomUserSecurityRuleCredential { UserCredential: UserCredential.FullUserCredential { User.Name: var name } } => name,
+
             SecurityRuleCredential.CustomUserSecurityRuleCredential customUserSecurityRuleCredential =>
 
-                (await this.simpleUserSource.GetUserAsync(customUserSecurityRuleCredential.UserCredential, cancellationToken)).Name,
+                (await this.simpleUserSource.GetUserAsync(customUserSecurityRuleCredential.UserCredential, ct)).Name,
 
             SecurityRuleCredential.CurrentUserWithRunAsCredential => currentUser.Name,
 

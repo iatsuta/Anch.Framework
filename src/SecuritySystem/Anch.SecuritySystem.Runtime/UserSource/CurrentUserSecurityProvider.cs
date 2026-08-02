@@ -67,11 +67,11 @@ public class CurrentUserSecurityProvider<TDomainObject>(
 
     public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => this.InnerService.Inject(queryable);
 
-    public ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.GetAccessResultAsync(domainObject, cancellationToken);
+    public ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.GetAccessResultAsync(domainObject, ct);
 
-    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.HasAccessAsync(domainObject, cancellationToken);
+    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.HasAccessAsync(domainObject, ct);
 
-    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.GetAccessorDataAsync(domainObject, cancellationToken);
+    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.GetAccessorDataAsync(domainObject, ct);
 }
 
 public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
@@ -111,13 +111,13 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
             })
             .Pipe(relativeDomainPathInfo.CreateCondition);
 
-    public override async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public override async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct)
     {
         var users = await relativeDomainPathInfo
             .GetRelativeObjects(domainObject)
             .ToAsyncEnumerable()
             .Select(visualIdentityInfo.Name.Getter)
-            .ToImmutableArrayAsync(cancellationToken);
+            .ToImmutableArrayAsync(ct);
 
         return SecurityAccessorData.Return(users);
     }

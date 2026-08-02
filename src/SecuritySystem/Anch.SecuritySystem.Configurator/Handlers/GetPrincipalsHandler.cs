@@ -11,9 +11,9 @@ namespace Anch.SecuritySystem.Configurator.Handlers;
 public class GetPrincipalsHandler([WithoutRunAs] ISecuritySystem securitySystem, IRootPrincipalSourceService principalSourceService)
     : BaseReadHandler, IGetPrincipalsHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken))
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct))
         {
             return Array.Empty<EntityDto>();
         }
@@ -24,6 +24,6 @@ public class GetPrincipalsHandler([WithoutRunAs] ISecuritySystem securitySystem,
             .GetPrincipalsAsync(nameFilter, 70)
             .Select(x => new PrincipalHeaderDto { Id = x.Identity.GetId().ToString()!, Name = x.Name, IsVirtual = x.IsVirtual })
             .OrderBy(x => x.Name)
-            .ToArrayAsync(cancellationToken);
+            .ToArrayAsync(ct);
     }
 }

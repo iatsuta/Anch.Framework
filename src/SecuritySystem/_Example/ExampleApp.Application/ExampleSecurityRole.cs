@@ -10,6 +10,8 @@ public static class ExampleSecurityRole
 
     public static SecurityRole DefaultRole { get; } = new(nameof(DefaultRole));
 
+    public static SecurityRole OtherRole { get; } = new(nameof(OtherRole));
+
     public static SecurityRole WithRestrictionFilterRole { get; } = new(nameof(WithRestrictionFilterRole));
 
     public static SecurityRole NotificationRole { get; } = new(nameof(NotificationRole));

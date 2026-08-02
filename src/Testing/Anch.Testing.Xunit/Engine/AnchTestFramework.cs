@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 
-using Xunit;
 using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
@@ -17,14 +16,7 @@ public class AnchTestFramework : XunitTestFramework
     private IServiceProviderPool? GetServiceProviderPool(Assembly assembly) =>
 
         this.serviceProviderPoolCache.GetOrAdd(assembly,
-            _ =>
-            {
-                var collectionBehaviorAttribute = assembly.GetCustomAttribute<CollectionBehaviorAttribute>();
-
-                return assembly.TryCreateTestEnvironment() is { } testEnvironment
-                    ? new ServiceProviderPool(testEnvironment, !collectionBehaviorAttribute?.DisableTestParallelization)
-                    : null;
-            });
+            _ => assembly.TryCreateTestEnvironment() is var (testEnvironment, poolFactory) ? poolFactory.Create(assembly, testEnvironment) : null);
 
     protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly) =>
         this.executorCache.GetOrAdd(assembly,

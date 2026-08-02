@@ -17,18 +17,18 @@ public class GetPrincipalHandler(
     ISecurityContextInfoSource securityContextInfoSource,
     [WithoutRunAs] ISecuritySystem securitySystem) : BaseReadHandler, IGetPrincipalHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken)) return new PrincipalDetailsDto { Permissions = [] };
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct)) return new PrincipalDetailsDto { Permissions = [] };
 
-        var permissions = await this.GetPermissionsAsync(context.ExtractSecurityIdentity(), cancellationToken);
+        var permissions = await this.GetPermissionsAsync(context.ExtractSecurityIdentity(), ct);
 
         return new PrincipalDetailsDto { Permissions = permissions };
     }
 
-    private async Task<List<PermissionDto>> GetPermissionsAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    private async Task<List<PermissionDto>> GetPermissionsAsync(UserCredential userCredential, CancellationToken ct)
     {
-        var principal = await principalSourceService.GetPrincipalAsync(userCredential, cancellationToken);
+        var principal = await principalSourceService.GetPrincipalAsync(userCredential, ct);
 
         var allSecurityContextDict = this.GetSecurityContextDict(principal);
 

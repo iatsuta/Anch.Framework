@@ -27,7 +27,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
     public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var securityContextRestrictions = securityRule.GetSafeSecurityContextRestrictions().ToList();
 
@@ -35,7 +35,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
             .ToAsyncEnumerable()
             .SelectMany(ps => ps.GetPermissionSources(securityRule))
             .SelectMany(ps => ps.GetPermissionsAsync(securityPath.UsedSecurityContextTypes))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         var optimizedPermissions = permissionOptimizationService.Optimize(rawPermissions);
 

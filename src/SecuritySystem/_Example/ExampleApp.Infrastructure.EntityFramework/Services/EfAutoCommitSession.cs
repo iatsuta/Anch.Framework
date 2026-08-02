@@ -26,9 +26,9 @@ public sealed class EfAutoCommitSession : IAsyncDisposable, IDisposable
 
     public void Dispose() => this.DisposeAsync().GetAwaiter().GetResult();
 
-    public ValueTask DisposeAsync() => this.CloseAsync();
+    public ValueTask DisposeAsync() => this.CloseAsync(CancellationToken.None);
 
-    public async ValueTask CloseAsync(CancellationToken cancellationToken = default)
+    public async ValueTask CloseAsync(CancellationToken ct)
     {
         if (this.closed)
         {
@@ -43,9 +43,9 @@ public sealed class EfAutoCommitSession : IAsyncDisposable, IDisposable
             {
                 await using (this.efTransaction)
                 {
-                    await this.NativeSession.SaveChangesAsync(cancellationToken);
+                    await this.NativeSession.SaveChangesAsync(ct);
 
-                    await this.efTransaction.CommitAsync(cancellationToken);
+                    await this.efTransaction.CommitAsync(ct);
                 }
             }
         }

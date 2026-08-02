@@ -11,7 +11,7 @@ public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectio
         IReadOnlyCollection<IXunitTestCase> testCases,
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         Guard.ArgumentNotNull(testAssembly);
         Guard.ArgumentNotNull(testCases);
@@ -23,7 +23,7 @@ public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectio
             testCases,
             executionMessageSink,
             executionOptions,
-            cancellationToken, commonTestCollectionRunner
+            ct, commonTestCollectionRunner
         );
 
         await ctxt.InitializeAsync();

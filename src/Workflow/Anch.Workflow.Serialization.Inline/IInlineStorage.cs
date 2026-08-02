@@ -6,9 +6,9 @@ namespace Anch.Workflow.Serialization.Inline;
 
 public interface IInlineStorage<TSource>
 {
-    ValueTask Save(TSource source, CancellationToken cancellationToken);
+    ValueTask Save(TSource source, CancellationToken ct);
 
-    ValueTask FlushChanges(CancellationToken cancellationToken);
+    ValueTask FlushChanges(CancellationToken ct);
 
     IQueryable<TSource> GetQueryable();
 

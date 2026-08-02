@@ -17,15 +17,16 @@ public class DomainSecurityRoleExtractor(ISecurityRuleExpander expander, IExpand
         this.rolesCache.GetOrAdd(securityRule.WithDefaultCredential(), _ =>
             expander.FullRoleExpand(this.ExtractSecurityRule(securityRule)).Children.SelectMany(c => c.SecurityRoles).ToImmutableHashSet());
 
-    public DomainSecurityRule.ExpandedRoleGroupSecurityRule ExtractSecurityRule(DomainSecurityRule securityRule) =>
-        this.rulesCache.GetOrAdd(securityRule.WithDefaultCredential(), _ =>
-        {
-            var usedRules = new HashSet<DomainSecurityRule.ExpandedRoleGroupSecurityRule>();
+    public DomainSecurityRule.ExpandedRoleGroupSecurityRule ExtractSecurityRule(DomainSecurityRule baseSecurityRule) =>
+        baseSecurityRule.WithDefaultCredential(securityRule =>
+            this.rulesCache.GetOrAdd(securityRule, _ =>
+            {
+                var usedRules = new HashSet<DomainSecurityRule.ExpandedRoleGroupSecurityRule>();
 
-            new ScanVisitor(usedRules).Visit(expander.FullDomainExpand(securityRule));
+                new ScanVisitor(usedRules).Visit(expander.FullDomainExpand(securityRule));
 
-            return securityRuleSetOptimizer.Optimize(usedRules);
-        });
+                return securityRuleSetOptimizer.Optimize(usedRules);
+            }));
 
 
     private class ScanVisitor(ISet<DomainSecurityRule.ExpandedRoleGroupSecurityRule> usedRules) : SecurityRuleVisitor

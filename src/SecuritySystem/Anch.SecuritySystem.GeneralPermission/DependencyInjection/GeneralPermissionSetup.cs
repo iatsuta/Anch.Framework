@@ -234,15 +234,18 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
 
                     .AddKeyedSingleton<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
-                        AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>(ISecurityValidator.ElementKey)
+                        AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>(
+                        ISecurityValidator.ElementKey)
 
                     .AddKeyedScoped<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
-                        ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>(ISecurityValidator.ElementKey)
+                        ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>>(ISecurityValidator
+                        .ElementKey)
 
                     .AddKeyedScoped<
                         IPermissionRestrictionValidator<TPermissionRestriction>,
-                        AllowedFilterPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>(ISecurityValidator.ElementKey)
+                        AllowedFilterPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>>(
+                        ISecurityValidator.ElementKey)
 
                     .AddScoped<
                         IPermissionRestrictionLoader<TPermission, TPermissionRestriction>,
@@ -275,7 +278,10 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
                 services.AddScoped(typeof(IPermissionEqualityComparer<TPermission, TPermissionRestriction>), this.permissionEqualityComparerType);
 
                 services.AddScoped(typeof(IPermissionManagementService<TPrincipal, TPermission, TPermissionRestriction>), this.permissionManagementServiceType);
-            });
+            })
+            .Pipe(
+                !bindingInfo.IsReadonly,
+                v => v.AddPrincipalManagementService<GeneralPrincipalManagementService<TPrincipal, TPermission, TPermissionRestriction>>());
     }
 
     private ISecuritySystemSetup RegisterGeneralServices(ISecuritySystemSetup settings)
@@ -307,8 +313,6 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
 
                     .AddSingleton<IGeneralPermissionBindingInfoSource, GeneralPermissionBindingInfoSource>()
                     .AddSingleton<IGeneralPermissionRestrictionBindingInfoSource, GeneralPermissionRestrictionBindingInfoSource>();
-            })
-
-            .SetPrincipalManagementService<GeneralPrincipalManagementService>();
+            });
     }
 }

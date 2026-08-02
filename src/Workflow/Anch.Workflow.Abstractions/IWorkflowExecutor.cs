@@ -7,24 +7,24 @@ namespace Anch.Workflow;
 
 public interface IWorkflowExecutor
 {
-    ValueTask<WorkflowProcessResult> Start<TSource, TWorkflow>(TSource source, CancellationToken cancellationToken = default)
+    ValueTask<WorkflowProcessResult> Start<TSource, TWorkflow>(TSource source, CancellationToken ct)
         where TSource : notnull
         where TWorkflow : IWorkflow<TSource>;
 
-    ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken cancellationToken = default)
+    ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflow<TSource> workflow, CancellationToken ct)
         where TSource : notnull;
 
-    ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflow, CancellationToken cancellationToken = default)
+    ValueTask<WorkflowProcessResult> Start<TSource>(TSource source, IWorkflowDefinition<TSource> workflow, CancellationToken ct)
         where TSource : notnull;
 
-    ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> ProcessUnprocessed(WorkflowProcessResult workflowProcessResult, CancellationToken ct);
 
-    ValueTask<WorkflowProcessResult> Terminate(WorkflowInstance workflowInstance, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> Terminate(WorkflowInstance workflowInstance, CancellationToken ct);
 
-    async ValueTask<WorkflowProcessResult> PushEvent(EventHeader @event, StateInstance targetState, object? data = null,
-        CancellationToken cancellationToken = default) =>
+    async ValueTask<WorkflowProcessResult> PushEvent(EventHeader @event, StateInstance targetState, object? data,
+        CancellationToken ct) =>
 
-        await this.PushEvent(new PushEventInfo(@event, null, targetState, data), cancellationToken);
+        await this.PushEvent(new PushEventInfo(@event, null, targetState, data), ct);
 
-    ValueTask<WorkflowProcessResult> PushEvent(PushEventInfo pushEventInfo, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> PushEvent(PushEventInfo pushEventInfo, CancellationToken ct);
 }

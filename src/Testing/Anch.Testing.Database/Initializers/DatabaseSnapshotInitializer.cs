@@ -15,28 +15,28 @@ public class DatabaseSnapshotInitializer(
 {
     private bool disposed;
 
-    public async Task Initialize(CancellationToken cancellationToken)
+    public async Task Initialize(CancellationToken ct)
     {
         switch (settings.InitMode)
         {
             case DatabaseInitMode.RebuildSnapshot:
                 {
-                    await this.InitializeEmptySchema(cancellationToken);
-                    await this.InitializeTestData(cancellationToken);
+                    await this.InitializeEmptySchema(ct);
+                    await this.InitializeTestData(ct);
 
                     break;
                 }
 
             case DatabaseInitMode.ReuseSnapshot:
                 {
-                    if (!await databaseManager.Exists(TestConnectionStringRole.EmptySnapshot, cancellationToken))
+                    if (!await databaseManager.Exists(TestConnectionStringRole.EmptySnapshot, ct))
                     {
-                        await this.InitializeEmptySchema(cancellationToken);
+                        await this.InitializeEmptySchema(ct);
                     }
 
-                    if (!await databaseManager.Exists(TestConnectionStringRole.FilledSnapshot, cancellationToken))
+                    if (!await databaseManager.Exists(TestConnectionStringRole.FilledSnapshot, ct))
                     {
-                        await this.InitializeTestData(cancellationToken);
+                        await this.InitializeTestData(ct);
                     }
 
                     break;
@@ -50,35 +50,35 @@ public class DatabaseSnapshotInitializer(
         }
     }
 
-    protected virtual async Task InternalInitializeEmptySchema(CancellationToken cancellationToken)
+    protected virtual async Task InternalInitializeEmptySchema(CancellationToken ct)
     {
-        await databaseManager.Remove(PoolTestConnectionStringRole.Main, cancellationToken);
+        await databaseManager.Remove(PoolTestConnectionStringRole.Main, ct);
 
-        await databaseManager.CreateEmpty(PoolTestConnectionStringRole.Main, cancellationToken);
+        await databaseManager.CreateEmpty(PoolTestConnectionStringRole.Main, ct);
 
-        await emptySchemaInitializer.Initialize(cancellationToken);
+        await emptySchemaInitializer.Initialize(ct);
 
-        await databaseManager.Move(PoolTestConnectionStringRole.Main, TestConnectionStringRole.EmptySnapshot, cancellationToken);
+        await databaseManager.Move(PoolTestConnectionStringRole.Main, TestConnectionStringRole.EmptySnapshot, ct);
     }
 
-    protected virtual async Task InternalInitializeTestData(CancellationToken cancellationToken)
+    protected virtual async Task InternalInitializeTestData(CancellationToken ct)
     {
-        await databaseManager.Copy(TestConnectionStringRole.EmptySnapshot, PoolTestConnectionStringRole.Main, cancellationToken);
+        await databaseManager.Copy(TestConnectionStringRole.EmptySnapshot, PoolTestConnectionStringRole.Main, ct);
 
-        await testDataInitializer.Initialize(cancellationToken);
+        await testDataInitializer.Initialize(ct);
 
-        await databaseManager.Move(PoolTestConnectionStringRole.Main, TestConnectionStringRole.FilledSnapshot, cancellationToken);
+        await databaseManager.Move(PoolTestConnectionStringRole.Main, TestConnectionStringRole.FilledSnapshot, ct);
     }
 
-    private Task InitializeEmptySchema(CancellationToken cancellationToken) =>
+    private Task InitializeEmptySchema(CancellationToken ct) =>
 
-        this.SafeInitialize(() => this.InternalInitializeEmptySchema(cancellationToken), cancellationToken);
+        this.SafeInitialize(() => this.InternalInitializeEmptySchema(ct), ct);
 
-    private Task InitializeTestData(CancellationToken cancellationToken) =>
+    private Task InitializeTestData(CancellationToken ct) =>
 
-        this.SafeInitialize(() => this.InternalInitializeTestData(cancellationToken), cancellationToken);
+        this.SafeInitialize(() => this.InternalInitializeTestData(ct), ct);
 
-    private async Task SafeInitialize(Func<Task> initAction, CancellationToken cancellationToken)
+    private async Task SafeInitialize(Func<Task> initAction, CancellationToken ct)
     {
         try
         {
@@ -90,7 +90,7 @@ public class DatabaseSnapshotInitializer(
             {
                 try
                 {
-                    await databaseManager.Remove(PoolTestConnectionStringRole.Main, cancellationToken);
+                    await databaseManager.Remove(PoolTestConnectionStringRole.Main, ct);
                 }
                 catch (Exception cleanEx)
                 {

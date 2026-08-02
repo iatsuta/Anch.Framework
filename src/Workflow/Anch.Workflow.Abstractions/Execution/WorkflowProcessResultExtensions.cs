@@ -8,8 +8,8 @@ public static class WorkflowProcessResultExtensions
     public static ValueTask<WorkflowProcessResult> AggregateAsync<T>(
         this IEnumerable<T> source,
         Func<T, CancellationToken, ValueTask<WorkflowProcessResult>> selector,
-        CancellationToken cancellationToken) =>
+        CancellationToken ct) =>
         source
             .ToAsyncEnumerable()
-            .AggregateAsync(WorkflowProcessResult.Empty, async (state, item, ct) => state + await selector(item, ct), cancellationToken);
+            .AggregateAsync(WorkflowProcessResult.Empty, async (state, item, lct) => state + await selector(item, lct), ct);
 }

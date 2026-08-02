@@ -2,10 +2,10 @@
 
 public interface IUserNameResolver
 {
-    Task<string> GetUserNameAsync(UserCredential userCredential, CancellationToken cancellationToken = default);
+    Task<string> GetUserNameAsync(UserCredential userCredential, CancellationToken ct);
 }
 
 public interface IUserNameResolver<out TUser>
 {
-    Task<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken cancellationToken = default);
+    Task<string?> GetUserNameAsync(SecurityRuleCredential credential, CancellationToken ct);
 }

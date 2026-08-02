@@ -24,26 +24,26 @@ public class WorkflowMachine(
         this.SetCurrentState(this.WorkflowInstance.Definition.StartState);
     }
 
-    public async ValueTask Save(CancellationToken cancellationToken)
+    public async ValueTask Save(CancellationToken ct)
     {
-        await storage.SaveWorkflowInstance(this.WorkflowInstance, cancellationToken);
+        await storage.SaveWorkflowInstance(this.WorkflowInstance, ct);
     }
 
-    public async ValueTask<WorkflowProcessResult> ProcessWorkflow(CancellationToken cancellationToken)
+    public async ValueTask<WorkflowProcessResult> ProcessWorkflow(CancellationToken ct)
     {
-        return await this.ProcessCurrentState(this.CreateExecutionContext(cancellationToken));
+        return await this.ProcessCurrentState(this.CreateExecutionContext(ct));
     }
 
-    public async ValueTask<WorkflowProcessResult> ProcessWorkflow(ExecutionResult executionResult, CancellationToken cancellationToken) =>
-        executionResult.WorkflowProcessResult + await this.ProcessExecutionResult(this.WorkflowInstance.CurrentState, executionResult, cancellationToken);
+    public async ValueTask<WorkflowProcessResult> ProcessWorkflow(ExecutionResult executionResult, CancellationToken ct) =>
+        executionResult.WorkflowProcessResult + await this.ProcessExecutionResult(this.WorkflowInstance.CurrentState, executionResult, ct);
 
-    public async ValueTask<WorkflowProcessResult> Terminate(CancellationToken cancellationToken)
+    public async ValueTask<WorkflowProcessResult> Terminate(CancellationToken ct)
     {
         if (this.WorkflowInstance.Status.Role != WorkflowStatusRole.Finished)
         {
             return await this.GetLeaveResult(
                        codeStateProcessorFactory.Create(this.WorkflowInstance.CurrentState),
-                       this.CreateExecutionContext(cancellationToken), true)
+                       this.CreateExecutionContext(ct), true)
                    + this.SwitchState(this.WorkflowInstance.Definition.TerminateState);
         }
         else
@@ -52,18 +52,18 @@ public class WorkflowMachine(
         }
     }
 
-    protected virtual IExecutionContext CreateExecutionContext(CancellationToken cancellationToken, WaitEventInfo? callbackEventInfo = null)
+    protected virtual IExecutionContext CreateExecutionContext(CancellationToken ct, WaitEventInfo? callbackEventInfo = null)
     {
-        return this.CreateExecutionContext(this.WorkflowInstance.CurrentState, cancellationToken, callbackEventInfo);
+        return this.CreateExecutionContext(this.WorkflowInstance.CurrentState, ct, callbackEventInfo);
     }
 
-    protected virtual IExecutionContext CreateExecutionContext(StateInstance stateInstance, CancellationToken cancellationToken,
+    protected virtual IExecutionContext CreateExecutionContext(StateInstance stateInstance, CancellationToken ct,
         WaitEventInfo? callbackEventInfo)
     {
         return new ExecutionContext
         {
             StateInstance = stateInstance,
-            CancellationToken = cancellationToken,
+            CancellationToken = ct,
             CallbackEventInfo = callbackEventInfo
         };
     }
@@ -153,7 +153,7 @@ public class WorkflowMachine(
     }
 
     protected virtual async ValueTask<WorkflowProcessResult> ProcessExecutionResult(StateInstance stateInstance, ExecutionResult executionResult,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         switch (executionResult)
         {
@@ -167,10 +167,10 @@ public class WorkflowMachine(
                 return WorkflowProcessResult.Empty;
 
             case PushEventResult pushEventResult:
-                return await this.ProcessExecutionResult(stateInstance, pushEventResult, cancellationToken);
+                return await this.ProcessExecutionResult(stateInstance, pushEventResult, ct);
 
             case Done:
-                return await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), cancellationToken);
+                return await this.ProcessExecutionResult(stateInstance, new PushEventResult(EventHeader.StateDone, stateInstance), ct);
 
             case MultiExecutionResult multiExecutionResult:
                 return new WorkflowProcessResult([],
@@ -182,13 +182,13 @@ public class WorkflowMachine(
     }
 
     private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(StateInstance stateInstance, PushEventResult pushEventResult,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        return await this.ProcessExecutionResult(stateInstance, pushEventResult.ToEventInfo(stateInstance.Workflow), cancellationToken);
+        return await this.ProcessExecutionResult(stateInstance, pushEventResult.ToEventInfo(stateInstance.Workflow), ct);
     }
 
     private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(StateInstance stateInstance, PushEventInfo pushEventInfo,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         if (pushEventInfo.TargetState == null && pushEventInfo.Header.IsGlobal)
         {
@@ -204,11 +204,11 @@ public class WorkflowMachine(
                 stateInstance.Workflow.Status = WorkflowStatus.Terminated;
             }
 
-            return await workflowExecutor.PushEvent(pushEventInfo, cancellationToken);
+            return await workflowExecutor.PushEvent(pushEventInfo, ct);
         }
         else if (pushEventInfo.TargetState.Maybe(s => s.Workflow != stateInstance.Workflow))
         {
-            return await workflowExecutor.PushEvent(pushEventInfo, cancellationToken);
+            return await workflowExecutor.PushEvent(pushEventInfo, ct);
         }
         else
         {
@@ -218,9 +218,9 @@ public class WorkflowMachine(
         }
     }
 
-    public async ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken cancellationToken)
+    public async ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken ct)
     {
-        var executionContext = this.CreateExecutionContext(releasedEventInfo.TargetState, cancellationToken, releasedEventInfo);
+        var executionContext = this.CreateExecutionContext(releasedEventInfo.TargetState, ct, releasedEventInfo);
 
         return await this.ProcessCurrentState(executionContext);
     }

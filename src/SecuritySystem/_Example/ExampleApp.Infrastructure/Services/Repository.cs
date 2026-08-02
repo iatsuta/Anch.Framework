@@ -11,22 +11,22 @@ public class Repository<TDomainObject>(
     ISecurityProvider<TDomainObject> securityProvider) : IRepository<TDomainObject>
     where TDomainObject : class
 {
-    public async Task SaveAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async Task SaveAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        await this.CheckAccess(domainObject, cancellationToken);
+        await this.CheckAccess(domainObject, ct);
 
-        await dal.SaveAsync(domainObject, cancellationToken);
+        await dal.SaveAsync(domainObject, ct);
     }
 
-    public async Task RemoveAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async Task RemoveAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        await this.CheckAccess(domainObject, cancellationToken);
+        await this.CheckAccess(domainObject, ct);
 
-        await dal.RemoveAsync(domainObject, cancellationToken);
+        await dal.RemoveAsync(domainObject, ct);
     }
 
-    private async Task CheckAccess(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        await securityProvider.CheckAccessAsync(domainObject, accessDeniedExceptionService, cancellationToken);
+    private async Task CheckAccess(TDomainObject domainObject, CancellationToken ct) =>
+        await securityProvider.CheckAccessAsync(domainObject, accessDeniedExceptionService, ct);
 
     public IQueryable<TDomainObject> GetQueryable() => securityProvider.Inject(dal.GetQueryable());
 }

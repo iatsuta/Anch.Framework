@@ -9,10 +9,10 @@ public class SecurityFilterFactory<TDomainObject>(
     : ISecurityFilterFactory<TDomainObject>
 {
     public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
-        SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
+        SecurityPath<TDomainObject> securityPath, CancellationToken ct)
     {
         return new SecurityFilterInfo<TDomainObject>(
-            (await queryFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken)).InjectFunc,
-            (await hasAccessFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken)).HasAccessFunc);
+            (await queryFactory.CreateFilterAsync(securityRule, securityPath, ct)).InjectFunc,
+            (await hasAccessFactory.CreateFilterAsync(securityRule, securityPath, ct)).HasAccessFunc);
     }
 }

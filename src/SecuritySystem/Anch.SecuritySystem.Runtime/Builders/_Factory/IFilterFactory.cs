@@ -2,5 +2,5 @@
 
 public interface IFilterFactory<TDomainObject, TFilter>
 {
-    Task<TFilter> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken);
+    Task<TFilter> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken ct);
 }

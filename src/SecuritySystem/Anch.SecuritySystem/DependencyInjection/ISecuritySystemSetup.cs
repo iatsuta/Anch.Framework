@@ -86,7 +86,10 @@ public interface ISecuritySystemSetup
     ISecuritySystemSetup SetSecurityAccessorInfinityStorage<TStorage>()
         where TStorage : class, ISecurityAccessorInfinityStorage;
 
-    ISecuritySystemSetup SetPrincipalManagementService<TPrincipalManagementService>()
+    ISecuritySystemSetup AddPrincipalManagementListener<TPrincipalManagementListener>()
+        where TPrincipalManagementListener : class, IPrincipalManagementListener;
+
+    ISecuritySystemSetup AddPrincipalManagementService<TPrincipalManagementService>()
         where TPrincipalManagementService : class, IPrincipalManagementService;
 
     ISecuritySystemSetup SetDefaultSecurityRuleCredential(SecurityRuleCredential securityRuleCredential);
