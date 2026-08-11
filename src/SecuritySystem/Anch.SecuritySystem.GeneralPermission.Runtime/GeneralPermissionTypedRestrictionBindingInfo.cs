@@ -12,7 +12,8 @@ public class GeneralPermissionTypedRestrictionBindingInfo<TPermission, TPermissi
     IQueryableSource queryableSource,
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IPermissionRestrictionTypeFilterFactory<TPermissionRestriction> permissionRestrictionTypeFilterFactory,
-    IIdentityInfoSource identityInfoSource) : IPermissionTypedRestrictionBindingInfo<TPermission>
+    IIdentityInfoSource identityInfoSource,
+    IEqualityDomainObjectInfo<TPermission> equalityPermissionInfo) : IPermissionTypedRestrictionBindingInfo<TPermission>
     where TPermission : class
     where TPermissionRestriction : class
     where TSecurityContextObjectIdent : notnull
@@ -35,7 +36,8 @@ public class GeneralPermissionTypedRestrictionBindingInfo<TPermission, TPermissi
             return permission => securityContextQ.Where(sc =>
 
                 restrictionQueryable
-                    .Where(restriction => ee.Evaluate(restrictionBindingInfo.Permission.Path, restriction) == permission)
+                    .Where(restriction => ee.Evaluate(equalityPermissionInfo.EqualityExpression,
+                        ee.Evaluate(restrictionBindingInfo.Permission.Path, restriction), permission))
                     .Select(restrictionBindingInfo.SecurityContextObjectId.Path)
                     .Any(securityContextId =>
                         ee.Evaluate(eqIdentExpr, securityContextId, ee.Evaluate(securityContextIdentityInfo.Id.Path, sc)))
@@ -53,7 +55,8 @@ public class GeneralPermissionTypedRestrictionBindingInfo<TPermission, TPermissi
         return ExpressionEvaluateHelper.InlineEvaluate<Func<TPermission, bool>>(ee =>
         {
             return permission => restrictionQueryable
-                .All(restriction => ee.Evaluate(restrictionBindingInfo.Permission.Path, restriction) != permission);
+                .All(restriction => !ee.Evaluate(equalityPermissionInfo.EqualityExpression, ee.Evaluate(restrictionBindingInfo.Permission.Path, restriction),
+                    permission));
         });
     }
 }

@@ -70,7 +70,7 @@ public class AnchTestRunner(IServiceProviderPool? serviceProviderPool) : XunitTe
             ctxt.Aggregator.Add(
                 new TestPipelineException(
                     string.Format(
-                        CultureInfo.CurrentCulture,
+                        CultureInfo.InvariantCulture,
                         "Test '{0}' does not have an associated method and cannot be run by TestRunner",
                         ctxt.Test.TestDisplayName
                     )
@@ -91,7 +91,7 @@ public class AnchTestRunner(IServiceProviderPool? serviceProviderPool) : XunitTe
                         ctxt.Aggregator.Add(
                             new InvalidOperationException(
                                 string.Format(
-                                    CultureInfo.CurrentCulture,
+                                    CultureInfo.InvariantCulture,
                                     "The test method expected {0} parameter value{1}, but {2} parameter value{3} {4} provided.",
                                     parameterCount,
                                     parameterCount == 1 ? "" : "s",

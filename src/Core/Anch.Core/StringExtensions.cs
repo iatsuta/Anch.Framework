@@ -38,7 +38,7 @@ public static class StringExtensions
 
         public string ToStartLowerCase() => input.Length != 0 ? char.ToLower(input.First()) + input[1..] : input;
 
-        public string Skip(string pattern, bool raiseIfNotEquals) => input.Skip(pattern, StringComparison.CurrentCulture, raiseIfNotEquals);
+        public string Skip(string pattern, bool raiseIfNotEquals) => input.Skip(pattern, StringComparison.InvariantCulture, raiseIfNotEquals);
 
         public string Skip(string pattern, StringComparison stringComparison, bool raiseIfNotEquals)
         {
@@ -58,7 +58,7 @@ public static class StringExtensions
 
         public string SkipLast(string pattern, bool raiseIfNotEquals)
         {
-            return input.SkipLast(pattern, StringComparison.CurrentCulture, raiseIfNotEquals);
+            return input.SkipLast(pattern, StringComparison.InvariantCulture, raiseIfNotEquals);
         }
 
         public string SkipLast(string pattern, StringComparison stringComparison, bool raiseIfNotEquals)
