@@ -10,8 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\ExampleApp.IntegrationTests.EntityFramework\*.cs"
-             Exclude="..\ExampleApp.IntegrationTests.EntityFramework\PermissionRestrictionNavigationTranslationTests.cs" />
+    <Compile Include="..\ExampleApp.IntegrationTests.EntityFramework\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
