@@ -4,8 +4,6 @@ namespace Anch.SecuritySystem.UserSource;
 
 public record UserSourceInfo<TUser>(Expression<Func<TUser, bool>> FilterPath) : UserSourceInfo
 {
-    public Func<TUser, bool> FilterGetter { get; } = FilterPath.Compile();
-
     public override Type UserType { get; } = typeof(TUser);
 }
 

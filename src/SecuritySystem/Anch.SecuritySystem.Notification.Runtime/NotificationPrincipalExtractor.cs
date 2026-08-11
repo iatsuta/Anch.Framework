@@ -31,7 +31,6 @@ public class NotificationPrincipalExtractor<TPrincipal>(IServiceProxyFactory ser
 
 public class NotificationPrincipalExtractor<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
-    UserSourceInfo<TPrincipal> userSourceInfo,
     INotificationPermissionExtractor<TPermission> notificationPermissionExtractor)
     : INotificationPrincipalExtractor<TPrincipal>
 {
@@ -41,6 +40,5 @@ public class NotificationPrincipalExtractor<TPrincipal, TPermission>(
         notificationPermissionExtractor
             .GetPermissionsAsync(securityRoles, notificationFilterGroups)
             .Select(bindingInfo.Principal.Getter)
-            .Distinct()
-            .Where(userSourceInfo.FilterGetter);
+            .Distinct();
 }

@@ -8,6 +8,7 @@ using Anch.GenericRepository;
 using Anch.IdentitySource;
 using Anch.SecuritySystem.ExternalSystem;
 using Anch.SecuritySystem.Services;
+using Anch.SecuritySystem.UserSource;
 using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.VirtualPermission;
@@ -25,6 +26,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
     VirtualPermissionSecurityRoleItemBindingInfo<TPermission> itemBindingInfo,
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
     DomainSecurityRule.RoleBaseSecurityRule securityRule,
+    UserSourceInfo<TPrincipal> userSourceInfo,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : IPermissionSource<TPermission>
     where TPermission : class
 {
@@ -50,6 +52,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
         //TODO: inject SecurityContextRestrictionFilterInfo
         return queryableSource
             .GetQueryable<TPermission>()
+            .Where(bindingInfo.Principal.Path.Select(userSourceInfo.FilterPath))
             .Where(itemBindingInfo.Filter(serviceProvider))
             .Where(bindingInfo.GetPeriodFilter(timeProvider.GetLocalNow().Date))
             .PipeMaybe(

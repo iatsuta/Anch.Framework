@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 using Anch.Core;
+using Anch.SecuritySystem.UserSource;
 using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
@@ -28,6 +29,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
     IPermissionFilterFactory<TPermission> permissionFilterFactory,
     SecurityRuleCredential defaultSecurityRuleCredential,
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
+    UserSourceInfo<TPrincipal> userSourceInfo,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : IAvailablePermissionFilterFactory<TPermission>
 {
     public Expression<Func<TPermission, bool>> CreateFilter(DomainSecurityRule.RoleBaseSecurityRule securityRule) =>
@@ -35,6 +37,8 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
 
     private IEnumerable<Expression<Func<TPermission, bool>>> GetFilterElements(DomainSecurityRule.RoleBaseSecurityRule securityRule)
     {
+        yield return bindingInfo.Principal.Path.Select(userSourceInfo.FilterPath);
+
         if (bindingInfo.PermissionStartDate != null)
         {
             yield return bindingInfo.GetPeriodFilter(timeProvider.GetUtcNow().Date);
