@@ -108,7 +108,7 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
             });
             services.AddSingletonFrom<VirtualPermissionBindingInfo, VirtualPermissionBindingInfo<TPermission>>();
 
-            services.AddSingleton<IPermissionTypedRestrictionBindingInfo<TPermission>, VirtualPermissionTypedRestrictionBindingInfo<TPermission>>();
+            services.AddScoped<IPermissionTypedRestrictionBindingInfo<TPermission>, VirtualPermissionTypedRestrictionBindingInfo<TPermission>>();
 
             services.AddScopedServiceProxy<IPermissionSource<TPermission>, VirtualPermissionSource<TPrincipal, TPermission>>();
 
