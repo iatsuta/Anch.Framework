@@ -49,7 +49,7 @@ public static class AnchRunnerHelper
                     [testCase],
                     ex.Message is not null && ex.Message.Length != 0
                         ? ex.Message
-                        : string.Format(CultureInfo.CurrentCulture, "Exception of type '{0}' was thrown", ex.GetType().SafeName()),
+                        : string.Format(CultureInfo.InvariantCulture, "Exception of type '{0}' was thrown", ex.GetType().SafeName()),
                     sendTestCaseMessages: false
                 );
             else

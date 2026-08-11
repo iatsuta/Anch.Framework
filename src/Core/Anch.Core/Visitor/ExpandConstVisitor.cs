@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 
 namespace Anch.Core.Visitor;
 
@@ -20,11 +21,12 @@ public class ExpandConstVisitor : ExpressionVisitor
 
             where res != node
 
+            where res.Value is not IQueryable
+
             select res;
 
         return request.GetValueOrDefault(baseVisited);
     }
-
 
     public static readonly ExpandConstVisitor Value = new();
 }

@@ -65,10 +65,10 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
                            ?? this.GetMethodAccessor(this.MemberType)
                            ?? throw new ArgumentException(
                                string.Format(
-                                   CultureInfo.CurrentCulture,
+                                   CultureInfo.InvariantCulture,
                                    "Could not find public static member (property, field, or method) named '{0}' on '{1}'{2}",
                                    this.MemberName, this.MemberType.SafeName(), this.Arguments.Length > 0
-                                       ? string.Format(CultureInfo.CurrentCulture, " with parameter types: {0}",
+                                       ? string.Format(CultureInfo.InvariantCulture, " with parameter types: {0}",
                                            string.Join(", ",
                                                this.Arguments.Select(p => p?.GetType().SafeName() ?? "(null)")))
                                        : ""
@@ -92,7 +92,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
                 accessor(testInstance)
                 ?? throw new ArgumentException(
                     string.Format(
-                        CultureInfo.CurrentCulture,
+                        CultureInfo.InvariantCulture,
                         "Member '{0}' on '{1}' returned null when queried for test data", this.MemberName,
                         this.MemberType.SafeName()
                     ));
@@ -145,7 +145,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
 
         throw new ArgumentException(
             string.Format(
-                CultureInfo.CurrentCulture,
+                CultureInfo.InvariantCulture,
                 "Member '{0}' on '{1}' must return data in one of the following formats:{2}{3}", this.MemberName,
                 type.SafeName(),
                 Environment.NewLine,
@@ -195,7 +195,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
 
             throw new ArgumentException(
                 string.Format(
-                    CultureInfo.CurrentCulture,
+                    CultureInfo.InvariantCulture,
                     "The call to method '{0}.{1}' is ambigous between {2} different options for the given arguments.",
                     type!.SafeName(), this.MemberName,
                     methodInfoArray.Length

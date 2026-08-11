@@ -14,7 +14,7 @@ public class RawSelectOperationParser(ICacheProvider cacheProvider, IParsingExce
 {
     private readonly ICache<string, SelectOperation> cache = cacheProvider.GetCache<string, SelectOperation>(typeof(IRawSelectOperationParser));
 
-    private readonly RawSelectOperationParserParser rawParser = new(cultureSource?.Culture ?? CultureInfo.CurrentCulture, ParameterExpression.Default);
+    private readonly RawSelectOperationParserParser rawParser = new(cultureSource?.Culture ?? CultureInfo.InvariantCulture, ParameterExpression.Default);
 
     public SelectOperation Parse(string input) =>
 
