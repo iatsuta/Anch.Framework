@@ -42,5 +42,5 @@ public class NotificationPrincipalExtractor<TPrincipal, TPermission>(
             .GetPermissionsAsync(securityRoles, notificationFilterGroups)
             .Select(bindingInfo.Principal.Getter)
             .Distinct()
-            .Where(userSourceInfo.Filter.Getter);
+            .Where(userSourceInfo.FilterGetter);
 }

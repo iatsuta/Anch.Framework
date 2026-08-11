@@ -1,15 +1,10 @@
 ﻿using System.Linq.Expressions;
 
-using Anch.Core;
-
 namespace Anch.SecuritySystem.UserSource;
 
-public record UserSourceInfo<TUser>(PropertyAccessors<TUser, bool> Filter) : UserSourceInfo
+public record UserSourceInfo<TUser>(Expression<Func<TUser, bool>> FilterPath) : UserSourceInfo
 {
-    public UserSourceInfo(Expression<Func<TUser, bool>> filterPath)
-        : this(new PropertyAccessors<TUser, bool>(filterPath))
-    {
-    }
+    public Func<TUser, bool> FilterGetter { get; } = FilterPath.Compile();
 
     public override Type UserType { get; } = typeof(TUser);
 }
