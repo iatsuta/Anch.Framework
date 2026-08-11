@@ -66,7 +66,7 @@ public class NotificationPermissionExtractor<TPermission>(
             }
         });
 
-        return optimalRequest.Select(pair => pair.Permission).Distinct<TPermission>();
+        return optimalRequest.Select(pair => pair.Permission).Distinct();
     }
 
     private IQueryable<PermissionLevelInfo<TPermission>> ApplyNotificationFilter(

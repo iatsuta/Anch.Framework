@@ -1,9 +1,7 @@
 ﻿using System.Collections.Immutable;
-using System.Security.Principal;
 
 using Anch.Core;
 using Anch.SecuritySystem.Notification.Domain;
-using Anch.SecuritySystem.Services;
 using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Notification;

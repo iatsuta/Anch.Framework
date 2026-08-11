@@ -14,7 +14,7 @@ public class UserQueryableSource<TUser>(
     {
         return queryableSource
             .GetQueryable<TUser>()
-            .Where(userSourceInfo.FilterPath)
+            .Where(userSourceInfo.Filter.Path)
             .Where(userFilterFactory.CreateFilter(userCredential));
     }
 

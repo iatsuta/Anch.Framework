@@ -3,6 +3,7 @@
 using Anch.Core;
 using Anch.SecuritySystem.Notification.Domain;
 using Anch.SecuritySystem.Services;
+using Anch.SecuritySystem.UserSource;
 
 namespace Anch.SecuritySystem.Notification;
 
@@ -30,13 +31,16 @@ public class NotificationPrincipalExtractor<TPrincipal>(IServiceProxyFactory ser
 
 public class NotificationPrincipalExtractor<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
+    UserSourceInfo<TPrincipal> userSourceInfo,
     INotificationPermissionExtractor<TPermission> notificationPermissionExtractor)
     : INotificationPrincipalExtractor<TPrincipal>
 {
-    public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(ImmutableArray<SecurityRole> securityRoles, ImmutableArray<NotificationFilterGroup> notificationFilterGroups) =>
+    public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(ImmutableArray<SecurityRole> securityRoles,
+        ImmutableArray<NotificationFilterGroup> notificationFilterGroups) =>
 
         notificationPermissionExtractor
             .GetPermissionsAsync(securityRoles, notificationFilterGroups)
             .Select(bindingInfo.Principal.Getter)
-            .Distinct();
+            .Distinct()
+            .Where(userSourceInfo.Filter.Getter);
 }
