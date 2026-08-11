@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <PackageId>Anch.Testing.Database.Mssql</PackageId>
@@ -6,11 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="MartinCostello.SqlLocalDb" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Anch.Testing.Database\Anch.Testing.Database.csproj" />
+    <ProjectReference Include="..\..\Core\Anch.Core\Anch.Core.csproj" />
+    <ProjectReference Include="..\..\Core\Anch.Threading\Anch.Threading.csproj" />
   </ItemGroup>
 
 </Project>

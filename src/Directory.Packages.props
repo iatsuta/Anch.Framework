@@ -17,6 +17,7 @@
   <!-- Other -->
   <ItemGroup>
     <PackageVersion Include="MartinCostello.SqlLocalDb" Version="[5.0.1]" />
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="[6.1.4]" />
     <PackageVersion Include="Microsoft.SqlServer.SqlManagementObjects" Version="181.19.0" />
     <PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageVersion Include="NHibernate" Version="5.7.0" />

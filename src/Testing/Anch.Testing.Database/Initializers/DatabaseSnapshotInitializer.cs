@@ -7,9 +7,9 @@ namespace Anch.Testing.Database.Initializers;
 
 public class DatabaseSnapshotInitializer(
     [FromKeyedServices(TestDatabaseInitializer.EmptySchemaKey)]
-    IInitializer emptySchemaInitializer,
+    IEnumerable<IInitializer> emptySchemaInitializers,
     [FromKeyedServices(TestDatabaseInitializer.TestDataKey)]
-    IInitializer testDataInitializer,
+    IEnumerable<IInitializer> testDataInitializers,
     IDatabaseManager databaseManager,
     TestDatabaseSettings settings) : IInitializer, IAsyncDisposable
 {
@@ -56,7 +56,10 @@ public class DatabaseSnapshotInitializer(
 
         await databaseManager.CreateEmpty(PoolTestConnectionStringRole.Main, ct);
 
-        await emptySchemaInitializer.Initialize(ct);
+        foreach (var emptySchemaInitializer in emptySchemaInitializers)
+        {
+            await emptySchemaInitializer.Initialize(ct);
+        }
 
         await databaseManager.Move(PoolTestConnectionStringRole.Main, TestConnectionStringRole.EmptySnapshot, ct);
     }
@@ -65,7 +68,10 @@ public class DatabaseSnapshotInitializer(
     {
         await databaseManager.Copy(TestConnectionStringRole.EmptySnapshot, PoolTestConnectionStringRole.Main, ct);
 
-        await testDataInitializer.Initialize(ct);
+        foreach (var testDataInitializer in testDataInitializers)
+        {
+            await testDataInitializer.Initialize(ct);
+        }
 
         await databaseManager.Move(PoolTestConnectionStringRole.Main, TestConnectionStringRole.FilledSnapshot, ct);
     }
