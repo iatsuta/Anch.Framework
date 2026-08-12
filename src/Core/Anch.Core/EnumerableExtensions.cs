@@ -59,6 +59,13 @@ public static class EnumerableExtensions
         return source.SelectMany(child => child.GetAllElements(getChildFunc));
     }
 
+    public static IEnumerable<T> GetAllElements<T>(this T source, Func<T, IEnumerable<T>> getChildFunc, bool skipFirstElement)
+    {
+        var baseElements = source.GetAllElements(getChildFunc);
+
+        return skipFirstElement ? baseElements.Skip(1) : baseElements;
+    }
+
     public static IEnumerable<T> GetAllElements<T>(this T source, Func<T, IEnumerable<T>> getChildFunc)
     {
         yield return source;
@@ -99,7 +106,6 @@ public static class EnumerableExtensions
             throw new Exception("Empty source");
         }
     }
-
 
     public static Maybe<TSource> SingleMaybe<TSource>(this IEnumerable<TSource> source)
     {
