@@ -3,7 +3,6 @@
 using Anch.Core;
 using Anch.SecuritySystem.Notification.Domain;
 using Anch.SecuritySystem.Services;
-using Anch.SecuritySystem.UserSource;
 
 namespace Anch.SecuritySystem.Notification;
 
