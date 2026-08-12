@@ -70,6 +70,21 @@ public static class ExpressionExtensions
                 many => many.Aggregate(BuildOr));
     }
 
+    extension<T1, T2>(IEnumerable<Expression<Func<T1, T2, bool>>> source)
+    {
+        public Expression<Func<T1, T2, bool>> BuildAnd() =>
+
+            source.Match(() => (_, _) => true,
+                single => single,
+                many => many.Aggregate(BuildAnd));
+
+        public Expression<Func<T1, T2, bool>> BuildOr() =>
+
+            source.Match(() => (_, _) => false,
+                single => single,
+                many => many.Aggregate(BuildOr));
+    }
+
     extension<T1, T2>(Expression<Func<T1, T2, bool>> expr1)
     {
         public Expression<Func<T1, T2, bool>> BuildAnd(Expression<Func<T1, T2, bool>> expr2)

@@ -14,4 +14,9 @@ public abstract record SecurityRuleCredential
     {
         return new CustomUserSecurityRuleCredential(userCredential);
     }
+
+    public static implicit operator SecurityRuleCredential(string? userCredential)
+    {
+        return (UserCredential)userCredential;
+    }
 }

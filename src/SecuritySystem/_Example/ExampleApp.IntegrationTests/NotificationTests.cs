@@ -473,7 +473,6 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var searchBuIdentity =
             await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2-Child", ct);
 
-
         var testUserName = nameof(this.NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit);
 
         await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(this.testSecurityRole) { BusinessUnit = permissionBuIdentity }, ct);
@@ -498,32 +497,57 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         Assert.Equivalent(new[] { testUserName }, principalNames);
     }
 
-    //[AnchFact]
-    //public async Task VirtualPermissionTest()
-    //{
-    //    // Arrange
-    //    var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", ct);
+    [AnchFact]
+    public async Task VirtualPermissionTest_Test01(CancellationToken ct)
+    {
+        // Arrange
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", ct);
 
-    //    var notificationFilterGroup = new NotificationFilterGroup<Guid>
-    //    {
-    //        SecurityContextType = typeof(BusinessUnit),
-    //        Idents = [buIdentity.Id],
-    //        ExpandType = NotificationExpandType.DirectOrFirstParent
-    //    };
+        var notificationFilterGroup = new NotificationFilterGroup<Guid>
+        {
+            SecurityContextType = typeof(BusinessUnit),
+            Idents = [buIdentity.Id],
+            ExpandType = NotificationExpandType.DirectOrFirstParent
+        };
 
-    //    // Act
-    //    var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>()
-    //        .EvaluateAsync(TestingScopeMode.Read, async extractor =>
-    //            await extractor.GetPrincipalsAsync([testSecurityRole], [notificationFilterGroup])
-    //                .Select(employee => employee.Login)
-    //                .ToArrayAsync(ct));
+        // Act
+        var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>()
+            .EvaluateAsync(TestingScopeMode.Read, async extractor =>
+                await extractor.GetPrincipalsAsync([this.testSecurityRole], [notificationFilterGroup])
+                    .Select(employee => employee.Login)
+                    .ToArrayAsync(ct));
 
-    //    // Assert
+        var expectedResult = new[] { "TestEmployee2" };
 
-    //    return;
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v));
+    }
 
-    //    //Assert.Equivalent(expectedResult, result.OrderBy(v => v.Name));
-    //}
+    [AnchFact]
+    public async Task ComplexPermissionTest_Test01(CancellationToken ct)
+    {
+        // Arrange
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", ct);
+
+        var notificationFilterGroup = new NotificationFilterGroup<Guid>
+        {
+            SecurityContextType = typeof(BusinessUnit),
+            Idents = [buIdentity.Id],
+            ExpandType = NotificationExpandType.DirectOrFirstParent
+        };
+
+        var testUserName = nameof(this.ComplexPermissionTest_Test01);
+
+        await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(this.testSecurityRole) { BusinessUnit = buIdentity }, ct);
+
+        // Act
+        var result = await this.GetEvaluator<INotificationPrincipalNameExtractor>()
+            .EvaluateAsync(TestingScopeMode.Read,
+                async extractor => await extractor.GetPrincipalNamesAsync([this.testSecurityRole], [notificationFilterGroup]).ToArrayAsync(ct));
+
+        var expectedResult = new[] { testUserName, "TestEmployee2" };
+
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v));
+    }
 
     private Task<string[]> GetNotificationPrincipalsAsync(NotificationFilterGroup[] notificationFilterGroups, CancellationToken ct) =>
 

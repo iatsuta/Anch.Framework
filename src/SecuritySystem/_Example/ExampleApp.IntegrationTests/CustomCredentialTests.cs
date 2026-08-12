@@ -11,8 +11,8 @@ public abstract class CustomCredentialTests(IServiceProvider rootServiceProvider
     public async Task HasAccessAsync_ChecksAccessForCustomCredentialUser(CancellationToken ct)
     {
         //Arrange
-        UserCredential user1 = "custom_cred_user1";
-        UserCredential user2 = "custom_cred_user2";
+        var user1 = "custom_cred_user1";
+        var user2 = "custom_cred_user2";
 
         await this.AuthManager.For(user1).AddRoleAsync(ExampleSecurityRole.DefaultRole, ct);
         await this.AuthManager.For(user2).AddRoleAsync(ExampleSecurityRole.OtherRole, ct);

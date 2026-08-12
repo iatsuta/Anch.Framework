@@ -27,10 +27,9 @@ public abstract class DomainSecurityRuleCredentialTests(IServiceProvider rootSer
 
     public IEnumerable<object?[]> GetEmployees_ReturnsExpectedUsers_Cases()
     {
-        string? user0 = null;
-        string? user1 = "TestEmployee1";
-        string? user2 = "TestEmployee2";
-
+        var user0 = default(string?);
+        var user1 = "TestEmployee1";
+        var user2 = "TestEmployee2";
 
         yield return
         [
@@ -40,24 +39,24 @@ public abstract class DomainSecurityRuleCredentialTests(IServiceProvider rootSer
 
         yield return
         [
-            DomainSecurityRule.CurrentUser with { CustomCredential = new SecurityRuleCredential.CustomUserSecurityRuleCredential(user1) },
+            DomainSecurityRule.CurrentUser with { CustomCredential = user1 },
             new[] { user1 }
         ];
 
         yield return
         [
-            (DomainSecurityRule.CurrentUser with { CustomCredential = new SecurityRuleCredential.CustomUserSecurityRuleCredential(user1) })
-            .Or(DomainSecurityRule.CurrentUser with { CustomCredential = new SecurityRuleCredential.CustomUserSecurityRuleCredential(user2) }),
+            (DomainSecurityRule.CurrentUser with { CustomCredential = user1 })
+            .Or(DomainSecurityRule.CurrentUser with { CustomCredential = user2 }),
             new[] { user1, user2 }
         ];
 
         yield return
         [
-            (DomainSecurityRule.CurrentUser with { CustomCredential = new SecurityRuleCredential.CustomUserSecurityRuleCredential(user0) })
-                .Or(DomainSecurityRule.CurrentUser with { CustomCredential = new SecurityRuleCredential.CustomUserSecurityRuleCredential(user1) })
+            (DomainSecurityRule.CurrentUser with { CustomCredential = user0 })
+                .Or(DomainSecurityRule.CurrentUser with { CustomCredential = user1 })
                 with
                 {
-                    CustomCredential = new SecurityRuleCredential.CustomUserSecurityRuleCredential(user2)
+                    CustomCredential = user2
                 },
             new[] { user2 }
         ];
