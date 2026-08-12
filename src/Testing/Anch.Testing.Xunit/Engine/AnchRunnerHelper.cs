@@ -32,7 +32,7 @@ public static class AnchRunnerHelper
 
         var tests = await aggregator.RunAsync(testCase.CreateTests, []);
 
-        if (aggregator.ToException() is  Exception ex)
+        if (aggregator.ToException() is Exception ex)
         {
             if (ex.Message?.StartsWith(DynamicSkipToken.Value, StringComparison.Ordinal) == true)
                 return XunitRunnerHelper.SkipTestCases(
