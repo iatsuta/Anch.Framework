@@ -12,11 +12,13 @@ public abstract record RelativeConditionInfo
 public record RelativeConditionInfo<TRelativeDomainObject>(Expression<Func<TRelativeDomainObject, bool>> Condition)
     : RelativeConditionInfo
 {
+    private int? hashCode;
+
     public override Type RelativeDomainObjectType { get; } = typeof(TRelativeDomainObject);
 
     public virtual bool Equals(RelativeConditionInfo<TRelativeDomainObject>? other) =>
         ReferenceEquals(this, other)
         || (other is not null && ExpressionComparer.Default.Equals(this.Condition, other.Condition));
 
-    public override int GetHashCode() => 0;
+    public override int GetHashCode() => this.hashCode ??= ExpressionComparer.Default.GetHashCode(this.Condition);
 }
