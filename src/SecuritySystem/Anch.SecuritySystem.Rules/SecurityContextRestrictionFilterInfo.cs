@@ -30,6 +30,8 @@ public record SecurityContextRestrictionFilterInfo<TSecurityContext, TService>(
     where TSecurityContext : ISecurityContext
     where TService : notnull
 {
+    private int? hashCode;
+
     public virtual bool Equals(SecurityContextRestrictionFilterInfo<TSecurityContext, TService>? other) =>
         ReferenceEquals(this, other)
         || (other is not null
@@ -46,5 +48,5 @@ public record SecurityContextRestrictionFilterInfo<TSecurityContext, TService>(
         return expressionEvaluator.Evaluate(this.Expression, service);
     }
 
-    public override int GetHashCode() => 0;
+    public override int GetHashCode() => this.hashCode ??= ExpressionComparer.Default.GetHashCode(this.Expression);
 }

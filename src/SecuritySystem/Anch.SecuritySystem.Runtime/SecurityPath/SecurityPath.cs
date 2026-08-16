@@ -84,6 +84,8 @@ public abstract record SecurityPath<TDomainObject>
 
     public record ConditionPath(Expression<Func<TDomainObject, bool>> FilterExpression) : SecurityPath<TDomainObject>
     {
+        private int? hashCode;
+
         public override ImmutableArray<Type> UsedSecurityContextTypes => ImmutableArray<Type>.Empty;
 
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
@@ -94,7 +96,7 @@ public abstract record SecurityPath<TDomainObject>
             ReferenceEquals(this, other)
             || (other is not null && ExpressionComparer.Default.Equals(this.FilterExpression, other.FilterExpression));
 
-        public override int GetHashCode() => 0;
+        public override int GetHashCode() => this.hashCode ??= ExpressionComparer.Default.GetHashCode(this.FilterExpression);
     }
 
     public abstract record BinarySecurityPath(SecurityPath<TDomainObject> Left, SecurityPath<TDomainObject> Right)
@@ -105,6 +107,8 @@ public abstract record SecurityPath<TDomainObject>
 
     public record OrSecurityPath(SecurityPath<TDomainObject> Left, SecurityPath<TDomainObject> Right) : BinarySecurityPath(Left, Right)
     {
+        private int? hashCode;
+
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
             Expression<Func<TNewDomainObject, TDomainObject>> selector) =>
             new SecurityPath<TNewDomainObject>.OrSecurityPath(this.Left.OverrideInput(selector), this.Right.OverrideInput(selector));
@@ -115,11 +119,13 @@ public abstract record SecurityPath<TDomainObject>
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Left, other.Left)
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Right, other.Right));
 
-        public override int GetHashCode() => 0;
+        public override int GetHashCode() => this.hashCode ??= HashCode.Combine(this.Left, this.Right);
     }
 
     public record AndSecurityPath(SecurityPath<TDomainObject> Left, SecurityPath<TDomainObject> Right) : BinarySecurityPath(Left, Right)
     {
+        private int? hashCode;
+
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
             Expression<Func<TNewDomainObject, TDomainObject>> selector) =>
             new SecurityPath<TNewDomainObject>.AndSecurityPath(
@@ -130,9 +136,9 @@ public abstract record SecurityPath<TDomainObject>
             ReferenceEquals(this, other)
             || (other is not null
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Left, other.Left)
-            && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Right, other.Right));
+                && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Right, other.Right));
 
-        public override int GetHashCode() => 0;
+        public override int GetHashCode() => this.hashCode ??= HashCode.Combine(this.Left, this.Right);
     }
 
     public record SingleSecurityPath<TSecurityContext>(
@@ -141,6 +147,8 @@ public abstract record SecurityPath<TDomainObject>
         string? Key) : SecurityPath<TDomainObject>, IContextSecurityPath
         where TSecurityContext : ISecurityContext
     {
+        private int? hashCode;
+
         Type IContextSecurityPath.SecurityContextType { get; } = typeof(TSecurityContext);
 
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = [typeof(TSecurityContext)];
@@ -159,7 +167,11 @@ public abstract record SecurityPath<TDomainObject>
                 && this.Key == other.Key
                 && ExpressionComparer.Default.Equals(this.Expression, other.Expression));
 
-        public override int GetHashCode() => this.Required.GetHashCode();
+        public override int GetHashCode() =>
+            this.hashCode ??= HashCode.Combine(
+                this.Required,
+                this.Key,
+                ExpressionComparer.Default.GetHashCode(this.Expression));
     }
 
     public record ManySecurityPath<TSecurityContext>(
@@ -168,6 +180,8 @@ public abstract record SecurityPath<TDomainObject>
         string? Key) : SecurityPath<TDomainObject>, IContextSecurityPath
         where TSecurityContext : ISecurityContext
     {
+        private int? hashCode;
+
         Type IContextSecurityPath.SecurityContextType { get; } = typeof(TSecurityContext);
 
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = [typeof(TSecurityContext)];
@@ -186,7 +200,11 @@ public abstract record SecurityPath<TDomainObject>
                 && this.Key == other.Key
                 && ExpressionComparer.Default.Equals(this.Expression, other.Expression));
 
-        public override int GetHashCode() => this.Required.GetHashCode();
+        public override int GetHashCode() =>
+            this.hashCode ??= HashCode.Combine(
+                this.Required,
+                this.Key,
+                ExpressionComparer.Default.GetHashCode(this.Expression));
     }
 
     public record NestedManySecurityPath<TNestedObject>(
@@ -194,6 +212,8 @@ public abstract record SecurityPath<TDomainObject>
         SecurityPath<TNestedObject> NestedSecurityPath,
         bool Required) : SecurityPath<TDomainObject>
     {
+        private int? hashCode;
+
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = NestedSecurityPath.UsedSecurityContextTypes;
 
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
@@ -210,6 +230,11 @@ public abstract record SecurityPath<TDomainObject>
                 && this.NestedSecurityPath == other.NestedSecurityPath
                 && ExpressionComparer.Default.Equals(this.NestedExpression, other.NestedExpression));
 
-        public override int GetHashCode() => this.Required.GetHashCode();
+
+        public override int GetHashCode() =>
+            this.hashCode ??= HashCode.Combine(
+                ExpressionComparer.Default.GetHashCode(this.NestedExpression),
+                this.NestedSecurityPath,
+                this.Required);
     }
 }
