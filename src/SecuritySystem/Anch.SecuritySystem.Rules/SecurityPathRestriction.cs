@@ -17,6 +17,16 @@ public record SecurityPathRestriction(
     DeepEqualsCollection<RelativeConditionInfo> RelativeConditions,
     bool IgnoreSecurityPath)
 {
+    private int? hashCode;
+
+    protected SecurityPathRestriction(SecurityPathRestriction source)
+    {
+        this.SecurityContextRestrictions = source.SecurityContextRestrictions;
+        this.ConditionFactoryTypes = source.ConditionFactoryTypes;
+        this.RelativeConditions = source.RelativeConditions;
+        this.IgnoreSecurityPath = source.IgnoreSecurityPath;
+    }
+
     public IEnumerable<Type>? SecurityContextTypes => this.SecurityContextRestrictions?.Select(v => v.SecurityContextType);
 
     /// <summary>
@@ -90,4 +100,16 @@ public record SecurityPathRestriction(
 
     public static SecurityPathRestriction Create<TDomainObject>(Expression<Func<TDomainObject, bool>> condition) =>
         Default.AddRelativeCondition(condition);
+
+    public virtual bool Equals(SecurityPathRestriction? other) =>
+        object.ReferenceEquals(this, other)
+        || (other is not null
+            && this.GetHashCode() == other.GetHashCode()
+            && this.IgnoreSecurityPath == other.IgnoreSecurityPath
+            && this.SecurityContextRestrictions == other.SecurityContextRestrictions
+            && this.ConditionFactoryTypes == other.ConditionFactoryTypes
+            && this.RelativeConditions == other.RelativeConditions);
+
+    public override int GetHashCode() => this.hashCode ??=
+        HashCode.Combine(this.SecurityContextRestrictions, this.ConditionFactoryTypes, this.RelativeConditions, this.IgnoreSecurityPath);
 }

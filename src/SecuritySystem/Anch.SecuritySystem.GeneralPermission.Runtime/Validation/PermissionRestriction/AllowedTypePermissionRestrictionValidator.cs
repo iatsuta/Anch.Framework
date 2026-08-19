@@ -3,29 +3,6 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
-public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction>(
-    IServiceProxyFactory serviceProxyFactory,
-    IGeneralPermissionRestrictionBindingInfoSource restrictionBindingInfoSource) : IPermissionRestrictionValidator<TPermissionRestriction>
-{
-    private readonly Lazy<IPermissionRestrictionValidator<TPermissionRestriction>> lazyInnerService = new(() =>
-    {
-        var restrictionBindingInfo = restrictionBindingInfoSource.GetForPermissionRestriction(typeof(TPermissionRestriction));
-
-        var innerServiceType = typeof(AllowedTypePermissionRestrictionValidator<,,,>)
-            .MakeGenericType(
-                restrictionBindingInfo.PermissionRestrictionType,
-                restrictionBindingInfo.SecurityContextTypeType,
-                restrictionBindingInfo.SecurityContextObjectIdentType,
-                restrictionBindingInfo.PermissionType);
-
-        return serviceProxyFactory.Create<IPermissionRestrictionValidator<TPermissionRestriction>>(
-            innerServiceType,
-            restrictionBindingInfo);
-    });
-
-    public ValueTask ValidateAsync(TPermissionRestriction value, CancellationToken ct) => this.lazyInnerService.Value.ValidateAsync(value, ct);
-}
-
 public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,
