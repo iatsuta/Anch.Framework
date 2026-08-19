@@ -36,7 +36,7 @@ public class DomainSecurityServiceSetup<TDomainObject> : DomainSecurityServiceSe
             services.AddSingleton(new DomainModeSecurityRuleInfo(modeSecurityRule.ToDomain(this.DomainType), implementedSecurityRule));
         }
 
-        if (this.securityPath != null)
+        if (this.securityPath is not null)
         {
             services.AddSingleton(this.securityPath);
         }

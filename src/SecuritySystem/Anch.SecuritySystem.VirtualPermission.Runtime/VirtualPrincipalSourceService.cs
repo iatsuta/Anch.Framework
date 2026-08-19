@@ -68,7 +68,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
     {
         var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(ct);
 
-        if (principal == null)
+        if (principal is null)
         {
             return null;
         }
@@ -148,7 +148,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
             {
                 var securityContext = this.expressionEvaluator.Evaluate(singlePath, permission);
 
-                if (securityContext != null)
+                if (securityContext is not null)
                 {
                     yield return identityInfo.Id.Getter(securityContext);
                 }

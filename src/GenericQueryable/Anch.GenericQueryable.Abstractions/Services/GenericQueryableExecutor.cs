@@ -19,7 +19,7 @@ public class GenericQueryableExecutor(IEnumerable<IMethodRedirector> methodRedir
 
             let result = methodRedirector.TryRedirect(callExpression)
 
-            where result != null
+            where result is not null
 
             select result;
 

@@ -23,7 +23,7 @@ public class GeneralPermissionFilterFactory<TPermission, TPermissionRestriction,
         SecurityContextRestriction<TSecurityContext> securityContextRestriction)
         where TSecurityContext : class, ISecurityContext
     {
-        if (securityContextRestriction.Filter != null)
+        if (securityContextRestriction.Filter is not null)
         {
             var restrictionFilter = this.CreateFilter(permissionRestrictionFilterFactory.CreateFilter(securityContextRestriction.Filter));
 

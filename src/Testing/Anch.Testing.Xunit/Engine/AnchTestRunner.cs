@@ -20,7 +20,7 @@ public class AnchTestRunner(IServiceProviderPool? serviceProviderPool) : XunitTe
     {
         await using var serviceProviderPoolScope = await serviceProviderPool.TryCreateScopeAsync(cancellationTokenSource.Token);
 
-        if (serviceProviderPoolScope?.Exception == null)
+        if (serviceProviderPoolScope?.Exception is null)
         {
             await using var ctxt = new XunitTestRunnerContext(
                 test,

@@ -9,15 +9,15 @@ public abstract class LambdaExpressionConverterBase : ILambdaExpressionConverter
 {
     protected virtual SExpressions.Expression Convert(Expression expression, Dictionary<ParameterExpression, SExpressions.ParameterExpression> parameters, Type? expectedResultType = null)
     {
-        if (expression == null) throw new ArgumentNullException(nameof(expression));
-        if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+        if (expression is null) throw new ArgumentNullException(nameof(expression));
+        if (parameters is null) throw new ArgumentNullException(nameof(parameters));
 
         if (expression is LambdaExpression lambdaExpression)
         {
             return this.Convert(lambdaExpression, parameters, expectedResultType);
         }
 
-        if (expectedResultType != null)
+        if (expectedResultType is not null)
         {
             throw new ArgumentOutOfRangeException(nameof(expectedResultType));
         }

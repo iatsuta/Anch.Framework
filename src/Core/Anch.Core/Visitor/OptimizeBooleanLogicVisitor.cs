@@ -41,7 +41,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 
         var leftValue = left.TryGetConstantExpression();
 
-        if (leftValue != null)
+        if (leftValue is not null)
         {
             switch (node.NodeType)
             {
@@ -55,20 +55,20 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
         var right = this.Visit(node.Right);
         var rightValue = right.TryGetConstantExpression();
 
-        if (leftValue != null && rightValue != null)
+        if (leftValue is not null && rightValue is not null)
         {
             var methodResult = node.Method?.Invoke(null, [leftValue.Value, rightValue.Value])
                                ?? node.NodeType.GetBinaryMethod()?.Invoke(leftValue.Value!, rightValue.Value!);
 
-            if (methodResult != null)
+            if (methodResult is not null)
             {
                 return Expression.Constant(methodResult);
             }
         }
 
-        if (node.Method == null)
+        if (node.Method is null)
         {
-            if (leftValue != null)
+            if (leftValue is not null)
             {
                 switch (node.NodeType)
                 {
@@ -79,7 +79,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
                 }
             }
 
-            if (rightValue != null)
+            if (rightValue is not null)
             {
                 switch (node.NodeType)
                 {

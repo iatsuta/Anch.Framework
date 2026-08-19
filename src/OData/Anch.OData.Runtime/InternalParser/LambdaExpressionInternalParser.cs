@@ -217,7 +217,7 @@ public class LambdaExpressionInternalParser(
                        (Expression)currentParameter,
                        (source, propertyPair) =>
 
-                           propertyPair.Alias == null
+                           propertyPair.Alias is null
                                ? new PropertyExpression(source, propertyPair.PropertyName)
                                : new SelectExpression(source, propertyPair.PropertyName, propertyPair.Alias));
         }

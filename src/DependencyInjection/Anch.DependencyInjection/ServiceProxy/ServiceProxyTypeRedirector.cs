@@ -20,7 +20,7 @@ public class ServiceProxyTypeRedirector(IEnumerable<ServiceProxyTypeRedirectInfo
         this.GetRedirectCandidates(sourceType)
             .Aggregate(default(ServiceProxyTypeRedirectInfo?), (prev, next) =>
             {
-                if (prev == null)
+                if (prev is null)
                 {
                     return next.Replace ? throw new InvalidOperationException("The first candidate cannot perform a replacement") : next;
                 }

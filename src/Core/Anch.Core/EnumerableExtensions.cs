@@ -87,7 +87,7 @@ public static class EnumerableExtensions
     public static IEnumerable<T> GetAllElements<T>(this T? source, Func<T, T?> getNextFunc)
         where T : class
     {
-        for (var state = source; state != null; state = getNextFunc(state))
+        for (var state = source; state is not null; state = getNextFunc(state))
         {
             yield return state;
         }

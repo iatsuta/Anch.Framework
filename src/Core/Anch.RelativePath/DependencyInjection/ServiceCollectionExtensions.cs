@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
         {
             var info = new SingleRelativeDomainPathInfo<TFrom, TTo>(path);
 
-            if (key == null)
+            if (key is null)
             {
                 return services.AddSingleton<IRelativeDomainPathInfo<TFrom, TTo>>(info);
             }
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
         {
             var info = new ManyRelativeDomainPathInfo<TFrom, TTo>(path);
 
-            if (key == null)
+            if (key is null)
             {
                 return services.AddSingleton<IRelativeDomainPathInfo<TFrom, TTo>>(info);
             }

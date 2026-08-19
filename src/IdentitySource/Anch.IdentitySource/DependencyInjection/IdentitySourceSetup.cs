@@ -33,7 +33,7 @@ public class IdentitySourceSetup : IIdentitySourceSetup, IServiceInitializer
     {
         if (services.AlreadyInitialized<IIdentityInfoSource>())
         {
-            if (this.customSettings != null)
+            if (this.customSettings is not null)
             {
                 services.ReplaceSingleton(this.customSettings);
             }

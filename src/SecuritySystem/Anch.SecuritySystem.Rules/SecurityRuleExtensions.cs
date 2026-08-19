@@ -151,17 +151,17 @@ public static class SecurityRuleExtensions
                 .TryApply(customRestriction);
 
         public TSecurityRule TryApply(SecurityPathRestriction? customRestriction) =>
-            customRestriction == null || securityRule.CustomRestriction != null
+            customRestriction is null || securityRule.CustomRestriction is not null
                 ? securityRule
                 : securityRule with { CustomRestriction = customRestriction };
 
         public TSecurityRule TryApply(HierarchicalExpandType? customExpandType) =>
-            customExpandType == null || securityRule.CustomExpandType != null
+            customExpandType is null || securityRule.CustomExpandType is not null
                 ? securityRule
                 : securityRule with { CustomExpandType = customExpandType };
 
         public TSecurityRule WithDefaultCustoms() =>
-            securityRule.CustomCredential == null && securityRule.CustomExpandType == null && securityRule.CustomRestriction == null
+            securityRule.CustomCredential is null && securityRule.CustomExpandType is null && securityRule.CustomRestriction is null
                 ? securityRule
                 : securityRule with { CustomCredential = null, CustomExpandType = null, CustomRestriction = null };
     }
@@ -171,17 +171,17 @@ public static class SecurityRuleExtensions
         where TSecurityRule : SecurityRule
     {
         public TSecurityRule TryApply(SecurityRuleCredential? customCredential) =>
-            customCredential == null || securityRule.CustomCredential != null
+            customCredential is null || securityRule.CustomCredential is not null
                 ? securityRule
                 : securityRule with { CustomCredential = customCredential };
 
         public TSecurityRule ForceApply(SecurityRuleCredential? customCredential) =>
-            customCredential == null || customCredential == securityRule.CustomCredential
+            customCredential is null || customCredential == securityRule.CustomCredential
                 ? securityRule
                 : securityRule with { CustomCredential = customCredential };
 
         public TSecurityRule WithDefaultCredential() =>
-            securityRule.CustomCredential == null ? securityRule : securityRule with { CustomCredential = null };
+            securityRule.CustomCredential is null ? securityRule : securityRule with { CustomCredential = null };
 
         public TResult WithDefaultCredential<TResult>(Func<TSecurityRule, TResult> selector)
             where TResult : SecurityRule =>

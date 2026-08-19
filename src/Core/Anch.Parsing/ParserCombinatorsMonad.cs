@@ -10,7 +10,7 @@ public static class ParserCombinatorsMonad
         {
             var res = parser(input);
 
-            if (res.Value == null)
+            if (res.Value is null)
             {
                 return res;
             }

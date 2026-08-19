@@ -11,7 +11,7 @@ public class TestingEvaluator<TService>(IServiceProvider rootServiceProvider) : 
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        if (userCredential == null)
+        if (userCredential is null)
         {
             var service = scope.ServiceProvider.GetRequiredService<TService>();
 

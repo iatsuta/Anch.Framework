@@ -73,7 +73,7 @@ public class AnchTheoryTestMethod(IXunitTestMethod baseMethod) : IXunitTestMetho
     {
         var displayName = baseMethod.GetDisplayName(baseDisplayName, label, testMethodArguments, methodGenericTypes);
 
-        if (testMethodArguments != null && baseMethod.Method.LastParameterIsCt() && baseMethod.Method.LastParameterIsCt() && displayName.EndsWith("???)"))
+        if (testMethodArguments is not null && baseMethod.Method.LastParameterIsCt() && baseMethod.Method.LastParameterIsCt() && displayName.EndsWith("???)"))
         {
             var skipPattern = $", {baseMethod.Method.GetParameters().Last().Name}: ???)";
 

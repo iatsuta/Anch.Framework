@@ -50,7 +50,7 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
         {
             if (restrictionPath is Expression<Func<TPermission, TSecurityContext>> singlePath)
             {
-                if (this.restrictionFilterInfo == null)
+                if (this.restrictionFilterInfo is null)
                 {
                     yield return singlePath.Select(filterExpr);
                 }
@@ -66,7 +66,7 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
             {
                 yield return ExpressionEvaluateHelper.InlineEvaluate(ee =>
                 {
-                    if (this.restrictionFilterInfo == null)
+                    if (this.restrictionFilterInfo is null)
                     {
                         return manyPath.Select(securityContexts => securityContexts.Any(securityContext => ee.Evaluate(filterExpr, securityContext)));
                     }

@@ -7,7 +7,7 @@ public static class ExpressionExtensions
 {
     public static IEnumerable<Tuple<string, string?>> GetPropertyPath(this LambdaExpression expression)
     {
-        if (expression == null) throw new ArgumentNullException(nameof(expression));
+        if (expression is null) throw new ArgumentNullException(nameof(expression));
 
         var startParam = expression.Parameters.Single();
 

@@ -81,8 +81,8 @@ public class GeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPer
         Expression<Func<TPermission, DateTime?>>? endDatePath)
     {
         return this.SetPermissionPeriod(
-            startDatePath == null ? null : new PropertyAccessors<TPermission, DateTime?>(startDatePath),
-            endDatePath == null ? null : new PropertyAccessors<TPermission, DateTime?>(endDatePath));
+            startDatePath is null ? null : new PropertyAccessors<TPermission, DateTime?>(startDatePath),
+            endDatePath is null ? null : new PropertyAccessors<TPermission, DateTime?>(endDatePath));
     }
 
     public IGeneralPermissionSetup<TPrincipal, TPermission, TSecurityRole, TPermissionRestriction> SetPermissionComment(

@@ -11,7 +11,7 @@ public class ImpersonatedCurrentUser(
     IImpersonateState impersonateState,
     ISyncUserNameResolver userNameResolver) : ICurrentUser
 {
-    public string Name => impersonateState.CustomUserCredential == null
+    public string Name => impersonateState.CustomUserCredential is null
         ? rawCurrentUser.Name
         : userNameResolver.GetUserName(impersonateState.CustomUserCredential);
 }

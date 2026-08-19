@@ -55,8 +55,8 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
         Expression<Func<TPermission, DateTime?>>? startDatePath,
         Expression<Func<TPermission, DateTime?>>? endDatePath) =>
         this.SetPeriod(
-            startDatePath == null ? null : new PropertyAccessors<TPermission, DateTime?>(startDatePath),
-            endDatePath == null ? null : new PropertyAccessors<TPermission, DateTime?>(endDatePath));
+            startDatePath is null ? null : new PropertyAccessors<TPermission, DateTime?>(startDatePath),
+            endDatePath is null ? null : new PropertyAccessors<TPermission, DateTime?>(endDatePath));
 
     public IVirtualPermissionRootSetup<TPermission> SetComment(Expression<Func<TPermission, string>> commentPath)
     {

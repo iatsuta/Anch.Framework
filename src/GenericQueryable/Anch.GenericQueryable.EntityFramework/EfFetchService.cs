@@ -36,7 +36,7 @@ public class EfFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchSer
     private static MethodInfo GetFetchMethod<TSource>(LambdaExpression prop, LambdaExpression? prevProp)
         where TSource : class
     {
-        if (prevProp == null)
+        if (prevProp is null)
         {
             return new Func<IQueryable<TSource>, Expression<Func<TSource, Ignore>>, IIncludableQueryable<TSource, Ignore>>(EntityFrameworkQueryableExtensions.Include)
                 .CreateGenericMethod(typeof(TSource), prop.Body.Type);

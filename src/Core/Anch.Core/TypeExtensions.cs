@@ -23,7 +23,7 @@ public static class TypeExtensions
         {
             var res = type.IsSubsetOf(otherType) ? otherType : otherType.IsSubsetOf(type) ? type : null;
 
-            return safe && res == null ? typeof(object) : res;
+            return safe && res is null ? typeof(object) : res;
         }
 
         public bool IsSubsetOf(Type otherType)
@@ -58,13 +58,13 @@ public static class TypeExtensions
 
         public Type GetNullableElementTypeOrSelf() => type.GetNullableElementType() ?? type;
 
-        public bool IsNullable() => type.GetNullableElementType() != null;
+        public bool IsNullable() => type.GetNullableElementType() is not null;
 
         public Type? GetNullableElementType() => type.IsGenericTypeImplementation(typeof(Nullable<>)) ? type.GetGenericArguments().Single() : null;
 
         public Type GetCollectionElementTypeOrSelf() => type.GetCollectionElementType() ?? type;
 
-        public Type? GetCollectionElementType() => type.GetCollectionType() != null ? type.GetGenericArguments().Single() : null;
+        public Type? GetCollectionElementType() => type.GetCollectionType() is not null ? type.GetGenericArguments().Single() : null;
 
         public Type? GetCollectionType()
         {
@@ -112,7 +112,7 @@ public static class TypeExtensions
         public bool IsGenericTypeImplementation(Type genericTypeDefinition, Type[]? implementArguments = null)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == genericTypeDefinition
-                                      && (implementArguments == null || type.GetGenericArguments().SequenceEqual(implementArguments));
+                                      && (implementArguments is null || type.GetGenericArguments().SequenceEqual(implementArguments));
         }
 
         public Type? GetInterfaceImplementationArgument(Type interfaceType)
@@ -169,7 +169,7 @@ public static class TypeExtensions
         {
             if (withBaseTypes)
             {
-                return type.GetAllElements(t => t.BaseType).Select(t => t.GetEqualityMethod()).FirstOrDefault(t => t != null);
+                return type.GetAllElements(t => t.BaseType).Select(t => t.GetEqualityMethod()).FirstOrDefault(t => t is not null);
             }
             else
             {
@@ -190,7 +190,7 @@ public static class TypeExtensions
 
         public bool IsMaybe()
         {
-            return type.GetMaybeElementType() != null;
+            return type.GetMaybeElementType() is not null;
         }
 
         public PropertyInfo GetRequiredProperty(string propertyName, BindingFlags bindingFlags)

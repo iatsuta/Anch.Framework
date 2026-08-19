@@ -13,7 +13,7 @@ public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowPa
             .AddSingleton(serviceProviderBuildContext.Index)
             .AddSingleton<IParallelizationSettings, ParallelizationSettings>();
 
-        if (allowParallelization != null)
+        if (allowParallelization is not null)
         {
             services.AddSingleton(new AllowParallelizationConstraint(allowParallelization.Value));
         }

@@ -19,7 +19,7 @@ public static class MethodInfoHelper
 
     public static MethodExpressionType? GetMethodType(this MethodInfo methodInfo)
     {
-        if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
+        if (methodInfo is null) throw new ArgumentNullException(nameof(methodInfo));
 
         if (methodInfo == StringStartsWithMethod)
         {

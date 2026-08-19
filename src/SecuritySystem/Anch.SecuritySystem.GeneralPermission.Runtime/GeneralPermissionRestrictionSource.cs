@@ -58,7 +58,7 @@ public class GeneralPermissionRestrictionSource<TPermission, TPermissionRestrict
 
     public Expression<Func<TPermission, IEnumerable<TSecurityContextIdent>>> GetIdentsExpr()
     {
-        var restrictionFilter = this.restrictionFilterInfo == null ? _ => true : permissionRestrictionFilterFactory.CreateFilter(this.restrictionFilterInfo);
+        var restrictionFilter = this.restrictionFilterInfo is null ? _ => true : permissionRestrictionFilterFactory.CreateFilter(this.restrictionFilterInfo);
 
         var restrictionQueryable = queryableSource.GetQueryable<TPermissionRestriction>();
 

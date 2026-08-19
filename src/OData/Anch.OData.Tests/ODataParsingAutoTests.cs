@@ -278,8 +278,8 @@ public class ODataParsingAutoTests : TestBase
 
     private void Test(string parsingString, SelectOperation expectedOperation)
     {
-        if (parsingString == null) throw new ArgumentNullException(nameof(parsingString));
-        if (expectedOperation == null) throw new ArgumentNullException(nameof(expectedOperation));
+        if (parsingString is null) throw new ArgumentNullException(nameof(parsingString));
+        if (expectedOperation is null) throw new ArgumentNullException(nameof(expectedOperation));
 
         var parsedSelectOperation = this.RawSelectOperationParser.Parse(parsingString);
 

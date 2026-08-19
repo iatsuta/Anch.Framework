@@ -29,7 +29,7 @@ public interface ISecurityContextInfoSetup<TSecurityContext>
         this.SetHierarchicalInfo(
             new HierarchicalInfo<TSecurityContext>(parentPath),
             new FullAncestorLinkInfo<TSecurityContext, TDirectedLink, TUndirectedLink>(directed, undirected),
-            deepLevelPath == null ? null : new DeepLevelInfo<TSecurityContext>(deepLevelPath));
+            deepLevelPath is null ? null : new DeepLevelInfo<TSecurityContext>(deepLevelPath));
 
     ISecurityContextInfoSetup<TSecurityContext> AddExtension(Action<IServiceCollection> extension);
 }

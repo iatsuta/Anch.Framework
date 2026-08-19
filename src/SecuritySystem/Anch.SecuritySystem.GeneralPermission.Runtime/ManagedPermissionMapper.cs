@@ -155,9 +155,9 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
             pair => pair);
 
         if (restrictionMergeResult.IsEmpty
-            && (bindingInfo.PermissionComment == null || bindingInfo.PermissionComment.Getter(dbPermission) == managedPermission.Comment)
-            && (bindingInfo.PermissionStartDate == null || bindingInfo.PermissionStartDate.Getter(dbPermission) == managedPermission.Period.StartDate)
-            && (bindingInfo.PermissionEndDate == null || bindingInfo.PermissionEndDate.Getter(dbPermission) == managedPermission.Period.EndDate))
+            && (bindingInfo.PermissionComment is null || bindingInfo.PermissionComment.Getter(dbPermission) == managedPermission.Comment)
+            && (bindingInfo.PermissionStartDate is null || bindingInfo.PermissionStartDate.Getter(dbPermission) == managedPermission.Period.StartDate)
+            && (bindingInfo.PermissionEndDate is null || bindingInfo.PermissionEndDate.Getter(dbPermission) == managedPermission.Period.EndDate))
         {
             var permissionData = new PermissionData<TPermission, TPermissionRestriction>(
                 dbPermission,

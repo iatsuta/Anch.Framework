@@ -190,7 +190,7 @@ public class WorkflowMachine(
     private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(StateInstance stateInstance, PushEventInfo pushEventInfo,
         CancellationToken ct)
     {
-        if (pushEventInfo.TargetState == null && pushEventInfo.Header.IsGlobal)
+        if (pushEventInfo.TargetState is null && pushEventInfo.Header.IsGlobal)
         {
             if (pushEventInfo.Header == EventHeader.WorkflowFinished)
             {

@@ -31,7 +31,7 @@ public class VisitedNHibQueryProvider : DefaultQueryProvider, IGenericQueryProvi
 
     private Expression TryApplyVisitor(Expression expression)
     {
-        return this.Visitor == null ? expression : this.Visitor.Visit(expression);
+        return this.Visitor is null ? expression : this.Visitor.Visit(expression);
     }
 
     protected override NhLinqExpression PrepareQuery(Expression expression, out IQuery query)

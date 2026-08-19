@@ -90,7 +90,7 @@ public class SecurityRoleInitializer<TPermission, TSecurityRole>(
             var newName = securityRole.Name;
             var newDescription = securityRole.Information.Description ?? "";
 
-            if (newName != visualIdentityInfo.Name.Getter(dbSecurityRole) || (bindingInfo.SecurityRoleDescription != null &&
+            if (newName != visualIdentityInfo.Name.Getter(dbSecurityRole) || (bindingInfo.SecurityRoleDescription is not null &&
                                                                               newDescription != bindingInfo.SecurityRoleDescription.Getter(dbSecurityRole)))
             {
                 visualIdentityInfo.Name.Setter(dbSecurityRole, newName);

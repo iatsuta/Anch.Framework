@@ -25,7 +25,7 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
 {
     public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
-        if (permissionBindingInfo.DelegatedFrom == null)
+        if (permissionBindingInfo.DelegatedFrom is null)
         {
             return;
         }
@@ -34,7 +34,7 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
 
         var delegatedFrom = permissionBindingInfo.DelegatedFrom.Getter(permission);
 
-        if (delegatedFrom != null)
+        if (delegatedFrom is not null)
         {
             if (permissionBindingInfo.Principal.Getter(delegatedFrom) == permissionBindingInfo.Principal.Getter(permission))
             {
@@ -125,11 +125,11 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
         {
             var delegatedFromRestrictions = delegatedFromRestrictionDict.GetValueOrDefault(securityContextInfo.Type);
 
-            if (delegatedFromRestrictions != null)
+            if (delegatedFromRestrictions is not null)
             {
                 var subRestrictions = subPermissionRestrictionDict.GetValueOrDefault(securityContextInfo.Type);
 
-                if (subRestrictions == null)
+                if (subRestrictions is null)
                 {
                     yield return new(securityContextInfo, Array.Empty<object>());
                 }

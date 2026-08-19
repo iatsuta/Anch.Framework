@@ -55,7 +55,7 @@ public class InlineWorkflowRepository<TSource>(
 
     public async ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken ct)
     {
-        if (identity.Definition != null && identity.Definition != this.WorkflowDefinitionBuilder.Identity)
+        if (identity.Definition is not null && identity.Definition != this.WorkflowDefinitionBuilder.Identity)
         {
             return null;
         }
@@ -88,7 +88,7 @@ public class InlineWorkflowRepository<TSource>(
 
     public async ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken ct)
     {
-        if (identity.Definition != null && identity.Definition != this.WorkflowDefinitionBuilder.Identity)
+        if (identity.Definition is not null && identity.Definition != this.WorkflowDefinitionBuilder.Identity)
         {
             return null;
         }

@@ -44,12 +44,12 @@ public interface ISecuritySystemSetup
         {
             b.SetView(viewSecurityRule);
 
-            if (editSecurityRule != null)
+            if (editSecurityRule is not null)
             {
                 b.SetEdit(editSecurityRule);
             }
 
-            if (securityPath != null)
+            if (securityPath is not null)
             {
                 b.SetPath(securityPath);
             }

@@ -131,7 +131,7 @@
 
 //    private async ValueTask<WorkflowProcessResult> ProcessExecutionResult(PushEventInfo pushEventInfo, CancellationToken ct)
 //    {
-//        if (pushEventInfo.TargetState == null && pushEventInfo.Header.IsGlobal)
+//        if (pushEventInfo.TargetState is null && pushEventInfo.Header.IsGlobal)
 //        {
 //            if (pushEventInfo.Header == EventHeader.WorkflowFinished)
 //            {

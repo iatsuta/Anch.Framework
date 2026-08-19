@@ -562,7 +562,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         this.AuthManager.SaveSecurityContextAsync<BusinessUnit, Guid>(async sp => new BusinessUnit
         {
             Name = name,
-            Parent = parent == null ? null : await sp.GetRequiredService<ISecurityRepository<BusinessUnit>>().GetObjectAsync(parent, ct)
+            Parent = parent is null ? null : await sp.GetRequiredService<ISecurityRepository<BusinessUnit>>().GetObjectAsync(parent, ct)
         }, ct);
 
     private Task<TypedSecurityIdentity<Guid>> SaveManagementUnit(string name, TypedSecurityIdentity<Guid>? parent, CancellationToken ct) =>
@@ -570,7 +570,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         this.AuthManager.SaveSecurityContextAsync<ManagementUnit, Guid>(async sp => new ManagementUnit
         {
             Name = name,
-            Parent = parent == null ? null : await sp.GetRequiredService<ISecurityRepository<ManagementUnit>>().GetObjectAsync(parent, ct)
+            Parent = parent is null ? null : await sp.GetRequiredService<ISecurityRepository<ManagementUnit>>().GetObjectAsync(parent, ct)
         }, ct);
 
     private Task<TypedSecurityIdentity<Guid>> SaveEmployee(string login, CancellationToken ct) =>

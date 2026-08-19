@@ -35,7 +35,7 @@ public class CurrentUserSecurityProvider<TDomainObject>(
             {
                 actualRelativeDomainPathInfo,
                 securityRuleCredential
-            }.Where(arg => arg != null)
+            }.Where(arg => arg is not null)
             .Select(arg => arg!)
             .ToArray();
 
@@ -49,11 +49,11 @@ public class CurrentUserSecurityProvider<TDomainObject>(
 
                 var relativePathKey = key?.Name;
 
-                var relativeDomainPathInfo = relativePathKey == null
+                var relativeDomainPathInfo = relativePathKey is null
                     ? serviceProvider.GetService(relativeDomainPathInfoType)
                     : serviceProvider.GetKeyedService(relativeDomainPathInfoType, relativePathKey);
 
-                if (relativeDomainPathInfo != null)
+                if (relativeDomainPathInfo is not null)
                 {
                     return (userSourceInfo, relativeDomainPathInfo);
                 }
@@ -95,7 +95,7 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
 
                 var userName = await userNameResolver.GetUserNameAsync(securityRuleCredential, ct);
 
-                if (userName == null)
+                if (userName is null)
                 {
                     return _ => true;
                 }

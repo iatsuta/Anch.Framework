@@ -138,7 +138,7 @@ public static class AsyncEnumerableExtensions
     public static async IAsyncEnumerable<T> GetAllElements<T>(this T? source, Func<T, ValueTask<T?>> getNextFunc)
         where T : class
     {
-        for (var state = source; state != null; state = await getNextFunc(state))
+        for (var state = source; state is not null; state = await getNextFunc(state))
         {
             yield return state;
         }

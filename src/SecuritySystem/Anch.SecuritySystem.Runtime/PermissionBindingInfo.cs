@@ -37,17 +37,17 @@ public abstract record PermissionBindingInfo<TPermission> : PermissionBindingInf
 
     private Expression<Func<TPermission, bool>> GetStartDateFilter(DateTime today)
     {
-        return this.PermissionStartDate == null ? _ => true : this.PermissionStartDate.Path.Select(startDate => startDate == null || startDate <= today);
+        return this.PermissionStartDate is null ? _ => true : this.PermissionStartDate.Path.Select(startDate => startDate == null || startDate <= today);
     }
 
     private Expression<Func<TPermission, bool>> GetEndDateFilter(DateTime today)
     {
-        return this.PermissionEndDate == null ? _ => true : this.PermissionEndDate.Path.Select(endDate => endDate == null || endDate >= today);
+        return this.PermissionEndDate is null ? _ => true : this.PermissionEndDate.Path.Select(endDate => endDate == null || endDate >= today);
     }
 
 
     public string GetSafeComment(TPermission permission) =>
-        this.PermissionComment == null ? "" : this.PermissionComment.Getter(permission);
+        this.PermissionComment is null ? "" : this.PermissionComment.Getter(permission);
 }
 
 public record PermissionBindingInfo<TPermission, TPrincipal> : PermissionBindingInfo<TPermission>

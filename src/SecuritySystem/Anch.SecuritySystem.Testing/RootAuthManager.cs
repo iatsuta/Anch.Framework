@@ -89,7 +89,7 @@ public class RootAuthManager(
             return identityInfo.Id.Getter(securityContext);
         });
 
-        if (rootServiceProvider.GetService(typeof(FullAncestorLinkInfo<TSecurityContext>)) != null)
+        if (rootServiceProvider.GetService(typeof(FullAncestorLinkInfo<TSecurityContext>)) is not null)
         {
             await serviceProviderEvaluator.EvaluateAsync(TestingScopeMode.Write, async serviceProvider =>
             {
@@ -104,7 +104,7 @@ public class RootAuthManager(
                     await ancestorDenormalizer.SyncAsync([securityContext], [], ct);
                 }
 
-                if (rootServiceProvider.GetService(typeof(DeepLevelInfo<TSecurityContext>)) != null)
+                if (rootServiceProvider.GetService(typeof(DeepLevelInfo<TSecurityContext>)) is not null)
                 {
                     var deepLevelDenormalizer = serviceProvider.GetRequiredService<IDeepLevelDenormalizer<TSecurityContext>>();
 

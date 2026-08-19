@@ -24,7 +24,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
         var errors = filteredWrongMultiUsage.Select(pair =>
         {
-            var keyedParts = pair.ActualServiceKey == null ? null : $" (ServiceKey: {pair.ActualServiceKey.Item1})";
+            var keyedParts = pair.ActualServiceKey is null ? null : $" (ServiceKey: {pair.ActualServiceKey.Item1})";
 
             return $"The service {pair.ServiceType} ({nameof(pair.Lifetime)} = {pair.Lifetime}) {keyedParts} has been registered many times. There are services that use it in the constructor in a single instance: "
                    + string.Join(", ", pair.UsedFor.Select(usedService => usedService.ImplementationType));
@@ -43,7 +43,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
             let actualImplementationFactory = service.IsKeyedService ? (object?)service.KeyedImplementationFactory : service.ImplementationFactory
 
-            where actualImplementationType != null && actualImplementationFactory == null
+            where actualImplementationType is not null && actualImplementationFactory is null
 
             let ctors = actualImplementationType.GetConstructors()
 
@@ -54,7 +54,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
                 _ => ctors.FirstOrDefault(ctor => ctor.GetCustomAttributes<ActivatorUtilitiesConstructorAttribute>().Any())
             }
 
-            where actualCtor != null
+            where actualCtor is not null
 
             from parameter in actualCtor.GetParameters()
 
@@ -62,7 +62,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
             let parameterKey = parameter.GetCustomAttribute<FromKeyedServicesAttribute>()
 
-            let actualParameterKey = parameterKey == null ? null : Tuple.Create(parameterKey.Key)
+            let actualParameterKey = parameterKey is null ? null : Tuple.Create(parameterKey.Key)
 
             group service by (parameterType, actualParameterKey, service.Lifetime);
 
@@ -82,7 +82,7 @@ public class DuplicateServiceUsageValidator(Type[] exceptServices) : IServiceCol
 
             let servicesWithSimpleUsage = usedParametersDict.GetValueOrDefault(serviceTypeGroup.Key)
 
-            where servicesWithSimpleUsage != null
+            where servicesWithSimpleUsage is not null
 
             select (serviceTypeGroup.Key.ServiceType, serviceTypeGroup.Key.Lifetime, serviceTypeGroup.Key.actualServiceKey, servicesWithSimpleUsage);
 

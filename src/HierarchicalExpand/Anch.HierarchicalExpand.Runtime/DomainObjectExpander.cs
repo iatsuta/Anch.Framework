@@ -17,7 +17,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
         {
             nextLayer = nextLayer
                 .Select(hierarchicalInfo.ParentFunc)
-                .Where(nextObj => nextObj != null && !allResult.Contains(nextObj))
+                .Where(nextObj => nextObj is not null && !allResult.Contains(nextObj))
                 .Select(nextObj => nextObj!)
                 .ToHashSet();
         }
@@ -35,7 +35,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
 
             for (var nextLayer = allResult; nextLayer.Any(); allResult.UnionWith(nextLayer))
             {
-                nextLayer = cache.Where(pair => pair.Value != null && nextLayer.Contains(pair.Value))
+                nextLayer = cache.Where(pair => pair.Value is not null && nextLayer.Contains(pair.Value))
                     .Select(pair => pair.Key)
                     .ToHashSet();
             }

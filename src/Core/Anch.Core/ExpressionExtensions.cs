@@ -44,7 +44,7 @@ public static class ExpressionExtensions
 
     public static IEnumerable<Expression> GetChildren(this MethodCallExpression expression)
     {
-        if (expression.Object != null)
+        if (expression.Object is not null)
         {
             yield return expression.Object;
         }

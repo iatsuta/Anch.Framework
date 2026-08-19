@@ -4,7 +4,7 @@ public class UndirectedAncestorViewScriptGenerator(ViewSchema? schema = null) : 
 {
     public string GetScript(Type directAncestorLinkType, Type undirectAncestorLinkType)
     {
-        var schemaPrefix = schema == null ? "" : $"{schema.Name}_";
+        var schemaPrefix = schema is null ? "" : $"{schema.Name}_";
 
         return @$"
 CREATE VIEW {schemaPrefix}{undirectAncestorLinkType.Name}

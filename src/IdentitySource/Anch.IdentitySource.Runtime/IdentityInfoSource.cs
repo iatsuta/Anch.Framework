@@ -26,7 +26,7 @@ public class IdentityInfoSource(IIdentityPropertyExtractor propertyExtractor, IE
         {
             var customInfo = customInfoList.SingleOrDefault(identityInfo => identityInfo.DomainObjectType == domainObjectType);
 
-            if (customInfo != null)
+            if (customInfo is not null)
             {
                 return customInfo;
             }
@@ -34,7 +34,7 @@ public class IdentityInfoSource(IIdentityPropertyExtractor propertyExtractor, IE
             {
                 var property = propertyExtractor.TryExtract(domainObjectType);
 
-                if (property == null)
+                if (property is null)
                 {
                     return null;
                 }
