@@ -11,6 +11,6 @@ public class OverrideExpressionVisitor(Func<Expression, bool> isReplaceExpressio
 
     public override Expression? Visit(Expression? node)
     {
-        return node != null && isReplaceExpression(node) ? newExpression : base.Visit(node);
+        return node is not null && isReplaceExpression(node) ? newExpression : base.Visit(node);
     }
 }

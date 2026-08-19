@@ -28,7 +28,7 @@ public class RootFetchRuleExpander([FromKeyedServices(IFetchRuleExpander.Element
 
                         let expandedFetchRule = expander.TryExpand(fetchRule)
 
-                        where expandedFetchRule != null
+                        where expandedFetchRule is not null
 
                         select expandedFetchRule;
 

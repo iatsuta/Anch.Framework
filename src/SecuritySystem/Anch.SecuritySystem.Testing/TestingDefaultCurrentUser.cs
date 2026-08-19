@@ -11,7 +11,7 @@ public class TestingDefaultCurrentUser(
 {
     public string Name =>
 
-        rootImpersonateServiceState.CustomUserCredential == null
+        rootImpersonateServiceState.CustomUserCredential is null
             ? testRootUserInfo.Name
             : rootImpersonateServiceState.Cache.TryGetValue(rootImpersonateServiceState.CustomUserCredential, out var cachedUserName)
                 ? cachedUserName

@@ -13,7 +13,7 @@ public class AccessDeniedExceptionService(IIdentityInfoSource identityInfoSource
 
     protected virtual string GetAccessDeniedExceptionMessage(AccessResult.AccessDeniedResult accessDeniedResult)
     {
-        if (accessDeniedResult.CustomMessage != null)
+        if (accessDeniedResult.CustomMessage is not null)
         {
             return accessDeniedResult.CustomMessage;
         }
@@ -21,9 +21,9 @@ public class AccessDeniedExceptionService(IIdentityInfoSource identityInfoSource
         {
             var securityRule = accessDeniedResult.SecurityRule;
 
-            if (accessDeniedResult.DomainObjectInfo == null)
+            if (accessDeniedResult.DomainObjectInfo is null)
             {
-                if (securityRule == null)
+                if (securityRule is null)
                 {
                     return $"You are not authorized to perform operation";
                 }
@@ -47,7 +47,7 @@ public class AccessDeniedExceptionService(IIdentityInfoSource identityInfoSource
 
         return elements.GetByFirst((first, other) =>
         {
-            var messagePrefix = this.TryGetId(domainObject, domainObjectType) == null
+            var messagePrefix = this.TryGetId(domainObject, domainObjectType) is null
                 ? "You have no permissions to create object"
                 : "You have no permissions to access object";
 
@@ -71,12 +71,12 @@ public class AccessDeniedExceptionService(IIdentityInfoSource identityInfoSource
 
         var id = this.TryGetId(domainObject, domainObjectType);
 
-        if (id != null)
+        if (id is not null)
         {
             yield return new KeyValuePair<string, object>("id", id);
         }
 
-        if (securityRule != null)
+        if (securityRule is not null)
         {
             yield return new KeyValuePair<string, object>("securityRule", securityRule);
         }

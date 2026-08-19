@@ -31,7 +31,7 @@ public class AsyncEnumerableMethodRedirector(ITargetMethodExtractor targetMethod
     {
         var asTaskMethod = callExpression.Type.GetMethod(nameof(ValueTask<>.AsTask));
 
-        return asTaskMethod == null ? callExpression : Expression.Call(callExpression, asTaskMethod);
+        return asTaskMethod is null ? callExpression : Expression.Call(callExpression, asTaskMethod);
     }
 
     public static IMethodRedirector Default { get; } = new AsyncEnumerableMethodRedirector(AsyncEnumerableTargetMethodExtractor.Default);

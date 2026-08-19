@@ -12,7 +12,7 @@ public abstract record SecurityRuleCredential
 
     public static implicit operator SecurityRuleCredential(UserCredential? userCredential)
     {
-        return userCredential == null ? null! : new CustomUserSecurityRuleCredential(userCredential);
+        return userCredential is null ? null! : new CustomUserSecurityRuleCredential(userCredential);
     }
 
     public static implicit operator SecurityRuleCredential(string? userCredential)

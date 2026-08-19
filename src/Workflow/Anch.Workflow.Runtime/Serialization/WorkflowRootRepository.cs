@@ -17,13 +17,13 @@ public class WorkflowRootRepository(
 
         this.GetActualRepositories(identity.Definition)
             .Select((rep, lct) => rep.TryGetWorkflowInstance(identity, lct))
-            .FirstOrDefaultAsync(wfInstance => wfInstance != null, ct);
+            .FirstOrDefaultAsync(wfInstance => wfInstance is not null, ct);
 
     public ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken ct) =>
 
         this.GetActualRepositories(identity.Definition)
             .Select((rep, lct) => rep.TryGetStateInstance(identity, lct))
-            .FirstOrDefaultAsync(stateInstance => stateInstance != null, ct);
+            .FirstOrDefaultAsync(stateInstance => stateInstance is not null, ct);
 
     public IAsyncEnumerable<WorkflowInstance> GetWorkflowInstances() =>
 
@@ -43,5 +43,5 @@ public class WorkflowRootRepository(
 
     private IEnumerable<WorkflowDefinitionIdentity> GetActualWorkflowDefinitions(WorkflowDefinitionIdentity? workflowDefinitionIdentity) =>
 
-        workflowDefinitionIdentity == null ? workflowSource.Workflows.Keys : new[] { workflowDefinitionIdentity };
+        workflowDefinitionIdentity is null ? workflowSource.Workflows.Keys : new[] { workflowDefinitionIdentity };
 }

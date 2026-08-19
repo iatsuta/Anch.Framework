@@ -11,6 +11,6 @@ public class HierarchicalInfoSource(IServiceProvider serviceProvider) : IHierarc
 
     public bool IsHierarchical(Type domainType)
     {
-        return serviceProvider.GetService(typeof(HierarchicalInfo<>).MakeGenericType(domainType)) != null;
+        return serviceProvider.GetService(typeof(HierarchicalInfo<>).MakeGenericType(domainType)) is not null;
     }
 }

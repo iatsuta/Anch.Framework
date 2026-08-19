@@ -87,17 +87,17 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         setup?.Invoke(builder);
 
-        if (builder.IdentitySetupAction != null)
+        if (builder.IdentitySetupAction is not null)
         {
             this.identitySetupActions.Add(builder.IdentitySetupAction);
         }
 
-        if (builder.VisualIdentitySetupAction != null)
+        if (builder.VisualIdentitySetupAction is not null)
         {
             this.visualIdentitySetupActions.Add(builder.VisualIdentitySetupAction);
         }
 
-        if (builder.HierarchicalSetupAction != null)
+        if (builder.HierarchicalSetupAction is not null)
         {
             this.hierarchicalSetupActions.Add(builder.HierarchicalSetupAction);
         }
@@ -196,7 +196,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         setupUserSource?.Invoke(userSourceBuilder);
 
-        if (userSourceBuilder.VisualIdentitySetupAction != null)
+        if (userSourceBuilder.VisualIdentitySetupAction is not null)
         {
             this.visualIdentitySetupActions.Add(userSourceBuilder.VisualIdentitySetupAction);
         }
@@ -213,9 +213,9 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             sc.AddScoped(typeof(IMissedUserService<TUser>), userSourceBuilder.MissedUserServiceType);
         });
 
-        if (userSourceBuilder.RunAsPath != null)
+        if (userSourceBuilder.RunAsPath is not null)
         {
-            if (this.registerRunAsManagerAction == null)
+            if (this.registerRunAsManagerAction is null)
             {
                 this.registerRunAsManagerAction = sc =>
                 {
@@ -367,7 +367,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         this.registerActions.ForEach(v => v(services));
 
-        if (this.registerRunAsManagerAction != null)
+        if (this.registerRunAsManagerAction is not null)
         {
             this.registerRunAsManagerAction(services);
         }

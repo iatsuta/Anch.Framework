@@ -38,7 +38,7 @@ public class MemoryWorkflowRepository(
 
     public async ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken ct)
     {
-        if (identity.Definition != null && identity.Definition != workflowDefinitionIdentity)
+        if (identity.Definition is not null && identity.Definition != workflowDefinitionIdentity)
         {
             return null;
         }
@@ -52,7 +52,7 @@ public class MemoryWorkflowRepository(
 
     public async ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken ct)
     {
-        if (identity.Definition != null && identity.Definition != workflowDefinitionIdentity)
+        if (identity.Definition is not null && identity.Definition != workflowDefinitionIdentity)
         {
             return null;
         }

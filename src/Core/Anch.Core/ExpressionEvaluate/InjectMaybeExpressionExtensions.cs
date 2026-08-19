@@ -13,7 +13,7 @@ public static class InjectMaybeExpressionExtensions
     {
         var elementType = expression.Type.GetMaybeElementType();
 
-        if (elementType == null)
+        if (elementType is null)
         {
             return expression;
         }
@@ -29,7 +29,7 @@ public static class InjectMaybeExpressionExtensions
     {
         var nullableType = expression.Type.GetNullableElementType();
 
-        if (nullableType != null)
+        if (nullableType is not null)
         {
             var wrapMethod = new Func<Ignore?, Maybe<Ignore>>(Maybe.ToMaybe).Method;
 

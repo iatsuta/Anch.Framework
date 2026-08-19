@@ -25,7 +25,7 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
                         await userSourceList
                             .ToAsyncEnumerable()
                             .Select(async (userSource, lct) => await userSource.ToSimple().TryGetUserAsync(userCredential, lct))
-                            .Where(user => user != null)
+                            .Where(user => user is not null)
                             .Select(user => user!.Name)
                             .Distinct()
                             .ToArrayAsync(ct);

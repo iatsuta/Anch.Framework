@@ -29,7 +29,7 @@ public class AnchFrameworkExecutor(
         }
         finally
         {
-            if (serviceProviderPool != null)
+            if (serviceProviderPool is not null)
             {
                 await serviceProviderPool.DisposeAsync();
             }

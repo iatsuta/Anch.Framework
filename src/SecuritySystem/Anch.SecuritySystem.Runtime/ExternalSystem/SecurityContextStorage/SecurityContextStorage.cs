@@ -45,7 +45,7 @@ public class SecurityContextStorage : ISecurityContextStorage
     {
         var hierarchicalInfo = this.serviceProvider.GetService(typeof(HierarchicalInfo<>).MakeGenericType(typeof(TSecurityContext)));
 
-        var (serviceType, args) = hierarchicalInfo == null
+        var (serviceType, args) = hierarchicalInfo is null
             ? (typeof(PlainTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>), Array.Empty<object>())
             : (typeof(HierarchicalTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>), [hierarchicalInfo]);
 

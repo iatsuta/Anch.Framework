@@ -9,7 +9,7 @@ public class TestingRawCurrentUser(
     ISyncUserNameResolver userNameResolver) : ICurrentUser
 {
     public string Name =>
-        rootImpersonateServiceState.CustomUserCredential == null
+        rootImpersonateServiceState.CustomUserCredential is null
             ? testRootUserInfo.Name
             : rootImpersonateServiceState.Cache.GetOrAdd(rootImpersonateServiceState.CustomUserCredential, _ =>
                 userNameResolver.GetUserName(rootImpersonateServiceState.CustomUserCredential));

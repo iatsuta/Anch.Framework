@@ -114,14 +114,14 @@ public abstract class Parsers<TInput>
 
     public Parser<TInput, TValue> OneOfMany<TValue>(params Parser<TInput, TValue>[] parsers)
     {
-        if (parsers == null) throw new ArgumentNullException(nameof(parsers));
+        if (parsers is null) throw new ArgumentNullException(nameof(parsers));
 
         return this.OneOfMany((IEnumerable<Parser<TInput, TValue>>)parsers);
     }
 
     public Parser<TInput, TValue> OneOfMany<TValue>(IEnumerable<Parser<TInput, TValue>> parsers)
     {
-        if (parsers == null) throw new ArgumentNullException(nameof(parsers));
+        if (parsers is null) throw new ArgumentNullException(nameof(parsers));
 
         return parsers.Select(p => this.GetLazy(() => p)).Aggregate((p1, p2) => p1.Or(p2));
     }

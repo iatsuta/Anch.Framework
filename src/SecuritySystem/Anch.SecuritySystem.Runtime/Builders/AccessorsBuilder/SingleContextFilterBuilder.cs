@@ -24,7 +24,7 @@ public class SingleContextFilterBuilder<TDomainObject, TPermission, TSecurityCon
     {
         var securityObject = this.expressionEvaluator.Evaluate(securityPath.Expression, domainObject);
 
-        if (securityObject != null)
+        if (securityObject is not null)
         {
             yield return securityObject;
         }

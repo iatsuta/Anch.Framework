@@ -11,7 +11,7 @@ public class StateDefinitionResolver<TSource, TStatus>(IWorkflowDefinition<TSour
 
     //private readonly Func<TSource, TStatus> getStatus = ((Expression<Func<TSource, TStatus>>)workflow.Definition.DomainBindingInfo.StatusProperty!).Compile(LambdaCompileCache.Default);
 
-    private readonly Dictionary<TStatus, IStateDefinition<TSource, TStatus>> statusMap = workflow.States.Where(state => state.Status != null).ToDictionary(st => st.Status!.Value);
+    private readonly Dictionary<TStatus, IStateDefinition<TSource, TStatus>> statusMap = workflow.States.Where(state => state.Status is not null).ToDictionary(st => st.Status!.Value);
 
     public IStateDefinition GetCurrentStateDefinition(TSource source)
     {

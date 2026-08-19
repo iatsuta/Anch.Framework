@@ -57,7 +57,7 @@ public class InjectMaybeVisitor : ExpressionVisitor
                 {
                     var nullableType = nodeExpression.Type.GetNullableElementType();
 
-                    if (nullableType != null && node.Member.Name == "Value")
+                    if (nullableType is not null && node.Member.Name == "Value")
                     {
                         return baseVisitedExpression.OverrideSelect(v => v.ToMaybeReturn());
                     }
@@ -87,7 +87,7 @@ public class InjectMaybeVisitor : ExpressionVisitor
                 {
                     var nullableType = nodeExpression.Type.GetNullableElementType();
 
-                    if (nullableType != null && node.Member.Name == "Value")
+                    if (nullableType is not null && node.Member.Name == "Value")
                     {
                         return baseVisitedExpression.OverrideSelect(v => v.ToMaybeReturn());
                     }

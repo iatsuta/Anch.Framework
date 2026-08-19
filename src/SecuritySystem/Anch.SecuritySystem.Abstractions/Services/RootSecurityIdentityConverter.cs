@@ -20,7 +20,7 @@ public class RootSecurityIdentityConverter(IServiceProvider serviceProvider, IEn
 
             let tryConvertedIdentity = converter.TryConvert(securityIdentity)
 
-            where tryConvertedIdentity != null
+            where tryConvertedIdentity is not null
 
             select tryConvertedIdentity;
 

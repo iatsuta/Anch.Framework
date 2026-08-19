@@ -41,7 +41,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
         {
             var testType = testMethod.ReflectedType!;
 
-            if (serviceProvider == null)
+            if (serviceProvider is null)
             {
                 return Activator.CreateInstance(testType);
             }
@@ -79,7 +79,7 @@ public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProvider
 
             await using var serviceProviderPoolScope = await this.serviceProviderPool.TryCreateScopeAsync(ct);
 
-            if (serviceProviderPoolScope?.Exception != null)
+            if (serviceProviderPoolScope?.Exception is not null)
             {
                 ExceptionDispatchInfo.Capture(serviceProviderPoolScope.Exception).Throw();
             }

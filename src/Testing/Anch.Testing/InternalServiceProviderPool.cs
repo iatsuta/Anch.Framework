@@ -34,7 +34,7 @@ public class InternalServiceProviderPool(
     {
         await this.mainInitialization.EnsureExecutedAsync(ct);
 
-        if (this.parallelSemaphoreSlim != null)
+        if (this.parallelSemaphoreSlim is not null)
         {
             await this.parallelSemaphoreSlim.WaitAsync(ct);
         }

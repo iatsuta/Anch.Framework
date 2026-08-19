@@ -11,7 +11,7 @@ public class MethodRedirector(ITargetMethodExtractor targetMethodExtractor) : IM
         {
             var targetMethod = targetMethodExtractor.TryGetTargetMethod(methodCallExpression.Method);
 
-            if (targetMethod != null)
+            if (targetMethod is not null)
             {
                 var args = methodCallExpression.Arguments.Take(targetMethod.GetParameters().Length);
 

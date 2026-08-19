@@ -17,11 +17,11 @@ public class SecurityPathRestrictionService(IServiceProvider serviceProvider, IS
         SecurityPath<TDomainObject>? securityPath,
         SecurityPathRestriction restriction)
     {
-        if (securityPath == null || restriction.IgnoreSecurityPath)
+        if (securityPath is null || restriction.IgnoreSecurityPath)
         {
             return SecurityPath<TDomainObject>.Empty;
         }
-        else if (restriction.SecurityContextRestrictions == null)
+        else if (restriction.SecurityContextRestrictions is null)
         {
             return securityPath;
         }
@@ -41,7 +41,7 @@ public class SecurityPathRestrictionService(IServiceProvider serviceProvider, IS
 
         var condition = conditionFactory?.Create();
 
-        if (condition != null)
+        if (condition is not null)
         {
             return securityPath.And(condition);
         }
@@ -63,7 +63,7 @@ public class SecurityPathRestrictionService(IServiceProvider serviceProvider, IS
 
         var condition = conditionFactory.Create();
 
-        if (condition != null)
+        if (condition is not null)
         {
             return securityPath.And(condition);
         }

@@ -36,7 +36,7 @@ public sealed class ConfiguratorMiddleware(RequestDelegate next, string route)
 
     private static void PatchContentType(HttpContext context, string path)
     {
-        // patch Request.ContentType since running on IIS gives ContentType == null
+        // patch Request.ContentType since running on IIS gives ContentType is null
         if (context.Response.StatusCode != (int)HttpStatusCode.OK)
         {
             return;

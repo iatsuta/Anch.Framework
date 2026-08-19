@@ -29,7 +29,7 @@ public class RootPrincipalSourceService(IEnumerable<IPrincipalSourceService> pri
 
             from principal in pss.TryGetPrincipalAsync(userCredential, ct).ToAsyncEnumerable()
 
-            where principal != null
+            where principal is not null
 
             group principal by principal.Header with { IsVirtual = false }
 

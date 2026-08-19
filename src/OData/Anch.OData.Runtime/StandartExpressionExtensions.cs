@@ -55,7 +55,7 @@ public static class StandardExpressionExtensions
     {
         var request = from value in baseExpression.GetConstantValue()
 
-                      where value != null && enumType.IsEnum && value.GetType() != enumType
+                      where value is not null && enumType.IsEnum && value.GetType() != enumType
 
                       from enumValue in TryConvertToEnum(value!, enumType)
 
@@ -79,7 +79,7 @@ public static class StandardExpressionExtensions
 
     private static SExpressions.Expression LiftToNullable(SExpressions.Expression expression, Type expectedNullableType)
     {
-        if (expression == null) throw new ArgumentNullException(nameof(expression));
+        if (expression is null) throw new ArgumentNullException(nameof(expression));
 
         if (expression.Type.IsNullable())
         {
@@ -93,7 +93,7 @@ public static class StandardExpressionExtensions
 
         return expression.GetConstantValue().Select(value =>
         {
-            if (value == null)
+            if (value is null)
             {
                 return SExpressions.Expression.Constant(null, expectedNullableType);
             }

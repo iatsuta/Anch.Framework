@@ -48,7 +48,7 @@ public class HierarchicalExpandSetup : IHierarchicalExpandSetup, IServiceInitial
             services.AddSingleton(directLinkType, fullAncestorLinkInfo);
             services.AddSingleton(withUndirectLinkType, fullAncestorLinkInfo);
 
-            if (deepLevelInfo != null)
+            if (deepLevelInfo is not null)
             {
                 services.AddSingleton<DeepLevelInfo>(deepLevelInfo);
                 services.AddSingleton(deepLevelInfo);

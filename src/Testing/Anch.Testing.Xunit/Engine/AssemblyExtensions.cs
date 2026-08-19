@@ -10,7 +10,7 @@ public static class AssemblyExtensions
                                            ?? throw new InvalidOperationException(
                                                $"Assembly '{assembly.FullName}' must be decorated with '{typeof(AnchTestFrameworkAttribute).FullName}' attribute");
 
-        return commonTestFrameworkAttribute.TestEnvironmentType == null
+        return commonTestFrameworkAttribute.TestEnvironmentType is null
             ? null
             : (Activator.CreateInstance(commonTestFrameworkAttribute.TestEnvironmentType) as ITestEnvironment
                ?? throw new InvalidOperationException(

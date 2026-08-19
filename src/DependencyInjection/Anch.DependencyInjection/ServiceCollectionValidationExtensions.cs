@@ -73,7 +73,7 @@ public static class ServiceCollectionValidationExtensions
 
                 let validator = sd.ImplementationInstance as IServiceCollectionValidator
 
-                where validator != null
+                where validator is not null
 
                 select validator;
         }

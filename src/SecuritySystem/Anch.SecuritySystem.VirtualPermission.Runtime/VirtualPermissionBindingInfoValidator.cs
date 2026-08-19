@@ -21,7 +21,7 @@ public class VirtualPermissionBindingInfoValidator(ISecurityRoleSource securityR
             .Restriction
             .SecurityContextRestrictions;
 
-        if (securityContextRestrictions != null)
+        if (securityContextRestrictions is not null)
         {
             var bindingContextTypes = virtualBindingInfo.SecurityContextTypes;
 

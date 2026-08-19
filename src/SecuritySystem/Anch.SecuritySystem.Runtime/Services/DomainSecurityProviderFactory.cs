@@ -35,7 +35,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
                         securityRule.RelativePathKey.Maybe(v => new CurrentUserSecurityProviderRelativeKey(v)),
                         securityRule.CustomCredential
                         }
-                        .Where(arg => arg != null)
+                        .Where(arg => arg is not null)
                         .Select(arg => arg!)
                         .ToArray();
 
@@ -46,7 +46,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
                 {
                     var securityProviderType = (securityRule.GenericSecurityProviderType ?? typeof(ISecurityProvider<>)).MakeGenericType(typeof(TDomainObject));
 
-                    var securityProvider = securityRule.Key == null
+                    var securityProvider = securityRule.Key is null
                         ? serviceProvider.GetRequiredService(securityProviderType)
                         : serviceProvider.GetRequiredKeyedService(securityProviderType, securityRule.Key);
 
@@ -59,7 +59,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
                         securityRule.GenericSecurityProviderFactoryType.MakeGenericType(typeof(TDomainObject));
 
                     var securityProviderFactoryUntyped =
-                        securityRule.Key == null
+                        securityRule.Key is null
                             ? serviceProvider.GetRequiredService(securityProviderFactoryType)
                             : serviceProvider.GetRequiredKeyedService(securityProviderFactoryType, securityRule.Key);
 

@@ -8,8 +8,8 @@ public class NewComparer(ExpressionComparer rootComparer) : ExpressionComparer<N
     {
         return x.Arguments.SequenceEqual(y.Arguments, rootComparer)
 
-               && ((x.Members == null && y.Members == null)
+               && ((x.Members is null && y.Members is null)
 
-                   || (x.Members != null && y.Members != null && x.Members.SequenceEqual(y.Members)));
+                   || (x.Members is not null && y.Members is not null && x.Members.SequenceEqual(y.Members)));
     }
 }

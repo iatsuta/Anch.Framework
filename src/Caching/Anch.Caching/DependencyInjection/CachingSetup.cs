@@ -19,7 +19,7 @@ public class CachingSetup : ICachingSetup, IServiceInitializer
 
     public void Initialize(IServiceCollection services)
     {
-        if (!services.AlreadyInitialized<ICacheProvider>() || this.cacheProviderType != null)
+        if (!services.AlreadyInitialized<ICacheProvider>() || this.cacheProviderType is not null)
         {
             services.TryAddSingleton(typeof(ICache<,>), typeof(CacheProxy<,>));
             services.ReplaceSingleton(typeof(ICacheProvider), this.cacheProviderType ?? typeof(CacheProvider));

@@ -91,7 +91,7 @@ public abstract record DomainSecurityRule : SecurityRule
 
         public IEnumerable<SecurityContextRestrictionFilterInfo> GetSafeSecurityContextRestrictionFilters() =>
             from securityContextRestriction in this.GetSafeSecurityContextRestrictions()
-            where securityContextRestriction.RawFilter != null
+            where securityContextRestriction.RawFilter is not null
             select securityContextRestriction.RawFilter;
 
         public bool EqualsCustoms(RoleBaseSecurityRule other)

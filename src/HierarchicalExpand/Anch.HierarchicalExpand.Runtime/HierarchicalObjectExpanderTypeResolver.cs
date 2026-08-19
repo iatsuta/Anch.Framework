@@ -27,7 +27,7 @@ public class HierarchicalObjectExpanderTypeResolver(
 
                 var identityInfo = identityInfoSource.GetIdentityInfo(domainType);
 
-                if (fullAncestorLinkInfo != null)
+                if (fullAncestorLinkInfo is not null)
                 {
                     return typeof(HierarchicalObjectAncestorLinkExpander<,,,>)
                         .MakeGenericType(domainType, fullAncestorLinkInfo.DirectedLinkType, fullAncestorLinkInfo.UndirectedLinkType, identityInfo.IdentityType);

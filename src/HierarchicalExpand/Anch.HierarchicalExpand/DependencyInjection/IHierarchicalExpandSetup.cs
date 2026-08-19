@@ -17,5 +17,5 @@ public interface IHierarchicalExpandSetup
         this.AddHierarchicalInfo(
             new HierarchicalInfo<TDomainObject>(parentPath),
             new FullAncestorLinkInfo<TDomainObject, TDirectedLink, TUndirectedLink>(directed, undirected),
-            deepLevelPath == null ? null : new DeepLevelInfo<TDomainObject>(deepLevelPath));
+            deepLevelPath is null ? null : new DeepLevelInfo<TDomainObject>(deepLevelPath));
 }

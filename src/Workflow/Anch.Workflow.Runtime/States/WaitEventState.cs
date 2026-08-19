@@ -44,7 +44,7 @@ public class WaitEventState : IState
 //        {
 //            var data = (TData)executionContext.CallbackEventInfo!.Data!;
 
-//            if (this.Callback != null)
+//            if (this.Callback is not null)
 //            {
 //                await this.Callback((TSource)executionContext.Source, data, executionContext.CancellationToken);
 //            }

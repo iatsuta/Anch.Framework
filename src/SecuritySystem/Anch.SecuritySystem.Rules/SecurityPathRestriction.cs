@@ -51,7 +51,7 @@ public record SecurityPathRestriction(
         this.Add(
             required,
             key,
-            filter == null
+            filter is null
                 ? null
                 : ExpressionHelper.Create((IServiceProvider _) => filter));
 
@@ -72,7 +72,7 @@ public record SecurityPathRestriction(
                     new SecurityContextRestriction<TSecurityContext>(
                         required,
                         key,
-                        filter == null ? null : new SecurityContextRestrictionFilterInfo<TSecurityContext, TFilterService>(filter))
+                        filter is null ? null : new SecurityContextRestrictionFilterInfo<TSecurityContext, TFilterService>(filter))
                 ])
                 .ToArray()
         };

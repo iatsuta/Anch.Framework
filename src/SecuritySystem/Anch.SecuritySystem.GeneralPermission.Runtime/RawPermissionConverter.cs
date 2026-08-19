@@ -26,7 +26,7 @@ public class RawPermissionConverter<TPermissionRestriction, TSecurityContextObje
 
                 var baseIdents = rawRestrictions.GetValueOrDefault(securityContextType, Array.Empty<TSecurityContextObjectIdent>());
 
-                if (securityContextRestrictionFilterInfo == null)
+                if (securityContextRestrictionFilterInfo is null)
                 {
                     return baseIdents;
                 }

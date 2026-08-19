@@ -26,7 +26,7 @@ public class UserCredentialManager(
     {
         var existsPrincipal = await this.principalSourceService.TryGetPrincipalAsync(this.ActualCredential, ct);
 
-        if (existsPrincipal == null)
+        if (existsPrincipal is null)
         {
             var newPrincipalData = await principalManagementService.CreatePrincipalAsync(this.ActualCredential, newPermissions, ct);
 

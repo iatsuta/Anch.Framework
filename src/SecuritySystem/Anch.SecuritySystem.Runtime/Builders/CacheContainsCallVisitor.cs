@@ -14,7 +14,7 @@ internal class CacheContainsCallVisitor : ExpressionVisitor
 
     public override Expression? Visit(Expression? node)
     {
-        return node == null ? base.Visit(node) : node.UpdateBase(new InternalStateVisitor());
+        return node is null ? base.Visit(node) : node.UpdateBase(new InternalStateVisitor());
     }
 
     private class InternalStateVisitor : ExpressionVisitor

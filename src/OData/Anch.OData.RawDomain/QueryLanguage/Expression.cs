@@ -86,9 +86,9 @@ public abstract record Expression
 
     internal static ConstantExpression CreateConstant(Type constType, object? constValue)
     {
-        if (constType == null) throw new ArgumentNullException(nameof(constType));
+        if (constType is null) throw new ArgumentNullException(nameof(constType));
 
-        if (constValue == null)
+        if (constValue is null)
         {
             return NullConstantExpression.Value;
         }

@@ -45,7 +45,7 @@ public class TestPermission
         where TSecurityContext : ISecurityContext
         where TIdent : notnull
     {
-        if (value == null)
+        if (value is null)
         {
             this.Restrictions.Remove(typeof(TSecurityContext));
         }

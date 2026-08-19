@@ -5,13 +5,13 @@ public static class PipeObjectExtensions
     public static TSource PipeMaybe<TSource, TValue>(this TSource source, TValue? value, Func<TSource, TValue, TSource> evaluate)
         where TValue : struct
     {
-        return value == null ? source : evaluate(source, value.Value);
+        return value is null ? source : evaluate(source, value.Value);
     }
 
     public static TSource PipeMaybe<TSource, TValue>(this TSource source, TValue? value, Func<TSource, TValue, TSource> evaluate)
         where TValue : class
     {
-        return value == null ? source : evaluate(source, value);
+        return value is null ? source : evaluate(source, value);
     }
 
     public static TResult Pipe<TSource, TResult>(this TSource source, Func<TSource, TResult> evaluate)

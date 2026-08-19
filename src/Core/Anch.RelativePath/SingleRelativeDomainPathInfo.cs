@@ -32,7 +32,7 @@ public record SingleRelativeDomainPathInfo<TFrom, TTo>(Expression<Func<TFrom, TT
     {
         var relativeObject = this.lazyPathFunc.Value(source);
 
-        if (relativeObject != null)
+        if (relativeObject is not null)
         {
             yield return relativeObject;
         }

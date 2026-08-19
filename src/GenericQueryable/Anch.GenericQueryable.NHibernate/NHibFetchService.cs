@@ -24,7 +24,7 @@ public class NHibFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchS
 
         if (isFirst)
         {
-            if (nextElementType != null)
+            if (nextElementType is not null)
             {
                 return new Func<IQueryable<TSource>, Expression<Func<TSource, IEnumerable<Ignore>>>, INhFetchRequest<TSource, Ignore>>(EagerFetchingExtensionMethods.FetchMany)
                     .CreateGenericMethod(typeof(TSource), nextElementType);
@@ -37,7 +37,7 @@ public class NHibFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchS
         }
         else
         {
-            if (nextElementType != null)
+            if (nextElementType is not null)
             {
                 return new Func<INhFetchRequest<TSource, Ignore>, Expression<Func<Ignore, IEnumerable<Ignore>>>, INhFetchRequest<TSource, Ignore>>(
                         EagerFetchingExtensionMethods.ThenFetchMany)

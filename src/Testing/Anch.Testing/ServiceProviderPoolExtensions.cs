@@ -4,7 +4,7 @@ public static class ServiceProviderPoolExtensions
 {
     public static async ValueTask<ServiceProviderPoolScope?> TryCreateScopeAsync(this IServiceProviderPool? serviceProviderPool, CancellationToken ct)
     {
-        if (serviceProviderPool == null)
+        if (serviceProviderPool is null)
         {
             return null;
         }
@@ -42,7 +42,7 @@ public static class ServiceProviderPoolExtensions
 
         public async ValueTask DisposeAsync()
         {
-            if (this.ServiceProvider != null)
+            if (this.ServiceProvider is not null)
             {
                 await this.ServiceProvider.RunEnvironmentHooks(EnvironmentHookType.After, ct);
 

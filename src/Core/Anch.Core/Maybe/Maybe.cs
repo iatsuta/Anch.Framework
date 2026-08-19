@@ -42,7 +42,7 @@ public static class Maybe
     public static Maybe<T> ToMaybe<T>(this T? value)
         where T : struct
     {
-        return OfCondition(value != null, () => value!.Value);
+        return OfCondition(value is not null, () => value!.Value);
     }
 
     public static Maybe<T> Return<T>(T value)
@@ -53,7 +53,7 @@ public static class Maybe
     public static Maybe<T> ToMaybe<T>(this T? value)
         where T : class
     {
-        return OfCondition(value != null, () => value!);
+        return OfCondition(value is not null, () => value!);
     }
 
     public static Maybe<T> OfCondition<T>(bool condition, Func<T> getJustValue)

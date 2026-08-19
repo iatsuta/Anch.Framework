@@ -53,7 +53,7 @@ public sealed class LambdaExpressionPath(ImmutableArray<LambdaExpression> proper
             default(PropertyInfo?),
             (prevProperty, propertyName) =>
             {
-                var currentType = prevProperty == null ? sourceType : prevProperty.PropertyType.GetCollectionElementTypeOrSelf();
+                var currentType = prevProperty is null ? sourceType : prevProperty.PropertyType.GetCollectionElementTypeOrSelf();
 
                 return currentType.GetRequiredProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
             }).Skip(1).Select(v => v!);

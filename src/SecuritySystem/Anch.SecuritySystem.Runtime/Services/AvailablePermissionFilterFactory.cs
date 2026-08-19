@@ -39,7 +39,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
     {
         yield return bindingInfo.Principal.Path.Select(userSourceInfo.FilterPath);
 
-        if (bindingInfo.PermissionStartDate != null)
+        if (bindingInfo.PermissionStartDate is not null)
         {
             yield return bindingInfo.GetPeriodFilter(timeProvider.GetUtcNow().Date);
         }
@@ -47,7 +47,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
         var principalName =
             defaultCancellationTokenSource.RunSync(ct => userNameResolver.GetUserNameAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
 
-        if (principalName != null)
+        if (principalName is not null)
         {
             yield return bindingInfo.Principal.Path.Select(principalVisualIdentityInfo.Name.Path).Select(name => name == principalName);
         }

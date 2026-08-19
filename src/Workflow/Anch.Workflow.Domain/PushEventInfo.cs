@@ -11,8 +11,8 @@ public record PushEventInfo(
     public bool IsMatched(WaitEventInfo waitEventInfo)
     {
         return waitEventInfo.Header == this.Header
-               && (waitEventInfo.TargetState == this.TargetState || this.TargetState == null)
-               && (waitEventInfo.SourceWorkflow == null || this.SourceWorkflow == waitEventInfo.SourceWorkflow)
-               && (waitEventInfo.Data == null || Equals(waitEventInfo.Data, this.Data));
+               && (waitEventInfo.TargetState == this.TargetState || this.TargetState is null)
+               && (waitEventInfo.SourceWorkflow is null || this.SourceWorkflow == waitEventInfo.SourceWorkflow)
+               && (waitEventInfo.Data is null || Equals(waitEventInfo.Data, this.Data));
     }
 }

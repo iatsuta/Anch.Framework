@@ -19,7 +19,7 @@ public class VirtualPermissionFilterFactory<TPermission>(
         SecurityContextRestriction<TSecurityContext> securityContextRestriction)
         where TSecurityContext : class, ISecurityContext
     {
-        if (securityContextRestriction.Filter != null)
+        if (securityContextRestriction.Filter is not null)
         {
             var restrictionFilter = this.CreateFilter(securityContextRestriction.Filter.GetPureFilter(serviceProvider));
 

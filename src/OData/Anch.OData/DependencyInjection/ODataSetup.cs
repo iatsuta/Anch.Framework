@@ -22,7 +22,7 @@ public class ODataSetup : IODataSetup, IServiceInitializer
                 .AddSingleton<ISelectOperationParser, SelectOperationParser>();
         }
 
-        if (this.parsingExceptionFactoryType != null)
+        if (this.parsingExceptionFactoryType is not null)
         {
             services.ReplaceSingleton(typeof(IParsingExceptionFactory), this.parsingExceptionFactoryType);
         }

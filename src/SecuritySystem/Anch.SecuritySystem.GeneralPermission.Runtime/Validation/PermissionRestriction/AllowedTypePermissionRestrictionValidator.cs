@@ -1,5 +1,4 @@
-﻿using Anch.Core;
-using Anch.SecuritySystem.Validation;
+﻿using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
@@ -20,7 +19,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, T
 
         var allowedSecurityContexts = securityRole.Information.Restriction.SecurityContextTypes;
 
-        var allowed = allowedSecurityContexts == null || allowedSecurityContexts.Contains(securityContextType);
+        var allowed = allowedSecurityContexts is null || allowedSecurityContexts.Contains(securityContextType);
 
         if (allowed)
         {

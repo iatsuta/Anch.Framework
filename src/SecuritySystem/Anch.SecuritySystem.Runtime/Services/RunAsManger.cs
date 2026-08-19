@@ -28,7 +28,7 @@ public class RunAsManager<TUser>(
     private TUser NativeCurrentUser => this.NativeTryCurrentUser ??
                                        throw missedUserErrorSource.GetNotFoundException(typeof(TUser), impersonatedCurrentUser.Name);
 
-    private TUser? NativeRunAsUser => this.NativeTryCurrentUser == null ? null : userSourceRunAsInfo.RunAs.Getter(this.NativeTryCurrentUser);
+    private TUser? NativeRunAsUser => this.NativeTryCurrentUser is null ? null : userSourceRunAsInfo.RunAs.Getter(this.NativeTryCurrentUser);
 
     public User? RunAsUser => this.NativeRunAsUser?.Pipe(toDefaultUserConverter.ConvertFunc);
 

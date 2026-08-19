@@ -84,7 +84,7 @@ public record VirtualPermissionBindingInfo<TPermission> : VirtualPermissionBindi
             {
                 yield return ExpressionEvaluateHelper.InlineEvaluate(ee =>
                 {
-                    if (filter == null)
+                    if (filter is null)
                     {
                         return singlePath.Select(IEnumerable<TResult> (securityContext) =>
                             securityContext != null ? new[] { ee.Evaluate(selector, securityContext) } : Array.Empty<TResult>());
@@ -102,7 +102,7 @@ public record VirtualPermissionBindingInfo<TPermission> : VirtualPermissionBindi
             {
                 yield return ExpressionEvaluateHelper.InlineEvaluate(ee =>
                 {
-                    if (filter == null)
+                    if (filter is null)
                     {
                         return manyPath.Select(securityContexts =>
                             securityContexts.Select(securityContext => ee.Evaluate(selector, securityContext)));
