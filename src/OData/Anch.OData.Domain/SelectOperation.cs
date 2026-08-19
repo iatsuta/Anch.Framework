@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 
 using Anch.Core;
-using Anch.OData.Domain.QueryLanguage;
+using Anch.Core.ExpressionComparers;
 
 using SExpressions = System.Linq.Expressions;
 
@@ -11,13 +11,30 @@ public record SelectOperation<TDomainObject>(
     SExpressions.Expression<Func<TDomainObject, bool>> Filter,
     ImmutableArray<SelectOrder<TDomainObject>> Orders,
     int SkipCount,
-    int TakeCount) : IDynamicSelectOperation, IQueryableInjector<TDomainObject>
+    int TakeCount) : IQueryableInjector<TDomainObject>
 {
+    private int? hashCode;
+
+    protected SelectOperation(SelectOperation<TDomainObject> source)
+    {
+        this.Filter = source.Filter;
+        this.Orders = source.Orders;
+        this.SkipCount = source.SkipCount;
+        this.TakeCount = source.TakeCount;
+    }
+
     public bool HasPaging => this.SkipCount != Default.SkipCount || this.TakeCount != Default.TakeCount;
 
-    public ImmutableArray<LambdaExpression> Expands { get; init; } = [];
+    public virtual bool Equals(SelectOperation<TDomainObject>? other) =>
+        object.ReferenceEquals(this, other) ||
+        (other is not null
+         && this.GetHashCode() == other.GetHashCode()
+         && this.SkipCount == other.SkipCount
+         && this.TakeCount == other.TakeCount
+         && ExpressionComparer.Default.Equals(this.Filter, other.Filter) && this.Orders.SequenceEqual(other.Orders));
 
-    public ImmutableArray<LambdaExpression> Selects { get; init; } = [];
+    public override int GetHashCode() => this.hashCode ??= HashCode.Combine(ExpressionComparer.Default.GetHashCode(this.Filter),
+        this.Orders.Aggregate(0, (hash, order) => HashCode.Combine(hash, order.GetHashCode())), this.SkipCount, this.TakeCount);
 
     public SelectOperation<TDomainObject> WithoutPaging() => this.HasPaging ? this with { SkipCount = Default.SkipCount, TakeCount = Default.TakeCount } : this;
 

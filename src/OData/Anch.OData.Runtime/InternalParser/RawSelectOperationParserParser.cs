@@ -24,12 +24,6 @@ public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpres
             this.GetElementParser("orderby", this.GetLazy(() => this.OrdersParser))
                 .ToRow(() => SelectOperation.Default.Orders),
 
-            this.GetElementParser("expand", this.GetLazy(() => this.ExpandsParser))
-                .ToRow(() => SelectOperation.Default.Expands),
-
-            this.GetElementParser("select", this.GetLazy(() => this.SelectsParser))
-                .ToRow(() => SelectOperation.Default.Selects),
-
             this.GetElementParser("skip", this.Int32Parser)
                 .ToRow(() => SelectOperation.Default.SkipCount),
 
@@ -38,9 +32,9 @@ public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpres
 
             this.PreSpaces(this.Char('&')),
 
-            (filter, orders, expands, selects, skipCount, takeCount) =>
+            (filter, orders, skipCount, takeCount) =>
 
-                new SelectOperation(filter, [.. orders], skipCount, takeCount) { Expands = [.. expands], Selects = [.. selects] })
+                new SelectOperation(filter, [.. orders], skipCount, takeCount))
 
         from _ in this.PreSpaces(this.Eof)
 

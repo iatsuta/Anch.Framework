@@ -29,88 +29,88 @@ public class DomainSecurityProviderFactory<TDomainObject>(
                 return roleBaseSecurityProviderFactory.Create(securityRule, securityPath);
 
             case DomainSecurityRule.CurrentUserSecurityRule securityRule:
-            {
-                var args = new object?[]
-                    {
+                {
+                    var args = new object?[]
+                        {
                         securityRule.RelativePathKey.Maybe(v => new CurrentUserSecurityProviderRelativeKey(v)),
                         securityRule.CustomCredential
-                    }
-                    .Where(arg => arg != null)
-                    .Select(arg => arg!)
-                    .ToArray();
+                        }
+                        .Where(arg => arg != null)
+                        .Select(arg => arg!)
+                        .ToArray();
 
-                return serviceProxyFactory.Create<ISecurityProvider<TDomainObject>, CurrentUserSecurityProvider<TDomainObject>>(args);
-            }
+                    return serviceProxyFactory.Create<ISecurityProvider<TDomainObject>, CurrentUserSecurityProvider<TDomainObject>>(args);
+                }
 
             case DomainSecurityRule.ProviderSecurityRule securityRule:
-            {
-                var securityProviderType = (securityRule.GenericSecurityProviderType ?? typeof(ISecurityProvider<>)).MakeGenericType(typeof(TDomainObject));
+                {
+                    var securityProviderType = (securityRule.GenericSecurityProviderType ?? typeof(ISecurityProvider<>)).MakeGenericType(typeof(TDomainObject));
 
-                var securityProvider = securityRule.Key == null
-                    ? serviceProvider.GetRequiredService(securityProviderType)
-                    : serviceProvider.GetRequiredKeyedService(securityProviderType, securityRule.Key);
+                    var securityProvider = securityRule.Key == null
+                        ? serviceProvider.GetRequiredService(securityProviderType)
+                        : serviceProvider.GetRequiredKeyedService(securityProviderType, securityRule.Key);
 
-                return (ISecurityProvider<TDomainObject>)securityProvider;
-            }
+                    return (ISecurityProvider<TDomainObject>)securityProvider;
+                }
 
             case DomainSecurityRule.ProviderFactorySecurityRule securityRule:
-            {
-                var securityProviderFactoryType =
-                    securityRule.GenericSecurityProviderFactoryType.MakeGenericType(typeof(TDomainObject));
+                {
+                    var securityProviderFactoryType =
+                        securityRule.GenericSecurityProviderFactoryType.MakeGenericType(typeof(TDomainObject));
 
-                var securityProviderFactoryUntyped =
-                    securityRule.Key == null
-                        ? serviceProvider.GetRequiredService(securityProviderFactoryType)
-                        : serviceProvider.GetRequiredKeyedService(securityProviderFactoryType, securityRule.Key);
+                    var securityProviderFactoryUntyped =
+                        securityRule.Key == null
+                            ? serviceProvider.GetRequiredService(securityProviderFactoryType)
+                            : serviceProvider.GetRequiredKeyedService(securityProviderFactoryType, securityRule.Key);
 
-                var securityProviderFactory = (IFactory<ISecurityProvider<TDomainObject>>)securityProviderFactoryUntyped;
+                    var securityProviderFactory = (IFactory<ISecurityProvider<TDomainObject>>)securityProviderFactoryUntyped;
 
-                return securityProviderFactory.Create();
-            }
+                    return securityProviderFactory.Create();
+                }
 
             case DomainSecurityRule.ConditionFactorySecurityRule securityRule:
-            {
-                var conditionFactoryType =
-                    securityRule.GenericConditionFactoryType.MakeGenericType(typeof(TDomainObject));
+                {
+                    var conditionFactoryType =
+                        securityRule.GenericConditionFactoryType.MakeGenericType(typeof(TDomainObject));
 
-                var conditionFactoryUntyped = serviceProvider.GetRequiredService(conditionFactoryType);
+                    var conditionFactoryUntyped = serviceProvider.GetRequiredService(conditionFactoryType);
 
-                var conditionFactory = (IFactory<Expression<Func<TDomainObject, bool>>>)conditionFactoryUntyped;
+                    var conditionFactory = (IFactory<Expression<Func<TDomainObject, bool>>>)conditionFactoryUntyped;
 
-                return new ConditionSecurityProvider<TDomainObject>(conditionFactory.Create(), expressionEvaluatorStorage);
-            }
+                    return new ConditionSecurityProvider<TDomainObject>(conditionFactory.Create(), expressionEvaluatorStorage);
+                }
 
             case DomainSecurityRule.RelativeConditionSecurityRule securityRule:
-            {
-                var conditionInfo = securityRule.RelativeConditionInfo;
+                {
+                    var conditionInfo = securityRule.RelativeConditionInfo;
 
-                var factoryType = typeof(RequiredRelativeConditionFactory<,>).MakeGenericType(
-                    typeof(TDomainObject),
-                    conditionInfo.RelativeDomainObjectType);
+                    var factoryType = typeof(RequiredRelativeConditionFactory<,>).MakeGenericType(
+                        typeof(TDomainObject),
+                        conditionInfo.RelativeDomainObjectType);
 
-                var conditionFactory = serviceProxyFactory.Create<IFactory<Expression<Func<TDomainObject, bool>>>>(factoryType, conditionInfo);
+                    var conditionFactory = serviceProxyFactory.Create<IFactory<Expression<Func<TDomainObject, bool>>>>(factoryType, conditionInfo);
 
-                var condition = conditionFactory.Create();
+                    var condition = conditionFactory.Create();
 
-                return new ConditionSecurityProvider<TDomainObject>(condition, expressionEvaluatorStorage);
-            }
+                    return new ConditionSecurityProvider<TDomainObject>(condition, expressionEvaluatorStorage);
+                }
 
             case DomainSecurityRule.FactorySecurityRule securityRule:
-            {
-                var dynamicRoleFactoryUntyped = serviceProvider.GetRequiredService(securityRule.RuleFactoryType);
+                {
+                    var dynamicRoleFactoryUntyped = serviceProvider.GetRequiredService(securityRule.RuleFactoryType);
 
-                var dynamicRoleFactory = (IFactory<DomainSecurityRule>)dynamicRoleFactoryUntyped;
+                    var dynamicRoleFactory = (IFactory<DomainSecurityRule>)dynamicRoleFactoryUntyped;
 
-                var dynamicRole = dynamicRoleFactory.Create();
+                    var dynamicRole = dynamicRoleFactory.Create();
 
-                return this.CreateInternal(dynamicRole.ForceApply(securityRule.CustomCredential), securityPath);
-            }
+                    return this.CreateInternal(dynamicRole.ForceApply(securityRule.CustomCredential), securityPath);
+                }
 
             case DomainSecurityRule.OverrideAccessDeniedMessageSecurityRule securityRule:
-            {
-                return this.CreateInternal(securityRule.BaseSecurityRule.ForceApply(securityRule.CustomCredential), securityPath)
-                    .OverrideAccessDeniedResult(accessDeniedResult => accessDeniedResult with { CustomMessage = securityRule.CustomMessage });
-            }
+                {
+                    return this.CreateInternal(securityRule.BaseSecurityRule.ForceApply(securityRule.CustomCredential), securityPath)
+                        .OverrideAccessDeniedResult(accessDeniedResult => accessDeniedResult with { CustomMessage = securityRule.CustomMessage });
+                }
 
             case DomainSecurityRule.OrSecurityRule securityRule:
                 return this.CreateInternal(securityRule.Left.ForceApply(securityRule.CustomCredential), securityPath)

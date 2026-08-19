@@ -86,6 +86,12 @@ public abstract record SecurityPath<TDomainObject>
     {
         private int? hashCode;
 
+        protected ConditionPath(ConditionPath source)
+            : base(source)
+        {
+            this.FilterExpression = source.FilterExpression;
+        }
+
         public override ImmutableArray<Type> UsedSecurityContextTypes => ImmutableArray<Type>.Empty;
 
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
@@ -94,7 +100,9 @@ public abstract record SecurityPath<TDomainObject>
 
         public virtual bool Equals(ConditionPath? other) =>
             ReferenceEquals(this, other)
-            || (other is not null && ExpressionComparer.Default.Equals(this.FilterExpression, other.FilterExpression));
+            || (other is not null
+                && this.GetHashCode() == other.GetHashCode()
+                && ExpressionComparer.Default.Equals(this.FilterExpression, other.FilterExpression));
 
         public override int GetHashCode() => this.hashCode ??= ExpressionComparer.Default.GetHashCode(this.FilterExpression);
     }
@@ -109,6 +117,11 @@ public abstract record SecurityPath<TDomainObject>
     {
         private int? hashCode;
 
+        protected OrSecurityPath(OrSecurityPath source)
+            : base(source)
+        {
+        }
+
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
             Expression<Func<TNewDomainObject, TDomainObject>> selector) =>
             new SecurityPath<TNewDomainObject>.OrSecurityPath(this.Left.OverrideInput(selector), this.Right.OverrideInput(selector));
@@ -116,6 +129,7 @@ public abstract record SecurityPath<TDomainObject>
         public virtual bool Equals(OrSecurityPath? other) =>
             ReferenceEquals(this, other)
             || (other is not null
+                && this.GetHashCode() == other.GetHashCode()
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Left, other.Left)
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Right, other.Right));
 
@@ -126,6 +140,11 @@ public abstract record SecurityPath<TDomainObject>
     {
         private int? hashCode;
 
+        protected AndSecurityPath(AndSecurityPath source)
+            : base(source)
+        {
+        }
+
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
             Expression<Func<TNewDomainObject, TDomainObject>> selector) =>
             new SecurityPath<TNewDomainObject>.AndSecurityPath(
@@ -135,6 +154,7 @@ public abstract record SecurityPath<TDomainObject>
         public virtual bool Equals(AndSecurityPath? other) =>
             ReferenceEquals(this, other)
             || (other is not null
+                && this.GetHashCode() == other.GetHashCode()
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Left, other.Left)
                 && EqualityComparer<SecurityPath<TDomainObject>>.Default.Equals(this.Right, other.Right));
 
@@ -148,6 +168,14 @@ public abstract record SecurityPath<TDomainObject>
         where TSecurityContext : ISecurityContext
     {
         private int? hashCode;
+
+        protected SingleSecurityPath(SingleSecurityPath<TSecurityContext> source)
+            : base(source)
+        {
+            this.Expression = source.Expression;
+            this.Required = source.Required;
+            this.Key = source.Key;
+        }
 
         Type IContextSecurityPath.SecurityContextType { get; } = typeof(TSecurityContext);
 
@@ -163,6 +191,7 @@ public abstract record SecurityPath<TDomainObject>
         public virtual bool Equals(SingleSecurityPath<TSecurityContext>? other) =>
             ReferenceEquals(this, other)
             || (other is not null
+                && this.GetHashCode() == other.GetHashCode()
                 && this.Required == other.Required
                 && this.Key == other.Key
                 && ExpressionComparer.Default.Equals(this.Expression, other.Expression));
@@ -182,6 +211,14 @@ public abstract record SecurityPath<TDomainObject>
     {
         private int? hashCode;
 
+        protected ManySecurityPath(ManySecurityPath<TSecurityContext> source)
+            : base(source)
+        {
+            this.Expression = source.Expression;
+            this.Required = source.Required;
+            this.Key = source.Key;
+        }
+
         Type IContextSecurityPath.SecurityContextType { get; } = typeof(TSecurityContext);
 
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = [typeof(TSecurityContext)];
@@ -196,6 +233,7 @@ public abstract record SecurityPath<TDomainObject>
         public virtual bool Equals(ManySecurityPath<TSecurityContext>? other) =>
             ReferenceEquals(this, other)
             || (other is not null
+                && this.GetHashCode() == other.GetHashCode()
                 && this.Required == other.Required
                 && this.Key == other.Key
                 && ExpressionComparer.Default.Equals(this.Expression, other.Expression));
@@ -214,6 +252,14 @@ public abstract record SecurityPath<TDomainObject>
     {
         private int? hashCode;
 
+        protected NestedManySecurityPath(NestedManySecurityPath<TNestedObject> source)
+            : base(source)
+        {
+            this.NestedExpression = source.NestedExpression;
+            this.NestedSecurityPath = source.NestedSecurityPath;
+            this.Required = source.Required;
+        }
+
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = NestedSecurityPath.UsedSecurityContextTypes;
 
         public override SecurityPath<TNewDomainObject> OverrideInput<TNewDomainObject>(
@@ -226,6 +272,7 @@ public abstract record SecurityPath<TDomainObject>
         public virtual bool Equals(NestedManySecurityPath<TNestedObject>? other) =>
             ReferenceEquals(this, other)
             || (other is not null
+                && this.GetHashCode() == other.GetHashCode()
                 && this.Required == other.Required
                 && this.NestedSecurityPath == other.NestedSecurityPath
                 && ExpressionComparer.Default.Equals(this.NestedExpression, other.NestedExpression));
