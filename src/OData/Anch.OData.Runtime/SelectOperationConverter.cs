@@ -11,11 +11,7 @@ public class SelectOperationConverter(ILambdaExpressionConverter lambdaExpressio
 
         var typedOrders = rawSelectOperation.Orders.Select(this.ToTypedOrder<TDomainObject>);
 
-        return new SelectOperation<TDomainObject>(typedFilter, [.. typedOrders], rawSelectOperation.SkipCount, rawSelectOperation.TakeCount)
-        {
-            Expands = rawSelectOperation.Expands,
-            Selects = rawSelectOperation.Selects
-        };
+        return new SelectOperation<TDomainObject>(typedFilter, [.. typedOrders], rawSelectOperation.SkipCount, rawSelectOperation.TakeCount);
     }
 
     private SelectOrder<TDomainObject> ToTypedOrder<TDomainObject>(SelectOrder selectOrder)

@@ -24,7 +24,10 @@ public class DeepEqualsCollection<T>(ImmutableArray<T> baseSource, IEqualityComp
 
         ReferenceEquals(this, other)
 
-        || (other is not null && baseSource.SequenceEqual(other, comparer));
+        || (other is not null
+            && this.GetHashCode() == other.GetHashCode()
+            && this.Count == other.Count
+            && baseSource.SequenceEqual(other, comparer));
 
     public override bool Equals(object? obj) => this.Equals(obj as DeepEqualsCollection<T>);
 

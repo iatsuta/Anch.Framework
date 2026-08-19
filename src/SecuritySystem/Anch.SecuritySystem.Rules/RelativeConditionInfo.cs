@@ -14,11 +14,19 @@ public record RelativeConditionInfo<TRelativeDomainObject>(Expression<Func<TRela
 {
     private int? hashCode;
 
+    protected RelativeConditionInfo(RelativeConditionInfo<TRelativeDomainObject> source)
+        : base(source)
+    {
+        this.Condition = source.Condition;
+    }
+
     public override Type RelativeDomainObjectType { get; } = typeof(TRelativeDomainObject);
 
     public virtual bool Equals(RelativeConditionInfo<TRelativeDomainObject>? other) =>
         ReferenceEquals(this, other)
-        || (other is not null && ExpressionComparer.Default.Equals(this.Condition, other.Condition));
+        || (other is not null
+            && this.GetHashCode() == other.GetHashCode()
+            && ExpressionComparer.Default.Equals(this.Condition, other.Condition));
 
     public override int GetHashCode() => this.hashCode ??= ExpressionComparer.Default.GetHashCode(this.Condition);
 }

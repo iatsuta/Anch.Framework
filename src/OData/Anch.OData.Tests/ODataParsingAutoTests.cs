@@ -38,65 +38,40 @@ public class ODataParsingAutoTests : TestBase
     }
 
 
-    [Fact]
-    public void Test002()
-    {
-        var skipCount = 10;
-        var takeCount = 20;
+    //[Fact]
+    //public void Test002()
+    //{
+    //    var skipCount = 10;
+    //    var takeCount = 20;
 
-        var path00 = "Location";
-        var path01 = Tuple.Create("Name", "LN");
+    //    var path00 = "Location";
+    //    var path01 = Tuple.Create("Name", "LN");
 
-        var path10 = "NameNative";
-        var path11 = Tuple.Create("FirstName", "FN");
+    //    var path10 = "NameNative";
+    //    var path11 = Tuple.Create("FirstName", "FN");
 
-        var testStr = string.Format(
-            "$skip={0}&$top={1}&$select={2}/[{3} {4}],{5}/[{6} {7}]&$expand={2},{5}",
-            skipCount,
-            takeCount,
-            path00,
-            path01.Item1,
-            path01.Item2,
-            path10,
-            path11.Item1,
-            path11.Item2);
+    //    var testStr = string.Format(
+    //        "$skip={0}&$top={1}&$select={2}/[{3} {4}],{5}/[{6} {7}]&$expand={2},{5}",
+    //        skipCount,
+    //        takeCount,
+    //        path00,
+    //        path01.Item1,
+    //        path01.Item2,
+    //        path10,
+    //        path11.Item1,
+    //        path11.Item2);
 
-        var parameter = ParameterExpression.Default;
-
-
-        var select0 = new LambdaExpression(
-            new SelectExpression(
-                new PropertyExpression(parameter, path00),
-                path01.Item1,
-                path01.Item2),
-            [parameter]);
-
-        var select1 = new LambdaExpression(
-            new SelectExpression(
-                new PropertyExpression(parameter, path10),
-                path11.Item1,
-                path11.Item2),
-            [parameter]);
+    //    var parameter = ParameterExpression.Default;
 
 
-        var expand0 = new LambdaExpression(
-            new PropertyExpression(parameter, path00),
-            [parameter]);
+    //    var expectedOperation = new SelectOperation(
+    //                            SelectOperation.Default.Filter,
+    //                            SelectOperation.Default.Orders,
+    //                            skipCount,
+    //                            takeCount);
 
-        var expand1 = new LambdaExpression(
-            new PropertyExpression(parameter, path10),
-            [parameter]);
-
-
-        var expectedOperation = new SelectOperation(
-                                SelectOperation.Default.Filter,
-                                SelectOperation.Default.Orders,
-                                skipCount,
-                                takeCount)
-        { Expands = [expand0, expand1], Selects = [select0, select1] };
-
-        this.Test(testStr, expectedOperation);
-    }
+    //    this.Test(testStr, expectedOperation);
+    //}
 
     [Fact]
     public void Test003()

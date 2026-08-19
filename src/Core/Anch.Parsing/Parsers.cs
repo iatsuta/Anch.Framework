@@ -6,24 +6,20 @@ namespace Anch.Parsing;
 
 public abstract class Parsers<TInput>
 {
-    protected Parser<TInput, TResult> OfTable<T1, T2, T3, T4, T5, T6, TSeparator, TResult>(
+    protected Parser<TInput, TResult> OfTable<T1, T2, T3, T4, TSeparator, TResult>(
         ParserTableRow<TInput, T1> p1,
         ParserTableRow<TInput, T2> p2,
         ParserTableRow<TInput, T3> p3,
         ParserTableRow<TInput, T4> p4,
-        ParserTableRow<TInput, T5> p5,
-        ParserTableRow<TInput, T6> p6,
         Parser<TInput, TSeparator> separator,
-        Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector)
+        Func<T1, T2, T3, T4, TResult> resultSelector)
     {
         var table = new Dictionary<string, Parser<TInput, object>>
         {
             { "p1", p1.Parser.Box() },
             { "p2", p2.Parser.Box() },
             { "p3", p3.Parser.Box() },
-            { "p4", p4.Parser.Box() },
-            { "p5", p5.Parser.Box() },
-            { "p6", p6.Parser.Box() },
+            { "p4", p4.Parser.Box() }
         };
 
 
@@ -37,11 +33,7 @@ public abstract class Parsers<TInput>
 
                let v4 = (T4)processResult.GetValueOrDefault("p4", () => p4.GetDefaultValue())
 
-               let v5 = (T5)processResult.GetValueOrDefault("p5", () => p5.GetDefaultValue())
-
-               let v6 = (T6)processResult.GetValueOrDefault("p6", () => p6.GetDefaultValue())
-
-               select resultSelector(v1, v2, v3, v4, v5, v6);
+               select resultSelector(v1, v2, v3, v4);
     }
 
 

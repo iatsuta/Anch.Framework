@@ -32,9 +32,16 @@ public record SecurityContextRestrictionFilterInfo<TSecurityContext, TService>(
 {
     private int? hashCode;
 
+    protected SecurityContextRestrictionFilterInfo(SecurityContextRestrictionFilterInfo<TSecurityContext, TService> source)
+        : base(source)
+    {
+        this.Expression = source.Expression;
+    }
+
     public virtual bool Equals(SecurityContextRestrictionFilterInfo<TSecurityContext, TService>? other) =>
         ReferenceEquals(this, other)
         || (other is not null
+            && this.GetHashCode() == other.GetHashCode()
             && ExpressionComparer.Default.Equals(this.Expression, other.Expression));
 
     public override Expression<Func<TSecurityContext, bool>> GetPureFilter(IServiceProvider serviceProvider)

@@ -10,12 +10,7 @@ public record SelectOperation(
     ImmutableArray<SelectOrder> Orders,
     int SkipCount,
     int TakeCount)
-    : IDynamicSelectOperation
 {
-    public ImmutableArray<LambdaExpression> Expands { get; init; } = [];
-
-    public ImmutableArray<LambdaExpression> Selects { get; init; } = [];
-
     public SelectOperation ToCountOperation() => Default with { Filter = this.Filter };
 
     public virtual bool Equals(SelectOperation? other) =>
@@ -25,12 +20,10 @@ public record SelectOperation(
 
             && this.Filter == other.Filter
             && this.Orders.SequenceEqual(other.Orders)
-            && this.Expands.SequenceEqual(other.Expands)
-            && this.Selects.SequenceEqual(other.Selects)
             && this.SkipCount == other.SkipCount
             && this.TakeCount == other.TakeCount);
 
-    public override int GetHashCode() => this.Orders.Length ^ this.Expands.Length ^ this.Selects.Length ^ this.SkipCount ^ this.TakeCount;
+    public override int GetHashCode() => this.Orders.Length ^ this.SkipCount ^ this.TakeCount;
 
     public static SelectOperation CreateFilter<TSource>(System.Linq.Expressions.Expression<Func<TSource, bool>> filter) => CreateFilter((System.Linq.Expressions.LambdaExpression)filter);
 
