@@ -63,4 +63,6 @@ public class AnchInlineDataAttribute(params object?[]? data) : Attribute, IDataA
     int? IDataAttribute.Timeout => this.InnerAttrI.Timeout;
 
     bool? IDataAttribute.Explicit => this.InnerAttrI.Explicit;
+
+    bool IDataAttribute.DisableParallelization => this.InnerAttrI.DisableParallelization;
 }

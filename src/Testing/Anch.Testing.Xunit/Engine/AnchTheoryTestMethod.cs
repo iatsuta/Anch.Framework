@@ -28,6 +28,14 @@ public class AnchTheoryTestMethod(IXunitTestMethod baseMethod) : IXunitTestMetho
 
     public int? MethodArity => baseMethod.MethodArity;
 
+    int ICoreTestMethod.MethodArity => baseMethod.MethodArity;
+
+    public int MetadataToken => baseMethod.MetadataToken;
+
+    public bool DisableParallelization => baseMethod.DisableParallelization;
+
+    public ITestCaseOrderer? TestCaseOrderer => baseMethod.TestCaseOrderer;
+
     public string MethodName => baseMethod.MethodName;
 
     public IReadOnlyDictionary<string, IReadOnlyCollection<string>> Traits => baseMethod.Traits;
@@ -62,6 +70,8 @@ public class AnchTheoryTestMethod(IXunitTestMethod baseMethod) : IXunitTestMetho
     public object?[] TestMethodArguments => baseMethod.TestMethodArguments;
 
     public IXunitTestClass TestClass => baseMethod.TestClass;
+
+    ICoreTestClass ICoreTestMethod.TestClass => baseMethod.TestClass;
 
     ITestClass ITestMethod.TestClass => this.TestClass;
 

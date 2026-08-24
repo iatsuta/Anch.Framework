@@ -25,7 +25,10 @@ public static class AnchRunnerHelper
         CancellationTokenSource cancellationTokenSource,
         ExceptionAggregator aggregator,
         ExplicitOption explicitOption,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
         object?[] constructorArguments,
+        FixtureMappingManager methodFixtureMappings,
         IServiceProviderPool? serviceProviderPool)
     {
         Guard.ArgumentNotNull(testCase);
@@ -68,10 +71,13 @@ public static class AnchRunnerHelper
             messageBus,
             aggregator,
             cancellationTokenSource,
+            parallelMode,
+            scheduler,
             testCase.TestCaseDisplayName,
             testCase.SkipReason,
             explicitOption,
-            constructorArguments
+            constructorArguments,
+            methodFixtureMappings
         );
     }
 }

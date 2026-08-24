@@ -15,7 +15,7 @@ public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
         if (testCase is ISelfExecutingXunitTestCase selfExecutingTestCase)
         {
             return await selfExecutingTestCase.Run(ctxt.ExplicitOption, ctxt.MessageBus, ctxt.ConstructorArguments, ctxt.Aggregator.Clone(),
-                ctxt.CancellationTokenSource);
+                ctxt.CancellationTokenSource, ctxt.ParallelMode, ctxt.Scheduler, ctxt.MethodFixtureMappings);
         }
         else
         {
@@ -27,7 +27,10 @@ public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
                 ctxt.CancellationTokenSource,
                 ctxt.Aggregator.Clone(),
                 ctxt.ExplicitOption,
+                ctxt.ParallelMode,
+                ctxt.Scheduler,
                 ctxt.ConstructorArguments,
+                ctxt.MethodFixtureMappings,
                 serviceProviderPool);
         }
     }
@@ -39,7 +42,10 @@ public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
         IMessageBus messageBus,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
-        object?[] constructorArguments)
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
+        object?[] constructorArguments,
+        FixtureMappingManager classFixtureMappings)
     {
         Guard.ArgumentNotNull(testCases);
         Guard.ArgumentNotNull(messageBus);
@@ -52,7 +58,10 @@ public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
             messageBus,
             aggregator,
             cancellationTokenSource,
-            constructorArguments);
+            parallelMode,
+            scheduler,
+            constructorArguments,
+            classFixtureMappings);
 
         await ctxt.InitializeAsync();
 

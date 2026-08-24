@@ -25,7 +25,8 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner)
             testCases,
             ctxt.ExplicitOption,
             ctxt.MessageBus,
-            ctxt.TestCaseOrderer,
+            ctxt.ParallelMode,
+            ctxt.Scheduler,
             ctxt.Aggregator.Clone(),
             ctxt.CancellationTokenSource,
             ctxt.CollectionFixtureMappings);

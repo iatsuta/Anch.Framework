@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;
+using Xunit.Sdk;
 using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
@@ -12,18 +12,29 @@ public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMeth
 
     public bool Explicit => baseTestCase.Explicit;
 
-    string? IXunitTestCase.SkipReason => baseTestCase.SkipReason;
+    public bool DisableParallelization => baseTestCase.DisableParallelization;
+
+    string? ICoreTestCase.SkipReason => baseTestCase.SkipReason;
 
     public Type? SkipType => baseTestCase.SkipType;
     public string? SkipUnless => baseTestCase.SkipUnless;
     public string? SkipWhen => baseTestCase.SkipWhen;
+
     public IXunitTestClass TestClass => baseTestCase.TestClass;
+
+    ICoreTestClass ICoreTestCase.TestClass => baseTestCase.TestClass;
+
     public IXunitTestCollection TestCollection => baseTestCase.TestCollection;
+
+    ICoreTestCollection ICoreTestCase.TestCollection => baseTestCase.TestCollection;
+
     public IXunitTestMethod TestMethod => testMethod;
+
+    ICoreTestMethod ICoreTestCase.TestMethod => testMethod;
 
     public int TestMethodMetadataToken => baseTestCase.TestMethodMetadataToken;
 
-    string IXunitTestCase.TestMethodName => baseTestCase.TestMethodName;
+    string ICoreTestCase.TestMethodName => baseTestCase.TestMethodName;
 
     string[] IXunitTestCase.TestMethodParameterTypesVSTest => baseTestCase.TestMethodParameterTypesVSTest;
 
@@ -31,11 +42,13 @@ public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMeth
 
     public int Timeout => baseTestCase.Timeout;
 
-    public int TestClassMetadataToken => baseTestCase.TestClassMetadataToken;
+    public int TestClassMetadataToken => baseTestCase.TestClass.MetadataToken;
 
-    string IXunitTestCase.TestClassName => baseTestCase.TestClassName;
+    string ICoreTestCase.TestClassName => baseTestCase.TestClassName;
 
-    string IXunitTestCase.TestClassSimpleName => baseTestCase.TestClassSimpleName;
+    string ICoreTestCase.TestClassSimpleName => baseTestCase.TestClassSimpleName;
+
+    int ICoreTestCase.TestMethodArity => baseTestCase.TestMethodArity;
 
     public ValueTask<IReadOnlyCollection<IXunitTest>> CreateTests() => baseTestCase.CreateTests();
 
@@ -61,7 +74,7 @@ public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMeth
 
     string? ITestCaseMetadata.TestClassSimpleName => baseTestCase.TestClassSimpleName;
 
-    public int? TestMethodArity => baseTestCase.TestMethodArity;
+    int? ITestCaseMetadata.TestMethodArity => baseTestCase.TestMethodArity;
 
     int? ITestCaseMetadata.TestMethodMetadataToken => baseTestCase.TestMethodMetadataToken;
 
