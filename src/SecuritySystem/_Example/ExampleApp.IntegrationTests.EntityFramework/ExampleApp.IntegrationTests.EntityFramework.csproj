@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <TestingPlatformCommandLine>true</TestingPlatformCommandLine>
     <RootNamespace>ExampleApp.IntegrationTests</RootNamespace>
   </PropertyGroup>
 

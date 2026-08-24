@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <TestingPlatformCommandLine>true</TestingPlatformCommandLine>
     <RootNamespace>Anch.HierarchicalExpand.IntegrationTests</RootNamespace>
   </PropertyGroup>
 
