@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <TestingPlatformCommandLine>true</TestingPlatformCommandLine>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <RootNamespace>Anch.GenericQueryable.IntegrationTests</RootNamespace>
   </PropertyGroup>
 
