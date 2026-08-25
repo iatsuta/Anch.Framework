@@ -3,6 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <RootNamespace>Anch.GenericQueryable.IntegrationTests</RootNamespace>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 
   <ItemGroup>
