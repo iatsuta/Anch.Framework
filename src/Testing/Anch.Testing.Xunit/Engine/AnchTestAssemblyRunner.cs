@@ -37,7 +37,7 @@ public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectio
         Guard.ArgumentNotNull(testCollection);
         Guard.ArgumentNotNull(testCases);
 
-        var testCaseOrderer = ctxt.AssemblyTestCaseOrderer ?? DefaultTestCaseOrderer.Instance;
+        var testCaseOrderer = RegisteredEngineConfig.GetAssemblyTestCaseOrderer(ctxt.TestAssembly.Assembly) ?? DefaultTestCaseOrderer.Instance;
 
         return ctxt.RunTestCollection(testCollection, testCases, testCaseOrderer);
     }

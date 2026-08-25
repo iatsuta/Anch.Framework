@@ -25,7 +25,7 @@ public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : Xu
     }
 
     protected override async ValueTask<RunSummary> RunTestMethod(XunitTestClassRunnerContext ctxt, IXunitTestMethod? testMethod,
-        IReadOnlyCollection<IXunitTestCase> testCases, object?[] constructorArguments)
+        IReadOnlyCollection<IXunitTestCase> testCases)
     {
         Guard.ArgumentNotNull(ctxt);
 
@@ -49,7 +49,10 @@ public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : Xu
             ctxt.MessageBus,
             ctxt.Aggregator.Clone(),
             ctxt.CancellationTokenSource,
-            constructorArguments);
+            ctxt.ParallelMode,
+            ctxt.Scheduler,
+            ctxt.ConstructorArguments,
+            ctxt.ClassFixtureMappings);
     }
 
     public async ValueTask<RunSummary> Run(
@@ -57,7 +60,8 @@ public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : Xu
         IReadOnlyCollection<IXunitTestCase> testCases,
         ExplicitOption explicitOption,
         IMessageBus messageBus,
-        ITestCaseOrderer testCaseOrderer,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
         FixtureMappingManager assemblyFixtureMappings)
@@ -65,7 +69,6 @@ public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : Xu
         Guard.ArgumentNotNull(testClass);
         Guard.ArgumentNotNull(testCases);
         Guard.ArgumentNotNull(messageBus);
-        Guard.ArgumentNotNull(testCaseOrderer);
         Guard.ArgumentNotNull(cancellationTokenSource);
         Guard.ArgumentNotNull(assemblyFixtureMappings);
 
@@ -74,9 +77,10 @@ public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : Xu
             testCases,
             explicitOption,
             messageBus,
-            testCaseOrderer,
             aggregator,
             cancellationTokenSource,
+            parallelMode,
+            scheduler,
             assemblyFixtureMappings);
 
         await ctxt.InitializeAsync();
