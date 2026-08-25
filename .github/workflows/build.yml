@@ -97,10 +97,10 @@ jobs:
       - name: OData Unit tests
         run: |
           dotnet test --project src/OData/Anch.OData.Tests --no-build --verbosity normal -c Release
-          
+
       - name: Testing tests
         run: |
-          dotnet test --project src/Testing/Anch.Testing.Tests --no-build --verbosity normal -c Release         
+          dotnet test --project src/Testing/Anch.Testing.Tests --no-build --verbosity normal -c Release
 
       - name: Workflow Unit tests
         run: |
