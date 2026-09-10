@@ -62,13 +62,6 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
 
         var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
 
-        var fullAncestorLinkInfo = scope.ServiceProvider
-            .GetRequiredService<FullAncestorLinkInfo<BusinessUnit, BusinessUnitDirectAncestorLink, BusinessUnitUndirectAncestorLink>>();
-
-        var hierarchicalInfo = scope.ServiceProvider.GetRequiredService<HierarchicalInfo<BusinessUnit>>();
-
-        var identityInfo = scope.ServiceProvider.GetRequiredService<IIdentityInfo<BusinessUnit, Guid>>();
-
         var middleBusinessUnit = await queryableSource.GetQueryable<BusinessUnit>()
             .Where(businessUnit => businessUnit.Parent != null && businessUnit.Parent.Parent == null)
             .Select(businessUnit => new { businessUnit.Id, ParentId = businessUnit.Parent!.Id })
@@ -78,27 +71,31 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
         var grantedIds = new[] { middleBusinessUnit.Id };
 
         // Ниже - код, вытащенный напрямую из HierarchicalObjectAncestorLinkExpander.GetExpandExpression
-        // (ветка HierarchicalExpandType.Children, т.е. fullAncestorLinkInfo.Directed).
-        var childrenAncestorLinkInfo = fullAncestorLinkInfo.Directed;
-
+        // (ветка HierarchicalExpandType.Children, т.е. Ancestor -> Child).
         var childrenAncestorLinkQueryable = queryableSource.GetQueryable<BusinessUnitDirectAncestorLink>();
 
-        var childrenFromPathIdExpr = childrenAncestorLinkInfo.From.Path.Select(identityInfo.Id.Path);
+        Expression<Func<BusinessUnitDirectAncestorLink, BusinessUnit>> ancestorPath = ancestorLink => ancestorLink.Ancestor;
 
-        var childrenToPathIdExpr = childrenAncestorLinkInfo.To.Path.Select(identityInfo.Id.Path);
+        Expression<Func<BusinessUnitDirectAncestorLink, BusinessUnit>> childPath = ancestorLink => ancestorLink.Child;
+
+        Expression<Func<BusinessUnit, Guid>> idPath = businessUnit => businessUnit.Id;
+
+        var fromPathIdExpr = ancestorPath.Select(idPath);
+
+        var toPathIdExpr = childPath.Select(idPath);
 
         var expandChildrenExpr = ExpressionEvaluateHelper.InlineEvaluate(ee =>
 
             ExpressionHelper.Create<IEnumerable<Guid>, IEnumerable<Guid>>(idents =>
 
-                childrenAncestorLinkQueryable.Where(ancestorLink => idents.Contains(ee.Evaluate(childrenFromPathIdExpr, ancestorLink)))
-                    .Select(childrenToPathIdExpr)
+                childrenAncestorLinkQueryable.Where(ancestorLink => idents.Contains(ee.Evaluate(fromPathIdExpr, ancestorLink)))
+                    .Select(toPathIdExpr)
                     .Distinct()));
 
         // Это в точности то, что делает SingleContextFilterBuilder.GetSecurityFilterExpression:
-        // берём expand-expression у ТОГО ЖЕ набора ancestor-link-инфраструктуры, которой потом будем строить дерево,
+        // берём expand-expression у ТОГО ЖЕ ancestor-link-запроса, которым потом будем строить дерево,
         // и фильтруем по нему queryable - т.е. security-фильтр и построение дерева
-        // используют один и тот же ancestor-link expression в одном EF-запросе.
+        // используют один и тот же expand-expression в одном EF-запросе.
         var securityFilter = ExpressionEvaluateHelper.InlineEvaluate(ee =>
             ExpressionHelper.Create((BusinessUnit businessUnit) =>
                 ee.Evaluate(expandChildrenExpr, grantedIds).Contains(businessUnit.Id)));
@@ -110,26 +107,24 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
         // Act
 
         // Ниже - код, вытащенный напрямую из HierarchicalObjectAncestorLinkExpander.ExpandWithParents(IQueryable<TIdent>, ...)
-        // -> ExpandWithParentsImplementation -> ExpandDomainObject (ветка HierarchicalExpandType.Parents, т.е. fullAncestorLinkInfo.Directed.Reverse()).
-        var parentsAncestorLinkInfo = fullAncestorLinkInfo.Directed.Reverse();
-
-        var parentsIdPath = parentsAncestorLinkInfo.From.Path.Select(identityInfo.Id.Path);
-
-        var parentsFilter = parentsIdPath.Select(domainObjectId => securedIdentsQueryable.Contains(domainObjectId));
+        // -> ExpandWithParentsImplementation -> ExpandDomainObject (ветка HierarchicalExpandType.Parents, т.е. Child -> Ancestor).
+        var parentsFilter = toPathIdExpr.Select(domainObjectId => securedIdentsQueryable.Contains(domainObjectId));
 
         var expandedDomainObjects = queryableSource.GetQueryable<BusinessUnitDirectAncestorLink>()
             .Where(parentsFilter)
-            .Select(parentsAncestorLinkInfo.To.Path);
+            .Select(ancestorPath);
+
+        Expression<Func<BusinessUnit, BusinessUnit?>> parentPath = businessUnit => businessUnit.Parent;
 
         var result = expandedDomainObjects
             .Select(ExpressionEvaluateHelper.InlineEvaluate(ee =>
 
                 ExpressionHelper.Create((BusinessUnit domainObject) => new
                 {
-                    Id = ee.Evaluate(identityInfo.Id.Path, domainObject),
-                    ParentId = ee.Evaluate(hierarchicalInfo.ParentPath, domainObject) == null
+                    Id = ee.Evaluate(idPath, domainObject),
+                    ParentId = ee.Evaluate(parentPath, domainObject) == null
                         ? default
-                        : ee.Evaluate(identityInfo.Id.Path!, ee.Evaluate(hierarchicalInfo.ParentPath, domainObject))
+                        : ee.Evaluate(idPath!, ee.Evaluate(parentPath, domainObject))
                 })))
             .Distinct()
             .ToDictionary(pair => pair.Id, pair => pair.ParentId!);
