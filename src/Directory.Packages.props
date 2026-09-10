@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <DotNet>10.0.11</DotNet>
+    <DotNet>10.0.12</DotNet>
   </PropertyGroup>
   <!-- DotNet -->
   <ItemGroup>
@@ -18,12 +18,12 @@
   <ItemGroup>
     <PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageVersion Include="NHibernate" Version="5.7.0" />
-    <PackageVersion Include="FluentNHibernate" Version="3.4.1" />
+    <PackageVersion Include="FluentNHibernate" Version="3.5.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
   <!-- Tests -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.0" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.0" />
