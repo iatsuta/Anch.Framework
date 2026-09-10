@@ -1,8 +1,11 @@
+using System.Linq.Expressions;
+
 using Anch.Core;
 using Anch.Core.ExpressionEvaluate;
 using Anch.GenericQueryable;
 using Anch.GenericRepository;
 using Anch.HierarchicalExpand.IntegrationTests.Domain;
+using Anch.IdentitySource;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +21,8 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var identityInfo = scope.ServiceProvider.GetRequiredService<IIdentityInfo<BusinessUnit, Guid>>();
+        var hierarchicalInfo = scope.ServiceProvider.GetRequiredService<HierarchicalInfo<BusinessUnit>>();
         var hierarchicalObjectExpanderFactory = scope.ServiceProvider.GetRequiredService<IHierarchicalObjectExpanderFactory>();
         var hierarchicalObjectExpander = hierarchicalObjectExpanderFactory.Create<Guid>(typeof(BusinessUnit));
 
