@@ -6,24 +6,36 @@ namespace Anch.Core;
 public static class LinqExpressionExtensions
 {
     public static Expression<Func<TSourceArg, TSelectorResult>> Select<TSourceArg, TSourceResult, TSelectorResult>(
-        this Expression<Func<TSourceArg, TSourceResult>> sourceExpr, Expression<Func<TSourceResult, TSelectorResult>> selector) =>
+        this Expression<Func<TSourceArg, TSourceResult>> sourceExpr, Expression<Func<TSourceResult, TSelectorResult>> selector)
+    {
+        var freshParameter = Expression.Parameter(typeof(TSourceArg), sourceExpr.Parameters.Single().Name);
 
-        Expression.Lambda<Func<TSourceArg, TSelectorResult>>(selector.Body.Override(selector.Parameters.Single(), sourceExpr.Body),
-            sourceExpr.Parameters);
+        var sourceBody = sourceExpr.Body.Override(sourceExpr.Parameters.Single(), freshParameter);
+
+        return Expression.Lambda<Func<TSourceArg, TSelectorResult>>(
+            selector.Body.Override(selector.Parameters.Single(), sourceBody),
+            freshParameter);
+    }
 
     public static Expression<Func<TSourceArg, TSelectorResult>> SelectMany<TSourceArg, TSourceResult, TNextResult, TSelectorResult>(
         this Expression<Func<TSourceArg, TSourceResult>> sourceExpr,
         Expression<Func<TSourceResult, Expression<Func<TSourceArg, TNextResult>>>> nextExpr,
         Expression<Func<TSourceResult, TNextResult, TSelectorResult>> resultSelector)
     {
-        var nextBody = VisitNextResult<TSourceArg, TSourceResult, TNextResult>(sourceExpr, nextExpr.Body);
+        var freshParameter = Expression.Parameter(typeof(TSourceArg), sourceExpr.Parameters.Single().Name);
+
+        var sourceExprWithFreshParameter = Expression.Lambda<Func<TSourceArg, TSourceResult>>(
+            sourceExpr.Body.Override(sourceExpr.Parameters.Single(), freshParameter),
+            freshParameter);
+
+        var nextBody = VisitNextResult<TSourceArg, TSourceResult, TNextResult>(sourceExprWithFreshParameter, nextExpr.Body);
 
         return Expression.Lambda<Func<TSourceArg, TSelectorResult>>(
 
             resultSelector.Body.Override(resultSelector.Parameters[1], nextBody)
-                .Override(resultSelector.Parameters[0], sourceExpr.Body),
+                .Override(resultSelector.Parameters[0], sourceExprWithFreshParameter.Body),
 
-            sourceExpr.Parameters);
+            freshParameter);
     }
 
     private static Expression VisitNextResult<TSourceArg, TSourceResult, TNextResult>(Expression<Func<TSourceArg, TSourceResult>> inputExpr,

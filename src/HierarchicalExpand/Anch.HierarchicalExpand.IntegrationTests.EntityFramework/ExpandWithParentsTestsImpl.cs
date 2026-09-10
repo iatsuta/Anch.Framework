@@ -127,12 +127,6 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
                         : ee.Evaluate(idPath!, ee.Evaluate(parentPath, domainObject))
                 })));
 
-        var diagVisitor = new ParamDiagVisitor();
-        diagVisitor.Visit(securedIdentsQueryable.Expression);
-        diagVisitor.Visit(expandedDomainObjects.Expression);
-        diagVisitor.Visit(parentsFilter);
-        throw new Exception(diagVisitor.Report());
-
         var result = projected
             .Distinct()
             .ToDictionary(pair => pair.Id, pair => pair.ParentId!);
@@ -140,48 +134,5 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
         // Assert
         Assert.Contains(middleBusinessUnit.Id, result.Keys);
         Assert.Equal(middleBusinessUnit.ParentId, result[middleBusinessUnit.Id]);
-    }
-}
-
-file class ParamDiagVisitor : ExpressionVisitor
-{
-    private readonly Dictionary<ParameterExpression, int> declaredIn = new();
-
-    private readonly List<string> problems = new();
-
-    protected override Expression VisitLambda<T>(Expression<T> node)
-    {
-        foreach (var p in node.Parameters)
-        {
-            if (this.declaredIn.TryGetValue(p, out var count))
-            {
-                this.declaredIn[p] = count + 1;
-
-                this.problems.Add($"ParameterExpression '{p.Name}' ({p.GetHashCode()}, type {p.Type}) declared as a Lambda parameter MORE THAN ONCE (seen {count + 1} times) — likely the same object reused across two different lambdas.");
-            }
-            else
-            {
-                this.declaredIn[p] = 1;
-            }
-        }
-
-        return base.VisitLambda(node);
-    }
-
-    protected override Expression VisitParameter(ParameterExpression node)
-    {
-        if (!this.declaredIn.ContainsKey(node))
-        {
-            this.problems.Add($"ParameterExpression '{node.Name}' ({node.GetHashCode()}, type {node.Type}) referenced but NEVER declared as a Lambda parameter in the visited tree(s) — dangling/free parameter.");
-        }
-
-        return base.VisitParameter(node);
-    }
-
-    public string Report()
-    {
-        return this.problems.Count == 0
-            ? "No parameter identity problems found."
-            : string.Join(System.Environment.NewLine, this.problems);
     }
 }
