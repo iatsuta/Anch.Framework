@@ -12,7 +12,7 @@ namespace Anch.HierarchicalExpand.IntegrationTests;
 public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
 {
     [AnchFact]
-    private async Task ExpandTest2(CancellationToken ct)
+    private async Task Problem1(CancellationToken ct)
     {
         // Arrange
         await using var scope = rootServiceProvider.CreateAsyncScope();
