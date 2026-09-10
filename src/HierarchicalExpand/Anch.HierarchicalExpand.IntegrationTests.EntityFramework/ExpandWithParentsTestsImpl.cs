@@ -21,8 +21,6 @@ public class ExpandWithParentsTestsImpl(IServiceProvider rootServiceProvider)
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
         var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
-        var identityInfo = scope.ServiceProvider.GetRequiredService<IIdentityInfo<BusinessUnit, Guid>>();
-        var hierarchicalInfo = scope.ServiceProvider.GetRequiredService<HierarchicalInfo<BusinessUnit>>();
         var hierarchicalObjectExpanderFactory = scope.ServiceProvider.GetRequiredService<IHierarchicalObjectExpanderFactory>();
         var hierarchicalObjectExpander = hierarchicalObjectExpanderFactory.Create<Guid>(typeof(BusinessUnit));
 
