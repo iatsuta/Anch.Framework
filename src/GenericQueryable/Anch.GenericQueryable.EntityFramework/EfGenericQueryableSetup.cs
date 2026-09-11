@@ -26,7 +26,14 @@ public class EfGenericQueryableSetup : GenericQueryableSetup, IEfGenericQueryabl
     public IEfGenericQueryableSetup SetVisitor<TVisitor>()
         where TVisitor : ExpressionVisitor
     {
-        this.initVisitorAction = sc => sc.AddKeyedScoped<ExpressionVisitor, TVisitor>(nameof(GenericQueryable));
+        this.initVisitorAction = sc => sc.AddKeyedSingleton<ExpressionVisitor, TVisitor>(nameof(GenericQueryable));
+
+        return this;
+    }
+
+    public IEfGenericQueryableSetup SetVisitor(ExpressionVisitor visitor)
+    {
+        this.initVisitorAction = sc => sc.AddKeyedSingleton(nameof(GenericQueryable), visitor);
 
         return this;
     }

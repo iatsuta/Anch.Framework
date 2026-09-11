@@ -14,4 +14,6 @@ public interface IEfGenericQueryableSetup : IGenericQueryableSetup
 
     IEfGenericQueryableSetup SetVisitor<TVisitor>()
         where TVisitor : ExpressionVisitor;
+
+    IEfGenericQueryableSetup SetVisitor(ExpressionVisitor visitor);
 }
