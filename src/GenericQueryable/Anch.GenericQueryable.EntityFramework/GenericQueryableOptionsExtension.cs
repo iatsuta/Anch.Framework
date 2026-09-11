@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.EntityFramework;
 
-public class GenericQueryableOptionsExtension(Action<IEfGenericQueryableSetup>? setupAction = null) : IDbContextOptionsExtension
+public class GenericQueryableOptionsExtension(Action<IEfGenericQueryableSetup>? setupAction) : IDbContextOptionsExtension
 {
     public DbContextOptionsExtensionInfo Info => field ??= new ExtensionInfo(this);
 
