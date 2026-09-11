@@ -17,7 +17,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
 
     private readonly List<FetchRuleHeaderInfo> fetchRuleHeaderInfoList = [];
 
-    public void Initialize(IServiceCollection services)
+    public virtual void Initialize(IServiceCollection services)
     {
         if (!services.AlreadyInitialized<IGenericQueryableExecutor>())
         {
