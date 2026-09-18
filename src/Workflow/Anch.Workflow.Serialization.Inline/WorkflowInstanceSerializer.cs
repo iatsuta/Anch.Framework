@@ -5,13 +5,15 @@ using Anch.Workflow.Domain.Runtime;
 namespace Anch.Workflow.Serialization.Inline;
 
 public class WorkflowInstanceSerializer<TSource>(
-    IServiceProvider serviceProvider,
+    IServiceProvider _,
     IWorkflowDefinition workflow,
     IStateInstanceSerializerFactory stateInstanceSerializerFactory,
     IIdentityInfo<TSource, Guid> identityInfo)
     : IWorkflowInstanceSerializer
     where TSource : notnull
 {
+    public IServiceProvider Unknown { get; } = _;
+
     private readonly IStateInstanceSerializer stateInstanceSerializer = stateInstanceSerializerFactory.Create(workflow);
 
     public WorkflowInstance Deserialize(object source)

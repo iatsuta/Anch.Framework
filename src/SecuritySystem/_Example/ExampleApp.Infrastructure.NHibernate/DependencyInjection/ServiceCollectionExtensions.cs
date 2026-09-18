@@ -1,5 +1,4 @@
-﻿using Anch.Core;
-using Anch.DependencyInjection;
+﻿using Anch.DependencyInjection;
 using Anch.GenericQueryable.NHibernate;
 
 using ExampleApp.Infrastructure.DependencyInjection.UndirectView;

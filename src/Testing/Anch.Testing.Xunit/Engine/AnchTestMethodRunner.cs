@@ -44,7 +44,7 @@ public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
         CancellationTokenSource cancellationTokenSource,
         ParallelMode parallelMode,
         ExecutionScheduler scheduler,
-        object?[] constructorArguments,
+        object?[]? constructorArguments,
         FixtureMappingManager classFixtureMappings)
     {
         Guard.ArgumentNotNull(testCases);

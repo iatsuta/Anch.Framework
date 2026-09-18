@@ -9,6 +9,7 @@ public class AnchTheoryTestMethod(IXunitTestMethod baseMethod) : IXunitTestMetho
 {
     private IReadOnlyCollection<IDataAttribute>? dataAttributes;
 
+    [Obsolete("Called by the de-serializer; should only be called by deriving classes for de-serialization purposes")]
     public AnchTheoryTestMethod() : this(new XunitTestMethod())
     {
     }

@@ -29,12 +29,12 @@ public class AnchTestFramework : XunitTestFramework
                         new AnchTestCollectionRunner(
                             new AnchTestClassRunner(serviceProviderPool)));
 
-                return new AnchFrameworkExecutor(new XunitTestAssembly(assembly), rootRunner, serviceProviderPool, this.CreateDiscoverer(assembly));
+                return new AnchFrameworkExecutor(new XunitTestAssembly(assembly, null), rootRunner, serviceProviderPool);
             });
 
     protected override ITestFrameworkDiscoverer CreateDiscoverer(Assembly assembly) =>
         this.discovererCache.GetOrAdd(assembly,
             _ =>
-                new AnchFrameworkDiscoverer(new XunitTestAssembly(assembly, null, assembly.GetName().Version),
+                new AnchFrameworkDiscoverer(new XunitTestAssembly(assembly, null),
                     this.GetServiceProviderPool(assembly)));
 }

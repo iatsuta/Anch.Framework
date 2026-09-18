@@ -18,6 +18,7 @@ public record RelativeConditionInfo<TRelativeDomainObject>(Expression<Func<TRela
         : base(source)
     {
         this.Condition = source.Condition;
+        this.RelativeDomainObjectType = source.RelativeDomainObjectType;
     }
 
     public override Type RelativeDomainObjectType { get; } = typeof(TRelativeDomainObject);
