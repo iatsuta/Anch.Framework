@@ -20,7 +20,8 @@ public class NHibTestEnvironment : TestEnvironment
             .AddSingleton<NHibConfigurationSource>()
             .AddSingletonFrom((NHibConfigurationSource configurationSource) => configurationSource.BuildConfiguration())
             .AddSingletonFrom((global::NHibernate.Cfg.Configuration cfg) => cfg.BuildSessionFactory())
-            .AddScopedFrom((ISessionFactory sessionFactory) => sessionFactory.OpenSession()).AddSingleton(typeof(IDomainObjectSaveStrategy<>), typeof(DomainObjectSaveStrategy<>))
+            .AddScopedFrom((ISessionFactory sessionFactory) => sessionFactory.OpenSession())
+            .AddSingleton(typeof(IDomainObjectSaveStrategy<>), typeof(DomainObjectSaveStrategy<>))
             .BindServiceProxy(typeof(IDomainObjectSaveStrategy<>), typeof(DomainObjectSaveStrategyServiceProxyBinder<>))
 
             .AddScoped<IGenericRepository, NHibGenericRepository>()
@@ -28,5 +29,5 @@ public class NHibTestEnvironment : TestEnvironment
 
             .AddSingleton<IEmptySchemaInitializer, NHibEmptySchemaInitializer>()
 
-            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure);
+            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Initialize);
 }
