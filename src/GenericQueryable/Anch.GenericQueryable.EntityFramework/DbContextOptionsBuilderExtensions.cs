@@ -5,7 +5,7 @@ namespace Anch.GenericQueryable.EntityFramework;
 
 public static class DbContextOptionsBuilderExtensions
 {
-    public static DbContextOptionsBuilder UseGenericQueryable(this DbContextOptionsBuilder optionsBuilder, Action<IEfGenericQueryableSetup>? setupAction = null)
+    public static DbContextOptionsBuilder UseGenericQueryable(this DbContextOptionsBuilder optionsBuilder, Action<IEfGenericQueryableExtensionSetup>? setupAction = null)
     {
         var extension = optionsBuilder.Options.FindExtension<GenericQueryableOptionsExtension>()
                         ?? new GenericQueryableOptionsExtension(setupAction);

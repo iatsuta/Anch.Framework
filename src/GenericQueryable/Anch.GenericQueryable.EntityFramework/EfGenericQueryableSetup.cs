@@ -31,13 +31,6 @@ public class EfGenericQueryableSetup : GenericQueryableSetup, IEfGenericQueryabl
         return this;
     }
 
-    public IEfGenericQueryableSetup SetVisitor(ExpressionVisitor visitor)
-    {
-        this.initVisitorAction = sc => sc.AddKeyedSingleton(nameof(GenericQueryable), visitor);
-
-        return this;
-    }
-
     public override void Initialize(IServiceCollection services)
     {
         this.SetFetchService<EfFetchService>();

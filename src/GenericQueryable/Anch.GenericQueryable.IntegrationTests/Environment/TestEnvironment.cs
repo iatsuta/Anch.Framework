@@ -27,8 +27,6 @@ public abstract class TestEnvironment : DatabaseTestEnvironment
 
         services
 
-            .AddSingleton<IGenericQueryableSetupConfigurator, GenericQueryableSetupConfigurator>()
-
             .Pipe(this.AddServices)
 
             .AddSingleton<IMainConnectionStringSource>(new MainConnectionStringSource(actualConnectionString.Value))
