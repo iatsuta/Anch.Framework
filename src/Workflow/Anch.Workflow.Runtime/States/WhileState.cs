@@ -3,10 +3,12 @@ using Anch.Workflow.Execution;
 
 namespace Anch.Workflow.States;
 
-public class WhileState<TLoopWorkflow, TSource>(IWorkflowHost workflowHost) : IState
+public class WhileState<TLoopWorkflow, TSource>(IWorkflowHost _) : IState
     where TLoopWorkflow : IWorkflow<TSource>
     where TSource : notnull
 {
+    public IWorkflowHost Unknown { get; } = _;
+
     public bool Condition { get; set; }
 
     public TSource Source { get; set; } = default!;

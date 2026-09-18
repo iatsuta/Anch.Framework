@@ -4,8 +4,10 @@ using Anch.Workflow.Execution;
 
 namespace Anch.Workflow.States;
 
-public class ForeachState<TSource, TElement>(IWorkflowHost workflowHost) : IState
+public class ForeachState<TSource, TElement>(IWorkflowHost _) : IState
 {
+    public IWorkflowHost Unknown { get; } = _;
+
     public IReadOnlyList<TElement> Elements { get; set; } = [];
 
     public IWorkflowDefinition<(TSource, TElement)> ElementWorkflow { get; set; } = null!;

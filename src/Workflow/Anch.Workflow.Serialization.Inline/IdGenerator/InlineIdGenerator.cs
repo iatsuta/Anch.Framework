@@ -2,8 +2,10 @@
 
 namespace Anch.Workflow.Serialization.Inline.IdGenerator;
 
-public class InlineIdGenerator<TElement>(Func<TElement, WorkflowInstance> pathToWi) : IInstanceIdGenerator<TElement>
+public class InlineIdGenerator<TElement>(Func<TElement, WorkflowInstance> _) : IInstanceIdGenerator<TElement>
 {
+    public Func<TElement, WorkflowInstance> Unknown { get; } = _;
+
     public Guid GenerateId(TElement element)
     {
         throw new NotImplementedException();

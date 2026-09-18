@@ -2,8 +2,10 @@
 
 namespace Anch.Testing.Tests;
 
-public class TheoryTests(IServiceProvider serviceProvider)
+public class TheoryTests(IServiceProvider _)
 {
+    public IServiceProvider Unknown { get; } = _;
+
     [Theory]
     [MemberData(nameof(GetTest2Cases))]
     public void TestSync(string value)

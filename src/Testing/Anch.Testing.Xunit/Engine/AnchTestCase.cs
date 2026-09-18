@@ -5,6 +5,7 @@ namespace Anch.Testing.Xunit.Engine;
 
 public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMethod) : IXunitTestCase
 {
+    [Obsolete("Called by the de-serializer; should only be called by deriving classes for de-serialization purposes")]
     public AnchTestCase()
         : this(new XunitTestCase(), new XunitTestMethod())
     {
@@ -68,29 +69,29 @@ public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMeth
 
     int? ITestCaseMetadata.TestClassMetadataToken => baseTestCase.TestClassMetadataToken;
 
-    string? ITestCaseMetadata.TestClassName => baseTestCase.TestClassName;
+    string ITestCaseMetadata.TestClassName => baseTestCase.TestClassName;
 
     public string? TestClassNamespace => baseTestCase.TestClassNamespace;
 
-    string? ITestCaseMetadata.TestClassSimpleName => baseTestCase.TestClassSimpleName;
+    string ITestCaseMetadata.TestClassSimpleName => baseTestCase.TestClassSimpleName;
 
     int? ITestCaseMetadata.TestMethodArity => baseTestCase.TestMethodArity;
 
     int? ITestCaseMetadata.TestMethodMetadataToken => baseTestCase.TestMethodMetadataToken;
 
-    string? ITestCaseMetadata.TestMethodName => baseTestCase.TestMethodName;
+    string ITestCaseMetadata.TestMethodName => baseTestCase.TestMethodName;
 
-    string[]? ITestCaseMetadata.TestMethodParameterTypesVSTest => baseTestCase.TestMethodParameterTypesVSTest;
+    string[] ITestCaseMetadata.TestMethodParameterTypesVSTest => baseTestCase.TestMethodParameterTypesVSTest;
 
-    string? ITestCaseMetadata.TestMethodReturnTypeVSTest => baseTestCase.TestMethodReturnTypeVSTest;
+    string ITestCaseMetadata.TestMethodReturnTypeVSTest => baseTestCase.TestMethodReturnTypeVSTest;
 
     public IReadOnlyDictionary<string, IReadOnlyCollection<string>> Traits => baseTestCase.Traits;
 
     public string UniqueID => baseTestCase.UniqueID;
 
-    ITestClass? ITestCase.TestClass => baseTestCase.TestClass;
+    ITestClass ITestCase.TestClass => baseTestCase.TestClass;
 
     ITestCollection ITestCase.TestCollection => baseTestCase.TestCollection;
 
-    ITestMethod? ITestCase.TestMethod => baseTestCase.TestMethod;
+    ITestMethod ITestCase.TestMethod => baseTestCase.TestMethod;
 }

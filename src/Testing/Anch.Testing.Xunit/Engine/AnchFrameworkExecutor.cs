@@ -8,11 +8,8 @@ namespace Anch.Testing.Xunit.Engine;
 public class AnchFrameworkExecutor(
     IXunitTestAssembly testAssembly,
     AnchTestAssemblyRunner commonXunitTestAssemblyRunner,
-    IServiceProviderPool? serviceProviderPool,
-    ITestFrameworkDiscoverer discoverer) : XunitTestFrameworkExecutor(testAssembly)
+    IServiceProviderPool? serviceProviderPool) : XunitTestFrameworkExecutor(testAssembly)
 {
-    protected override ITestFrameworkDiscoverer CreateDiscoverer() => discoverer;
-
     public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases, IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,
         CancellationToken ct)

@@ -175,9 +175,10 @@ public abstract record SecurityPath<TDomainObject>
             this.Expression = source.Expression;
             this.Required = source.Required;
             this.Key = source.Key;
+            this.SecurityContextType = source.SecurityContextType;
         }
 
-        Type IContextSecurityPath.SecurityContextType { get; } = typeof(TSecurityContext);
+        public Type SecurityContextType { get; } = typeof(TSecurityContext);
 
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = [typeof(TSecurityContext)];
 
@@ -217,9 +218,10 @@ public abstract record SecurityPath<TDomainObject>
             this.Expression = source.Expression;
             this.Required = source.Required;
             this.Key = source.Key;
+            this.SecurityContextType = source.SecurityContextType;
         }
 
-        Type IContextSecurityPath.SecurityContextType { get; } = typeof(TSecurityContext);
+        public Type SecurityContextType { get; } = typeof(TSecurityContext);
 
         public override ImmutableArray<Type> UsedSecurityContextTypes { get; } = [typeof(TSecurityContext)];
 

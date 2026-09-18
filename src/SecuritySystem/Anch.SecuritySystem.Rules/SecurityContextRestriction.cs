@@ -22,6 +22,7 @@ public record SecurityContextRestriction<TSecurityContext>(
         this.Required = source.Required;
         this.Key = source.Key;
         this.Filter = source.Filter;
+        this.SecurityContextType = source.SecurityContextType;
     }
 
     public override Type SecurityContextType { get; } = typeof(TSecurityContext);
