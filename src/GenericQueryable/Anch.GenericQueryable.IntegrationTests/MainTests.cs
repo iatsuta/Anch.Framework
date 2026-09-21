@@ -12,7 +12,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
     private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ITestDataInitializer>().TestObjId;
 
     [AnchFact]
-    public async Task TestLink(CancellationToken ct)
+    public async Task Where_LinkId_Should_Be_Translated_To_Id_And_Return_Matching_Object(CancellationToken ct)
     {
         // Arrange
         await using var scope = rootServiceProvider.CreateAsyncScope();
