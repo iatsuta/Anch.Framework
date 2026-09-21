@@ -8,10 +8,6 @@ namespace Anch.SecuritySystem.Builders;
 
 internal class CacheContainsCallVisitor : ExpressionVisitor
 {
-    private CacheContainsCallVisitor()
-    {
-    }
-
     public override Expression? Visit(Expression? node)
     {
         return node is null ? base.Visit(node) : node.UpdateBase(new InternalStateVisitor());
