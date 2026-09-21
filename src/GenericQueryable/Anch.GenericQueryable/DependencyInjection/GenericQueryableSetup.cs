@@ -17,6 +17,8 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
 
     private readonly List<FetchRuleHeaderInfo> fetchRuleHeaderInfoList = [];
 
+    private readonly List<IGenericQueryableExtension> extensions = [];
+
     public virtual void Initialize(IServiceCollection services)
     {
         if (!services.AlreadyInitialized<IGenericQueryableExecutor>())
@@ -86,6 +88,13 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         where TFetchRuleExpander : IFetchRuleExpander
     {
         this.fetchRuleExpanderTypeList.Add(typeof(TFetchRuleExpander));
+
+        return this;
+    }
+
+    public IGenericQueryableSetup AddExtension(IGenericQueryableExtension extension)
+    {
+        this.extensions.Add(extension);
 
         return this;
     }

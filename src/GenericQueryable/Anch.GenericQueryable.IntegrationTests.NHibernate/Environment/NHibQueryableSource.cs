@@ -16,8 +16,8 @@ public class NHibQueryableSource(
     {
         var queryable = session.Query<TDomainObject>();
 
-        var queryProvider = queryable.Provider as VisitedNHibQueryProvider ??
-                            throw new InvalidOperationException($"Register {nameof(VisitedNHibQueryProvider)} in Nhib configuration");
+        var queryProvider = queryable.Provider as IVisitedNHibQueryProvider ??
+                            throw new InvalidOperationException($"Register {nameof(IVisitedNHibQueryProvider)} in Nhib configuration");
 
         queryProvider.Visitor = nhibExpressionVisitorSource?.Visitor;
         queryProvider.Executor = genericQueryableExecutor;

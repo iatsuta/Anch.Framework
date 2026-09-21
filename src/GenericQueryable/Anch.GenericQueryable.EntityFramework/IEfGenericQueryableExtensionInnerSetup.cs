@@ -1,6 +1,8 @@
-﻿namespace Anch.GenericQueryable.EntityFramework;
+﻿using Anch.GenericQueryable.DependencyInjection;
+
+namespace Anch.GenericQueryable.EntityFramework;
 
 public interface IEfGenericQueryableExtensionInnerSetup
 {
-    void Initialize(IEfGenericQueryableSetup setup);
+    void Initialize(IGenericQueryableSetup setup);
 }

@@ -25,8 +25,5 @@ public class TestDbContext(
         base.OnModelCreating(modelBuilder);
     }
 
-    private class EfGenericQueryableExtensionSetup : GenericQueryableSetupConfigurator, IEfGenericQueryableExtensionInnerSetup
-    {
-        public void Initialize(IEfGenericQueryableSetup setup) => base.Initialize(setup);
-    }
+    private class EfGenericQueryableExtensionSetup : GenericQueryableSetupConfigurator, IEfGenericQueryableExtensionInnerSetup;
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Anch.GenericQueryable.DependencyInjection;
+
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.EntityFramework;
@@ -23,11 +25,14 @@ public class GenericQueryableOptionsExtension(Action<IEfGenericQueryableExtensio
 
     public void ApplyServices(IServiceCollection services)
     {
-        var innerSetup = new EfGenericQueryableSetup();
+        services.AddGenericQueryable(s =>
+        {
+            s.SetFetchService<EfFetchService>();
+            s.SetTargetMethodExtractor<EfTargetMethodExtractor>();
+            s.SetQueryProvider<VisitedEfQueryProvider>();
 
-        this.ExtensionSetup.CreateInstance?.Invoke().Initialize(innerSetup);
-
-        innerSetup.Initialize(services);
+            this.ExtensionSetup.CreateInstance?.Invoke().Initialize(s);
+        });
     }
 
     public void Validate(IDbContextOptions options)
