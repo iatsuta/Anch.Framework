@@ -26,6 +26,7 @@ public class NHibTestEnvironment : TestEnvironment
 
             .AddScoped<IGenericRepository, NHibGenericRepository>()
             .AddScoped<IQueryableSource, NHibQueryableSource>()
+            .AddSingleton<INHibExpressionVisitorSource, NHibExpressionVisitorSource>()
 
             .AddSingleton<IEmptySchemaInitializer, NHibEmptySchemaInitializer>()
 

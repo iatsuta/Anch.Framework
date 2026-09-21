@@ -59,6 +59,11 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         {
             services.AddSingleton(fetchRuleHeaderInfo);
         }
+
+        foreach (var extension in this.extensions)
+        {
+            extension.AddServices(services);
+        }
     }
 
     public IGenericQueryableSetup SetFetchService<TFetchService>()

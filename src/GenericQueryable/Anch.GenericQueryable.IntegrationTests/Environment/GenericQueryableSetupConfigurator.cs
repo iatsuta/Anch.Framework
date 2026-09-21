@@ -6,7 +6,7 @@ namespace Anch.GenericQueryable.IntegrationTests.Environment;
 
 public class GenericQueryableSetupConfigurator
 {
-    public void Initialize(IGenericQueryableSetup builder) =>
+    public virtual void Initialize(IGenericQueryableSetup builder) =>
         builder
 
             .AddFetchRuleExpander<AppFetchRuleExpander>()
