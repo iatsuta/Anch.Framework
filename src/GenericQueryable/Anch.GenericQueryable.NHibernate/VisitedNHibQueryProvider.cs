@@ -8,7 +8,7 @@ using NHibernate.Linq;
 
 namespace Anch.GenericQueryable.NHibernate;
 
-public class VisitedNHibQueryProvider : DefaultQueryProvider, IGenericQueryProvider
+public class VisitedNHibQueryProvider : DefaultQueryProvider, IVisitedNHibQueryProvider
 {
     public VisitedNHibQueryProvider(ISessionImplementor session)
         : base(session)

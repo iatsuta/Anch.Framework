@@ -8,6 +8,7 @@ public class GenericQueryableSetupConfigurator
 {
     public void Initialize(IGenericQueryableSetup builder) =>
         builder
+
             .AddFetchRuleExpander<AppFetchRuleExpander>()
             .AddFetchRule(AppFetchRule.TestFetchRule, FetchRule<TestObject>.Create(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject));
 }
