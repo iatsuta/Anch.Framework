@@ -3,7 +3,7 @@
 [assembly: AssemblyCompany("Anch")]
 [assembly: AssemblyProduct("Anch.Framework")]
 
-[assembly: AssemblyVersion("3.8.9.0")]
+[assembly: AssemblyVersion("3.8.10.0")]
 [assembly: AssemblyInformationalVersion("changes at build")]
 
 #if DEBUG

@@ -12,6 +12,22 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
     private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ITestDataInitializer>().TestObjId;
 
     [AnchFact]
+    public async Task TestLink(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet.Where(testObj => testObj.LinkId == this.testObjId).GenericToArrayAsync(ct);
+
+        // Assert
+        Assert.Single(result, testObj => testObj.Id == this.testObjId);
+    }
+
+
+    [AnchFact]
     public async Task DefaultGenericQueryable_InvokeToArrayAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange

@@ -1,5 +1,7 @@
-﻿using Anch.GenericQueryable.EntityFramework;
+﻿using Anch.GenericQueryable.DependencyInjection;
+using Anch.GenericQueryable.EntityFramework;
 using Anch.GenericQueryable.IntegrationTests.Domain;
+using Anch.GenericQueryable.IntegrationTests.Visitors;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -25,5 +27,13 @@ public class TestDbContext(
         base.OnModelCreating(modelBuilder);
     }
 
-    private class EfGenericQueryableExtensionSetup : GenericQueryableSetupConfigurator, IEfGenericQueryableExtensionInnerSetup;
+    private class EfGenericQueryableExtensionSetup : GenericQueryableSetupConfigurator, IEfGenericQueryableExtensionInnerSetup
+    {
+        public override void Initialize(IGenericQueryableSetup setup)
+        {
+            base.Initialize(setup);
+
+            setup.SetVisitor<LinkIdVisitor>();
+        }
+    }
 }
