@@ -20,12 +20,6 @@ public class InjectMaybeVisitor : ExpressionVisitor
     private static readonly MethodInfo OfConditionMethod = new Func<bool, Func<Maybe<object>>, Func<Maybe<object>>, Maybe<object>>(Maybe.OfCondition).Method.GetGenericMethodDefinition();
 
 
-    private InjectMaybeVisitor()
-    {
-
-    }
-
-
     public Expression<TDelegate> VisitAndGetValueOrDefault<TDelegate>(Expression<TDelegate> expr)
     {
         return (Expression<TDelegate>)this.VisitAndGetValueOrDefaultBase(expr);

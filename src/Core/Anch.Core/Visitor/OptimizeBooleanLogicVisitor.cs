@@ -4,10 +4,6 @@ namespace Anch.Core.Visitor;
 
 public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 {
-    private OptimizeBooleanLogicVisitor()
-    {
-    }
-
     protected override Expression VisitConditional(ConditionalExpression node)
     {
         var visitedTest = this.Visit(node.Test);

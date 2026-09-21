@@ -4,10 +4,6 @@ namespace Anch.Core.Visitor;
 
 public class ExpandConstVisitor : ExpressionVisitor
 {
-    private ExpandConstVisitor()
-    {
-    }
-
     public override Expression? Visit(Expression? baseNode)
     {
         var baseVisited = base.Visit(baseNode);
