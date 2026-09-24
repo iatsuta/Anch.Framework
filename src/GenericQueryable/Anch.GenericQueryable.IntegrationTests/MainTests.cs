@@ -1,4 +1,5 @@
-﻿using Anch.GenericQueryable.IntegrationTests.Domain;
+﻿using Anch.GenericQueryable.Fetching;
+using Anch.GenericQueryable.IntegrationTests.Domain;
 using Anch.GenericQueryable.IntegrationTests.Environment;
 using Anch.GenericRepository;
 using Anch.Testing.Xunit;
@@ -37,7 +38,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
 
         // Act
         var result = await testSet
-            .WithFetch(AppFetchRule.TestFetchRule)
+            .WithFetch(r => r.Fetch(x => x.FetchObject).CompositeWith(AppFetchRule.TestFetchRule))
             .GenericToArrayAsync(ct);
 
         // Assert

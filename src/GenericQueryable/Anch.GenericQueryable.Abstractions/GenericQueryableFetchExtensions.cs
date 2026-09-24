@@ -9,7 +9,7 @@ public static class GenericQueryableFetchExtensions
     {
         public IQueryable<TSource> WithFetch(string fetchPath) => source.WithFetch(new UntypedFetchRule<TSource>(fetchPath));
 
-        public IQueryable<TSource> WithFetch(Func<PropertyFetchRule<TSource>, PropertyFetchRule<TSource>> buildFetchRule) =>
+        public IQueryable<TSource> WithFetch(Func<PropertyFetchRule<TSource>, FetchRule<TSource>> buildFetchRule) =>
             source.WithFetch(buildFetchRule.ToFetchRule());
 
         public IQueryable<TSource> WithFetch(FetchRule<TSource> fetchRule) => source.Execute(executor => executor.FetchService.ApplyFetch(source, fetchRule));
