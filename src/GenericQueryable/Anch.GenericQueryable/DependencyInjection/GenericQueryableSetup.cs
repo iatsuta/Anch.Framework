@@ -28,6 +28,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
 
             services.AddKeyedSingleton<IFetchRuleExpander, FetchRuleHeaderExpander>(IFetchRuleExpander.ElementKey);
             services.AddKeyedSingleton<IFetchRuleExpander, UntypedFetchExpander>(IFetchRuleExpander.ElementKey);
+            services.AddKeyedSingleton<IFetchRuleExpander, CompositeFetchRuleExpander>(IFetchRuleExpander.ElementKey);
 
             services.AddSingleton<IFetchRuleExpander, RootFetchRuleExpander>();
         }

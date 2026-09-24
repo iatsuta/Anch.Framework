@@ -7,7 +7,7 @@ namespace Anch.GenericQueryable;
 
 public static class PropertyFetchRuleExtensions
 {
-    public static PropertyFetchRule<TSource> ToFetchRule<TSource>(this Func<PropertyFetchRule<TSource>, PropertyFetchRule<TSource>> buildFetchRule)
+    public static FetchRule<TSource> ToFetchRule<TSource>(this Func<PropertyFetchRule<TSource>, FetchRule<TSource>> buildFetchRule)
     {
         return buildFetchRule(FetchRule<TSource>.Empty);
     }
@@ -32,6 +32,6 @@ public static class PropertyFetchRuleExtensions
 
         var newLastPath = new LambdaExpressionPath(lastPath.Properties.Concat([prop]).ToList());
 
-        return new PropertyFetchRule<TSource, TNextProperty>(prevPaths.Concat([newLastPath]).ToList());
+        return new PropertyFetchRule<TSource, TNextProperty>([.. prevPaths, newLastPath]);
     }
 }
