@@ -12,7 +12,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>CS9107, xUnit1041, xUnit1026</NoWarn>
+    <NoWarn>$(NoWarn);CS9107, xUnit1041, xUnit1026</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);CS4014, CS1998, CA2016</WarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
