@@ -146,7 +146,7 @@ public static class SecurityRuleExtensions
             SecurityPathRestriction? customRestriction = null) =>
 
             securityRule
-                .ForceApply(customCredential)
+                .TryApply(customCredential)
                 .TryApply(customExpandType)
                 .TryApply(customRestriction);
 
@@ -175,17 +175,12 @@ public static class SecurityRuleExtensions
                 ? securityRule
                 : securityRule with { CustomCredential = customCredential };
 
-        public TSecurityRule ForceApply(SecurityRuleCredential? customCredential) =>
-            customCredential is null || customCredential == securityRule.CustomCredential
-                ? securityRule
-                : securityRule with { CustomCredential = customCredential };
-
         public TSecurityRule WithDefaultCredential() =>
             securityRule.CustomCredential is null ? securityRule : securityRule with { CustomCredential = null };
 
         public TResult WithDefaultCredential<TResult>(Func<TSecurityRule, TResult> selector)
             where TResult : SecurityRule =>
-            selector(securityRule.WithDefaultCredential()).ForceApply(securityRule.CustomCredential);
+            selector(securityRule.WithDefaultCredential()).TryApply(securityRule.CustomCredential);
     }
 
     public static RoleBaseSecurityRule ToSecurityRule(

@@ -1,6 +1,11 @@
 ﻿namespace Anch.Core;
 
-public interface IFactory<out T>
+public interface IFactory<out TResult>
 {
-    T Create();
+    TResult Create();
+}
+
+public interface IFactory<in TArg, out TResult>
+{
+    TResult Create(TArg arg);
 }
