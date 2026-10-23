@@ -18,11 +18,11 @@ public class NotificationPermissionExtractor<TPermission>(
     private const string LevelValueSeparator = ":";
 
     public IAsyncEnumerable<TPermission> GetPermissionsAsync(
-        ImmutableArray<SecurityRole> securityRoles,
+        DomainSecurityRule.RoleBaseSecurityRule securityRule,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups)
     {
         var startPermissionQ = queryableSource.GetQueryable<TPermission>()
-            .Where(notificationPermissionFilterFactory.Create(securityRoles))
+            .Where(notificationPermissionFilterFactory.Create(securityRule))
             .Select(p => new PermissionLevelInfo<TPermission> { Permission = p, LevelInfo = "" });
 
         var typeArr = notificationFilterGroups.Select(g => g.GetSecurityContextType()).ToArray();

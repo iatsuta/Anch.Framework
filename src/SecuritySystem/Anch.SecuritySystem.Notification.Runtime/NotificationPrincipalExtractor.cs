@@ -15,16 +15,16 @@ public class NotificationPrincipalExtractor<TPrincipal>(IServiceProxyFactory ser
                     typeof(NotificationPrincipalExtractor<,>).MakeGenericType(permissionBindingInfo.PrincipalType, permissionBindingInfo.PermissionType)))
             .ToArray());
 
-    public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(ImmutableArray<SecurityRole> securityRoles,
+    public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups) =>
         this.lazyInnerServices.Value switch
         {
             [] => throw new InvalidOperationException($"NotificationPrincipalExtractors for {nameof(TPrincipal)} not exists"),
 
-            [var innerService] => innerService.GetPrincipalsAsync(securityRoles, notificationFilterGroups),
+            [var innerService] => innerService.GetPrincipalsAsync(securityRule, notificationFilterGroups),
 
             _ => this.lazyInnerServices.Value.ToAsyncEnumerable()
-                .SelectMany(innerService => innerService.GetPrincipalsAsync(securityRoles, notificationFilterGroups))
+                .SelectMany(innerService => innerService.GetPrincipalsAsync(securityRule, notificationFilterGroups))
         };
 }
 
@@ -33,11 +33,11 @@ public class NotificationPrincipalExtractor<TPrincipal, TPermission>(
     INotificationPermissionExtractor<TPermission> notificationPermissionExtractor)
     : INotificationPrincipalExtractor<TPrincipal>
 {
-    public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(ImmutableArray<SecurityRole> securityRoles,
+    public IAsyncEnumerable<TPrincipal> GetPrincipalsAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups) =>
 
         notificationPermissionExtractor
-            .GetPermissionsAsync(securityRoles, notificationFilterGroups)
+            .GetPermissionsAsync(securityRule, notificationFilterGroups)
             .Select(bindingInfo.Principal.Getter)
             .Distinct();
 }
