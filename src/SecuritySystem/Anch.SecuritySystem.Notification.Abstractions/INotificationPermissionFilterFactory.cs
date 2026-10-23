@@ -4,5 +4,5 @@ namespace Anch.SecuritySystem.Notification;
 
 public interface INotificationPermissionFilterFactory<TPermission>
 {
-    Expression<Func<TPermission, bool>> Create(IEnumerable<SecurityRole> securityRoles);
+    Expression<Func<TPermission, bool>> Create(DomainSecurityRule.RoleBaseSecurityRule securityRule);
 }

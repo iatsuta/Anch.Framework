@@ -490,7 +490,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
                     ExpandType = NotificationExpandType.DirectOrFirstParent
                 };
 
-                return await extractor.GetPrincipalsAsync([this.testSecurityRole], [notificationFilterGroup]).Select(p => p.Name).ToArrayAsync(ct);
+                return await extractor.GetPrincipalsAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [notificationFilterGroup]).Select(p => p.Name).ToArrayAsync(ct);
             });
 
         // Assert
@@ -513,7 +513,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Act
         var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>()
             .EvaluateAsync(TestingScopeMode.Read, async extractor =>
-                await extractor.GetPrincipalsAsync([this.testSecurityRole], [notificationFilterGroup])
+                await extractor.GetPrincipalsAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [notificationFilterGroup])
                     .Select(employee => employee.Login)
                     .ToArrayAsync(ct));
 
@@ -542,7 +542,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         // Act
         var result = await this.GetEvaluator<INotificationPrincipalNameExtractor>()
             .EvaluateAsync(TestingScopeMode.Read,
-                async extractor => await extractor.GetPrincipalNamesAsync([this.testSecurityRole], [notificationFilterGroup]).ToArrayAsync(ct));
+                async extractor => await extractor.GetPrincipalNamesAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [notificationFilterGroup]).ToArrayAsync(ct));
 
         var expectedResult = new[] { testUserName, "TestEmployee2" };
 
@@ -553,7 +553,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         this.GetEvaluator<INotificationPrincipalExtractor<Domain.Auth.General.Principal>>()
             .EvaluateAsync(TestingScopeMode.Read, async extractor =>
-                await extractor.GetPrincipalsAsync([this.testSecurityRole], [.. notificationFilterGroups])
+                await extractor.GetPrincipalsAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [.. notificationFilterGroups])
                     .Select(p => p.Name)
                     .ToArrayAsync(ct));
 

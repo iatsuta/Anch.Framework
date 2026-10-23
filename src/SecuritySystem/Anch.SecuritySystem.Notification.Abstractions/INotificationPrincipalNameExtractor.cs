@@ -6,5 +6,5 @@ namespace Anch.SecuritySystem.Notification;
 
 public interface INotificationPrincipalNameExtractor
 {
-    IAsyncEnumerable<string> GetPrincipalNamesAsync(ImmutableArray<SecurityRole> securityRoles, ImmutableArray<NotificationFilterGroup> notificationFilterGroups);
+    IAsyncEnumerable<string> GetPrincipalNamesAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, ImmutableArray<NotificationFilterGroup> notificationFilterGroups);
 }

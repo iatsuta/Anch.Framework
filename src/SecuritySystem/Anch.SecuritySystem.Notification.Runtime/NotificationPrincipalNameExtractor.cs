@@ -13,10 +13,10 @@ public class NotificationPrincipalNameExtractor(IServiceProxyFactory serviceProx
         bindingInfoList.Select(permissionBindingInfo => permissionBindingInfo.PrincipalType).Distinct()
                 .Select(principalType => serviceProxyFactory.Create<INotificationPrincipalNameExtractor>(typeof(NotificationPrincipalNameExtractor<>).MakeGenericType(principalType))).ToArray());
 
-    public IAsyncEnumerable<string> GetPrincipalNamesAsync(ImmutableArray<SecurityRole> securityRoles,
+    public IAsyncEnumerable<string> GetPrincipalNamesAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups) =>
         this.lazyInnerServices.Value.ToAsyncEnumerable()
-            .SelectMany(innerService => innerService.GetPrincipalNamesAsync(securityRoles, notificationFilterGroups))
+            .SelectMany(innerService => innerService.GetPrincipalNamesAsync(securityRule, notificationFilterGroups))
             .Distinct();
 }
 
@@ -24,7 +24,7 @@ public class NotificationPrincipalNameExtractor<TPrincipal>(
     INotificationPrincipalExtractor<TPrincipal> notificationPrincipalExtractor,
     IVisualIdentityInfo<TPrincipal> visualIdentityInfo) : INotificationPrincipalNameExtractor
 {
-    public IAsyncEnumerable<string> GetPrincipalNamesAsync(ImmutableArray<SecurityRole> securityRoles,
+    public IAsyncEnumerable<string> GetPrincipalNamesAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups) => notificationPrincipalExtractor
-        .GetPrincipalsAsync(securityRoles, notificationFilterGroups).Select(visualIdentityInfo.Name.Getter);
+        .GetPrincipalsAsync(securityRule, notificationFilterGroups).Select(visualIdentityInfo.Name.Getter);
 }
