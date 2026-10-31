@@ -2,6 +2,7 @@
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Extensions for async lifetime handling of test objects.</summary>
 public static class AsyncLifetimeExtensions
 {
     public static async ValueTask<IAsyncDisposable?> TryCreateScopeAsync(this IAsyncLifetime? asyncLifetime, CancellationToken ct)

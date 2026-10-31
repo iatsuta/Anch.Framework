@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get operation.</summary>
 public class GetOperationHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     ISecurityRoleSource roleSource,

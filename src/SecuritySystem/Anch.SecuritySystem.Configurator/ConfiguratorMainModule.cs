@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Configurator;
 
+/// <summary>The built-in module of the configurator: principals, permissions, roles and operations.</summary>
 public class ConfiguratorMainModule : IConfiguratorModule
 {
     public string Name { get; } = "Main";

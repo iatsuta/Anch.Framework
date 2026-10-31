@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Exposes the domain type modes as client rules.</summary>
 public class DomainModeClientSecurityRuleInfoSource(IClientSecurityRuleNameExtractor clientSecurityRuleNameExtractor, IClientDomainModeSecurityRuleSource clientDomainModeSecurityRuleSource)
     : IClientSecurityRuleInfoSource
 {

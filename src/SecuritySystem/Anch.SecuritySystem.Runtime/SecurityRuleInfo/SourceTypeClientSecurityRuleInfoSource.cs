@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Collects the client rules declared as static properties of a type.</summary>
 public class SourceTypeClientSecurityRuleInfoSource(IClientSecurityRuleNameExtractor clientSecurityRuleNameExtractor, Type sourceType) : IClientSecurityRuleInfoSource
 {
     private readonly ClientSecurityRuleInfo[] infos =

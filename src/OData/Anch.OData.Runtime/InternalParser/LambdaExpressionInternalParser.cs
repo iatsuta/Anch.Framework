@@ -15,6 +15,7 @@ using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData.InternalParser;
 
+/// <summary>The grammar of expressions inside a query: operators with precedence, constants, properties, nested lambdas and method calls.</summary>
 public class LambdaExpressionInternalParser(
     CultureInfo culture,
     ParameterExpression currentParameter,

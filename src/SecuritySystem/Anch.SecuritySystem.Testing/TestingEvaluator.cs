@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>Runs test code in a new scope of the root container.</summary>
 public class TestingEvaluator<TService>(IServiceProvider rootServiceProvider) : ITestingEvaluator<TService>
     where TService : notnull
 {

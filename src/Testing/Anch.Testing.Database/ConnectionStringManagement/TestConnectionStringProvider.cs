@@ -2,6 +2,7 @@
 
 namespace Anch.Testing.Database.ConnectionStringManagement;
 
+/// <summary>Supplies the connection strings of the test databases by role.</summary>
 public class TestConnectionStringProvider(
     ITestConnectionStringFactory testConnectionStringFactory,
     ITestConnectionStringPostfixFactory testConnectionStringPostfixFactory)

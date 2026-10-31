@@ -2,6 +2,8 @@
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Structural comparer of collection initializer elements.</summary>
+/// <param name="rootComparer">The comparer used for the child expressions.</param>
 public class ElementInitComparer(ExpressionComparer rootComparer) : IEqualityComparer<ElementInit>
 {
     public bool Equals(ElementInit? x, ElementInit? y)

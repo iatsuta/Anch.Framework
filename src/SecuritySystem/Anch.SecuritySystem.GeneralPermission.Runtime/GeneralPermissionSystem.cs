@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>A permission system whose permissions are stored as entities of the application.</summary>
 public class GeneralPermissionSystem<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     GeneralPermissionBindingInfo<TPermission> generalBindingInfo,
@@ -45,6 +46,7 @@ public class GeneralPermissionSystem<TPermission>(
     public IAsyncEnumerable<SecurityRole> GetAvailableSecurityRoles() => this.InnerService.GetAvailableSecurityRoles();
 }
 
+/// <summary>A permission system whose permissions are stored as entities of the application.</summary>
 public class GeneralPermissionSystem<TPermission, TSecurityRole, TSecurityRoleIdent>(
     IServiceProxyFactory serviceProxyFactory,
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,

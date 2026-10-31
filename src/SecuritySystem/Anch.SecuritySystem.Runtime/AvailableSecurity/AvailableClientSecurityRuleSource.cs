@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.AvailableSecurity;
 
+/// <summary>Lists the client rules satisfied by the roles that the current user has.</summary>
 public class AvailableClientSecurityRuleSource(
     IAvailableSecurityRoleSource availableSecurityRoleSource,
     IClientSecurityRuleResolver clientSecurityRuleResolver) : IAvailableClientSecurityRuleSource

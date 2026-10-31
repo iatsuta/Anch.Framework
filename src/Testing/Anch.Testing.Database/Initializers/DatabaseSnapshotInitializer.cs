@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Initializers;
 
+/// <summary>Creates the empty schema snapshot and the filled snapshot once, in the main container.</summary>
 public class DatabaseSnapshotInitializer(
     [FromKeyedServices(TestDatabaseInitializer.EmptySchemaKey)]
     IInitializer emptySchemaInitializer,

@@ -3,6 +3,7 @@ using Anch.SecuritySystem.ExternalSystem.Management;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Loads the restriction entities of a permission.</summary>
 public interface IPermissionRestrictionLoader<TPermission, TPermissionRestriction>
 {
     IAsyncEnumerable<TPermissionRestriction> LoadAsync(TPermission permission);

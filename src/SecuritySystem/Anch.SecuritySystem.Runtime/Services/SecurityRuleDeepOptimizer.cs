@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Expanders;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Expands a rule and simplifies it.</summary>
 public class SecurityRuleDeepOptimizer(
     ISecurityRuleExpander expander,
     ISecurityRuleBasicOptimizer basicOptimizer)

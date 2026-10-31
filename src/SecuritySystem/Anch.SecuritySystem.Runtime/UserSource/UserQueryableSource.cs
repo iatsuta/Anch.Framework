@@ -3,6 +3,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Provides a query over the users that match a credential.</summary>
 public class UserQueryableSource<TUser>(
     IQueryableSource queryableSource,
     UserSourceInfo<TUser> userSourceInfo,
@@ -23,6 +24,7 @@ public class UserQueryableSource<TUser>(
         return new SimpleUserQueryableSource(this.GetQueryable, defaultUserConverter);
     }
 
+    /// <summary>Provides a query over the users that match a credential, converted to simple <see cref="User"/> records.</summary>
     public class SimpleUserQueryableSource(Func<UserCredential, IQueryable<TUser>> getFilteredQueryable, IDefaultUserConverter<TUser> defaultUserConverter)
         : IUserQueryableSource<User>
     {

@@ -5,21 +5,27 @@ using Anch.Core;
 
 namespace Anch.VisualIdentitySource;
 
+/// <summary>Finds the name property of a type: an explicitly registered description wins, otherwise the property found by the extractor is used. Results are cached.</summary>
+/// <param name="propertyExtractor">Locates the name property by convention.</param>
+/// <param name="customInfoList">The explicitly registered descriptions.</param>
 public class VisualIdentityInfoSource(IVisualIdentityPropertyExtractor propertyExtractor, IEnumerable<VisualIdentityInfo> customInfoList)
     : IVisualIdentityInfoSource
 {
     private readonly ConcurrentDictionary<Type, VisualIdentityInfo?> cache = [];
 
+    /// <inheritdoc/>
     public VisualIdentityInfo<TDomainObject>? TryGetVisualIdentityInfo<TDomainObject>()
     {
         return (VisualIdentityInfo<TDomainObject>?)this.TryGetVisualIdentityInfo(typeof(TDomainObject));
     }
 
+    /// <inheritdoc/>
     public VisualIdentityInfo GetVisualIdentityInfo(Type domainObjectType)
     {
         return this.TryGetVisualIdentityInfo(domainObjectType) ?? throw GetMissedError(domainObjectType);
     }
 
+    /// <inheritdoc/>
     public VisualIdentityInfo? TryGetVisualIdentityInfo(Type domainObjectType)
     {
         return this.cache.GetOrAdd(domainObjectType, _ =>
@@ -50,6 +56,7 @@ public class VisualIdentityInfoSource(IVisualIdentityPropertyExtractor propertyE
         });
     }
 
+    /// <inheritdoc/>
     public VisualIdentityInfo<TDomainObject> GetVisualIdentityInfo<TDomainObject>()
     {
         return this.TryGetVisualIdentityInfo<TDomainObject>() ?? throw GetMissedError(typeof(TDomainObject));

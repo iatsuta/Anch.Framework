@@ -7,6 +7,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Describes a virtual permission: the entity it is computed from, the roles it grants and the contexts it is limited to.</summary>
 public abstract record VirtualPermissionBindingInfo
 {
     private ImmutableArray<Type>? securityContextTypes;
@@ -26,6 +27,7 @@ public abstract record VirtualPermissionBindingInfo
     public abstract ImmutableArray<VirtualPermissionSecurityRoleItemBindingInfo> BaseItems { get; }
 }
 
+/// <summary>Describes a virtual permission: the entity it is computed from, the roles it grants and the contexts it is limited to.</summary>
 public record VirtualPermissionBindingInfo<TPermission> : VirtualPermissionBindingInfo
 {
     private ImmutableArray<VirtualPermissionSecurityRoleItemBindingInfo>? baseItems;

@@ -8,6 +8,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a domain type from its security path (factory).</summary>
 public class AccessorsFilterBuilderFactory<TDomainObject>(IServiceProxyFactory serviceProxyFactory, IEnumerable<IPermissionSystem> permissionSystems) :
     IAccessorsFilterFactory<TDomainObject>
 {
@@ -31,6 +32,7 @@ public class AccessorsFilterBuilderFactory<TDomainObject>(IServiceProxyFactory s
     }
 }
 
+/// <summary>Computes who has access to an object (the accessors), for a domain type from its security path (factory).</summary>
 public class AccessorsFilterBuilderFactory<TDomainObject, TPermission>(
     IIdentityInfoSource identityInfoSource,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,

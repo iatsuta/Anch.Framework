@@ -8,6 +8,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Creates, renames, removes principals and updates their stored permissions, validating the changes.</summary>
 public class GeneralPrincipalManagementService<TPrincipal, TPermission, TPermissionRestriction>(
     IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction> principalValidator,
     IGenericRepository genericRepository,

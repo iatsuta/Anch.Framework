@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Allows RunAs only to users that exist.</summary>
 public class ExistsOtherwiseUsersRunAsValidator<TUser>(IEnumerable<IUserSource<TUser>> userSources, IMissedUserErrorSource missedUserErrorSource)
     : IRunAsValidator
 {

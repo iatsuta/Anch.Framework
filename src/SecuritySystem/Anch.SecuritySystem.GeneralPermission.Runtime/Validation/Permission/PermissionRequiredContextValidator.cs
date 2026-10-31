@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Permission;
 
+/// <summary>Checks that a permission specifies the security contexts that its role requires.</summary>
 public class PermissionRequiredContextValidator<TPermission, TPermissionRestriction>(
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,
     ISecurityContextInfoSource securityContextInfoSource,

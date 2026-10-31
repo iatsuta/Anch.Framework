@@ -7,6 +7,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a path that matches security context identifiers against the permission restrictions.</summary>
 public abstract class ByIdentsFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>(
     IPermissionSystem<TPermission> permissionSystem,
     IHierarchicalObjectExpanderFactory hierarchicalObjectExpanderFactory,

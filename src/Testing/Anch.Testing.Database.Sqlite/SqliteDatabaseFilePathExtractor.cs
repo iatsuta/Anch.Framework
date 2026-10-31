@@ -4,6 +4,7 @@ using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.Sqlite;
 
+/// <summary>Extracts the file path of a SQLite database from the test connection string.</summary>
 public class SqliteDatabaseFilePathExtractor(ITestConnectionStringProvider testConnectionStringProvider) : IDatabaseFilePathExtractor
 {
     public string Extract(TestConnectionStringRole connectionStringRole) => this.Extract(testConnectionStringProvider.GetConnectionString(connectionStringRole));

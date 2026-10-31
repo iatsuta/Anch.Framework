@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.SecuritySystem.VirtualPermission.DependencyInjection;
 
+/// <summary>Collects the settings of a virtual permission and turns them into registrations.</summary>
 public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccessors<TPermission, TPrincipal> principalAccessors)
     : IVirtualPermissionRootSetup<TPermission>, IServiceInitializer<ISecuritySystemSetup>
     where TPermission : class

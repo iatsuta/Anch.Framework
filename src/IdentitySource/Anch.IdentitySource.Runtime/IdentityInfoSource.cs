@@ -5,21 +5,27 @@ using Anch.Core;
 
 namespace Anch.IdentitySource;
 
+/// <summary>Finds the identifier of a type: an explicitly registered description wins, otherwise the property found by the extractor is used. Results are cached.</summary>
+/// <param name="propertyExtractor">Locates the identifier property by convention.</param>
+/// <param name="customInfoList">The explicitly registered descriptions.</param>
 public class IdentityInfoSource(IIdentityPropertyExtractor propertyExtractor, IEnumerable<IdentityInfo> customInfoList)
     : IIdentityInfoSource
 {
     private readonly ConcurrentDictionary<Type, IdentityInfo?> cache = [];
 
+    /// <inheritdoc/>
     public IdentityInfo<TDomainObject>? TryGetIdentityInfo<TDomainObject>()
     {
         return (IdentityInfo<TDomainObject>?)this.TryGetIdentityInfo(typeof(TDomainObject));
     }
 
+    /// <inheritdoc/>
     public IdentityInfo GetIdentityInfo(Type domainObjectType)
     {
         return this.TryGetIdentityInfo(domainObjectType) ?? throw GetMissedError(domainObjectType);
     }
 
+    /// <inheritdoc/>
     public IdentityInfo? TryGetIdentityInfo(Type domainObjectType)
     {
         return this.cache.GetOrAdd(domainObjectType, _ =>
@@ -50,6 +56,7 @@ public class IdentityInfoSource(IIdentityPropertyExtractor propertyExtractor, IE
         });
     }
 
+    /// <inheritdoc/>
     public IdentityInfo<TDomainObject> GetIdentityInfo<TDomainObject>()
     {
         return this.TryGetIdentityInfo<TDomainObject>() ?? throw GetMissedError(typeof(TDomainObject));

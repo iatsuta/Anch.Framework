@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>Prepares the test user: creates it and grants the requested permissions.</summary>
 public class RootAuthManager(
     IServiceProvider rootServiceProvider,
     IServiceProxyFactory serviceProxyFactory,

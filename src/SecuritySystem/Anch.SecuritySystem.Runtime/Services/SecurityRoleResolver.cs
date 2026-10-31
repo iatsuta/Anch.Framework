@@ -5,6 +5,7 @@ using Anch.SecuritySystem.Expanders;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Expands a role-based rule and returns the roles it consists of.</summary>
 public class SecurityRoleResolver(ISecurityRuleExpander securityRuleExpander, ISecurityRoleSource securityRoleSource) : ISecurityRoleResolver
 {
     private readonly ConcurrentDictionary<(DomainSecurityRule.RoleBaseSecurityRule, bool), FrozenSet<FullSecurityRole>> cache = [];

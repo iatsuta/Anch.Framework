@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.VirtualPermission.DependencyInjection;
 
+/// <summary>Collects the settings of one role of a virtual permission.</summary>
 public class VirtualBindingInfoSettingsSetup<TPermission> : IVirtualBindingInfoSettingsSetup<TPermission>
     where TPermission : notnull
 {

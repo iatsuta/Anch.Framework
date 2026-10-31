@@ -12,6 +12,7 @@ using Anch.SecuritySystem.PermissionOptimization;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for a domain type from its security path (factory).</summary>
 public class SecurityFilterBuilderFactory<TDomainObject>(
     IIdentityInfoSource identityInfoSource,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,

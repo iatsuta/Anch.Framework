@@ -6,6 +6,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a path to a collection of security context objects.</summary>
 public class ManyContextFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>(
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     IPermissionSystem<TPermission> permissionSystem,

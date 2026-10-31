@@ -6,6 +6,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs a test class with a container from the pool.</summary>
 public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : XunitTestClassRunnerBase<XunitTestClassRunnerContext, IXunitTestClass, IXunitTestMethod, IXunitTestCase>
 {
     protected override async ValueTask<object?> GetConstructorArgument(

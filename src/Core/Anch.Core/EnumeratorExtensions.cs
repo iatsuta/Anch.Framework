@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for enumerators.</summary>
 public static class EnumeratorExtensions
 {
     extension<T>(IEnumerator<T> source)

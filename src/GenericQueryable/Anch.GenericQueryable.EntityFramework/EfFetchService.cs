@@ -9,8 +9,11 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Anch.GenericQueryable.EntityFramework;
 
+/// <summary>Applies fetch rules with <c>Include</c> and <c>ThenInclude</c>.</summary>
+/// <param name="fetchRuleExpander">Expands rules into property paths.</param>
 public class EfFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchService(fetchRuleExpander)
 {
+    /// <inheritdoc/>
     public override IQueryable<TSource> ApplyFetch<TSource>(IQueryable<TSource> source, FetchRule<TSource> fetchRule)
         where TSource : class
     {
@@ -24,6 +27,7 @@ public class EfFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchSer
         }
     }
 
+    /// <inheritdoc/>
     protected override IEnumerable<MethodInfo> GetFetchMethods<TSource>(LambdaExpressionPath fetchPath)
         where TSource : class
     {

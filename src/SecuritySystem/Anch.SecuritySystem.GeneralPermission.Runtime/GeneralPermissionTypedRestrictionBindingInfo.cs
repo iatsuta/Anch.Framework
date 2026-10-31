@@ -8,6 +8,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Describes how the restrictions of a stored permission are read for one security context type.</summary>
 public class GeneralPermissionTypedRestrictionBindingInfo<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     IQueryableSource queryableSource,
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,

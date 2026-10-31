@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Permission;
 
+/// <summary>Runs all permission validators and the restriction validators.</summary>
 public class PermissionRootValidator<TPermission, TPermissionRestriction>(
     [FromKeyedServices(ISecurityValidator.ElementKey)] IEnumerable<IPermissionValidator<TPermission, TPermissionRestriction>> validators,
     IPermissionRestrictionValidator<TPermissionRestriction> permissionRestrictionRootValidator)

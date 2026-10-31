@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Builds the filter that selects the permissions that are valid for notifications.</summary>
 public class NotificationGeneralPermissionFilterFactory<TPermission>(IAvailablePermissionFilterFactory<TPermission> availablePermissionFilterFactory)
     : INotificationPermissionFilterFactory<TPermission>
 {

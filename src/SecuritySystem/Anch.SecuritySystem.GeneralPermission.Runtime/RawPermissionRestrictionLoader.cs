@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Loads the restrictions of a permission in the raw form.</summary>
 public class RawPermissionRestrictionLoader<TPermission, TPermissionRestriction>(
     IPermissionRestrictionLoader<TPermission, TPermissionRestriction> permissionRestrictionLoader,
     IPermissionRestrictionRawConverter<TPermissionRestriction> permissionRestrictionRawConverter) : IRawPermissionRestrictionLoader<TPermission>

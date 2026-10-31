@@ -5,6 +5,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Builds the filter that selects the valid virtual permissions (those within their period).</summary>
 public class VirtualPermissionFilterFactory<TPermission>(
     IServiceProvider serviceProvider,
     VirtualPermissionBindingInfo<TPermission> virtualPermissionBindingInfo) : IPermissionFilterFactory<TPermission>

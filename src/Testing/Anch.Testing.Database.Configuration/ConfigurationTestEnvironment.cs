@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Configuration;
 
+/// <summary>A database test environment whose connection string comes from <c>IConfiguration</c>.</summary>
 public abstract class ConfigurationTestEnvironment : DatabaseTestEnvironment
 {
     protected abstract IConfiguration RawConfiguration { get; }

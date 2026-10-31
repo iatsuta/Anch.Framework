@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.SecuritySystem.Testing.DependencyInjection;
 
+/// <summary>Collects the settings of the testing helpers.</summary>
 public class SecuritySystemTestingSetup : ISecuritySystemTestingSetup, IServiceInitializer
 {
     private Type evaluatorType = typeof(TestingEvaluator<>);

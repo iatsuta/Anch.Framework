@@ -6,7 +6,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 namespace Anch.SecuritySystem.Providers;
 
 /// <summary>
-/// Контекстный провайдер доступа
+/// Security provider that restricts access by security contexts.
 /// </summary>
 /// <typeparam name="TDomainObject"></typeparam>
 public class RoleBaseSecurityPathProvider<TDomainObject>(

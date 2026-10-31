@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.ExternalSystem.Management;
 
+/// <summary>Adapts a typed listener to the untyped listener interface.</summary>
 public class SafePrincipalManagementListener<TPrincipal, TPermission, TPermissionRestriction>(
     IPrincipalManagementListener<TPrincipal, TPermission, TPermissionRestriction> listener)
     : IRawPrincipalManagementListener

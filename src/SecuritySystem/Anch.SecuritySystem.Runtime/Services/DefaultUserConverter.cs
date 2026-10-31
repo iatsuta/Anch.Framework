@@ -6,6 +6,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Converts the application's user entity into the simple <see cref="User"/> record.</summary>
 public class DefaultUserConverter<TUser>(
     ISecurityIdentityManager<TUser> securityIdentityManager,
     IVisualIdentityInfo<TUser> visualIdentityInfo) : IDefaultUserConverter<TUser>

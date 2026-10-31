@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>The roles registered before initialization, with their final registration data.</summary>
 public class InitializedSecurityRoleSource(IEnumerable<PreInitializerFullSecurityRole> securityRoles) : IInitializedSecurityRoleSource
 {
     public IEnumerable<FullSecurityRole> GetSecurityRoles()

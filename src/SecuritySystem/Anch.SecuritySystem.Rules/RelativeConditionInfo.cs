@@ -4,11 +4,16 @@ using Anch.Core.ExpressionComparers;
 
 namespace Anch.SecuritySystem;
 
+/// <summary>A condition on an object related to the secured one; used by <see cref="DomainSecurityRule.RelativeConditionSecurityRule"/> and <see cref="SecurityPathRestriction"/>.</summary>
 public abstract record RelativeConditionInfo
 {
+    /// <summary>The type of the related object the condition is applied to.</summary>
     public abstract Type RelativeDomainObjectType { get; }
 }
 
+/// <summary>A typed condition; equality compares the expression structurally.</summary>
+/// <param name="Condition">The condition on the related object.</param>
+/// <typeparam name="TRelativeDomainObject">The type of the related object.</typeparam>
 public record RelativeConditionInfo<TRelativeDomainObject>(Expression<Func<TRelativeDomainObject, bool>> Condition)
     : RelativeConditionInfo
 {

@@ -5,6 +5,7 @@ using static Anch.SecuritySystem.SecurityRule;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Simplifies a rule without expanding it, for example by merging neighbouring role rules.</summary>
 public class SecurityRuleBasicOptimizer : SecurityRuleVisitor, ISecurityRuleBasicOptimizer
 {
     private readonly IDictionaryCache<DomainSecurityRule, DomainSecurityRule> cache;

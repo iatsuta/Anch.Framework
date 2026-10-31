@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds the principals to notify for an event.</summary>
 public class NotificationPrincipalExtractor<TPrincipal>(IServiceProxyFactory serviceProxyFactory, IPermissionBindingInfoSource permissionBindingInfoSource)
     : INotificationPrincipalExtractor<TPrincipal>
 {
@@ -28,6 +29,7 @@ public class NotificationPrincipalExtractor<TPrincipal>(IServiceProxyFactory ser
         };
 }
 
+/// <summary>Finds the principals to notify for an event.</summary>
 public class NotificationPrincipalExtractor<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     INotificationPermissionExtractor<TPermission> notificationPermissionExtractor)

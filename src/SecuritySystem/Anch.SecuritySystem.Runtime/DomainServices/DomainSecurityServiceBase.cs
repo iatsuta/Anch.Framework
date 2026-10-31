@@ -3,6 +3,7 @@ using Anch.SecuritySystem.Providers;
 
 namespace Anch.SecuritySystem.DomainServices;
 
+/// <summary>The base of the domain security services; caches the provider of each rule.</summary>
 public abstract class DomainSecurityServiceBase<TDomainObject> : IDomainSecurityService<TDomainObject>
 {
     private readonly IDictionaryCache<SecurityRule, ISecurityProvider<TDomainObject>> providersCache;

@@ -2,6 +2,8 @@
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Structural comparer of method call expression nodes; used by <see cref="ExpressionComparer"/>.</summary>
+/// <param name="rootComparer">The comparer used for the child expressions.</param>
 public class MethodCallComparer(ExpressionComparer rootComparer) : ExpressionComparer<MethodCallExpression>
 {
     protected override bool PureEquals(MethodCallExpression x, MethodCallExpression y)

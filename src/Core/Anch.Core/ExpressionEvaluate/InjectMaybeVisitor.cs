@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Core.ExpressionEvaluate;
 
+/// <summary>Rewrites member chains so that a <c>null</c> in the middle yields a default value instead of throwing (null-safe navigation).</summary>
 public class InjectMaybeVisitor : ExpressionVisitor
 {
     //private static readonly MethodInfo BoolOrMethodSimple = new Func<Maybe<bool>, Func<bool>, Maybe<bool>>(MaybeExtensions.Or).Method;

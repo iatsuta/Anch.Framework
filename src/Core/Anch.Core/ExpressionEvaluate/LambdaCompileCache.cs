@@ -6,8 +6,13 @@ using Anch.Core.ExpressionComparers;
 
 namespace Anch.Core.ExpressionEvaluate;
 
+/// <summary>Compiles lambdas once per structure: constants are lifted into parameters, so lambdas that differ only in constants share a compiled delegate.</summary>
+/// <param name="mode">The transformations applied before compilation.</param>
+/// <param name="lambdaComparer">Decides when two lambdas are the same.</param>
 public class LambdaCompileCache(LambdaCompileMode mode, IEqualityComparer<LambdaExpression> lambdaComparer) : ILambdaCompileCache
 {
+    /// <summary>Creates a cache that compares lambdas structurally, ignoring constants.</summary>
+    /// <param name="mode">The transformations applied before compilation.</param>
     public LambdaCompileCache(LambdaCompileMode mode)
         : this(mode, ExpressionComparer.WithoutConst.LambdaComparer)
     {
@@ -15,6 +20,7 @@ public class LambdaCompileCache(LambdaCompileMode mode, IEqualityComparer<Lambda
 
     private readonly ConcurrentDictionary<ValueTuple<Type, MethodInfo?>, ConcurrentDictionary<LambdaExpression, Delegate>> rootCache = [];
 
+    /// <inheritdoc/>
     public TDelegate GetFunc<TDelegate>(Expression<TDelegate> lambdaExpression)
     {
         IReadOnlyCollection<ValueTuple<ParameterExpression, ConstantExpression>> args = null!;

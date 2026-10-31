@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="IEnumerable{T}"/>.</summary>
 public static class EnumerableExtensions
 {
     //public static FrozenDictionary<TKey, TValue> ToFrozenDictionary<TKey, TValue>(this IEnumerable<Tuple<TKey, TValue>> pairs, IEqualityComparer<TKey>? comparer = null)

@@ -6,6 +6,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Builds the filter that selects the permissions of the current user that are valid now and satisfy a rule.</summary>
 public class AvailablePermissionFilterFactory<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     PermissionBindingInfo<TPermission> bindingInfo) : IAvailablePermissionFilterFactory<TPermission>
@@ -21,6 +22,7 @@ public class AvailablePermissionFilterFactory<TPermission>(
         this.lazyInnerService.Value.CreateFilter(securityRule);
 }
 
+/// <summary>Builds the filter that selects the permissions of the current user that are valid now and satisfy a rule.</summary>
 public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     TimeProvider timeProvider,

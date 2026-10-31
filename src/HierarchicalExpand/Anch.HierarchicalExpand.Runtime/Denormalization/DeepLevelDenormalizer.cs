@@ -5,9 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.Denormalization;
 
+/// <summary>Recomputes the stored depth of every registered type that has one; used for initialization.</summary>
+/// <param name="serviceProvider">Supplies the denormalizer of each type.</param>
+/// <param name="deepLevelInfoList">The registered depth descriptions.</param>
 public class DeepLevelDenormalizer(IServiceProvider serviceProvider, IEnumerable<DeepLevelInfo> deepLevelInfoList)
     : IDeepLevelDenormalizer
 {
+    /// <inheritdoc/>
     public async Task Initialize(CancellationToken ct)
     {
         foreach (var deepLevelInfo in deepLevelInfoList)
@@ -21,6 +25,13 @@ public class DeepLevelDenormalizer(IServiceProvider serviceProvider, IEnumerable
     }
 }
 
+/// <summary>Keeps the stored depth of objects equal to the number of their ancestors including themselves; also updates the descendants of changed objects.</summary>
+/// <param name="queryableSource">Reads the objects.</param>
+/// <param name="genericRepository">Saves changed objects.</param>
+/// <param name="domainObjectExpanderFactory">Creates the expander that finds descendants.</param>
+/// <param name="hierarchicalInfo">The parent property.</param>
+/// <param name="deepLevelInfo">The depth property.</param>
+/// <typeparam name="TDomainObject">The hierarchical domain type.</typeparam>
 public class DeepLevelDenormalizer<TDomainObject>(
     IQueryableSource queryableSource,
     IGenericRepository genericRepository,
@@ -29,6 +40,7 @@ public class DeepLevelDenormalizer<TDomainObject>(
     DeepLevelInfo<TDomainObject> deepLevelInfo) : IDeepLevelDenormalizer<TDomainObject>
     where TDomainObject : class
 {
+    /// <inheritdoc/>
     public async Task UpdateDeepLevels(IEnumerable<TDomainObject> domainObjects, CancellationToken ct)
     {
         var updatedDomainObjects = domainObjects.Where(domainObject =>
@@ -44,6 +56,7 @@ public class DeepLevelDenormalizer<TDomainObject>(
         }
     }
 
+    /// <inheritdoc/>
     public Task Initialize(CancellationToken ct) =>
         this.UpdateDeepLevels(queryableSource.GetQueryable<TDomainObject>(), ct);
 }

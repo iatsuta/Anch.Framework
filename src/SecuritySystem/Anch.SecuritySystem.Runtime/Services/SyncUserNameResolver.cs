@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Resolves a user name synchronously using the default cancellation token.</summary>
 public class SyncUserNameResolver(
     IUserNameResolver userNameResolver,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : ISyncUserNameResolver

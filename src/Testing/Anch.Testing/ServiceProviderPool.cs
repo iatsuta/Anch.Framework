@@ -2,6 +2,7 @@
 
 namespace Anch.Testing;
 
+/// <summary>The default pool: creates the main container from the test environment.</summary>
 public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowParallelization) : IServiceProviderPool
 {
     private readonly Lazy<IServiceProviderPool> lazyInternalServiceProviderPool = new(() =>

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>Collects the settings of one security context type.</summary>
 public class SecurityContextInfoSetup<TSecurityContext>(TypedSecurityIdentity identity) : ISecurityContextInfoSetup<TSecurityContext>
     where TSecurityContext : class, ISecurityContext
 {

@@ -6,6 +6,7 @@ using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData;
 
+/// <summary>Helpers for building LINQ expressions during conversion, such as aligning the types of operands.</summary>
 public static class StandardExpressionExtensions
 {
     internal static SExpressions.Expression TryNormalize(this SExpressions.Expression baseExpression, Type leftType, Type rightType)

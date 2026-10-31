@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DependencyInjection.Domain;
 
+/// <summary>Collects the access rules of one domain type and turns them into registrations.</summary>
 public abstract class DomainSecurityServiceSetup : IServiceInitializer
 {
     public abstract Type DomainType { get; }
@@ -17,6 +18,7 @@ public abstract class DomainSecurityServiceSetup : IServiceInitializer
     public abstract void Initialize(IServiceCollection services);
 }
 
+/// <summary>Collects the access rules of one domain type and turns them into registrations.</summary>
 public class DomainSecurityServiceSetup<TDomainObject> : DomainSecurityServiceSetup, IDomainSecurityServiceSetup<TDomainObject>
 {
     private readonly Dictionary<SecurityRule.ModeSecurityRule, DomainSecurityRule> domainObjectSecurityDict = [];

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Parses text identifiers using the identifier type of a domain type.</summary>
 public class DomainObjectIdentsParser(IServiceProvider serviceProvider, IIdentityInfoSource identityInfoSource) : IDomainObjectIdentsParser
 {
     private readonly ConcurrentDictionary<Type, IIdentsParser> parsersCache = new();

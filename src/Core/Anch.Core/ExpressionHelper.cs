@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Helpers for creating expression trees.</summary>
 public static class ExpressionHelper
 {
     public static MemberExpression PropertyOrFieldAuto(Expression expr, string memberName)

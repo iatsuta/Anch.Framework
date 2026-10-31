@@ -7,6 +7,12 @@ using Anch.GenericRepository;
 
 namespace Anch.HierarchicalExpand.Denormalization;
 
+/// <summary>Computes the ancestor links that must be added and removed after a tree changes, by comparing the stored links with the links implied by the parent properties.</summary>
+/// <param name="queryableSource">Reads the stored data.</param>
+/// <param name="domainObjectExpanderFactory">Creates the expander that walks the tree.</param>
+/// <param name="fullAncestorLinkInfo">Describes the link entities.</param>
+/// <typeparam name="TDomainObject">The hierarchical domain type.</typeparam>
+/// <typeparam name="TDirectAncestorLink">The directed link entity type.</typeparam>
 public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
     IQueryableSource queryableSource,
     IDomainObjectExpanderFactory<TDomainObject> domainObjectExpanderFactory,
@@ -20,6 +26,7 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
     private readonly FetchRule<TDirectAncestorLink> linkFetchRule =
         FetchRule<TDirectAncestorLink>.Create(fullAncestorLinkInfo.Directed.From.Path).Fetch(fullAncestorLinkInfo.Directed.To.Path);
 
+    /// <inheritdoc/>
     public async Task<SyncResult<TDomainObject, TDirectAncestorLink>> GetSyncAllResult(CancellationToken ct)
     {
         var existsDomainObjects = await queryableSource.GetQueryable<TDomainObject>().GenericToListAsync(ct);
@@ -31,6 +38,7 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
         return await this.GetSyncResult(existsDomainObjects, nonExistsDomainObjects, ct);
     }
 
+    /// <inheritdoc/>
     public async Task<SyncResult<TDomainObject, TDirectAncestorLink>> GetSyncResult(
         IEnumerable<TDomainObject> updatedDomainObjectsBase,
         IEnumerable<TDomainObject> removedDomainObjects,
@@ -50,6 +58,7 @@ public class AncestorLinkExtractor<TDomainObject, TDirectAncestorLink>(
         return existsLinkInfos.Union([forceRemovedLinksSyncResult]).Aggregate();
     }
 
+    /// <inheritdoc/>
     public Task<SyncResult<TDomainObject, TDirectAncestorLink>> GetSyncResult(TDomainObject domainObject, CancellationToken ct) =>
         this.GetSyncResult([domainObject], [], ct);
 

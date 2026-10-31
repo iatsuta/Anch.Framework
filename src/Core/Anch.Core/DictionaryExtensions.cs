@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Extensions for dictionaries.</summary>
 public static class DictionaryExtensions
 {
     public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(

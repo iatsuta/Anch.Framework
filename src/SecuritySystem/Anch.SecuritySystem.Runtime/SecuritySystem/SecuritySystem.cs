@@ -7,6 +7,7 @@ using Anch.SecuritySystem.SecurityRuleInfo;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 
+/// <summary>The default <see cref="ISecuritySystem"/>: expands the rule into roles and asks each permission system whether the user has them.</summary>
 public class SecuritySystem(
     IAccessDeniedExceptionService accessDeniedExceptionService,
     ImmutableArray<IPermissionSystem> permissionSystems,

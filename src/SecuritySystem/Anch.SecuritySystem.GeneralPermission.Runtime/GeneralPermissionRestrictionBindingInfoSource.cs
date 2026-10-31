@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Finds the restriction bindings of the GeneralPermission source.</summary>
 public class GeneralPermissionRestrictionBindingInfoSource : IGeneralPermissionRestrictionBindingInfoSource
 {
     private readonly FrozenDictionary<Type, GeneralPermissionRestrictionBindingInfo> permissionDict;

@@ -3,6 +3,7 @@ using Anch.GenericRepository;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Loads entities by security identifier.</summary>
 public class SecurityRepository<TDomainObject>(IQueryableSource queryableSource, ISecurityIdentityFilterFactory<TDomainObject> filterFactory)
     : ISecurityRepository<TDomainObject>
     where TDomainObject : class

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the request to replace the permissions of a principal.</summary>
 public class UpdatePermissionsHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     ISecurityRoleSource securityRoleSource,
@@ -69,6 +70,7 @@ public class UpdatePermissionsHandler(
 
         public string DelegatedFromId { get; set; } = default!;
 
+        /// <summary>A security context object shown in the configurator.</summary>
         public class ContextDto
         {
             public string Id { get; set; } = default!;

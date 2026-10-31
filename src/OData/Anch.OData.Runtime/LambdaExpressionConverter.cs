@@ -7,8 +7,10 @@ using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData;
 
+/// <summary>The default converter of the untyped syntax tree into LINQ expressions: binds properties to the domain type, aligns the operand types of binary operations and maps the supported string and collection methods.</summary>
 public class LambdaExpressionConverter : LambdaExpressionConverterBase
 {
+    /// <inheritdoc/>
     protected override SExpressions.LambdaExpression Convert(LambdaExpression expression,
         Dictionary<ParameterExpression, SExpressions.ParameterExpression> parameters, Type? expectedResultType)
     {
@@ -24,6 +26,7 @@ public class LambdaExpressionConverter : LambdaExpressionConverterBase
         return SExpressions.Expression.Lambda(expectedResultType, bodyExpr, parameterPairs.Select(pair => pair.OutParameter));
     }
 
+    /// <inheritdoc/>
     protected override SExpressions.BinaryExpression Convert(BinaryExpression expression,
         Dictionary<ParameterExpression, SExpressions.ParameterExpression> parameters)
     {
@@ -39,6 +42,7 @@ public class LambdaExpressionConverter : LambdaExpressionConverterBase
     }
 
 
+    /// <inheritdoc/>
     protected override SExpressions.MethodCallExpression Convert(MethodExpression expression,
         Dictionary<ParameterExpression, SExpressions.ParameterExpression> parameters)
     {

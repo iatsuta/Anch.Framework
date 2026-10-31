@@ -5,12 +5,13 @@ using Anch.Core;
 namespace Anch.SecuritySystem;
 
 /// <summary>
-/// Структура для описания дополнительных ограничений на SecurityPath, связывается с ролью.
+/// Describes additional restrictions on a SecurityPath; bound to a role.
+/// Immutable: the <c>Add*</c> methods return a modified copy.
 /// </summary>
-/// <param name="SecurityContextRestrictions"></param>
-/// <param name="ConditionFactoryTypes"></param>
-/// <param name="RelativeConditions"></param>
-/// <param name="IgnoreSecurityPath">Игнорирование SecurityPath</param>
+/// <param name="SecurityContextRestrictions">Allowed security context types with their options; null means all context types are allowed</param>
+/// <param name="ConditionFactoryTypes">Types of factories that produce additional filter conditions</param>
+/// <param name="RelativeConditions">Additional conditions on the domain object itself</param>
+/// <param name="IgnoreSecurityPath">Whether the SecurityPath is ignored</param>
 public record SecurityPathRestriction(
     DeepEqualsCollection<SecurityContextRestriction>? SecurityContextRestrictions,
     DeepEqualsCollection<Type> ConditionFactoryTypes,
@@ -30,12 +31,12 @@ public record SecurityPathRestriction(
     public IEnumerable<Type>? SecurityContextTypes => this.SecurityContextRestrictions?.Select(v => v.SecurityContextType);
 
     /// <summary>
-    /// Ограничения по умолчанию для ролей (доступны все типы контекстов, SecurityPath применяется)
+    /// Default restrictions for roles (all context types are allowed, SecurityPath is applied).
     /// </summary>
     public static SecurityPathRestriction Default { get; } = new(null, Array.Empty<Type>(), Array.Empty<RelativeConditionInfo>(), false);
 
     /// <summary>
-    /// Ограничения для базовых ролей 'Administrator' и 'SystemIntegration' (запрещены все контексты и SecurityPath не применяются)
+    /// Restrictions for the built-in 'Administrator' and 'SystemIntegration' roles (all contexts are denied and SecurityPath is not applied).
     /// </summary>
     public static SecurityPathRestriction Ignored { get; } = new(
         Array.Empty<SecurityContextRestriction>(),

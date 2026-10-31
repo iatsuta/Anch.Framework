@@ -30,6 +30,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>Collects the settings of the security system and turns them into registrations.</summary>
 public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 {
     private readonly List<DomainSecurityServiceSetup> domainBuilders = [];

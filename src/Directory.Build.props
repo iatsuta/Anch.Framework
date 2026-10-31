@@ -7,12 +7,20 @@
     <RepositoryUrl>https://github.com/iatsuta/Anch.Framework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
+    <Authors>Anch</Authors>
+    <Company>Anch</Company>
+    <Copyright>Copyright (c) 2026 Anch</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/iatsuta/Anch.Framework</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CS9107, xUnit1041, xUnit1026</NoWarn>
+    <!-- CS1591 (missing XML comment) is suppressed until the public API is fully documented -->
+    <NoWarn>$(NoWarn);CS9107, CS1591, xUnit1041, xUnit1026</NoWarn>
     <WarningsAsErrors>$(WarningsAsErrors);CS4014, CS1998, CA2016</WarningsAsErrors>
   </PropertyGroup>
 

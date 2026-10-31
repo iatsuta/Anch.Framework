@@ -6,6 +6,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Helpers shared by the Anch test runners.</summary>
 public static class AnchRunnerHelper
 {
     /// <summary>
@@ -17,8 +18,12 @@ public static class AnchRunnerHelper
     /// <param name="cancellationTokenSource">The cancellation token source to cancel if requested</param>
     /// <param name="aggregator">The exception aggregator to record exceptions to</param>
     /// <param name="explicitOption">A flag to indicate which types of tests to run (non-explicit, explicit, or both)</param>
+    /// <param name="parallelMode">The parallelization mode of the run</param>
+    /// <param name="scheduler">The scheduler that executes the test</param>
     /// <param name="constructorArguments">The arguments to pass to the test class constructor</param>
-    /// <returns></returns>
+    /// <param name="methodFixtureMappings">The fixtures available to the test method</param>
+    /// <param name="serviceProviderPool">The pool from which the test takes its service container; <c>null</c> when no environment is configured</param>
+    /// <returns>The summary of the run</returns>
     public static async ValueTask<RunSummary> RunXunitTestCase(
         IXunitTestCase testCase,
         IMessageBus messageBus,

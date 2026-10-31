@@ -8,6 +8,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Creates and changes the permission entities of a principal, including their restrictions.</summary>
 public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,

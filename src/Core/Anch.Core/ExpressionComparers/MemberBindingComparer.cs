@@ -2,6 +2,8 @@
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Structural comparer of member bindings in object initializers.</summary>
+/// <param name="rootComparer">The comparer used for the child expressions.</param>
 public class MemberBindingComparer(ExpressionComparer rootComparer) : IEqualityComparer<MemberBinding>
 {
     private readonly ElementInitComparer elementInitComparer = new(rootComparer);

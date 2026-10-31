@@ -3,6 +3,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.Builders._Factory;
 
+/// <summary>Base of the filter builder factories: walks a security path and creates the builder of each node.</summary>
 public abstract class FilterBuilderFactoryBase<TDomainObject, TBuilder>(IIdentityInfoSource identityInfoSource)
     where TBuilder : notnull
 {

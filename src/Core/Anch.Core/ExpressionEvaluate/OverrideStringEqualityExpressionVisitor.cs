@@ -3,6 +3,8 @@ using System.Reflection;
 
 namespace Anch.Core.ExpressionEvaluate;
 
+/// <summary>Rewrites string equality comparisons to use a given <see cref="StringComparison"/>.</summary>
+/// <param name="stringComparison">The comparison to use.</param>
 public class OverrideStringEqualityExpressionVisitor(StringComparison stringComparison) : ExpressionVisitor
 {
     private static readonly MethodInfo StringEqualityMethod = typeof(string).GetEqualityMethod()!;

@@ -4,6 +4,7 @@ using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.Sqlite;
 
+/// <summary>Creates SQLite connection strings for the test databases.</summary>
 public class SqliteTestConnectionStringFactory(TestDatabaseSettings databaseSettings) : ITestConnectionStringFactory
 {
     public TestConnectionString Create(string postfix)

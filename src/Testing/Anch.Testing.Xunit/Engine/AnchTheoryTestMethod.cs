@@ -5,6 +5,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>A theory method that knows the container pool of its test.</summary>
 public class AnchTheoryTestMethod(IXunitTestMethod baseMethod) : IXunitTestMethod, IXunitSerializable, IServiceProviderPoolContainer
 {
     private IReadOnlyCollection<IDataAttribute>? dataAttributes;

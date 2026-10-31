@@ -6,6 +6,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit;
 
+/// <summary>Supplies inline data to a theory run by the Anch test framework.</summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class AnchInlineDataAttribute(params object?[]? data) : Attribute, IDataAttribute
 {

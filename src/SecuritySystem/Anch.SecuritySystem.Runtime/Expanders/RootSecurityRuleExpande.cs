@@ -4,6 +4,7 @@ using static Anch.SecuritySystem.SecurityRule;
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>The main rule expander: applies the specialized expanders (modes, operations, role groups, factories, client rules, headers) until only concrete roles, conditions and providers remain.</summary>
 public class RootSecurityRuleExpander(
     ISecurityModeExpander securityModeExpander,
     ISecurityOperationExpander securityOperationExpander,

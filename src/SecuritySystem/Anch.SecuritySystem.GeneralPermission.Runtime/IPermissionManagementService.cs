@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Creates and changes the permission entities of a principal.</summary>
 public interface IPermissionManagementService<in TPrincipal, TPermission, TPermissionRestriction>
 {
     Task<ManagedPermission> ToManagedPermissionAsync(TPermission permission, CancellationToken ct);

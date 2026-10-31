@@ -8,8 +8,15 @@ using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData.Domain.QueryLanguage;
 
+/// <summary>
+/// A node of the untyped query language syntax tree. The tree has no .NET types, so it can be built from a query string, printed,
+/// serialized and later bound to a domain type; it can also be built from a LINQ expression with <see cref="Create{TDelegate}"/>.
+/// </summary>
 public abstract record Expression
 {
+    /// <summary>Converts a LINQ lambda into the untyped syntax tree. Supports properties, constants, binary operations, enum comparisons and the string and collection methods listed in <see cref="MethodExpressionType"/>.</summary>
+    /// <param name="standardExpression">The LINQ lambda.</param>
+    /// <typeparam name="TDelegate">The delegate type of the lambda.</typeparam>
     public static LambdaExpression Create<TDelegate>(SExpressions.Expression<TDelegate> standardExpression) =>
         (LambdaExpression)Create((SExpressions.Expression)standardExpression);
 

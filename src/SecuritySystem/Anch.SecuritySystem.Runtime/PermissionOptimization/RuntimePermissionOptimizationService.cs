@@ -1,5 +1,6 @@
 namespace Anch.SecuritySystem.PermissionOptimization;
 
+/// <summary>Merges and simplifies loaded permissions (for example, a permission that is covered by another one is dropped).</summary>
 public class RuntimePermissionOptimizationService : IRuntimePermissionOptimizationService
 {
     public IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<IReadOnlyDictionary<Type, Array>> permissions)

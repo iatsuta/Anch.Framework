@@ -5,6 +5,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for a path to a collection of security context objects.</summary>
 public class ManyContextFilterBuilder<TDomainObject, TSecurityContext, TSecurityContextIdent>(
     SecurityPath<TDomainObject>.ManySecurityPath<TSecurityContext> securityPath,
     SecurityContextRestriction<TSecurityContext>? securityContextRestriction,

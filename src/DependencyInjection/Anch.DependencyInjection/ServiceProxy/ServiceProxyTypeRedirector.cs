@@ -5,6 +5,7 @@ using Anch.Core;
 
 namespace Anch.DependencyInjection.ServiceProxy;
 
+/// <summary>Finds the redirect target of a type from the configured redirects; supports open generic types and binders.</summary>
 public class ServiceProxyTypeRedirector(IEnumerable<ServiceProxyTypeRedirectInfo> infoList, INativeActivator nativeActivator) : IServiceProxyTypeRedirector
 {
     private readonly ImmutableArray<ServiceProxyTypeRedirectInfo> cachedList = [.. infoList];

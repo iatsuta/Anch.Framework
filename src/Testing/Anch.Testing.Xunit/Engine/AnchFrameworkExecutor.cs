@@ -5,6 +5,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs the tests of an assembly with the Anch runners.</summary>
 public class AnchFrameworkExecutor(
     IXunitTestAssembly testAssembly,
     AnchTestAssemblyRunner commonXunitTestAssemblyRunner,

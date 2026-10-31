@@ -7,6 +7,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Reads the restrictions of virtual permissions from the properties of the entity.</summary>
 public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, TSecurityContextIdent>(
     IServiceProvider serviceProvider,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,

@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for computing a <see cref="MergeResult{TSource, TTarget}"/>.</summary>
 public static class MergeResultExtensions
 {
     public static MergeResult<TResult, TResult> Select<TSource, TResult>(

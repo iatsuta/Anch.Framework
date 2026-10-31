@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
+/// <summary>Checks that the restricted objects pass the filter that the role allows for the context type.</summary>
 public class AllowedFilterPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,

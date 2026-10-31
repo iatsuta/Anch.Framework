@@ -2,6 +2,7 @@
 
 namespace Anch.Testing.Database.DependencyInjection;
 
+/// <summary>Fluent configuration of database testing: the provider, the initializers and the parallelism.</summary>
 public interface IDatabaseTestingSetup
 {
     IDatabaseTestingSetup SetParallelization(bool allow);

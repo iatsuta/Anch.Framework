@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.ExternalSystem.Management;
 
+/// <summary>Manages principals through the permission system that owns them and notifies the listeners.</summary>
 public class RootPrincipalManagementService(
     [FromKeyedServices(IPrincipalManagementService.ElementKey)]
     IEnumerable<IPrincipalManagementService> principalManagementServices,

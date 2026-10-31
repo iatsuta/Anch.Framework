@@ -7,6 +7,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Creates and removes principal entities.</summary>
 public class PrincipalDomainService<TPrincipal>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfo<TPrincipal> identityInfo,
@@ -35,6 +36,7 @@ public class PrincipalDomainService<TPrincipal>(
         this.InnerService.RemoveAsync(principal, force, ct);
 }
 
+/// <summary>Creates and removes principal entities.</summary>
 public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     IQueryableSource queryableSource,

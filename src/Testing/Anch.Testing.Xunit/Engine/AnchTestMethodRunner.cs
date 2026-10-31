@@ -4,6 +4,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs a test method with a container from the pool.</summary>
 public class AnchTestMethodRunner(IServiceProviderPool? serviceProviderPool)
     : XunitTestMethodRunnerBase<XunitTestMethodRunnerContext, IXunitTestMethod, IXunitTestCase>
 {

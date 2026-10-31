@@ -7,6 +7,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 
 namespace Anch.SecuritySystem.Providers.DependencySecurity;
 
+/// <summary>Provides access to objects through the provider of another type that is linked by identifier.</summary>
 public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject, TIdent>(
     IQueryableSource queryableSource,
     ISecurityProvider<TBaseDomainObject> baseSecurityProvider,

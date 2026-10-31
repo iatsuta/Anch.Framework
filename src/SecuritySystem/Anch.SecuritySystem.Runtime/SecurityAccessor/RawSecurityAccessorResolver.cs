@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.SecurityAccessor;
 
+/// <summary>Turns accessor data into user names, expanding the unrestricted access into all users from the storage.</summary>
 public class RawSecurityAccessorResolver(ISecurityAccessorInfinityStorage infinityStorage) : ISecurityAccessorResolver
 {
     public virtual IEnumerable<string> Resolve(SecurityAccessorData securityAccessorData)

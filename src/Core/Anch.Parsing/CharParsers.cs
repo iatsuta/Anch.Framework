@@ -7,6 +7,7 @@ using Anch.Core;
 
 namespace Anch.Parsing;
 
+/// <summary>Parsers of characters, text, spaces and brackets.</summary>
 public class CharParsers(CultureInfo culture) : CharParsers<SharedMemoryString>(culture)
 {
     public override Parser<SharedMemoryString, char> AnyChar
@@ -92,6 +93,7 @@ public class CharParsers(CultureInfo culture) : CharParsers<SharedMemoryString>(
 }
 
 
+/// <summary>Parsers of characters, text, spaces and brackets.</summary>
 public abstract class CharParsers<TInput>(CultureInfo culture) : Parsers<TInput>
 {
     protected virtual FrozenSet<char> SpaceChars { get; } = [' '];

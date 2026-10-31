@@ -1,5 +1,6 @@
 ﻿namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>A service provider that returns its container to the pool when the test ends.</summary>
 public class HandledServiceProvider : IServiceProvider
 {
     private HandledServiceProvider()

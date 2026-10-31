@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get business role contexts.</summary>
 public class GetBusinessRoleContextsHandler(
     ISecurityContextInfoSource securityContextInfoSource,
     [WithoutRunAs] ISecuritySystem securitySystem)

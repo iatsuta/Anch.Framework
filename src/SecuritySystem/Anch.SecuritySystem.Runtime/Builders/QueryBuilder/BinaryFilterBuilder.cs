@@ -4,6 +4,7 @@ using Anch.HierarchicalExpand;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a security path that combines two others.</summary>
 public abstract class BinaryFilterBuilder<TDomainObject, TPermission, TSecurityPath>(
     SecurityFilterBuilderFactory<TDomainObject, TPermission> builderFactory,
     TSecurityPath securityPath,

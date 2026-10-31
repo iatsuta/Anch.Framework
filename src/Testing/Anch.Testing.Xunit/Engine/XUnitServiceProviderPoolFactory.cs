@@ -5,6 +5,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Creates the container pool of a test assembly from the test framework attribute.</summary>
 public class XUnitServiceProviderPoolFactory : IServiceProviderPoolFactory
 {
     public IServiceProviderPool Create(Assembly assembly, ITestEnvironment testEnvironment)

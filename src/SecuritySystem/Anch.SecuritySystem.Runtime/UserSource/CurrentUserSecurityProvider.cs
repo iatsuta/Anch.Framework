@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Grants access to the objects that belong to the current user, found through a relative path.</summary>
 public class CurrentUserSecurityProvider<TDomainObject>(
     IServiceProvider serviceProvider,
     IServiceProxyFactory serviceProxyFactory,
@@ -74,6 +75,7 @@ public class CurrentUserSecurityProvider<TDomainObject>(
     public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.GetAccessorDataAsync(domainObject, ct);
 }
 
+/// <summary>Grants access to the objects that belong to the current user, found through a relative path.</summary>
 public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     IRelativeDomainPathInfo<TDomainObject, TUser> relativeDomainPathInfo,

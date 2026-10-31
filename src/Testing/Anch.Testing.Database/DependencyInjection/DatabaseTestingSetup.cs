@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.DependencyInjection;
 
+/// <summary>Collects the settings of database testing and turns them into registrations.</summary>
 public class DatabaseTestingSetup : IDatabaseTestingSetup, IServiceInitializer
 {
     private bool allowParallelization = true;

@@ -8,6 +8,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Converts principal entities into managed principal headers.</summary>
 public class ManagedPrincipalHeaderConverter<TPrincipal>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfoSource identityInfoSource,
@@ -31,6 +32,7 @@ public class ManagedPrincipalHeaderConverter<TPrincipal>(
     public ManagedPrincipalHeader Convert(TPrincipal principal) => this.lazyInnerService.Value.Convert(principal);
 }
 
+/// <summary>Converts principal entities into managed principal headers.</summary>
 public class ManagedPrincipalHeaderConverter<TPrincipal, TPrincipalIdent>(
     PermissionBindingInfo bindingInfo,
     IIdentityInfo<TPrincipal, TPrincipalIdent> identityInfo,

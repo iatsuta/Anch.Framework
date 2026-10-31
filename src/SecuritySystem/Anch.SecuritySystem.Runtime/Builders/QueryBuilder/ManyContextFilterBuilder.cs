@@ -8,6 +8,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a path to a collection of security context objects.</summary>
 public class ManyContextFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>(
     IPermissionSystem<TPermission> permissionSystem,
     IHierarchicalObjectExpanderFactory hierarchicalObjectExpanderFactory,

@@ -3,6 +3,8 @@ using System.Linq.Expressions;
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Structural comparer of list initialization expression nodes; used by <see cref="ExpressionComparer"/>.</summary>
+/// <param name="rootComparer">The comparer used for the child expressions.</param>
 public class ListInitComparer(ExpressionComparer rootComparer) : ExpressionComparer<ListInitExpression>
 {
     private readonly ElementInitComparer elementInitComparer = new(rootComparer);

@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.Configurator.Models;
 
+/// <summary>A permission shown in the configurator: role, period, comment and restrictions.</summary>
 public record PermissionDto
 {
     public required string Id { get; init; }

@@ -10,6 +10,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Reads stored principals together with their permissions.</summary>
 public class GeneralPrincipalSourceService<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     IQueryableSource queryableSource,

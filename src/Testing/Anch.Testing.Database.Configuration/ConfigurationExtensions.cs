@@ -2,6 +2,7 @@
 
 namespace Anch.Testing.Database.Configuration;
 
+/// <summary>Reads test database settings from configuration.</summary>
 public static class ConfigurationExtensions
 {
     public static string GetRequiredConnectionString(this IConfiguration configuration, string name)

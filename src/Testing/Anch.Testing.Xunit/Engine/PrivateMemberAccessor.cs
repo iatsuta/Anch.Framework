@@ -4,6 +4,7 @@ using System.Reflection;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Reads non-public members of xunit objects.</summary>
 public static class PrivateMemberAccessor
 {
     public static Func<TObject, TField> GetInstanceField<TObject, TField>(string fieldName) => InstanceFieldHelper<TObject, TField>.Get(fieldName);

@@ -2,6 +2,7 @@
 
 namespace Anch.Testing.Database.Sqlite;
 
+/// <summary>Manages SQLite test databases as files: a copy of a database is a copy of its file.</summary>
 public class SqliteDatabaseManager(IDatabaseFilePathExtractor pathExtractor) : IDatabaseManager
 {
     public ValueTask CreateEmpty(TestConnectionStringRole connectionStringRole, CancellationToken ct)

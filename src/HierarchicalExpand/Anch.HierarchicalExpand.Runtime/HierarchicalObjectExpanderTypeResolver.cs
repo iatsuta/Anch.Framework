@@ -4,6 +4,10 @@ using Anch.IdentitySource;
 
 namespace Anch.HierarchicalExpand;
 
+/// <summary>Chooses the expander for a domain type: the ancestor link expander when links are registered, otherwise the pass-through expander.</summary>
+/// <param name="serviceProvider">The container.</param>
+/// <param name="identityInfoSource">Finds the identifier type of the domain type.</param>
+/// <param name="realTypeResolver">Maps runtime types to registered domain types.</param>
 public class HierarchicalObjectExpanderTypeResolver(
     IServiceProvider serviceProvider,
     IIdentityInfoSource identityInfoSource,
@@ -11,6 +15,7 @@ public class HierarchicalObjectExpanderTypeResolver(
 {
     private readonly ConcurrentDictionary<Type, Type> cache = [];
 
+    /// <inheritdoc/>
     public Type Resolve(Type domainType)
     {
         return this.cache.GetOrAdd(domainType, _ =>

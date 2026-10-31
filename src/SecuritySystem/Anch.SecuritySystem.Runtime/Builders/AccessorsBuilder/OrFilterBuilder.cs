@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for the alternative of two security paths.</summary>
 public class OrFilterBuilder<TDomainObject, TPermission>(
     AccessorsFilterBuilderFactory<TDomainObject, TPermission> builderFactory,
     SecurityPath<TDomainObject>.OrSecurityPath securityPath,

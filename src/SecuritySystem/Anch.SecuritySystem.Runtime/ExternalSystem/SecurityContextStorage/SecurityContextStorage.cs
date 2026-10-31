@@ -5,6 +5,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>Finds the storage of a security context type.</summary>
 public class SecurityContextStorage : ISecurityContextStorage
 {
     private readonly IServiceProvider serviceProvider;

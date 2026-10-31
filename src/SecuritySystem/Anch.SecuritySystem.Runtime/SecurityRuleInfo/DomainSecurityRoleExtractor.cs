@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Expands a rule and extracts the roles it consists of.</summary>
 public class DomainSecurityRoleExtractor(ISecurityRuleExpander expander, IExpandedRoleGroupSecurityRuleSetOptimizer securityRuleSetOptimizer)
     : IDomainSecurityRoleExtractor
 {

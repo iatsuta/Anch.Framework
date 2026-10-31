@@ -2,6 +2,7 @@
 
 namespace Anch.Testing;
 
+/// <summary>Extensions for <see cref="IServiceProvider"/> in tests.</summary>
 public static class ServiceProviderExtensions
 {
     public static async ValueTask RunEnvironmentHooks(this IServiceProvider serviceProvider, EnvironmentHookType hookType, CancellationToken ct)

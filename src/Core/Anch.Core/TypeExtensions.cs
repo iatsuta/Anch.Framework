@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="Type"/>: generic arguments, collection element types and property lookup.</summary>
 public static class TypeExtensions
 {
     private static readonly HashSet<Type> CollectionTypes = new[]

@@ -2,6 +2,7 @@
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Extensions for assemblies in the test engine.</summary>
 public static class AssemblyExtensions
 {
     public static (ITestEnvironment, IServiceProviderPoolFactory)? TryCreateTestEnvironment(this Assembly assembly)

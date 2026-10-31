@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.Parsing;
 
+/// <summary>The base set of parser combinators: choice, repetition, optional values, separators.</summary>
 public abstract class Parsers<TInput>
 {
     protected Parser<TInput, TResult> OfTable<T1, T2, T3, T4, TSeparator, TResult>(

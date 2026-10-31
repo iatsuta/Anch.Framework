@@ -5,6 +5,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Reads and writes the identifier of an entity as a security identifier.</summary>
 public class SecurityIdentityManager<TDomainObject>(IServiceProxyFactory serviceProxyFactory, IIdentityInfoSource identityInfoSource)
     : ISecurityIdentityManager<TDomainObject>
 {
@@ -27,6 +28,7 @@ public class SecurityIdentityManager<TDomainObject>(IServiceProxyFactory service
         this.lazyInnerService.Value.SetIdentity(domainObject, securityIdentity);
 }
 
+/// <summary>Reads and writes the identifier of an entity as a security identifier.</summary>
 public class SecurityIdentityManager<TDomainObject, TDomainObjectIdent>(
     ISecurityIdentityConverter<TDomainObjectIdent> converter,
     IIdentityInfo<TDomainObject, TDomainObjectIdent> identityInfo)

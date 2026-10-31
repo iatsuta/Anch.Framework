@@ -1,5 +1,6 @@
 ﻿namespace Anch.Testing.Database.ConnectionStringManagement;
 
+/// <summary>Creates the suffixes that make pooled database names unique.</summary>
 public class TestConnectionStringPostfixFactory : ITestConnectionStringPostfixFactory
 {
     public string Create(TestConnectionStringRole testConnectionStringRole)

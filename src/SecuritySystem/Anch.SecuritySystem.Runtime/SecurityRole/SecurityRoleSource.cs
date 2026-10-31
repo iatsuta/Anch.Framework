@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Services;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 
+/// <summary>The registry of roles.</summary>
 public class SecurityRoleSource : ISecurityRoleSource
 {
     private readonly FrozenDictionary<TypedSecurityIdentity, FullSecurityRole> identityDict;

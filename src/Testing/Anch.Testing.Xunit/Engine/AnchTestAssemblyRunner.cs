@@ -4,6 +4,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs the test collections of an assembly.</summary>
 public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectionRunner) : XunitTestAssemblyRunnerBase<AnchTestAssemblyRunnerContext, IXunitTestAssembly, IXunitTestCollection, IXunitTestCase>
 {
     public async ValueTask<RunSummary> Run(
