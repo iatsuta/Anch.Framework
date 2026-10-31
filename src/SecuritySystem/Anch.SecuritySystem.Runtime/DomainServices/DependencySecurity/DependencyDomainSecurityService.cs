@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Providers.DependencySecurity;
 
 namespace Anch.SecuritySystem.DomainServices.DependencySecurity;
 
+/// <summary>Protects a type through a related base type: access to an object follows access to the related object.</summary>
 public class DependencyDomainSecurityService<TDomainObject, TBaseDomainObject>(
     ISecurityRuleExpander securityRuleExpander,
     IDomainSecurityService<TBaseDomainObject> baseDomainSecurityService,

@@ -1,6 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="Maybe{T}"/>: mapping, combining and extracting values.</summary>
 public static class MaybeExtensions
 {
     extension<TSource>(Maybe<TSource> maybeValue)

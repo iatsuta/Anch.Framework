@@ -2,9 +2,12 @@
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Base of the structural expression comparers: two expressions are equal when their node type, type and content are equal.</summary>
+/// <typeparam name="TExpression">The compared expression node type.</typeparam>
 public abstract class ExpressionComparer<TExpression> : IEqualityComparer<TExpression>
     where TExpression : Expression
 {
+    /// <inheritdoc/>
     public bool Equals(TExpression? x, TExpression? y)
     {
         if (ReferenceEquals(x, y)) return true;
@@ -13,14 +16,22 @@ public abstract class ExpressionComparer<TExpression> : IEqualityComparer<TExpre
         return x.NodeType == y.NodeType && x.Type == y.Type && x.GetType() == y.GetType() && this.PureEquals(x, y);
     }
 
+    /// <summary>Compares the content of two nodes of the same kind.</summary>
+    /// <param name="x">The first node.</param>
+    /// <param name="y">The second node.</param>
     protected abstract bool PureEquals(TExpression x, TExpression y);
 
+    /// <inheritdoc/>
     public virtual int GetHashCode(TExpression obj)
     {
         return obj.Type.GetHashCode() ^ obj.NodeType.GetHashCode();
     }
 }
 
+/// <summary>
+/// Compares expression trees by structure instead of by reference, so two lambdas that were written separately but look the same are equal.
+/// Used as the equality of <c>PropertyAccessors</c>, <c>LambdaExpressionPath</c> and the OData and security rule records.
+/// </summary>
 public class ExpressionComparer : ExpressionComparer<Expression>
 {
     protected ExpressionComparer()
@@ -39,31 +50,44 @@ public class ExpressionComparer : ExpressionComparer<Expression>
         this.ListInitComparer = new ListInitComparer(this);
     }
 
+    /// <summary>Comparer of lambda nodes.</summary>
     public virtual IEqualityComparer<LambdaExpression> LambdaComparer { get; }
 
+    /// <summary>Comparer of parameter nodes.</summary>
     public virtual IEqualityComparer<ParameterExpression> ParameterComparer { get; }
 
+    /// <summary>Comparer of method call nodes.</summary>
     public virtual IEqualityComparer<MethodCallExpression> MethodCallComparer { get; }
 
+    /// <summary>Comparer of member access nodes.</summary>
     public virtual IEqualityComparer<MemberExpression> MemberComparer { get; }
 
+    /// <summary>Comparer of binary nodes.</summary>
     public virtual IEqualityComparer<BinaryExpression> BinaryComparer { get; }
 
+    /// <summary>Comparer of constant nodes.</summary>
     public virtual IEqualityComparer<ConstantExpression> ConstantComparer { get; }
 
+    /// <summary>Comparer of unary nodes.</summary>
     public virtual IEqualityComparer<UnaryExpression> UnaryComparer { get; }
 
+    /// <summary>Comparer of array creation nodes.</summary>
     public virtual IEqualityComparer<NewArrayExpression> NewArrayComparer { get; }
 
+    /// <summary>Comparer of object creation nodes.</summary>
     public virtual IEqualityComparer<NewExpression> NewComparer { get; }
 
+    /// <summary>Comparer of member initialization nodes.</summary>
     public virtual IEqualityComparer<MemberInitExpression> MemberInitComparer { get; }
 
+    /// <summary>Comparer of conditional nodes.</summary>
     public virtual IEqualityComparer<ConditionalExpression> ConditionalComparer { get; }
 
+    /// <summary>Comparer of list initialization nodes.</summary>
     public virtual IEqualityComparer<ListInitExpression> ListInitComparer { get; }
 
 
+    /// <inheritdoc/>
     protected override bool PureEquals(Expression x, Expression y)
     {
         return (x, y) switch
@@ -86,8 +110,10 @@ public class ExpressionComparer : ExpressionComparer<Expression>
     }
 
 
+    /// <summary>Compares everything, including constants by value.</summary>
     public static ExpressionComparer Default { get; } = new();
 
+    /// <summary>Does not allow constants: use it for trees whose constants were replaced by parameters.</summary>
     public static ExpressionComparer WithoutConst { get; } = new WithoutConstExpressionComparer();
 
     private class WithoutConstExpressionComparer : ExpressionComparer

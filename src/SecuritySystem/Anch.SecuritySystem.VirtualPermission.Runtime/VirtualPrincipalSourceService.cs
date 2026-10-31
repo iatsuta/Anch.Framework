@@ -14,6 +14,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Reads the principals that have virtual permissions, together with those permissions.</summary>
 public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
     IServiceProvider serviceProvider,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,

@@ -8,6 +8,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Reads the restrictions of permissions: the security context objects a permission is limited to.</summary>
 public class GeneralPermissionRestrictionSource<TPermission, TSecurityContext, TSecurityContextIdent>(
     IServiceProxyFactory serviceProxyFactory,
     IGeneralPermissionRestrictionBindingInfoSource restrictionBindingInfoSource,
@@ -39,6 +40,7 @@ public class GeneralPermissionRestrictionSource<TPermission, TSecurityContext, T
     public Expression<Func<TPermission, IEnumerable<TSecurityContextIdent>>> GetIdentsExpr() => this.lazyInnerService.Value.GetIdentsExpr();
 }
 
+/// <summary>Reads the restrictions of permissions: the security context objects a permission is limited to.</summary>
 public class GeneralPermissionRestrictionSource<TPermission, TPermissionRestriction, TSecurityContextType,
     TSecurityContextObjectIdent, TSecurityContext, TSecurityContextIdent>(
     IQueryableSource queryableSource,

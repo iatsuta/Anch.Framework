@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get run as.</summary>
 public class GetRunAsHandler(IRunAsManager? runAsManager = null) : BaseReadHandler, IGetRunAsHandler
 {
     protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct) =>

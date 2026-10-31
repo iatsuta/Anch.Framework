@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>The base of the security context storages: loading by identifier, existence checks and caching.</summary>
 public abstract class TypedSecurityContextStorageBase<TSecurityContext, TSecurityContextIdent>(
     IQueryableSource queryableSource,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,

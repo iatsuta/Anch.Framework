@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Builds the filter that selects the permissions that have the roles of a rule.</summary>
 public class GeneralPermissionSecurityRoleFilterFactory<TPermission>(
     IPermissionSecurityRoleByIdentsFilterFactory<TPermission> permissionSecurityRoleByIdentsFilterFactory,
     ISecurityRoleIdentsResolver securityRolesIdentsResolver) : IPermissionSecurityRoleFilterFactory<TPermission>

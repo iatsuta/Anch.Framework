@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for delegates.</summary>
 public static class DelegateExtensions
 {
     public static System.Reflection.MethodInfo CreateGenericMethod(this Delegate source, params Type[] types)

@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Extensions for concurrent dictionaries.</summary>
 public static class ConcurrentDictionaryExtensions
 {
     public static TNestedValue GetOrAddAs<TKey, TValue, TNestedValue>(

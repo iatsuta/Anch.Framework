@@ -1,6 +1,6 @@
 ﻿namespace Anch.SecuritySystem;
 
 /// <summary>
-/// Операция доступа
+/// Access operation.
 /// </summary>
 public record SecurityOperation(string Name);

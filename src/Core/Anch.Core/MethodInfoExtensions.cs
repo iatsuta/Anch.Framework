@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="System.Reflection.MethodInfo"/>.</summary>
 public static class MethodInfoExtensions
 {
     extension(MethodInfo methodInfo)

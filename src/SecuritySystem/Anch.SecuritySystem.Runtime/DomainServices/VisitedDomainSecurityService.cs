@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.DomainServices;
 
+/// <summary>A domain security service that expands the rule before it asks the provider factory.</summary>
 public class VisitedDomainSecurityService<TDomainObject>(
     ISecurityRuleExpander securityRuleExpander,
     IDomainSecurityProviderFactory<TDomainObject> domainSecurityProviderFactory) : DomainSecurityServiceBase<TDomainObject>

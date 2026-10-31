@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: create principal.</summary>
 public class CreatePrincipalHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     IPrincipalManagementService principalManagementService)

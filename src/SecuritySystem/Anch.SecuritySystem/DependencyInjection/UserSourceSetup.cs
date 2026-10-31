@@ -5,6 +5,7 @@ using Anch.VisualIdentitySource.DependencyInjection;
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>Collects the settings of the user source.</summary>
 public class UserSourceSetup<TUser> : IUserSourceSetup<TUser>
 {
     public Action<IVisualIdentitySourceSetup>? VisualIdentitySetupAction { get; private set; }

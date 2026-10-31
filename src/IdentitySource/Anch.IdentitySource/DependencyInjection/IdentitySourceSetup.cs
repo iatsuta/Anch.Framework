@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.IdentitySource.DependencyInjection;
 
+/// <summary>Collects the settings of the identity source and turns them into registrations.</summary>
 public class IdentitySourceSetup : IIdentitySourceSetup, IServiceInitializer
 {
     private IdentityPropertySourceSettings? customSettings;

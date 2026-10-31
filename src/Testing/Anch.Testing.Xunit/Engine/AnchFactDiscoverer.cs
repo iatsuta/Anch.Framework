@@ -3,6 +3,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Discovers <c>[AnchFact]</c> test methods.</summary>
 public class AnchFactDiscoverer : FactDiscoverer
 {
     public override ValueTask<IReadOnlyCollection<IXunitTestCase>> Discover(

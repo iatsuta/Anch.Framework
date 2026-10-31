@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.ExternalSystem.Management;
 
+/// <summary>Forwards principal and permission change notifications to all registered listeners.</summary>
 public class RootPrincipalManagementListener(IServiceProxyFactory serviceProxyFactory, IEnumerable<IPrincipalManagementListener> listeners)
     : IRawPrincipalManagementListener
 {

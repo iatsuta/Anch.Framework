@@ -1,5 +1,6 @@
 ﻿namespace Anch.Parsing;
 
+/// <summary>Extensions for running a parser on an input.</summary>
 public static class ParserExtensions
 {
     extension<TInput, TValue>(Parser<TInput, TValue> parser)

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.GenericQueryable.DependencyInjection;
 
+/// <summary>Collects the settings of GenericQueryable and turns them into registrations: the executor, fetch rule expanders, the fetch service and the target method extractor.</summary>
 public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
 {
     private Type fetchServiceType = typeof(IgnoreFetchService);
@@ -19,6 +20,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
 
     private readonly List<IGenericQueryableExtension> extensions = [];
 
+    /// <inheritdoc/>
     public virtual void Initialize(IServiceCollection services)
     {
         if (!services.AlreadyInitialized<IGenericQueryableExecutor>())
@@ -67,6 +69,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         }
     }
 
+    /// <inheritdoc/>
     public IGenericQueryableSetup SetFetchService<TFetchService>()
         where TFetchService : IFetchService
     {
@@ -75,6 +78,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         return this;
     }
 
+    /// <inheritdoc/>
     public IGenericQueryableSetup AddFetchRule<TSource>(FetchRuleHeader<TSource> header, PropertyFetchRule<TSource> implementation)
     {
         this.fetchRuleHeaderInfoList.Add(new FetchRuleHeaderInfo<TSource>(header, implementation));
@@ -82,6 +86,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         return this;
     }
 
+    /// <inheritdoc/>
     public IGenericQueryableSetup SetTargetMethodExtractor<TTargetMethodExtractor>()
         where TTargetMethodExtractor : ITargetMethodExtractor
     {
@@ -90,6 +95,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         return this;
     }
 
+    /// <inheritdoc/>
     public IGenericQueryableSetup AddFetchRuleExpander<TFetchRuleExpander>()
         where TFetchRuleExpander : IFetchRuleExpander
     {
@@ -98,6 +104,7 @@ public class GenericQueryableSetup : IGenericQueryableSetup, IServiceInitializer
         return this;
     }
 
+    /// <inheritdoc/>
     public IGenericQueryableSetup AddExtension(IGenericQueryableExtension extension)
     {
         this.extensions.Add(extension);

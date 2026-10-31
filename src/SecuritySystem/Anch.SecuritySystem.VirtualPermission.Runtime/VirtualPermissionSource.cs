@@ -13,6 +13,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Reads the virtual permissions that satisfy a rule.</summary>
 public class VirtualPermissionSource<TPrincipal, TPermission>(
     IServiceProvider serviceProvider,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,

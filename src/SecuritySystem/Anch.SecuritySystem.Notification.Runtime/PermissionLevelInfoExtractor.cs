@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Extracts the hierarchy level of the restrictions of a permission for one security context type.</summary>
 public class PermissionLevelInfoExtractor<TPermission, TSecurityContext>(
     IPermissionTypedRestrictionBindingInfo<TPermission> permissionRestrictionBinding,
     IDirectLevelExtractor<TSecurityContext> directLevelExtractor) : IPermissionLevelInfoExtractor<TPermission>

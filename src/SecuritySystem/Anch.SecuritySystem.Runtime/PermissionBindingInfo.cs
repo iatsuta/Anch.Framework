@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem;
 
+/// <summary>Describes how a permission entity is bound to its principal, role and restrictions.</summary>
 public abstract record PermissionBindingInfo
 {
     public bool IsReadonly { get; init; }
@@ -13,6 +14,7 @@ public abstract record PermissionBindingInfo
     public abstract Type PermissionType { get; }
 }
 
+/// <summary>Describes how a permission entity is bound to its principal, role and restrictions.</summary>
 public abstract record PermissionBindingInfo<TPermission> : PermissionBindingInfo
 {
     public sealed override Type PermissionType { get; } = typeof(TPermission);
@@ -50,6 +52,7 @@ public abstract record PermissionBindingInfo<TPermission> : PermissionBindingInf
         this.PermissionComment is null ? "" : this.PermissionComment.Getter(permission);
 }
 
+/// <summary>Describes how a permission entity is bound to its principal, role and restrictions.</summary>
 public record PermissionBindingInfo<TPermission, TPrincipal> : PermissionBindingInfo<TPermission>
 {
     public sealed override Type PrincipalType { get; } = typeof(TPrincipal);

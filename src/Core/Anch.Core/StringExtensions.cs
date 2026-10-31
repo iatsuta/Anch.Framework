@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for strings.</summary>
 public static class StringExtensions
 {
     extension(string input)

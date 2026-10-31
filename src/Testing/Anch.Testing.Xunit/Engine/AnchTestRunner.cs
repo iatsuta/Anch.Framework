@@ -3,6 +3,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs a single test with a container from the pool.</summary>
 public class AnchTestRunner(IServiceProviderPool? serviceProviderPool) : XunitTestRunnerBase<AnchTestRunnerContext, IXunitTest>
 {
     public async ValueTask<RunSummary> Run(

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Sqlite;
 
+/// <summary>Registers the SQLite implementation of database testing.</summary>
 public class SqliteDatabaseTestingProvider : IDatabaseTestingProvider
 {
     public void AddServices(IServiceCollection services)

@@ -3,6 +3,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs a test collection.</summary>
 public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner) : XunitTestCollectionRunner
 {
     protected override async ValueTask<RunSummary> RunTestClass(XunitTestCollectionRunnerContext ctxt, IXunitTestClass? testClass,

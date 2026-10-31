@@ -1,53 +1,53 @@
 # GenericQueryable
 
-Папка `src/GenericQueryable/`. Есть собственный человеческий README: [`src/GenericQueryable/readme.md`](../../src/GenericQueryable/readme.md) (ссылка на `GenericQueryableExtensions.cs` в нём устарела; файл лежит в `Anch.GenericQueryable.Abstractions/`).
+Folder `src/GenericQueryable/`. It has its own README: [`src/GenericQueryable/readme.md`](../../src/GenericQueryable/readme.md) (the link to `GenericQueryableExtensions.cs` in it is outdated; the file is in `Anch.GenericQueryable.Abstractions/`).
 
-## Зачем
+## Why
 
-Async LINQ (`ToListAsync`, `FirstOrDefaultAsync`, `Include`…) в EF/NHibernate это статические методы, привязанные к ORM. Прикладной слой не должен на них ссылаться. GenericQueryable даёт ORM-независимые методы `GenericToListAsync()`, `GenericSingleAsync()` … и `WithFetch(...)` (eager loading), а исполнение делегирует провайдеру, «зашитому» в `IQueryable`.
+Async LINQ (`ToListAsync`, `FirstOrDefaultAsync`, `Include`…) in EF/NHibernate consists of static methods tied to the ORM. The application layer should not reference them. GenericQueryable provides ORM-independent methods `GenericToListAsync()`, `GenericSingleAsync()` … and `WithFetch(...)` (eager loading), and delegates execution to the provider "baked into" the `IQueryable`.
 
-## Проекты
+## Projects
 
-| Проект | Содержимое |
+| Project | Contents |
 |---|---|
-| `Anch.GenericQueryable.Abstractions` | Публичное API и контракты (см. ниже) |
-| `Anch.GenericQueryable.Runtime` | Реализации fetch-расширения: `RootFetchService`, `CompositeFetchRuleExpander`, `FetchRuleHeaderExpander`, `UntypedFetchExpander`, `RootFetchRuleExpander` |
+| `Anch.GenericQueryable.Abstractions` | Public API and contracts (see below) |
+| `Anch.GenericQueryable.Runtime` | Fetch extension implementations: `RootFetchService`, `CompositeFetchRuleExpander`, `FetchRuleHeaderExpander`, `UntypedFetchExpander`, `RootFetchRuleExpander` |
 | `Anch.GenericQueryable` | DI: `AddGenericQueryable(setup)`, `IGenericQueryableSetup`, `IGenericQueryableExtension` |
-| `Anch.GenericQueryable.EntityFramework` | Адаптер EF Core: `UseGenericQueryable()` для `DbContextOptionsBuilder`, `EfFetchService`, `VisitedEfQueryProvider`, `EfTargetMethodExtractor` |
-| `Anch.GenericQueryable.NHibernate` | Адаптер NHibernate: `AddNHibernateGenericQueryable()`, `Configuration.SetGenericQueryProvider()`, `NHibFetchService`, `VisitedNHibQueryProvider` |
+| `Anch.GenericQueryable.EntityFramework` | EF Core adapter: `UseGenericQueryable()` for `DbContextOptionsBuilder`, `EfFetchService`, `VisitedEfQueryProvider`, `EfTargetMethodExtractor` |
+| `Anch.GenericQueryable.NHibernate` | NHibernate adapter: `AddNHibernateGenericQueryable()`, `Configuration.SetGenericQueryProvider()`, `NHibFetchService`, `VisitedNHibQueryProvider` |
 | `Anch.GenericQueryable.UnitTests` | `MainTests`, `FetchRuleExpanderTests` |
-| `Anch.GenericQueryable.IntegrationTests` (+ `.EntityFramework`, `.NHibernate`) | Общие тесты + два окружения (SQLite) |
+| `Anch.GenericQueryable.IntegrationTests` (+ `.EntityFramework`, `.NHibernate`) | Shared tests + two environments (SQLite) |
 
-## Как это работает
+## How it works
 
-1. **Расширения** (`GenericQueryableExtensions.cs`): `source.GenericToListAsync(ct)`, `GenericSingleAsync`, `GenericAnyAsync`, `GenericContainsAsync`, `GenericAllAsync`, `GenericCountAsync`, `GenericFirst(OrDefault)Async`, `GenericSingle(OrDefault)Async`, `GenericToDictionaryAsync`, `GenericToHashSetAsync`, `GenericSumAsync`, `GenericAsAsyncEnumerable` и т.д. Каждое вызывает `source.Execute(() => <тот же метод>)`.
-2. `Execute` берёт `IGenericQueryableExecutor` из `IGenericQueryProvider` (т.е. `IQueryable.Provider` должен реализовать `IGenericQueryProvider`), и передаёт выражение вызова.
-3. `GenericQueryableExecutor` перебирает `IMethodRedirector`'ы (`QueryableMethodRedirector`, `AsyncEnumerableMethodRedirector`, `MethodRedirector`) и подменяет вызов `GenericXxxAsync` на реальный ORM-метод (`ITargetMethodExtractor` знает соответствия: `EfTargetMethodExtractor`, `NHibTargetMethodExtractor`). Результат компилируется и кэшируется (`LambdaCompileCache`).
-4. Для **обычных** `IQueryable` (LINQ to Objects, в тестах) используется `GenericQueryableExecutor.Sync`: методы сводятся к синхронным/`AsyncEnumerable`-аналогам, а `WithFetch` игнорируется (`IgnoreFetchService`).
-5. ORM-адаптеры подменяют `IQueryProvider` у запросов своим «visited»-провайдером (`VisitedEfQueryProvider`, `VisitedNHibQueryProvider`), через который проходит `ExpressionVisitor` (точка расширения: `SetVisitor<T>()`, на ней строится, например, `LinkIdVisitor` в интеграционных тестах).
+1. **Extensions** (`GenericQueryableExtensions.cs`): `source.GenericToListAsync(ct)`, `GenericSingleAsync`, `GenericAnyAsync`, `GenericContainsAsync`, `GenericAllAsync`, `GenericCountAsync`, `GenericFirst(OrDefault)Async`, `GenericSingle(OrDefault)Async`, `GenericToDictionaryAsync`, `GenericToHashSetAsync`, `GenericSumAsync`, `GenericAsAsyncEnumerable`, etc. Each calls `source.Execute(() => <the same method>)`.
+2. `Execute` takes an `IGenericQueryableExecutor` from `IGenericQueryProvider` (i.e. `IQueryable.Provider` must implement `IGenericQueryProvider`) and passes it the call expression.
+3. `GenericQueryableExecutor` goes through the `IMethodRedirector`s (`QueryableMethodRedirector`, `AsyncEnumerableMethodRedirector`, `MethodRedirector`) and replaces the `GenericXxxAsync` call with the real ORM method (`ITargetMethodExtractor` knows the mappings: `EfTargetMethodExtractor`, `NHibTargetMethodExtractor`). The result is compiled and cached (`LambdaCompileCache`).
+4. For **plain** `IQueryable` (LINQ to Objects, in tests) `GenericQueryableExecutor.Sync` is used: the methods are reduced to synchronous/`AsyncEnumerable` analogues, and `WithFetch` is ignored (`IgnoreFetchService`).
+5. ORM adapters replace the `IQueryProvider` of queries with their own "visited" provider (`VisitedEfQueryProvider`, `VisitedNHibQueryProvider`), through which an `ExpressionVisitor` passes (extension point: `SetVisitor<T>()`, on which, for example, `LinkIdVisitor` in the integration tests is built).
 
-## Fetch-правила (`Abstractions/Fetching/`)
+## Fetch rules (`Abstractions/Fetching/`)
 
-`WithFetch` описывает, какие связи подгрузить:
+`WithFetch` describes which relations to load:
 
 ```csharp
-query.WithFetch(r => r.Fetch(x => x.Orders).ThenFetch(o => o.Items));  // типизированно
-query.WithFetch("Orders.Items");                                      // строкой (UntypedFetchRule)
-query.WithFetch(AppFetchRule.TestFetchRule);                          // именованное правило (FetchRuleHeader)
+query.WithFetch(r => r.Fetch(x => x.Orders).ThenFetch(o => o.Items));  // typed
+query.WithFetch("Orders.Items");                                      // by string (UntypedFetchRule)
+query.WithFetch(AppFetchRule.TestFetchRule);                          // named rule (FetchRuleHeader)
 ```
 
-- `FetchRule<TSource>`: корень иерархии (record). Подтипы: `PropertyFetchRule<TSource[,TProp]>` (цепочки `LambdaExpressionPath`), `UntypedFetchRule`, `FetchRuleHeader<TSource,TValue>` (именованный «заголовок»), `CompositeFetchRule`.
-- `IFetchRuleExpander.TryExpand(rule)`: превращает «заголовок»/строку/композит в `PropertyFetchRule`. Свои раскрыватели добавляются: `AddFetchRuleExpander<T>()`; готовое соответствие «заголовок → путь»: `AddFetchRule(header, implementation)`.
-- `IFetchService.ApplyFetch(query, rule)`: применяет ORM-специфичный `Include`/`Fetch` (`EfFetchService`, `NHibFetchService`).
+- `FetchRule<TSource>`: the root of the hierarchy (record). Subtypes: `PropertyFetchRule<TSource[,TProp]>` (`LambdaExpressionPath` chains), `UntypedFetchRule`, `FetchRuleHeader<TSource,TValue>` (a named "header"), `CompositeFetchRule`.
+- `IFetchRuleExpander.TryExpand(rule)`: turns a "header"/string/composite into a `PropertyFetchRule`. Custom expanders are added with `AddFetchRuleExpander<T>()`; a ready "header → path" mapping: `AddFetchRule(header, implementation)`.
+- `IFetchService.ApplyFetch(query, rule)`: applies the ORM-specific `Include`/`Fetch` (`EfFetchService`, `NHibFetchService`).
 
-## Подключение
+## Setup
 
 EF Core:
 ```csharp
 services.AddDbContext<MyDb>(o => o.UseGenericQueryable());
-// с настройкой fetch-правил и т.п. через свой setup-тип (IEfGenericQueryableExtensionSetup.SetSetupType<T>()):
+// with fetch rule configuration etc. through your own setup type (IEfGenericQueryableExtensionSetup.SetSetupType<T>()):
 services.AddDbContext<MyDb>(o => o.UseGenericQueryable(s => s.SetSetupType<EfGenericQueryableExtensionSetup>()));
-// образец: Anch.GenericQueryable.IntegrationTests.EntityFramework/Environment/TestDbContext.cs
+// sample: Anch.GenericQueryable.IntegrationTests.EntityFramework/Environment/TestDbContext.cs
 ```
 NHibernate:
 ```csharp
@@ -55,8 +55,8 @@ cfg.SetGenericQueryProvider();                                           // Conf
 services.AddNHibernateGenericQueryable(b => b.AddFetchRuleExpander<AppFetchRuleExpander>());
 ```
 
-## Где что менять
+## What to change where
 
-- Новый async-метод (`GenericXxxAsync`): `Abstractions/GenericQueryableExtensions.cs` + проверить, что `ITargetMethodExtractor`'ы (`Services/*TargetMethodExtractor.cs`, `EfTargetMethodExtractor`, `NHibTargetMethodExtractor`) умеют найти соответствие.
-- Новое fetch-правило: `Abstractions/Fetching/*` (модель) + `Runtime/Fetching/*` (раскрытие).
-- Поддержка новой ORM: по образцу `Anch.GenericQueryable.NHibernate` (query provider, fetch service, target method extractor, DI-расширение).
+- A new async method (`GenericXxxAsync`): `Abstractions/GenericQueryableExtensions.cs` + make sure the `ITargetMethodExtractor`s (`Services/*TargetMethodExtractor.cs`, `EfTargetMethodExtractor`, `NHibTargetMethodExtractor`) can find the mapping.
+- A new fetch rule: `Abstractions/Fetching/*` (model) + `Runtime/Fetching/*` (expansion).
+- Support for a new ORM: follow `Anch.GenericQueryable.NHibernate` (query provider, fetch service, target method extractor, DI extension).

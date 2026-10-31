@@ -15,6 +15,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit;
 
+/// <summary>Supplies data from a member to a theory run by the Anch test framework.</summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProviderPoolContainer
 {

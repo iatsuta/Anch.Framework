@@ -2,6 +2,7 @@
 
 namespace Anch.Core.Visitor;
 
+/// <summary>Replaces closure field accesses with their current values as constants, so the tree no longer depends on captured variables.</summary>
 public class ExpandConstVisitor : ExpressionVisitor
 {
     public override Expression? Visit(Expression? baseNode)

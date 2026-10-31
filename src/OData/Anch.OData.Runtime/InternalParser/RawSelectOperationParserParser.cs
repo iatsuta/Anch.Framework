@@ -7,6 +7,9 @@ using Anch.Parsing;
 
 namespace Anch.OData.InternalParser;
 
+/// <summary>The grammar of the query string: parses <c>$filter</c>, <c>$orderby</c>, <c>$top</c> and <c>$skip</c> into an untyped <see cref="SelectOperation"/>.</summary>
+/// <param name="culture">The culture used to parse numbers and dates.</param>
+/// <param name="rootParameter">The lambda parameter that property names refer to.</param>
 public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpression rootParameter) : CharParsers(culture)
 {
     private readonly LambdaExpressionInternalParser rootLambdaExpressionParser = new(culture, rootParameter, [rootParameter]);

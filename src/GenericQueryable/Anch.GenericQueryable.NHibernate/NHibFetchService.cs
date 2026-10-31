@@ -8,8 +8,11 @@ using NHibernate.Linq;
 
 namespace Anch.GenericQueryable.NHibernate;
 
+/// <summary>Applies fetch rules with <c>Fetch</c>, <c>FetchMany</c>, <c>ThenFetch</c> and <c>ThenFetchMany</c>.</summary>
+/// <param name="fetchRuleExpander">Expands rules into property paths.</param>
 public class NHibFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchService(fetchRuleExpander)
 {
+    /// <inheritdoc/>
     protected override IEnumerable<MethodInfo> GetFetchMethods<TSource>(LambdaExpressionPath fetchPath) =>
         fetchPath.Properties.Select((prop, index) => GetFetchMethod<TSource>(prop, index == 0));
 
@@ -52,6 +55,7 @@ public class NHibFetchService(IFetchRuleExpander fetchRuleExpander) : RootFetchS
         }
     }
 
+    /// <inheritdoc/>
     protected override LambdaExpression GetFetchProperty(LambdaExpression prop)
     {
         var nextPropertyType = prop.Body.Type;

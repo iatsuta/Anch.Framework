@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Core;
 
+/// <summary>LINQ-style extensions for expression trees, such as combining conditions and selecting through a lambda.</summary>
 public static class LinqExpressionExtensions
 {
     public static Expression<Func<TSourceArg, TSelectorResult>> Select<TSourceArg, TSourceResult, TSelectorResult>(

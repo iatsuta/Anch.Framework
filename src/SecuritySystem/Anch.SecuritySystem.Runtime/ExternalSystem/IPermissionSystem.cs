@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.ExternalSystem;
 
+/// <summary>A source of permissions, such as GeneralPermission or VirtualPermission.</summary>
 public interface IPermissionSystem
 {
     Type PermissionType { get; }
@@ -9,6 +10,7 @@ public interface IPermissionSystem
     IAsyncEnumerable<SecurityRole> GetAvailableSecurityRoles();
 }
 
+/// <summary>A source of permissions, such as GeneralPermission or VirtualPermission.</summary>
 public interface IPermissionSystem<TPermission> : IPermissionSystem
 {
     IPermissionRestrictionSource<TPermission, TSecurityContextIdent> GetRestrictionSource<TSecurityContext, TSecurityContextIdent>(

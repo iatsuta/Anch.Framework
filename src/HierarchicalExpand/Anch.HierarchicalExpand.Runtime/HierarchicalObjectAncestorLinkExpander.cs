@@ -7,6 +7,18 @@ using Anch.IdentitySource;
 
 namespace Anch.HierarchicalExpand;
 
+/// <summary>
+/// Expands identifiers using the stored ancestor links: children through the directed links, parents through the reversed directed links,
+/// both through the undirected links. Works on queries, so the expansion runs in the database.
+/// </summary>
+/// <param name="queryableSource">Reads the link entities.</param>
+/// <param name="fullAncestorLinkInfo">Describes the link entities.</param>
+/// <param name="hierarchicalInfo">The parent property.</param>
+/// <param name="identityInfo">The identifier property of the domain type.</param>
+/// <typeparam name="TDomainObject">The hierarchical domain type.</typeparam>
+/// <typeparam name="TDirectedAncestorLink">The directed link entity type.</typeparam>
+/// <typeparam name="TUndirectedAncestorLink">The undirected link entity type.</typeparam>
+/// <typeparam name="TIdent">The type of the identifier.</typeparam>
 public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAncestorLink, TUndirectedAncestorLink, TIdent>(
     IQueryableSource queryableSource,
     FullAncestorLinkInfo<TDomainObject, TDirectedAncestorLink, TUndirectedAncestorLink> fullAncestorLinkInfo,
@@ -19,6 +31,7 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
     where TIdent : notnull
     where TDomainObject : class
 {
+    /// <inheritdoc/>
     public IEnumerable<TIdent> Expand(IEnumerable<TIdent> idents, HierarchicalExpandType expandType)
     {
         if (idents is IQueryable<TIdent> queryable)
@@ -31,6 +44,9 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
         }
     }
 
+    /// <summary>Expands identifiers given as a sequence; the result is a query.</summary>
+    /// <param name="baseIdents">The identifiers to start from.</param>
+    /// <param name="expandType">Which relatives to include.</param>
     public IEnumerable<TIdent> ExpandEnumerable(IEnumerable<TIdent> baseIdents, HierarchicalExpandType expandType)
     {
         var idents = baseIdents.ToHashSet();
@@ -66,6 +82,9 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
         return ancestorLinkQueryable.Where(containsExpr).Select(toPathIdExpr).Distinct();
     }
 
+    /// <summary>Expands the identifiers produced by a query; the result is a query too.</summary>
+    /// <param name="idents">The query that yields the identifiers to start from.</param>
+    /// <param name="expandType">Which relatives to include.</param>
     public IQueryable<TIdent> ExpandQueryable(IQueryable<TIdent> idents, HierarchicalExpandType expandType)
     {
         return expandType switch
@@ -100,6 +119,7 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
         return ancestorLinkQueryable.Where(containsExpr).Select(toPathIdExpr).Distinct();
     }
 
+    /// <inheritdoc/>
     public Expression<Func<IEnumerable<TIdent>, IEnumerable<TIdent>>> GetExpandExpression(
         HierarchicalExpandType expandType)
     {
@@ -137,6 +157,7 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
                     .Distinct()));
     }
 
+    /// <inheritdoc/>
     public Expression<Func<TIdent, IEnumerable<TIdent>>>? TryGetSingleExpandExpression(
         HierarchicalExpandType expandType)
     {
@@ -178,11 +199,13 @@ public class HierarchicalObjectAncestorLinkExpander<TDomainObject, TDirectedAnce
                     .Distinct()));
     }
 
+    /// <inheritdoc/>
     public Dictionary<TIdent, TIdent> ExpandWithParents(IEnumerable<TIdent> idents, HierarchicalExpandType expandType)
     {
         return this.ExpandWithParentsImplementation(idents.ToHashSet(), expandType);
     }
 
+    /// <inheritdoc/>
     public Dictionary<TIdent, TIdent> ExpandWithParents(IQueryable<TIdent> idents, HierarchicalExpandType expandType)
     {
         return this.ExpandWithParentsImplementation(idents, expandType);

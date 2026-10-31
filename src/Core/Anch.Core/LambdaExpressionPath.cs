@@ -6,6 +6,8 @@ using Anch.Core.ExpressionComparers;
 
 namespace Anch.Core;
 
+/// <summary>A chain of property lambdas, such as <c>x =&gt; x.Orders</c> followed by <c>o =&gt; o.Items</c>, compared by structure. Used to describe eager loading paths.</summary>
+/// <param name="properties">The lambdas of the chain, outermost first.</param>
 public sealed class LambdaExpressionPath(ImmutableArray<LambdaExpression> properties) : IEquatable<LambdaExpressionPath>
 {
     private static readonly IEqualityComparer<LambdaExpression> Comparer = ExpressionComparer.Default;
@@ -17,6 +19,7 @@ public sealed class LambdaExpressionPath(ImmutableArray<LambdaExpression> proper
     {
     }
 
+    /// <summary>The lambdas of the chain; each takes the result of the previous one (or an element of it, for collections).</summary>
     public ImmutableArray<LambdaExpression> Properties { get; } = properties;
 
     public override bool Equals(object? obj) => this.Equals(obj as LambdaExpressionPath);
@@ -47,6 +50,9 @@ public sealed class LambdaExpressionPath(ImmutableArray<LambdaExpression> proper
 
     public static bool operator !=(LambdaExpressionPath? left, LambdaExpressionPath? right) => !(left == right);
 
+    /// <summary>Builds a path from property names, resolving each property on the type of the previous one (the element type for collections).</summary>
+    /// <param name="sourceType">The type the first property belongs to.</param>
+    /// <param name="properties">The property names, outermost first.</param>
     public static LambdaExpressionPath Create(Type sourceType, string[] properties)
     {
         var typedProperties = properties.Scan(

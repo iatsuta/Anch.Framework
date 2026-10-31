@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.RelativePath;
 
+/// <summary>A relative path through a single-valued property.</summary>
 public record SingleRelativeDomainPathInfo<TFrom, TTo>(Expression<Func<TFrom, TTo>> Path) : IRelativeDomainPathInfo<TFrom, TTo>
 {
     private readonly Lazy<Func<TFrom, TTo>> lazyPathFunc = new(Path.Compile);

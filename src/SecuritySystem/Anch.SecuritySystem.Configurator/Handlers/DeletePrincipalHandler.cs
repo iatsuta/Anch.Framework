@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: delete principal.</summary>
 public class DeletePrincipalHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     IPrincipalManagementService principalManagementService)

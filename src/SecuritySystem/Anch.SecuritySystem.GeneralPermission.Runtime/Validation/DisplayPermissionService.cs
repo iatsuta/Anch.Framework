@@ -4,6 +4,7 @@ using Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation;
 
+/// <summary>Formats a permission as text for validation messages.</summary>
 public class DisplayPermissionService<TPermission, TPermissionRestriction>(
     PermissionBindingInfo<TPermission> bindingInfo,
     IPermissionSecurityRoleResolver<TPermission> securityRoleResolver,

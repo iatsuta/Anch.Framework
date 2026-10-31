@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.SecurityAccessor;
 
+/// <summary>Simplifies accessor data (for example, <c>Infinity</c> or <c>Empty</c> parts of a combination).</summary>
 public class SecurityAccessorDataOptimizer : SecurityAccessorDataVisitor, ISecurityAccessorDataOptimizer
 {
     public SecurityAccessorData Optimize(SecurityAccessorData data)

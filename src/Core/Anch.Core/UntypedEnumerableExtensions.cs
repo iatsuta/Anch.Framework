@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for non-generic sequences.</summary>
 public static class UntypedEnumerableExtensions
 {
     public static Array ToArray(this System.Collections.IEnumerable source, Type elementType)

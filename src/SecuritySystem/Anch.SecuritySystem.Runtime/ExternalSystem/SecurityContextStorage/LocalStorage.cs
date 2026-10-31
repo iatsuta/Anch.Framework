@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>A per-scope cache of security context objects by identifier.</summary>
 public class LocalStorage<TSecurityContext, TSecurityContextIdent>(IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo)
     where TSecurityContext : ISecurityContext
     where TSecurityContextIdent : notnull

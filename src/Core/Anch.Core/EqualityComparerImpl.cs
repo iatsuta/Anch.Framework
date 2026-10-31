@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>An equality comparer built from delegates.</summary>
 public class EqualityComparerImpl<T>(Func<T, T, bool> equalsFunc, Func<T, int>? getHashFunc = null) : EqualityComparer<T>
 {
     public override bool Equals(T? x, T? y)

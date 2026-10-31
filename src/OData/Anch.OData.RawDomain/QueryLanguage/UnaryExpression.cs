@@ -2,6 +2,9 @@
 
 namespace Anch.OData.Domain.QueryLanguage;
 
+/// <summary>A unary operation, such as negation.</summary>
+/// <param name="Operation">The operation.</param>
+/// <param name="Operand">The operand.</param>
 public record UnaryExpression(UnaryOperation Operation, Expression Operand) : Expression
 {
     public override string ToString() => $"({this.Operation.ToFormatString()}{this.Operand})";

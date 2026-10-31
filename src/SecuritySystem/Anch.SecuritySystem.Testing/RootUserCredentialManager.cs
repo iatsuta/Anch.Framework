@@ -3,6 +3,7 @@ using Anch.SecuritySystem.ExternalSystem.Management;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>Creates and removes the testing root user with the administrator roles.</summary>
 public class RootUserCredentialManager(
     AdministratorsRoleList administratorsRoleList,
     ITestingEvaluator<IServiceProxyFactory> baseEvaluator,

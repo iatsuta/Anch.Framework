@@ -5,6 +5,7 @@ using Anch.SecuritySystem.SecurityRuleInfo;
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Replaces an access mode of a domain type with the rule configured for it.</summary>
 public class SecurityModeExpander(IEnumerable<DomainModeSecurityRuleInfo> infoList) : ISecurityModeExpander
 {
     private readonly FrozenDictionary<DomainSecurityRule.DomainModeSecurityRule, DomainSecurityRule> dict =

@@ -5,6 +5,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 
 namespace Anch.SecuritySystem.Providers.DependencySecurity;
 
+/// <summary>Provides access to objects through the provider of a related base object.</summary>
 public class DependencySecurityProvider<TDomainObject, TBaseDomainObject>(
     ISecurityProvider<TBaseDomainObject> baseSecurityProvider,
     IRelativeDomainPathInfo<TDomainObject, TBaseDomainObject> relativePath,

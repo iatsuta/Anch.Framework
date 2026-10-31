@@ -10,6 +10,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace Anch.SecuritySystem.Configurator;
 
+/// <summary>Registration and middleware of the permission configurator (the admin REST API and UI).</summary>
 public static class ConfiguratorDependencyInjection
 {
     private static readonly string EmbeddedFileNamespace = $"{typeof(ConfiguratorDependencyInjection).Assembly.GetName().Name}.configurator_ui.dist";

@@ -7,6 +7,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Builds filters that find users by name or identifier.</summary>
 public class UserFilterFactory<TUser>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfo<TUser> identityInfo) : IUserFilterFactory<TUser>
@@ -17,6 +18,7 @@ public class UserFilterFactory<TUser>(
     public Expression<Func<TUser, bool>> CreateFilter(UserCredential userCredential) => this.lazyInnerService.Value.CreateFilter(userCredential);
 }
 
+/// <summary>Builds filters that find users by name or identifier.</summary>
 public class UserFilterFactory<TUser, TIdent>(
     IIdentityInfo<TUser, TIdent> identityInfo,
     IVisualIdentityInfo<TUser> visualIdentityInfo,

@@ -2,6 +2,9 @@
 
 namespace Anch.Threading;
 
+/// <summary>A value that is created asynchronously on first use, once, even when requested concurrently. A failure is remembered and rethrown to every caller; disposing the lazy disposes the value.</summary>
+/// <param name="factory">Creates the value.</param>
+/// <typeparam name="T">The type of the value.</typeparam>
 public class AsyncLazy<T>(Func<CancellationToken, Task<T>> factory) : IAsyncDisposable
 {
     private readonly IAsyncLocker asyncLocker = new AsyncLocker();
@@ -14,6 +17,9 @@ public class AsyncLazy<T>(Func<CancellationToken, Task<T>> factory) : IAsyncDisp
 
     private ExceptionDispatchInfo? exceptionDispatchInfo;
 
+    /// <summary>Returns the value, creating it on the first call.</summary>
+    /// <param name="ct">Cancellation token.</param>
+    /// <exception cref="ObjectDisposedException">The lazy has been disposed.</exception>
     public async Task<T> GetValueAsync(CancellationToken ct)
     {
         if (!this.initialized)
@@ -47,6 +53,7 @@ public class AsyncLazy<T>(Func<CancellationToken, Task<T>> factory) : IAsyncDisp
         return this.value!;
     }
 
+    /// <summary><c>true</c> once the factory has finished (successfully or not).</summary>
     public bool Initialized => this.initialized;
 
     public async ValueTask DisposeAsync()

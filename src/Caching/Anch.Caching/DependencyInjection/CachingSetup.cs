@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.Caching.DependencyInjection;
 
+/// <summary>Collects the settings of caching and turns them into registrations.</summary>
 public class CachingSetup : ICachingSetup, IServiceInitializer
 {
     private Type? cacheProviderType;

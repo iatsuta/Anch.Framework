@@ -1,5 +1,6 @@
 ﻿namespace Anch.Testing;
 
+/// <summary>Extensions for <see cref="IServiceProviderPool"/>.</summary>
 public static class ServiceProviderPoolExtensions
 {
     public static async ValueTask<ServiceProviderPoolScope?> TryCreateScopeAsync(this IServiceProviderPool? serviceProviderPool, CancellationToken ct)
@@ -30,6 +31,7 @@ public static class ServiceProviderPoolExtensions
         }
     }
 
+    /// <summary>A container borrowed from the pool; disposing the scope returns it (or discards it after a failure).</summary>
     public class ServiceProviderPoolScope(
         IServiceProviderPool serviceProviderPool,
         IServiceProvider? serviceProvider,

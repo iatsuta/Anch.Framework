@@ -3,6 +3,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Discovers the tests of an assembly for the Anch test framework.</summary>
 public class AnchFrameworkDiscoverer(IXunitTestAssembly testAssembly, IServiceProviderPool? serviceProviderPool)
     : XunitTestFrameworkDiscoverer(testAssembly)
 {

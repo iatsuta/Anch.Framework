@@ -6,6 +6,8 @@ using Anch.Core;
 
 namespace Anch.GenericQueryable.Fetching;
 
+/// <summary>Expands a named fetch rule using the paths registered with <c>AddFetchRule</c>.</summary>
+/// <param name="fetchRuleHeaderInfoList">The registered named rules.</param>
 public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleHeaderInfoList) : IFetchRuleExpander
 {
     private readonly FrozenDictionary<Type, ImmutableArray<FetchRuleHeaderInfo>> headersDict =
@@ -13,6 +15,7 @@ public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleH
 
     private readonly ConcurrentDictionary<Type, object> cache = [];
 
+    /// <inheritdoc/>
     public PropertyFetchRule<TSource>? TryExpand<TSource>(FetchRule<TSource> fetchRule)
     {
         if (fetchRule is FetchRuleHeader<TSource> fetchRuleHeader)

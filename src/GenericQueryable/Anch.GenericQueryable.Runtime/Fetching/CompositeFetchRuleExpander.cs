@@ -2,10 +2,13 @@
 
 namespace Anch.GenericQueryable.Fetching;
 
+/// <summary>Expands a <see cref="CompositeFetchRule{TSource}"/> by expanding both parts and joining their paths.</summary>
+/// <param name="serviceProvider">Supplies the root expander used for the parts.</param>
 public class CompositeFetchRuleExpander(IServiceProvider serviceProvider) : IFetchRuleExpander
 {
     private IFetchRuleExpander RootFetchRuleExpander => field ??= serviceProvider.GetRequiredService<IFetchRuleExpander>();
 
+    /// <inheritdoc/>
     public PropertyFetchRule<TSource>? TryExpand<TSource>(FetchRule<TSource> fetchRule)
     {
         if (fetchRule is CompositeFetchRule<TSource> compositeFetchRule

@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Fluent <c>Pipe</c> helpers that work with <c>Maybe&lt;T&gt;</c> values.</summary>
 public static class PipeMaybeObjectExtensions
 {
     [DebuggerStepThrough]

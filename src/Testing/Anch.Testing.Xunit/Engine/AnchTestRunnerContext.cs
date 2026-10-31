@@ -6,6 +6,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>The state of a single test run.</summary>
 public class AnchTestRunnerContext(
     IXunitTest test,
     ExplicitOption explicitOption,

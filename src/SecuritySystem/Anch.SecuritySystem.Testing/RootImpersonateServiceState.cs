@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>The impersonation state of the testing root user.</summary>
 public record RootImpersonateServiceState : ImpersonateState
 {
     public ConcurrentDictionary<UserCredential, string> Cache { get; set; } = [];

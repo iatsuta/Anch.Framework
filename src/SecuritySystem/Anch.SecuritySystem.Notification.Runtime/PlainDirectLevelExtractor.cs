@@ -5,6 +5,7 @@ using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds the direct contexts of a non-hierarchical security context type.</summary>
 public class PlainDirectLevelExtractor<TSecurityContext, TSecurityContextIdent>(
     INotificationFilterGroupConverter notificationFilterGroupConverter,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo)

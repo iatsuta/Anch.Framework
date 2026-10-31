@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Describes how the restrictions of a virtual permission are read for one security context type.</summary>
 public class VirtualPermissionTypedRestrictionBindingInfo<TPermission>(
     VirtualPermissionBindingInfo<TPermission> bindingInfo,
     IQueryableSource queryableSource)

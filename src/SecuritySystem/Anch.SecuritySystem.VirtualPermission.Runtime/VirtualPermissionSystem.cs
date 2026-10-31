@@ -5,6 +5,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>A permission system whose permissions are computed from domain entities.</summary>
 public class VirtualPermissionSystem<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     ISecurityRuleExpander securityRuleExpander,

@@ -4,6 +4,7 @@ using Anch.SecuritySystem.SecurityRuleInfo;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 
+/// <summary>Creates a security system that checks the permissions of a given user.</summary>
 public class SecuritySystemFactory(
     IAccessDeniedExceptionService accessDeniedExceptionService,
     IDomainSecurityRoleExtractor domainSecurityRoleExtractor,

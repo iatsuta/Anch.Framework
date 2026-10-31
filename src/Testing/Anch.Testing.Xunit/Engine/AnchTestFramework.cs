@@ -5,6 +5,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>The xunit test framework that runs tests with containers from a pool built by a test environment.</summary>
 public class AnchTestFramework : XunitTestFramework
 {
     private readonly ConcurrentDictionary<Assembly, IServiceProviderPool?> serviceProviderPoolCache = [];

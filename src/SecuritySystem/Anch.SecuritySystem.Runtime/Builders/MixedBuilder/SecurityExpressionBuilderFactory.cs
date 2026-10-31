@@ -3,6 +3,7 @@ using Anch.SecuritySystem.Builders._Filter;
 
 namespace Anch.SecuritySystem.Builders.MixedBuilder;
 
+/// <summary>Combines two filter factories: one for restricting queries and one for checking single objects.</summary>
 public class SecurityFilterFactory<TDomainObject>(
     ISecurityFilterFactory<TDomainObject> queryFactory,
     ISecurityFilterFactory<TDomainObject> hasAccessFactory)

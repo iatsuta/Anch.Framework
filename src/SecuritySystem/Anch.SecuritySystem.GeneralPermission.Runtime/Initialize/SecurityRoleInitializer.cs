@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Anch.SecuritySystem.GeneralPermission.Initialize;
 
+/// <summary>Creates the missing role entities and handles the unexpected ones according to the settings.</summary>
 public class SecurityRoleInitializer(IServiceProvider serviceProvider, IEnumerable<GeneralPermissionBindingInfo> bindings)
     : ISecurityRoleInitializer
 {
@@ -25,6 +26,7 @@ public class SecurityRoleInitializer(IServiceProvider serviceProvider, IEnumerab
     }
 }
 
+/// <summary>Creates the missing role entities and handles the unexpected ones according to the settings.</summary>
 public class SecurityRoleInitializer<TPermission, TSecurityRole>(
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> bindingInfo,
     IQueryableSource queryableSource,

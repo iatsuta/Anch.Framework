@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Creates the provider that enforces a rule for a domain type: custom providers, conditions, role-based providers and the combinators.</summary>
 public class DomainSecurityProviderFactory<TDomainObject>(
     IServiceProvider serviceProvider,
     IServiceProxyFactory serviceProxyFactory,

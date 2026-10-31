@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="Action"/> delegates.</summary>
 public static class ActionExtensions
 {
     public static Func<object?> ToDefaultFunc(this Action action) => () =>

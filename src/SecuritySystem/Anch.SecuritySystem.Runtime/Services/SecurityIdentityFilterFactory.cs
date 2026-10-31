@@ -5,6 +5,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Builds filters on the identifier of a domain type from security identifiers.</summary>
 public class SecurityIdentityFilterFactory<TDomainObject>(IServiceProxyFactory serviceProxyFactory, IIdentityInfo<TDomainObject> identityInfo)
     : ISecurityIdentityFilterFactory<TDomainObject>
 {
@@ -19,6 +20,7 @@ public class SecurityIdentityFilterFactory<TDomainObject>(IServiceProxyFactory s
         this.lazyInnerService.Value.CreateFilter(securityIdentity);
 }
 
+/// <summary>Builds filters on the identifier of a domain type from security identifiers.</summary>
 public class SecurityIdentityFilterFactory<TDomainObject, TIdent>(
     IIdentityInfo<TDomainObject, TIdent> identityInfo,
     ISecurityIdentityConverter<TIdent> securityIdentityConverter) : ISecurityIdentityFilterFactory<TDomainObject>

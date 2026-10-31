@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Allows RunAs only to users that exist.</summary>
 public class ExistUserRunAsValidator<TUser>(IMissedUserErrorSource missedUserErrorSource, IUserSource<TUser> userSource) : IRunAsValidator
 {
     public async ValueTask ValidateAsync(UserCredential value, CancellationToken ct)

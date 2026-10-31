@@ -1,33 +1,34 @@
 # DependencyInjection
 
-Папка `src/DependencyInjection/`, проект `Anch.DependencyInjection` (+ `Anch.DependencyInjection.Tests`).
-Зависит от `Anch.Core` и `Microsoft.Extensions.DependencyInjection.Abstractions`. Это фундамент всех `AddXxx`-методов, см. [architecture.md §3](../architecture.md).
+Folder `src/DependencyInjection/`, project `Anch.DependencyInjection` (+ `Anch.DependencyInjection.Tests`).
+Depends on `Anch.Core` and `Microsoft.Extensions.DependencyInjection.Abstractions`. This is the foundation of all `AddXxx` methods, see [architecture.md §3](../architecture.md).
 
-## Что внутри
+## What is inside
 
-| Файл | Назначение |
+| File | Purpose |
 |---|---|
-| `IServiceInitializer.cs` | `IServiceInitializer<TContainer>` и `IServiceInitializer` (для `IServiceCollection`): метод `Initialize(services)` |
-| `ServiceCollectionExtensions.cs` | `Initialize<TInitializer>(setup)`, `AlreadyInitialized<T>()`, `AddScopedFrom`/`AddSingletonFrom`, `AddServiceProxyFactory`, `BindServiceProxy`, замены регистраций (`Replace*`) |
+| `IServiceInitializer.cs` | `IServiceInitializer<TContainer>` and `IServiceInitializer` (for `IServiceCollection`): the `Initialize(services)` method |
+| `ServiceCollectionExtensions.cs` | `Initialize<TInitializer>(setup)`, `AlreadyInitialized<T>()`, `AddScopedFrom`/`AddSingletonFrom`, `AddServiceProxyFactory`, `BindServiceProxy`, registration replacements (`Replace*`) |
 | `ServiceProviderExtensions.cs` | `GetServiceProxyFactory()` |
-| `IServiceCollectionValidator.cs`, `ValidationResult.cs` | Контракт валидатора коллекции сервисов |
-| `DuplicateServiceUsageValidator.cs` | Валидатор: находит сервисы, зарегистрированные несколько раз, но запрашиваемые в конструкторе как одиночные зависимости |
-| `ServiceCollectionValidationExtensions.cs` | `AddValidator<T>()`, `Validate(options?)` бросает `InvalidOperationException` со списком всех ошибок |
-| `ServiceProxy/*` | «Прокси-фабрика»: создание сервиса с подменой типа реализации |
+| `IServiceCollectionValidator.cs`, `ValidationResult.cs` | Contract of a service collection validator |
+| `DuplicateServiceUsageValidator.cs` | Validator: finds services registered several times but requested in a constructor as single dependencies |
+| `ServiceCollectionValidationExtensions.cs` | `AddValidator<T>()`, `Validate(options?)` throws `InvalidOperationException` with the list of all errors |
+| `ServiceProxy/*` | The "proxy factory": creates a service with the implementation type substituted |
 
 ## Service proxy (ServiceProxyFactory)
 
-Задача: создать экземпляр сервиса через DI-совместимый активатор, при этом тип реализации можно **перенаправить** (redirect) настройкой.
+Goal: create a service instance through a DI-compatible activator, while the implementation type can be **redirected** by configuration.
 
-- `IServiceProxyFactory.Create<TService>(instanceServiceType, args)`: контракт в `Anch.Core`.
-- `ServiceProxyFactory` спрашивает `IServiceProxyTypeRedirector.TryRedirect(type)`, затем создаёт объект через `INativeActivator` (обёртка над `ActivatorUtilities`).
-- Настройка: `services.AddServiceProxyFactory(setup => setup.SetRedirect(source, target, replace))` или `BindRedirect(source, binderType, replace)`, где `binderType : IServiceProxyBinder` вычисляет целевой тип.
-- Правила цепочки редиректов (`ServiceProxyTypeRedirector`): первый кандидат не должен быть `replace`, каждый следующий обязан быть `replace`. Поддерживаются open generic: target `Foo<>` для source `IFoo<T>`.
-- Пример использования: `AncestorDenormalizerServiceProxyBinder` в HierarchicalExpand (`BindServiceProxy(typeof(IAncestorDenormalizer<>), typeof(AncestorDenormalizerServiceProxyBinder<>))`): открытый generic-тип, целевая реализация выбирается по типу доменного объекта.- `IPermissionSystemFactory` в SecuritySystem можно задать через `Func<IServiceProxyFactory, ...>` (`AddPermissionSystem`).
+- `IServiceProxyFactory.Create<TService>(instanceServiceType, args)`: the contract is in `Anch.Core`.
+- `ServiceProxyFactory` asks `IServiceProxyTypeRedirector.TryRedirect(type)`, then creates the object via `INativeActivator` (a wrapper over `ActivatorUtilities`).
+- Configuration: `services.AddServiceProxyFactory(setup => setup.SetRedirect(source, target, replace))` or `BindRedirect(source, binderType, replace)`, where `binderType : IServiceProxyBinder` computes the target type.
+- Redirect chain rules (`ServiceProxyTypeRedirector`): the first candidate must not be `replace`, every following one must be `replace`. Open generics are supported: target `Foo<>` for source `IFoo<T>`.
+- Usage example: `AncestorDenormalizerServiceProxyBinder` in HierarchicalExpand (`BindServiceProxy(typeof(IAncestorDenormalizer<>), typeof(AncestorDenormalizerServiceProxyBinder<>))`): an open generic type whose target implementation is chosen by the domain object type.
+- `IPermissionSystemFactory` in SecuritySystem can be set through `Func<IServiceProxyFactory, ...>` (`AddPermissionSystem`).
 
-## Валидация сервисов (важно для тестов)
+## Service validation (important for tests)
 
-Стандартный контейнер не умеет собирать все ошибки. Типовая сборка в тестах и примерах:
+The standard container cannot collect all errors. Typical setup in tests and examples:
 
 ```csharp
 services
@@ -37,8 +38,8 @@ services
     .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
 ```
 
-Если тест падает с сообщением «The service X has been registered many times…», значит в конструкторе берётся `X`, а зарегистрировано несколько `X`. Нужно брать `IEnumerable<X>` или убрать дубль (`DuplicateServiceUsageValidator(exceptServices)` позволяет задать исключения).
+If a test fails with "The service X has been registered many times…", a constructor takes `X` while several `X` are registered. Take `IEnumerable<X>` instead or remove the duplicate (`DuplicateServiceUsageValidator(exceptServices)` lets you specify exceptions).
 
-## Тесты
+## Tests
 
-`Anch.DependencyInjection.Tests`: проверки редиректа, валидатора и прокси-фабрики.
+`Anch.DependencyInjection.Tests`: tests of the redirect, the validator and the proxy factory.

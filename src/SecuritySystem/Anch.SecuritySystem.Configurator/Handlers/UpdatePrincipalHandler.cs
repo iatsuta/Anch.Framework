@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: update principal.</summary>
 public class UpdatePrincipalHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     IPrincipalManagementService principalManagementService)

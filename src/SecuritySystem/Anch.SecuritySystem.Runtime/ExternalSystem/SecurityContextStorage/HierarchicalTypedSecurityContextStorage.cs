@@ -7,6 +7,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>Reads the objects of a hierarchical security context type, including parent links.</summary>
 public class HierarchicalTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>(
     IQueryableSource queryableSource,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,

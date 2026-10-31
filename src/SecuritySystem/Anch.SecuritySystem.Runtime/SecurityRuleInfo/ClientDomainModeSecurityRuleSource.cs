@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Lists the domain type modes registered with <c>AddDomainSecurity</c>.</summary>
 public class ClientDomainModeSecurityRuleSource(IEnumerable<DomainModeSecurityRuleInfo> domainModeSecurityRuleInfoList)
     : IClientDomainModeSecurityRuleSource
 {

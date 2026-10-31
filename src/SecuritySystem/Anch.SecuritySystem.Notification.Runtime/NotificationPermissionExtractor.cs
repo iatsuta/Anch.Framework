@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds the permissions to notify for an event and applies the expansion mode of each context group.</summary>
 public class NotificationPermissionExtractor<TPermission>(
     INotificationPermissionFilterFactory<TPermission> notificationPermissionFilterFactory,
     IServiceProxyFactory serviceProxyFactory,

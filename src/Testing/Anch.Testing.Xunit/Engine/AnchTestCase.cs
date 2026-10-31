@@ -3,6 +3,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>A test case that takes its service container from the pool.</summary>
 public class AnchTestCase(IXunitTestCase baseTestCase, IXunitTestMethod testMethod) : IXunitTestCase
 {
     [Obsolete("Called by the de-serializer; should only be called by deriving classes for de-serialization purposes")]

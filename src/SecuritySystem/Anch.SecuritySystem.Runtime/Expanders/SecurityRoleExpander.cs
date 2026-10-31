@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Expands roles upwards through the role hierarchy and removes redundant roles.</summary>
 public class SecurityRoleGroupExpander(ISecurityRoleSource securityRoleSource, IExpandedRoleGroupSecurityRuleSetOptimizer setOptimizer)
     : ISecurityRoleGroupExpander
 {

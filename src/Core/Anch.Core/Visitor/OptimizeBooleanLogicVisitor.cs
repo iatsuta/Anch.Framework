@@ -2,6 +2,7 @@
 
 namespace Anch.Core.Visitor;
 
+/// <summary>Folds conditions and boolean operators whose operands are constants (for example <c>false &amp;&amp; x</c> becomes <c>false</c>).</summary>
 public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 {
     protected override Expression VisitConditional(ConditionalExpression node)

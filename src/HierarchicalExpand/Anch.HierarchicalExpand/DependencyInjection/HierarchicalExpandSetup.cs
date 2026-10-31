@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.DependencyInjection;
 
+/// <summary>Collects the hierarchy descriptions and turns them into registrations.</summary>
 public class HierarchicalExpandSetup : IHierarchicalExpandSetup, IServiceInitializer
 {
     private readonly List<Action<IServiceCollection>> actions = [];

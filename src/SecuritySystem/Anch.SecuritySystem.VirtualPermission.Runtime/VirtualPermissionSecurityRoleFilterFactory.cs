@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Builds the filter that selects the virtual permissions that grant the roles of a rule.</summary>
 public class VirtualPermissionSecurityRoleFilterFactory<TPermission>(
     IServiceProvider serviceProvider,
     VirtualPermissionBindingInfo<TPermission> virtualPermissionBindingInfo,

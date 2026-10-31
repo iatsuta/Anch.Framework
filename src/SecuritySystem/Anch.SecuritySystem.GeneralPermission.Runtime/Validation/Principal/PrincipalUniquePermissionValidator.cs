@@ -5,6 +5,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Principal;
 
+/// <summary>Checks that a principal has no duplicate permissions.</summary>
 public class PrincipalUniquePermissionValidator<TPrincipal, TPermission, TPermissionRestriction>(
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
     IDisplayPermissionService<TPermission, TPermissionRestriction> displayPermissionService,

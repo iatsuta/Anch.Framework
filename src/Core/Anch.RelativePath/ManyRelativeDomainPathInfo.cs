@@ -5,6 +5,7 @@ using Anch.Core.ExpressionEvaluate;
 
 namespace Anch.RelativePath;
 
+/// <summary>A relative path through a collection property.</summary>
 public record ManyRelativeDomainPathInfo<TFrom, TTo>(Expression<Func<TFrom, IEnumerable<TTo>>> Path) : IRelativeDomainPathInfo<TFrom, TTo>
 {
     private readonly Lazy<Func<TFrom, IEnumerable<TTo>>> lazyPathFunc = new(Path.Compile);

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Hooks;
 
+/// <summary>Restores the private database of a container from the filled snapshot before a test.</summary>
 public class PrepareDatabaseEnvironmentHook(
     [FromKeyedServices(ITestEnvironment.MainServiceProviderKey)]
     IServiceProvider mainServiceProvider,

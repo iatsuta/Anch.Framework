@@ -1,78 +1,78 @@
 # Core
 
-Папка `src/Core/`. Базовые библиотеки без доменной логики. На них опираются все остальные модули.
+Folder `src/Core/`. Base libraries without domain logic. All other modules build on them.
 
-| Проект | Пакет | Назначение |
+| Project | Package | Purpose |
 |---|---|---|
-| `Anch.Core` | Anch.Core | Утилиты: Maybe, Expression-инструменты, расширения LINQ/Task/Type, базовые интерфейсы |
-| `Anch.GenericRepository` | Anch.GenericRepository | Два минимальных интерфейса доступа к данным |
-| `Anch.Parsing` | Anch.Parsing | Парсер-комбинаторы (используются OData) |
-| `Anch.RelativePath` | Anch.RelativePath | «Относительный путь» между доменными типами (`From → To`) в виде выражений |
-| `Anch.Threading` | Anch.Threading | Асинхронные примитивы синхронизации |
-| `Anch.Core.Tests` | не пакет | Юнит-тесты Core |
+| `Anch.Core` | Anch.Core | Utilities: Maybe, expression tools, LINQ/Task/Type extensions, base interfaces |
+| `Anch.GenericRepository` | Anch.GenericRepository | Two minimal data access interfaces |
+| `Anch.Parsing` | Anch.Parsing | Parser combinators (used by OData) |
+| `Anch.RelativePath` | Anch.RelativePath | A "relative path" between domain types (`From → To`) expressed as expressions |
+| `Anch.Threading` | Anch.Threading | Asynchronous synchronization primitives |
+| `Anch.Core.Tests` | not a package | Core unit tests |
 
 ## Anch.Core
 
-Корневой namespace `Anch.Core` (подпространства: `Auth`, `ExpressionComparers`, `ExpressionEvaluate`, `DictionaryCache`, `Visitor`). Много файлов-расширений `*Extensions.cs`, смотрите по имени типа, который расширяется (`EnumerableExtensions`, `TaskExtensions`, `TypeExtensions`, `StringExtensions` и т.д.).
+Root namespace `Anch.Core` (sub-namespaces: `Auth`, `ExpressionComparers`, `ExpressionEvaluate`, `DictionaryCache`, `Visitor`). Many `*Extensions.cs` extension files; look them up by the name of the type being extended (`EnumerableExtensions`, `TaskExtensions`, `TypeExtensions`, `StringExtensions`, etc.).
 
-### Базовые контракты (в корне проекта)
+### Base contracts (project root)
 
-| Тип | Файл | Что это |
+| Type | File | What it is |
 |---|---|---|
-| `IFactory<TResult>`, `IFactory<TArg,TResult>` | `IFactory.cs` | Фабрика |
-| `IInitializer` | `IInitializer.cs` | `Task Initialize(CancellationToken)`. Используется тестовой инфраструктурой и денормализаторами (регистрируется как keyed-сервис) |
-| `IQueryableInjector<T>` | `IQueryableInjector.cs` | `IQueryable<T> Inject(IQueryable<T>)`. «Добавь к запросу фильтр/сортировку». Реализуют `ISecurityProvider<T>`, `SelectOperation<T>` (OData) |
-| `IServiceProxyFactory`, `IServiceProxyBinder` | одноимённые | Контракты «прокси-фабрики» (реализация в `Anch.DependencyInjection/ServiceProxy`) |
-| `IDefaultCancellationTokenSource` | | Источник токена по умолчанию для синхронных мест |
-| `ICultureSource` / `CultureSource` | | Источник текущей культуры |
-| `Ignore` | `Ignore.cs` | `record struct`, аналог `Unit`/void для generic-параметров |
-| `MergeResult<TSource,TTarget>` | `MergeResult.cs` | Результат слияния коллекций: `AddingItems`, `CombineItems`, `RemovingItems` |
-| `ICurrentUser` | `Auth/ICurrentUser.cs` | `string Name`; константы ключей `RawKey/ImpersonatedKey/DefaultKey` (keyed-регистрации). `FixedCurrentUser` фиксированный пользователь |
+| `IFactory<TResult>`, `IFactory<TArg,TResult>` | `IFactory.cs` | Factory |
+| `IInitializer` | `IInitializer.cs` | `Task Initialize(CancellationToken)`. Used by the test infrastructure and denormalizers (registered as a keyed service) |
+| `IQueryableInjector<T>` | `IQueryableInjector.cs` | `IQueryable<T> Inject(IQueryable<T>)`. "Add a filter/ordering to the query". Implemented by `ISecurityProvider<T>`, `SelectOperation<T>` (OData) |
+| `IServiceProxyFactory`, `IServiceProxyBinder` | same names | Contracts of the "proxy factory" (implementation in `Anch.DependencyInjection/ServiceProxy`) |
+| `IDefaultCancellationTokenSource` | | Default token source for synchronous places |
+| `ICultureSource` / `CultureSource` | | Source of the current culture |
+| `Ignore` | `Ignore.cs` | `record struct`, analogue of `Unit`/void for generic parameters |
+| `MergeResult<TSource,TTarget>` | `MergeResult.cs` | Result of merging collections: `AddingItems`, `CombineItems`, `RemovingItems` |
+| `ICurrentUser` | `Auth/ICurrentUser.cs` | `string Name`; key constants `RawKey/ImpersonatedKey/DefaultKey` (keyed registrations). `FixedCurrentUser` is a fixed user |
 
 ### Maybe (`Maybe/`)
 
-`Maybe<T>` (struct) с `HasValue`, `Value`, `Just`, `Nothing`. Хелперы: `Maybe.Return`, `ToMaybe`, `OfCondition`, `OfTryMethod`; LINQ-расширения (`from x in maybe select ...`) в `LinqMaybeExtensions`. Широко используется внутри (например, `ExpressionExtensions.GetConstantValue<T>()` возвращает `Maybe`).
+`Maybe<T>` (struct) with `HasValue`, `Value`, `Just`, `Nothing`. Helpers: `Maybe.Return`, `ToMaybe`, `OfCondition`, `OfTryMethod`; LINQ extensions (`from x in maybe select ...`) in `LinqMaybeExtensions`. Used widely inside (for example, `ExpressionExtensions.GetConstantValue<T>()` returns a `Maybe`).
 
-### Выражения (Expression)
+### Expressions
 
-| Что | Где | Зачем |
+| What | Where | Why |
 |---|---|---|
-| `PropertyAccessors<TSource,TProp>` | `PropertyAccessors.cs` | `record`: путь-выражение + `Getter` + `Setter`. Равенство через `ExpressionComparer`. Строится из лямбды: `expr.ToPropertyAccessors()` |
-| `LambdaExpressionPath` | `LambdaExpressionPath.cs` | Цепочка лямбд-свойств (`a.B.C`), сравнимая по значению. Создаётся из строки: `LambdaExpressionPath.Create(type, ["B","C"])`. Основа fetch-правил GenericQueryable |
-| `ExpressionComparers/*` | | Структурное сравнение/хэширование Expression (`ExpressionComparer.Default`). Отдельный компаратор на каждый тип узла |
-| `ExpressionEvaluate/*` | | Компиляция лямбд с кэшем: `IExpressionEvaluator`, `LambdaCompileCache`, `LambdaCompileMode` (флаги `InjectMaybe`, `IgnoreStringCase`, `OptimizeBooleanLogic`, `All`) |
-| `Visitor/*` | | `ExpressionVisitor`'ы: `ExpandConstVisitor`, `OptimizeBooleanLogicVisitor` (сворачивает константные условия), `OverrideExpressionVisitor` |
-| `ExpressionHelper`, `ExpressionExtensions`, `LinqExpressionExtensions`, `FuncHelper` | корень | Построение/композиция выражений (`Select`, `UpdateBody`, `GetEqualityWithExpr`, …) |
+| `PropertyAccessors<TSource,TProp>` | `PropertyAccessors.cs` | `record`: path expression + `Getter` + `Setter`. Equality via `ExpressionComparer`. Built from a lambda: `expr.ToPropertyAccessors()` |
+| `LambdaExpressionPath` | `LambdaExpressionPath.cs` | A chain of property lambdas (`a.B.C`), comparable by value. Created from strings: `LambdaExpressionPath.Create(type, ["B","C"])`. The basis of GenericQueryable fetch rules |
+| `ExpressionComparers/*` | | Structural comparison/hashing of expressions (`ExpressionComparer.Default`). A separate comparer for each node type |
+| `ExpressionEvaluate/*` | | Lambda compilation with a cache: `IExpressionEvaluator`, `LambdaCompileCache`, `LambdaCompileMode` (flags `InjectMaybe`, `IgnoreStringCase`, `OptimizeBooleanLogic`, `All`) |
+| `Visitor/*` | | `ExpressionVisitor`s: `ExpandConstVisitor`, `OptimizeBooleanLogicVisitor` (folds constant conditions), `OverrideExpressionVisitor` |
+| `ExpressionHelper`, `ExpressionExtensions`, `LinqExpressionExtensions`, `FuncHelper` | root | Building/composing expressions (`Select`, `UpdateBody`, `GetEqualityWithExpr`, …) |
 
-### Прочее
+### Other
 
-- `DictionaryCache/` : `IDictionaryCache<TKey,TValue>`, простой потокобезопасный кэш-словарь.
-- `DeepEqualsCollection<T>`, `ArrayComparer`, `EqualityComparerImpl` — сравнение коллекций по значению (используется в `SecurityPathRestriction`).
+- `DictionaryCache/`: `IDictionaryCache<TKey,TValue>`, a simple thread-safe dictionary cache.
+- `DeepEqualsCollection<T>`, `ArrayComparer`, `EqualityComparerImpl`: value-based collection comparison (used in `SecurityPathRestriction`).
 - `PipeObjectExtensions` (`.Pipe(...)`), `LazyHelper`, `TaskResultHelper`.
 
 ## Anch.GenericRepository
 
-Два интерфейса:
+Two interfaces:
 ```csharp
-IGenericRepository { SaveAsync<T>(T, ct); RemoveAsync<T>(T, ct); }   // запись
-IQueryableSource  { IQueryable<T> GetQueryable<T>(); }                // чтение
+IGenericRepository { SaveAsync<T>(T, ct); RemoveAsync<T>(T, ct); }   // write
+IQueryableSource  { IQueryable<T> GetQueryable<T>(); }                // read
 ```
-Приложение реализует их поверх своей ORM, а модули фреймворка (HierarchicalExpand, SecuritySystem) только зависят от интерфейсов. В тестах это `TestQueryableSource` и `Substitute.For<IGenericRepository>()`.
+The application implements them on top of its ORM, while the framework modules (HierarchicalExpand, SecuritySystem) depend only on the interfaces. In tests these are `TestQueryableSource` and `Substitute.For<IGenericRepository>()`.
 
 ## Anch.Parsing
 
-Монада парсер-комбинаторов: `delegate ParsingState<TInput,TValue> Parser<TInput,TValue>(TInput input)`. Файлы: `Parser.cs`, `ParserCombinatorsMonad.cs` (LINQ-синтаксис), `ParserCombinatorExtensions.cs`, `CharParsers.cs`, `DecimalParser.cs`, `Parsers.cs`. Единственный потребитель в репозитории `Anch.OData.Runtime`.
+A parser-combinator monad: `delegate ParsingState<TInput,TValue> Parser<TInput,TValue>(TInput input)`. Files: `Parser.cs`, `ParserCombinatorsMonad.cs` (LINQ syntax), `ParserCombinatorExtensions.cs`, `CharParsers.cs`, `DecimalParser.cs`, `Parsers.cs`. The only consumer in the repository is `Anch.OData.Runtime`.
 
 ## Anch.RelativePath
 
-`IRelativeDomainPathInfo<TFrom,TTo>`: описание связи между типами с помощью выражения (одиночное свойство или коллекция):
-- `CreateCondition(Expression<Func<TTo,bool>>)` превращает фильтр по `TTo` в фильтр по `TFrom`;
+`IRelativeDomainPathInfo<TFrom,TTo>`: describes a relation between types using an expression (a single property or a collection):
+- `CreateCondition(Expression<Func<TTo,bool>>)` turns a filter on `TTo` into a filter on `TFrom`;
 - `GetRelativeObjects(TFrom)`, `Select(...)`, `OverrideInput(...)`.
 
-Реализации: `SingleRelativeDomainPathInfo`, `ManyRelativeDomainPathInfo`, `SelfRelativeDomainPathInfo`. Регистрация: `services.AddRelativeDomainPath<TFrom,TTo>(x => x.Prop, key?)` (`DependencyInjection/ServiceCollectionExtensions.cs`). Используется SecuritySystem для зависимых доменных объектов (`SetDependency`, `CurrentUser` с `RelativePathKey`).
+Implementations: `SingleRelativeDomainPathInfo`, `ManyRelativeDomainPathInfo`, `SelfRelativeDomainPathInfo`. Registration: `services.AddRelativeDomainPath<TFrom,TTo>(x => x.Prop, key?)` (`DependencyInjection/ServiceCollectionExtensions.cs`). Used by SecuritySystem for dependent domain objects (`SetDependency`, `CurrentUser` with `RelativePathKey`).
 
 ## Anch.Threading
 
-- `AsyncLocker` / `IAsyncLocker`: `await locker.CreateScope(ct)` → `IDisposable` (асинхронный mutex).
-- `AsyncOnce`: выполнить async-действие один раз, повторные вызовы получают то же исключение (`EnsureExecutedAsync`).
+- `AsyncLocker` / `IAsyncLocker`: `await locker.CreateScope(ct)` → `IDisposable` (an asynchronous mutex).
+- `AsyncOnce`: runs an async action once; repeated calls receive the same exception (`EnsureExecutedAsync`).
 - `AsyncLazy<T>`.

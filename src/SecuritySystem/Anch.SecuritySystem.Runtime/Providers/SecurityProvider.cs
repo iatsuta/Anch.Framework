@@ -6,6 +6,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 
 namespace Anch.SecuritySystem.Providers;
 
+/// <summary>The base of the providers defined by a filter expression.</summary>
 public abstract class SecurityProvider<TDomainObject> : ISecurityProvider<TDomainObject>
 {
     private readonly Lazy<Func<TDomainObject, bool>> lazyHasAccessFunc;

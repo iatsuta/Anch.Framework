@@ -1,7 +1,10 @@
 ﻿namespace Anch.SecuritySystem;
 
+/// <summary>A named role. Two roles are equal when their names are equal. Roles are registered with <c>AddSecurityRole</c>.</summary>
+/// <param name="name">Name of the role.</param>
 public class SecurityRole(string name)
 {
+    /// <summary>Name of the role.</summary>
     public string Name { get; } = name;
 
     public override string ToString() => this.Name;
@@ -19,12 +22,12 @@ public class SecurityRole(string name)
     public static bool operator !=(SecurityRole? sr1, SecurityRole? sr2) => !(sr1 == sr2);
 
     /// <summary>
-    /// Администраторская роль
+    /// Administrator role.
     /// </summary>
     public static SecurityRole Administrator { get; } = new(nameof(Administrator));
 
     /// <summary>
-    /// Интеграционная роль
+    /// System integration role.
     /// </summary>
     public static SecurityRole SystemIntegration { get; } = new(nameof(SystemIntegration));
 }

@@ -1,5 +1,6 @@
 ﻿namespace Anch.Testing.Database.ConnectionStringManagement;
 
+/// <summary>Creates, copies and removes test databases of a particular database engine.</summary>
 public interface IDatabaseManager
 {
     ValueTask CreateEmpty(TestConnectionStringRole connectionStringRole, CancellationToken ct);

@@ -2,6 +2,7 @@
 
 namespace Anch.OData.Domain.QueryLanguage;
 
+/// <summary>Recognizes the .NET methods that the query language supports.</summary>
 public static class MethodInfoHelper
 {
     public static readonly MethodInfo StringContainsMethod = new Func<string, bool>("".Contains).Method;
@@ -17,6 +18,9 @@ public static class MethodInfoHelper
 
     public static readonly MethodInfo CollectionAllFilterMethod = new Func<IEnumerable<int>, Func<int, bool>, bool>(Enumerable.All).Method.GetGenericMethodDefinition();
 
+    /// <summary>Maps a .NET method to the query language method.</summary>
+    /// <param name="methodInfo">The method.</param>
+    /// <returns>The method type, or <c>null</c> if the method is not supported.</returns>
     public static MethodExpressionType? GetMethodType(this MethodInfo methodInfo)
     {
         if (methodInfo is null) throw new ArgumentNullException(nameof(methodInfo));

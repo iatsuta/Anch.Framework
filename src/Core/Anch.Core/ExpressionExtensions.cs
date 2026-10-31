@@ -6,6 +6,7 @@ using Anch.Core.Visitor;
 
 namespace Anch.Core;
 
+/// <summary>Extensions for expression trees: reading constants, building property accessors and rewriting.</summary>
 public static class ExpressionExtensions
 {
     public static Expression<Func<TArg1, TArg2, TResult>> UnCurrying<TArg1, TArg2, TResult>(

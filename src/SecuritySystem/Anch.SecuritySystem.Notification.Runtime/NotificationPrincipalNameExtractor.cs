@@ -6,6 +6,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds the names of the principals to notify for an event.</summary>
 public class NotificationPrincipalNameExtractor(IServiceProxyFactory serviceProxyFactory, IEnumerable<PermissionBindingInfo> bindingInfoList)
     : INotificationPrincipalNameExtractor
 {
@@ -20,6 +21,7 @@ public class NotificationPrincipalNameExtractor(IServiceProxyFactory serviceProx
             .Distinct();
 }
 
+/// <summary>Finds the names of the principals to notify for an event.</summary>
 public class NotificationPrincipalNameExtractor<TPrincipal>(
     INotificationPrincipalExtractor<TPrincipal> notificationPrincipalExtractor,
     IVisualIdentityInfo<TPrincipal> visualIdentityInfo) : INotificationPrincipalNameExtractor

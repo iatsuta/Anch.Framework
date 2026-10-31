@@ -2,6 +2,8 @@
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Structural comparer of object creation expression nodes; used by <see cref="ExpressionComparer"/>.</summary>
+/// <param name="rootComparer">The comparer used for the child expressions.</param>
 public class NewComparer(ExpressionComparer rootComparer) : ExpressionComparer<NewExpression>
 {
     protected override bool PureEquals(NewExpression x, NewExpression y)

@@ -5,6 +5,7 @@ using Anch.SecuritySystem.SecurityRuleInfo;
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Replaces a rule header with the rule registered under its name.</summary>
 public class SecurityRuleHeaderExpander(IEnumerable<SecurityRuleHeaderInfo> securityRuleFullInfoList) : ISecurityRuleHeaderExpander
 {
     private readonly FrozenDictionary<DomainSecurityRule.SecurityRuleHeader, DomainSecurityRule> dict =

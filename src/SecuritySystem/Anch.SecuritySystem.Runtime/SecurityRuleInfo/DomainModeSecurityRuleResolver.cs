@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Finds the domain type modes that a role grants.</summary>
 public class DomainModeSecurityRuleResolver(
     IDomainSecurityRoleExtractor domainSecurityRoleExtractor,
     IEnumerable<DomainModeSecurityRuleInfo> domainModeSecurityRuleInfoList) : IDomainModeSecurityRuleResolver

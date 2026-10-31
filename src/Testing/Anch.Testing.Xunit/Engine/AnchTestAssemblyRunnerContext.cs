@@ -3,6 +3,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>The state of an assembly run.</summary>
 public class AnchTestAssemblyRunnerContext(
     IXunitTestAssembly testAssembly,
     IReadOnlyCollection<IXunitTestCase> testCases,

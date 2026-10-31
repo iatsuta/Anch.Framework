@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>Creates the test user and manages its permissions through the principal management service.</summary>
 public class UserCredentialManager(
     ICurrentUser currentUser,
     Tuple<UserCredential?> userCredential,

@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Finds the role of a permission entity.</summary>
 public class PermissionSecurityRoleResolver<TPermission, TSecurityRole>(
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,
     ISecurityIdentityManager<TSecurityRole> securityRoleIdentityManager,

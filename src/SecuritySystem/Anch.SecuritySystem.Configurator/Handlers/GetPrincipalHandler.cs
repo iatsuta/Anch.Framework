@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get principal.</summary>
 public class GetPrincipalHandler(
     IRootPrincipalSourceService principalSourceService,
     ISecurityContextStorage securityContextStorage,

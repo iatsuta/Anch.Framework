@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="IAsyncEnumerable{T}"/>.</summary>
 public static class AsyncEnumerableExtensions
 {
     public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this Task<T?> task)

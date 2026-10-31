@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Resolves the name of a user from the user sources.</summary>
 public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNameResolver
 {
     public async Task<string> GetUserNameAsync(UserCredential userCredential, CancellationToken ct)
@@ -40,6 +41,7 @@ public class UserNameResolver(IEnumerable<IUserSource> userSourceList) : IUserNa
     }
 }
 
+/// <summary>Resolves the name of a user from the user sources.</summary>
 public class UserNameResolver<TUser>(
     ICurrentUser currentUser,
     [FromKeyedServices(ICurrentUser.ImpersonatedKey)]

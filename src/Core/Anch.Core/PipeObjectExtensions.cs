@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Fluent <c>Pipe</c> helpers that pass an object through a function.</summary>
 public static class PipeObjectExtensions
 {
     public static TSource PipeMaybe<TSource, TValue>(this TSource source, TValue? value, Func<TSource, TValue, TSource> evaluate)

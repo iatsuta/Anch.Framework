@@ -8,6 +8,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Permission;
 
+/// <summary>Checks that a delegated permission stays within the rights of the permission it was delegated from.</summary>
 public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionRestriction>(
     PermissionBindingInfo<TPermission, TPrincipal> permissionBindingInfo,
     IPermissionRestrictionRawConverter<TPermissionRestriction> permissionRestrictionRawConverter,

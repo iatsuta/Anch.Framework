@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="Task"/> and <see cref="Task{TResult}"/>.</summary>
 public static class TaskExtensions
 {
     public static Func<Task<object?>> ToDefaultTask(this Func<Task> func) =>

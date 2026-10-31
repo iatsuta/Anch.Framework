@@ -1,85 +1,89 @@
-# Сборка, тесты, CI, публикация
+# Build, tests, CI, publishing
 
-## Требования
+## Requirements
 
-- .NET SDK **10.0.x** (`TargetFramework=net10.0`, `LangVersion=latest`, используются C# 14 `extension`-блоки).
-- Node.js (в CI 18) + npm: только для сборки Angular-UI конфигуратора (`Anch.SecuritySystem.Configurator`). Результат `configurator-ui/dist/**` встраивается в сборку через `EmbeddedResource`. Без `dist` C#-проект всё равно соберётся, но UI админки будет отсутствовать (пакет для публикации надо собирать только после сборки UI, как в `publish.yml`).
-- `global.json` включает **Microsoft.Testing.Platform** как test runner → тесты запускаются `dotnet test --project <папка>` (не `dotnet test <sln>`).
+- .NET SDK **10.0.x** (`TargetFramework=net10.0`, `LangVersion=latest`, C# 14 `extension` blocks are used).
+- Node.js (18 in CI) + npm: only for building the Angular UI of the configurator (`Anch.SecuritySystem.Configurator`). The result `configurator-ui/dist/**` is embedded into the assembly via `EmbeddedResource`. Without `dist` the C# project still builds, but the admin UI will be missing (build the package for publishing only after building the UI, as in `publish.yml`).
+- `global.json` enables **Microsoft.Testing.Platform** as the test runner → tests are run with `dotnet test --project <folder>` (not `dotnet test <sln>`).
 
-## Сборка
+## Build
 
-Все команды из корня репозитория.
+All commands are run from the repository root.
 
 ```bash
-# UI (нужен только если важна админка Configurator; в CI делается всегда)
+# UI (only needed if the Configurator admin UI matters; CI always builds it)
 cd src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui && npm ci && npm run ng build && cd -
 
 dotnet restore src/Anch.Framework.slnx
 dotnet build src/Anch.Framework.slnx -c Release
 ```
 
-Только нужный модуль (без UI), например: `dotnet build src/Core/Anch.Core/Anch.Core.csproj`.
+A single module only (without UI), for example: `dotnet build src/Core/Anch.Core/Anch.Core.csproj`.
 
-Версии пакетов NuGet централизованы в `src/Directory.Packages.props` (`ManagePackageVersionsCentrally`; версия `$(DotNet)` для всех пакетов Microsoft). В `csproj` у `PackageReference` версии **не указываются**. Новые пакеты добавляйте через `PackageVersion` в `Directory.Packages.props`.
+NuGet package versions are centralized in `src/Directory.Packages.props` (`ManagePackageVersionsCentrally`; the `$(DotNet)` version is used for all Microsoft packages). Versions are **not specified** on `PackageReference` in a `csproj`. Add new packages via `PackageVersion` in `Directory.Packages.props`.
 
-## Тестовые проекты
+## Test projects
 
-Запуск: `dotnet test --project <путь к проекту> -c Release` (так делает CI).
+Run: `dotnet test --project <project path> -c Release` (this is what CI does).
 
-| Модуль | Проект | Что покрывает |
+| Module | Project | What it covers |
 |---|---|---|
-| Core | `src/Core/Anch.Core.Tests` | Maybe, выражения, Dictionary, async-enumerable, **`CsprojValidationTests`** (проверка конвенции `PackageId == имя проекта` для всех csproj) |
-| DI | `src/DependencyInjection/Anch.DependencyInjection.Tests` | Прокси-фабрика, валидаторы |
-| IdentitySource | `src/IdentitySource/Anch.IdentitySource.Tests` | Поиск Id |
-| VisualIdentitySource | `src/VisualIdentitySource/Anch.VisualIdentitySource.Tests` | Отображаемые имена |
-| GenericQueryable | `Anch.GenericQueryable.UnitTests`, `…IntegrationTests.NHibernate`, `…IntegrationTests.EntityFramework` | (`…IntegrationTests` = общая библиотека тестов, не запускается сама) |
-| HierarchicalExpand | `Anch.HierarchicalExpand.Tests`, `…IntegrationTests.NHibernate`, `…IntegrationTests.EntityFramework` | то же |
-| SecuritySystem | `Anch.SecuritySystem.DiTests`, `_Example/ExampleApp.IntegrationTests.NHibernate`, `_Example/ExampleApp.IntegrationTests.EntityFramework` | `ExampleApp.IntegrationTests` общая библиотека |
-| OData | `src/OData/Anch.OData.Tests` | Парсинг/конвертация |
-| Testing | `src/Testing/Anch.Testing.Tests` | Инфраструктура тестов |
-| Caching, Parsing, RelativePath, Threading, GenericRepository, Configurator | *(отдельных тестов нет)* | Parsing/Threading/RelativePath частично через другие модули |
+| Core | `src/Core/Anch.Core.Tests` | Maybe, expressions, Dictionary, async-enumerable, **`CsprojValidationTests`** (checks the `PackageId == project name` convention for all csproj files) |
+| DI | `src/DependencyInjection/Anch.DependencyInjection.Tests` | Proxy factory, validators |
+| IdentitySource | `src/IdentitySource/Anch.IdentitySource.Tests` | Id lookup |
+| VisualIdentitySource | `src/VisualIdentitySource/Anch.VisualIdentitySource.Tests` | Display names |
+| GenericQueryable | `Anch.GenericQueryable.UnitTests`, `…IntegrationTests.NHibernate`, `…IntegrationTests.EntityFramework` | (`…IntegrationTests` = shared test library, not run on its own) |
+| HierarchicalExpand | `Anch.HierarchicalExpand.Tests`, `…IntegrationTests.NHibernate`, `…IntegrationTests.EntityFramework` | same |
+| SecuritySystem | `Anch.SecuritySystem.DiTests`, `_Example/ExampleApp.IntegrationTests.NHibernate`, `_Example/ExampleApp.IntegrationTests.EntityFramework` | `ExampleApp.IntegrationTests` is a shared library |
+| OData | `src/OData/Anch.OData.Tests` | Parsing/conversion |
+| Testing | `src/Testing/Anch.Testing.Tests` | Test infrastructure |
+| Caching, Parsing, RelativePath, Threading, GenericRepository, Configurator | *(no dedicated tests)* | Parsing/Threading/RelativePath are partly covered through other modules |
 
-Пример: `dotnet test --project src/HierarchicalExpand/Anch.HierarchicalExpand.Tests -c Release`.
+Example: `dotnet test --project src/HierarchicalExpand/Anch.HierarchicalExpand.Tests -c Release`.
 
-Интеграционные тесты используют SQLite-файлы (создаются автоматически, см. [testing.md](modules/testing.md)); внешняя БД не нужна.
+Integration tests use SQLite files (created automatically, see [testing.md](modules/testing.md)); no external database is needed.
 
-### Как устроены тесты
+### How the tests are organized
 
-Окружение (`TestEnvironment`) и пул DI-контейнеров, `[AnchFact]`, `[assembly: AnchTestFramework<…>]`: см. [modules/testing.md](modules/testing.md). Тесты, как правило, принимают сервисы через конструктор.
+The environment (`TestEnvironment`) and the DI container pool, `[AnchFact]`, `[assembly: AnchTestFramework<…>]`: see [modules/testing.md](modules/testing.md). Tests usually receive services through the constructor.
 
 ## CI (GitHub Actions)
 
-`.github/workflows/build.yml` (на push/PR в `main`): Node 18 → `npm ci && npm run ng build` → .NET 10 → `dotnet restore` → `dotnet build -c Release` → по одному шагу `dotnet test --project … --no-build -c Release` на каждый тестовый проект из таблицы выше. **Новый тестовый проект нужно добавить в `build.yml` вручную.**
+`.github/workflows/build.yml` (on push/PR to `main`): Node 18 → `npm ci && npm run ng build` → .NET 10 → `dotnet restore` → `dotnet build -c Release` → one `dotnet test --project … --no-build -c Release` step for each test project in the table above. **A new test project must be added to `build.yml` manually.**
 
-`.github/workflows/publish.yml` (на публикацию GitHub Release): сборка UI → `dotnet pack src/Anch.Framework.slnx /p:PackageVersion=<tag релиза> /p:InformationalVersion=<sha>` → `dotnet nuget push` на nuget.org (секрет `NUGET_Anch`). Версия пакетов = **тег релиза**; значение `AssemblyVersion` в `src/__RootSolutionItems/RootCommonAssemblyInfo.cs` (сейчас `3.9.3.0`) задано вручную и с тегом не связано.
+`.github/workflows/publish.yml` (on GitHub Release publication): UI build → `dotnet pack src/Anch.Framework.slnx /p:PackageVersion=<release tag> /p:InformationalVersion=<sha>` → `dotnet nuget push` to nuget.org (secret `NUGET_Anch`). Package version = **release tag**; the `AssemblyVersion` value in `src/__RootSolutionItems/RootCommonAssemblyInfo.cs` (currently `3.9.3.0`) is set manually and is not tied to the tag.
 
-### Метаданные NuGet-пакетов
+### NuGet package metadata
 
-Общие (`Authors`, `Company`, `Copyright`, лицензия MIT, `PackageProjectUrl`, `PackageReadmeFile`) заданы в `src/Directory.Build.props`. `Description` и `PackageTags` вычисляются по `PackageId` в `src/Directory.Build.targets` (описание модуля + суффикс слоя); корневой `README.md` кладётся в каждый пакет. Свой `Description`/`PackageTags` в csproj имеет приоритет. Для нового модуля добавьте строку с описанием в `Directory.Build.targets`, иначе будет описание по умолчанию.
+The common metadata (`Authors`, `Company`, `Copyright`, MIT license, `PackageProjectUrl`, `PackageReadmeFile`) is set in `src/Directory.Build.props`. `Description` and `PackageTags` are computed from `PackageId` in `src/Directory.Build.targets` (module description + layer suffix); the root `README.md` is packed into every package. A `Description`/`PackageTags` set in a csproj takes priority. For a new module, add a description line to `Directory.Build.targets`, otherwise the default description is used.
 
-## Добавление нового проекта (чек-лист)
+### XML documentation
 
-1. Каталог `src/<Модуль>/Anch.<Модуль>[.<Слой>]/`, csproj с `<PackageId>` равным имени проекта (проверяется тестом `CsprojValidationTests`) и при необходимости `<RootNamespace>`.
-2. Добавить проект в `src/Anch.Framework.slnx` (в нужную `<Folder>`).
-3. Ссылки на другие проекты через `ProjectReference`, пакеты через `PackageReference` без версии (+ запись в `Directory.Packages.props`).
-4. Для тестового проекта: `<IsPackable>false</IsPackable>`, `<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>`, ссылка на `Anch.Testing.Xunit`, шаг в `build.yml`.
-5. Общие настройки (nullable, LangVersion, NoWarn, `CS4014/CS1998/CA2016` как ошибки) приходят из `src/Directory.Build.props` автоматически. Туда же линкуется `__RootSolutionItems/RootCommonAssemblyInfo.cs`.
+`GenerateDocumentationFile` is enabled for all projects in `src/Directory.Build.props`, so the XML comments of the public API reach IntelliSense and the NuGet packages. Missing comments (`CS1591`) are suppressed for now because the API is not documented in full yet; malformed comments are still reported as warnings. Write comments in English; document new public types and members together with the code.
 
-## Граф знаний (graphify)
+## Adding a new project (checklist)
 
-В git хранится только `graphify-out/graph.json`; отчёт, HTML и кеш создаются локально и игнорируются (`.gitignore`).
+1. Directory `src/<Module>/Anch.<Module>[.<Layer>]/`, a csproj with `<PackageId>` equal to the project name (checked by the `CsprojValidationTests` test) and, if needed, `<RootNamespace>`.
+2. Add the project to `src/Anch.Framework.slnx` (into the right `<Folder>`).
+3. References to other projects via `ProjectReference`, packages via `PackageReference` without a version (+ an entry in `Directory.Packages.props`).
+4. For a test project: `<IsPackable>false</IsPackable>`, `<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>`, a reference to `Anch.Testing.Xunit`, a step in `build.yml`.
+5. Shared settings (nullable, LangVersion, NoWarn, `CS4014/CS1998/CA2016` as errors) come from `src/Directory.Build.props` automatically. `__RootSolutionItems/RootCommonAssemblyInfo.cs` is linked from there too.
 
-- Обновить граф: `graphify update .` (только код, без LLM), затем `git add graphify-out/graph.json`.
-- Обновляйте граф **отдельным коммитом** после крупных изменений кода. Кто перегенерировал граф, тот его и коммитит.
-- Граф не мёржится. Конфликт в `graph.json` решается не правкой, а пересборкой: `graphify update .` и `git add graphify-out/graph.json`.
-- Слияние настроено как обычное (merge-драйвер graphify не используется); дифф файла скрыт (`-diff`, `linguist-generated`).
+## Knowledge graph (graphify)
 
-## Частые проблемы
+Only `graphify-out/graph.json` is stored in git; the report, HTML and cache are created locally and ignored (`.gitignore`).
 
-| Симптом | Причина / решение |
+- Update the graph: `graphify update .` (code only, no LLM), then `git add graphify-out/graph.json`.
+- Update the graph in a **separate commit** after major code changes. Whoever regenerated the graph commits it.
+- The graph is not merged. A conflict in `graph.json` is resolved not by editing but by rebuilding: `graphify update .` and `git add graphify-out/graph.json`.
+- Merging is configured as usual (the graphify merge driver is not used); the file diff is hidden (`-diff`, `linguist-generated`).
+
+## Common problems
+
+| Symptom | Cause / solution |
 |---|---|
-| Страница `/admin/configurator` отдаёт 404 / нет статики | Не собран Angular-UI перед сборкой C#: выполните `npm ci && npm run ng build` в `configurator-ui`, затем пересоберите проект |
-| `dotnet test` на `.slnx` ничего не запускает | Используйте `--project <csproj или папка>` (Microsoft.Testing.Platform) |
-| Тест падает на «has been registered many times» | Сработал `DuplicateServiceUsageValidator`, см. [dependency-injection.md](modules/dependency-injection.md) |
-| Предупреждения как ошибки `CS4014/CS1998/CA2016` | Это настройка репозитория: не забытый `await`, `async` без `await`, не переданный `CancellationToken` |
-| В каталогах `src/**/Anch.X` и рядом `src/**/X` (без префикса) | Второй это мусор после переименования (`bin/obj`), не трогать |
+| The `/admin/configurator` page returns 404 / no static files | The Angular UI was not built before building the C# project: run `npm ci && npm run ng build` in `configurator-ui`, then rebuild the project |
+| `dotnet test` on `.slnx` runs nothing | Use `--project <csproj or folder>` (Microsoft.Testing.Platform) |
+| A test fails with "has been registered many times" | `DuplicateServiceUsageValidator` fired, see [dependency-injection.md](modules/dependency-injection.md) |
+| Warnings as errors `CS4014/CS1998/CA2016` | This is a repository setting: a forgotten `await`, `async` without `await`, a `CancellationToken` that was not passed |
+| Directories `src/**/Anch.X` and next to them `src/**/X` (no prefix) | The second is leftover garbage after a rename (`bin/obj`), do not touch |

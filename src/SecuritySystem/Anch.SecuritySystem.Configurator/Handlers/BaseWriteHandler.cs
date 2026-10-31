@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>The base of the handlers that change data; they require the security administrator role.</summary>
 public abstract class BaseWriteHandler
 {
     // TODO: this can be replaced with built serialization/deserialization

@@ -1,6 +1,7 @@
 ﻿
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Simplifies a set of expanded role rules, for example by dropping roles that another role already covers.</summary>
 public class ExpandedRoleGroupSecurityRuleSetOptimizer(ISecurityRoleSource securityRoleSource) : IExpandedRoleGroupSecurityRuleSetOptimizer
 {
     public DomainSecurityRule.ExpandedRoleGroupSecurityRule Optimize(IEnumerable<DomainSecurityRule.ExpandedRolesSecurityRule> roleRules) =>

@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Services;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 
+/// <summary>The registry of security context types.</summary>
 public class SecurityContextInfoSource : ISecurityContextInfoSource
 {
     private readonly FrozenDictionary<Type, SecurityContextInfo> typeDict;

@@ -4,6 +4,7 @@ using Anch.SecuritySystem.ExternalSystem.Management;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation;
 
+/// <summary>Compares permissions by role, period, restrictions and delegation.</summary>
 public class PermissionEqualityComparer<TPermission, TSecurityRole, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     PermissionBindingInfo<TPermission> bindingInfo,
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,

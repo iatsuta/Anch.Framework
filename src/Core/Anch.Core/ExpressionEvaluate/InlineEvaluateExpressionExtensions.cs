@@ -3,10 +3,11 @@ using System.Reflection;
 
 namespace Anch.Core.ExpressionEvaluate;
 
+/// <summary>Replaces calls to <c>Evaluate</c> in an expression with the bodies of the evaluated lambdas.</summary>
 public static class InlineEvaluateExpressionExtensions
 {
     /// <summary>
-    /// Встраивает вызовы Eval-методов непосредственно в сам текущий Expression
+    /// Inlines calls to Eval methods directly into the current expression.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="expr"></param>

@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Converts security identifiers to a parsable identifier type.</summary>
 public class SecurityIdentityConverter<TIdent>(ICultureSource? cultureSource = null) : ISecurityIdentityConverter<TIdent>
     where TIdent : IParsable<TIdent>, new()
 {

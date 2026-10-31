@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get modules.</summary>
 public class GetModulesHandler(IEnumerable<IConfiguratorModule> modules) : BaseReadHandler, IGetModulesHandler
 {
     protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)

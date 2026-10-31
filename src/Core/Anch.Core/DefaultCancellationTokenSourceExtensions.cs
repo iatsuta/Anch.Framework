@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="IDefaultCancellationTokenSource"/>.</summary>
 public static class DefaultCancellationTokenSourceExtensions
 {
     public static CancellationToken GetSafeDefaultCancellationTokenSource(this IDefaultCancellationTokenSource? defaultCancellationTokenSource)

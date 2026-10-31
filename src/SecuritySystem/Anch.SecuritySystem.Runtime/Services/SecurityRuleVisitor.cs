@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.Services;
 
+/// <summary>The base of the visitors that walk a security rule.</summary>
 public abstract class SecurityRuleVisitor
 {
     protected virtual DomainSecurityRule Visit(DomainSecurityRule.ExpandedRoleGroupSecurityRule securityRule)

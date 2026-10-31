@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 
 namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Finds the client rules that a role satisfies.</summary>
 public class ClientSecurityRuleResolver(
     IDomainSecurityRoleExtractor domainSecurityRoleExtractor,
     IClientSecurityRuleInfoSource clientSecurityRuleInfoSource) : IClientSecurityRuleResolver

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing;
 
+/// <summary>The pool implementation: builds containers with the test environment on demand, initializes the main container once and limits parallelism when required.</summary>
 public class InternalServiceProviderPool(
     ITestEnvironment testEnvironment,
     IServiceProvider mainServiceProvider,

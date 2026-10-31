@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Converts a stored principal with its permissions into a managed principal.</summary>
 public class ManagedPrincipalConverter<TPrincipal, TPermission, TPermissionRestriction>(
     IManagedPrincipalHeaderConverter<TPrincipal> headerConverter,
     IPermissionLoader<TPrincipal, TPermission> permissionLoader,

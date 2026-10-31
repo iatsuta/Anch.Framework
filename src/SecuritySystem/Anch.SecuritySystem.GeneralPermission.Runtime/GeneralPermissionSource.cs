@@ -12,6 +12,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Reads the stored permissions that satisfy a rule.</summary>
 public class GeneralPermissionSource<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfo<TPermission> permissionIdentityInfo,
@@ -46,6 +47,7 @@ public class GeneralPermissionSource<TPermission>(
     public IAsyncEnumerable<string> GetAccessorsAsync(Expression<Func<TPermission, bool>> permissionFilter) => this.InnerService.GetAccessorsAsync(permissionFilter);
 }
 
+/// <summary>Reads the stored permissions that satisfy a rule.</summary>
 public class GeneralPermissionSource<TPrincipal, TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermissionIdent>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,

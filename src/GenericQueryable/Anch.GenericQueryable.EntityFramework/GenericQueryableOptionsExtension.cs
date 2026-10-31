@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.EntityFramework;
 
+/// <summary>The EF Core options extension that registers GenericQueryable services in the context's internal service provider.</summary>
+/// <param name="setupAction">Optional settings.</param>
 public class GenericQueryableOptionsExtension(Action<IEfGenericQueryableExtensionSetup>? setupAction) : IDbContextOptionsExtension
 {
     public DbContextOptionsExtensionInfo Info => field ??= new ExtensionInfo(this);

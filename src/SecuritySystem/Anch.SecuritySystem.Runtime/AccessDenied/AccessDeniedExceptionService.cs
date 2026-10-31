@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Providers;
 
 namespace Anch.SecuritySystem.AccessDenied;
 
+/// <summary>The default <see cref="IAccessDeniedExceptionService"/>: builds an <see cref="AccessDenied.AccessDeniedException"/> with a message that names the denied object and rule.</summary>
 public class AccessDeniedExceptionService(IIdentityInfoSource identityInfoSource) : IAccessDeniedExceptionService
 {
     public Exception GetAccessDeniedException(AccessResult.AccessDeniedResult accessDeniedResult)

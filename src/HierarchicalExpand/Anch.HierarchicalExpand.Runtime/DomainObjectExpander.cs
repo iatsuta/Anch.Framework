@@ -3,12 +3,17 @@ using Anch.GenericRepository;
 
 namespace Anch.HierarchicalExpand;
 
+/// <summary>Walks the tree in memory: ancestors through the parent property, descendants through a cached map of all objects to their parents. The cache lives as long as the expander.</summary>
+/// <param name="hierarchicalInfo">The parent property.</param>
+/// <param name="queryableSource">Reads all objects when descendants are needed.</param>
+/// <typeparam name="TDomainObject">The hierarchical domain type.</typeparam>
 public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject> hierarchicalInfo, IQueryableSource queryableSource)
     : IDomainObjectExpander<TDomainObject>
     where TDomainObject : class
 {
     private IReadOnlyDictionary<TDomainObject, TDomainObject?>? baseCache;
 
+    /// <inheritdoc/>
     public ValueTask<HashSet<TDomainObject>> GetAllParents(IEnumerable<TDomainObject> startDomainObjects, CancellationToken ct)
     {
         var allResult = startDomainObjects.ToHashSet();
@@ -25,6 +30,7 @@ public class DomainObjectExpander<TDomainObject>(HierarchicalInfo<TDomainObject>
         return new(allResult);
     }
 
+    /// <inheritdoc/>
     public async ValueTask<HashSet<TDomainObject>> GetAllChildren(IEnumerable<TDomainObject> startDomainObjects, CancellationToken ct)
     {
         var allResult = startDomainObjects.ToHashSet();

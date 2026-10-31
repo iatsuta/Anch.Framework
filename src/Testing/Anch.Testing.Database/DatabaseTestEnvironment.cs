@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database;
 
+/// <summary>The base of test environments with a database: every pooled container works with its own copy of a prepared database.</summary>
 public abstract class DatabaseTestEnvironment : ITestEnvironment
 {
     protected abstract TestConnectionString RawConnectionString { get; }

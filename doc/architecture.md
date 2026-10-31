@@ -1,57 +1,57 @@
-# Архитектура и соглашения
+# Architecture and conventions
 
-Документ описывает, как устроен репозиторий в целом. Модули разобраны в [modules/](modules/).
+This document describes how the repository is organized as a whole. Modules are covered in [modules/](modules/).
 
-## 1. Раскладка репозитория
+## 1. Repository layout
 
 ```
 Anch.Framework/
 ├── global.json                     # test runner = Microsoft.Testing.Platform
 ├── src/
-│   ├── Anch.Framework.slnx         # единственное решение (формат slnx)
-│   ├── Directory.Build.props       # net10.0, Nullable, LangVersion=latest, общие NoWarn
-│   ├── Directory.Packages.props    # центральные версии NuGet-пакетов (CPM)
-│   ├── __RootSolutionItems/        # файлы, линкуемые во все проекты (AssemblyInfo, xunit-настройки)
-│   ├── Core/                       # базовые библиотеки без привязки к домену
-│   ├── DependencyInjection/        # расширения над Microsoft.Extensions.DependencyInjection
+│   ├── Anch.Framework.slnx         # the only solution (slnx format)
+│   ├── Directory.Build.props       # net10.0, Nullable, LangVersion=latest, shared NoWarn
+│   ├── Directory.Packages.props    # central NuGet package versions (CPM)
+│   ├── __RootSolutionItems/        # files linked into all projects (AssemblyInfo, xunit settings)
+│   ├── Core/                       # base libraries independent of any domain
+│   ├── DependencyInjection/        # extensions over Microsoft.Extensions.DependencyInjection
 │   ├── Caching/
-│   ├── IdentitySource/             # «как достать Id из доменного объекта»
-│   ├── VisualIdentitySource/       # «как достать Name/Display из доменного объекта»
-│   ├── GenericQueryable/           # ORM-независимые async LINQ + fetch-правила
-│   ├── HierarchicalExpand/         # раскрытие иерархий (родители/дети)
-│   ├── OData/                      # парсер OData-запросов в Expression
-│   ├── SecuritySystem/             # система прав (самый большой модуль)
-│   ├── Testing/                    # инфраструктура интеграционных тестов (xunit v3)
-│   └── Workflow/                   # ⚠ ПОКА НЕ ИЗУЧАТЬ, см. modules/workflow.md
-├── doc/                            # эта документация
-├── graphify-out/                   # граф знаний: в git только graph.json, остальное генерируется локально
+│   ├── IdentitySource/             # "how to get the Id of a domain object"
+│   ├── VisualIdentitySource/       # "how to get the Name/Display of a domain object"
+│   ├── GenericQueryable/           # ORM-independent async LINQ + fetch rules
+│   ├── HierarchicalExpand/         # expansion of hierarchies (parents/children)
+│   ├── OData/                      # OData query parser producing an Expression
+│   ├── SecuritySystem/             # permission system (the largest module)
+│   ├── Testing/                    # integration test infrastructure (xunit v3)
+│   └── Workflow/                   # ⚠ DO NOT STUDY FOR NOW, see modules/workflow.md
+├── doc/                            # this documentation
+├── graphify-out/                   # knowledge graph: only graph.json is in git, the rest is generated locally
 └── .github/workflows/              # build.yml (CI), publish.yml (NuGet)
 ```
 
-Каждая папка модуля содержит несколько csproj. Имя проекта = `Anch.<Модуль>[.<Слой>]`, имя пакета NuGet совпадает (`<PackageId>`).
+Each module folder contains several csproj files. Project name = `Anch.<Module>[.<Layer>]`; the NuGet package name is the same (`<PackageId>`).
 
-> В рабочей копии могут лежать каталоги без префикса `Anch.` (например `src/GenericQueryable/GenericQueryable`, `src/SecuritySystem/SecuritySystem`). Это остатки после переименования: внутри только `bin/obj`, в git их нет. Исходники всегда в каталогах `Anch.*`.
+> The working copy may contain directories without the `Anch.` prefix (for example `src/GenericQueryable/GenericQueryable`, `src/SecuritySystem/SecuritySystem`). These are leftovers from a rename: they contain only `bin/obj` and are not in git. Sources are always in the `Anch.*` directories.
 
-## 2. Слои внутри модуля (главное правило навигации)
+## 2. Layers inside a module (the main navigation rule)
 
-Почти каждый модуль разбит на одни и те же слои. Зная слой, понятно, что в проекте лежит:
+Almost every module is split into the same layers. Knowing the layer tells you what a project contains:
 
-| Суффикс проекта | Что внутри | Зависимости |
+| Project suffix | Contents | Dependencies |
 |---|---|---|
-| `.Domain` | Чистые модели/enum'ы без логики (`HierarchicalExpandType`, `ISecurityContext`, `SelectOperation`) | минимум |
-| `.Abstractions` | Публичные интерфейсы и контракты (`IIdentityInfoSource`, `ISecuritySystem`) | Core, Domain |
-| `.Runtime` | Реализации интерфейсов (классы `*Source`, `*Service`, `*Expander`) | Abstractions |
-| *(без суффикса)* `Anch.<Модуль>` | **Точка входа для потребителя**: `AddXxx(...)` для `IServiceCollection` и `IXxxSetup` (fluent-настройка) | Runtime + `Anch.DependencyInjection` |
-| `.<ORM/технология>` | Адаптеры (`.EntityFramework`, `.NHibernate`, `.Sqlite`, `.Xunit`) | основной пакет + внешняя библиотека |
-| `.Tests`, `.UnitTests`, `.IntegrationTests*`, `.DiTests` | Тесты | см. [building-and-testing.md](building-and-testing.md) |
+| `.Domain` | Plain models/enums without logic (`HierarchicalExpandType`, `ISecurityContext`, `SelectOperation`) | minimal |
+| `.Abstractions` | Public interfaces and contracts (`IIdentityInfoSource`, `ISecuritySystem`) | Core, Domain |
+| `.Runtime` | Interface implementations (classes `*Source`, `*Service`, `*Expander`) | Abstractions |
+| *(no suffix)* `Anch.<Module>` | **Consumer entry point**: `AddXxx(...)` for `IServiceCollection` and `IXxxSetup` (fluent configuration) | Runtime + `Anch.DependencyInjection` |
+| `.<ORM/technology>` | Adapters (`.EntityFramework`, `.NHibernate`, `.Sqlite`, `.Xunit`) | main package + external library |
+| `.Tests`, `.UnitTests`, `.IntegrationTests*`, `.DiTests` | Tests | see [building-and-testing.md](building-and-testing.md) |
 
-Не везде есть все слои: например, у `Caching` нет `.Domain`, у `Core` слоёв нет вовсе.
+Not every module has all layers: for example, `Caching` has no `.Domain`, and `Core` has no layers at all.
 
-Правило для потребителя: ссылаться достаточно на пакет без суффикса (`Anch.SecuritySystem`), он транзитивно тянет Runtime/Abstractions. Библиотеки, которым нужны только контракты (например, доменный слой приложения), ссылаются на `.Abstractions`.
+Rule for consumers: referencing the package without a suffix (`Anch.SecuritySystem`) is enough; it transitively pulls Runtime/Abstractions. Libraries that need only the contracts (for example, an application's domain layer) reference `.Abstractions`.
 
-## 3. Паттерн регистрации: `AddXxx(Action<IXxxSetup>)`
+## 3. Registration pattern: `AddXxx(Action<IXxxSetup>)`
 
-Единый способ подключения любого модуля к DI:
+A single way to plug any module into DI:
 
 ```csharp
 services.AddIdentitySource(b => b.SetId((MyEntity e) => e.Key));   // IdentitySource
@@ -59,22 +59,22 @@ services.AddHierarchicalExpand(b => b.AddHierarchicalInfo(...));   // Hierarchic
 services.AddSecuritySystem(b => b.AddSecurityRole(...));           // SecuritySystem
 ```
 
-Как это работает (см. `src/DependencyInjection/Anch.DependencyInjection/ServiceCollectionExtensions.cs`):
+How it works (see `src/DependencyInjection/Anch.DependencyInjection/ServiceCollectionExtensions.cs`):
 
-1. Есть интерфейс `IServiceInitializer<TContainer>` с методом `Initialize(TContainer)`.
-2. Каждый модуль определяет класс `XxxSetup : IXxxSetup, IServiceInitializer`. Методы `IXxxSetup` только **накапливают** настройки.
-3. `services.Initialize<XxxSetup>(setupAction)` создаёт `XxxSetup`, вызывает `setupAction`, затем `Initialize(services)`, где настройки превращаются в регистрации в контейнере.
-4. Вложенные расширения (GeneralPermission, VirtualPermission, Notification) делают то же самое поверх `ISecuritySystemSetup`: `securitySystemSetup.Initialize<ISecuritySystemSetup, XxxSetup>(...)`.
+1. There is an interface `IServiceInitializer<TContainer>` with a method `Initialize(TContainer)`.
+2. Each module defines a class `XxxSetup : IXxxSetup, IServiceInitializer`. The `IXxxSetup` methods only **accumulate** settings.
+3. `services.Initialize<XxxSetup>(setupAction)` creates `XxxSetup`, invokes `setupAction`, then `Initialize(services)`, where the settings are turned into container registrations.
+4. Nested extensions (GeneralPermission, VirtualPermission, Notification) do the same on top of `ISecuritySystemSetup`: `securitySystemSetup.Initialize<ISecuritySystemSetup, XxxSetup>(...)`.
 
-Где искать настройку модуля: файлы `DependencyInjection/*Setup.cs` и `DependencyInjection/ServiceCollectionExtensions.cs` в проекте без суффикса.
+Where to find a module's configuration: the `DependencyInjection/*Setup.cs` and `DependencyInjection/ServiceCollectionExtensions.cs` files in the project without a suffix.
 
-Полезные хелперы DI из `Anch.DependencyInjection`:
-- `AlreadyInitialized<T>()` проверка, зарегистрирован ли сервис;
-- `AddScopedFrom<TService, TSource>(selector)`, `AddSingletonFrom<…>` регистрация сервиса как проекции другого;
-- `ReplaceSingleton/ReplaceScoped` замена регистрации;
-- `AddValidator<T>()` + `Validate()` ручная валидация коллекции сервисов (см. [dependency-injection.md](modules/dependency-injection.md)).
+Useful DI helpers from `Anch.DependencyInjection`:
+- `AlreadyInitialized<T>()`: checks whether a service is registered;
+- `AddScopedFrom<TService, TSource>(selector)`, `AddSingletonFrom<…>`: register a service as a projection of another one;
+- `ReplaceSingleton/ReplaceScoped`: replace a registration;
+- `AddValidator<T>()` + `Validate()`: manual validation of a service collection (see [dependency-injection.md](modules/dependency-injection.md)).
 
-## 4. Граф зависимостей модулей
+## 4. Module dependency graph
 
 ```
 Core (Anch.Core, Threading, Parsing, RelativePath, GenericRepository)
@@ -90,12 +90,12 @@ Core (Anch.Core, Threading, Parsing, RelativePath, GenericRepository)
                              IdentitySource.Abstractions, RelativePath, GenericRepository
 ```
 
-Циклических зависимостей нет. `Anch.Core` и `Anch.GenericRepository` ни от чего не зависят.
+There are no circular dependencies. `Anch.Core` and `Anch.GenericRepository` depend on nothing.
 
-## 5. Конвенции кода
+## 5. Code conventions
 
-- **Целевая платформа**: `net10.0`, `LangVersion=latest`, включены `Nullable` и `ImplicitUsings`.
-- **C# 14 `extension(...)`-блоки** вместо классических `this`-методов:
+- **Target platform**: `net10.0`, `LangVersion=latest`, `Nullable` and `ImplicitUsings` enabled.
+- **C# 14 `extension(...)` blocks** instead of classic `this` methods:
   ```csharp
   public static class ServiceCollectionExtensions
   {
@@ -105,17 +105,17 @@ Core (Anch.Core, Threading, Parsing, RelativePath, GenericRepository)
       }
   }
   ```
-  Это нормально. При поиске метода расширения грепайте по имени метода, а не по `this IServiceCollection`.
-- **Выражения как данные**: пути к свойствам передаются как `Expression<Func<T, TProp>>` (а не строки). Они хранятся в `PropertyAccessors<TSource,TProp>` (путь + скомпилированные getter/setter) и сравниваются через `ExpressionComparer` (см. [core.md](modules/core.md)). Поэтому многие `record` в проекте имеют кэш `hashCode` и ручной `Equals`.
-- **`CancellationToken ct`** последний параметр во всех async-методах. Иногда используется `IDefaultCancellationTokenSource` для синхронных мест.
-- **`record`/`record struct`** для моделей и результатов. Наследование records широко используется (см. `DomainSecurityRule`).
-- **Ключевые (keyed) сервисы** активно применяются: `AddKeyedSingleton/Scoped` с `string`/enum-ключом (например, `ElementKey = "Element"`, `ICurrentUser.RawKey/ImpersonatedKey/DefaultKey`, `ITestEnvironment.MainServiceProviderKey`).
-- **Тесты** используют xunit v3 + свою надстройку `Anch.Testing.Xunit` (`[AnchFact]`, `[assembly: AnchTestFramework<TestEnvironment>]`). Подробнее в [testing.md](modules/testing.md).
-- **CRLF**: `.gitattributes` принудительно задаёт `eol=crlf` для `*.cs`, `*.csproj` и др.
-- Файлы начинаются с BOM (UTF-8 with BOM). При ручном редактировании/сравнении учитывать это.
+  This is normal. When searching for an extension method, grep by the method name, not by `this IServiceCollection`.
+- **Expressions as data**: property paths are passed as `Expression<Func<T, TProp>>` (not strings). They are stored in `PropertyAccessors<TSource,TProp>` (path + compiled getter/setter) and compared via `ExpressionComparer` (see [core.md](modules/core.md)). That is why many `record`s in the project cache the hash code and have a hand-written `Equals`.
+- **`CancellationToken ct`** is the last parameter of all async methods. `IDefaultCancellationTokenSource` is sometimes used for synchronous places.
+- **`record`/`record struct`** for models and results. Record inheritance is widely used (see `DomainSecurityRule`).
+- **Keyed services** are used heavily: `AddKeyedSingleton/Scoped` with a `string`/enum key (for example, `ElementKey = "Element"`, `ICurrentUser.RawKey/ImpersonatedKey/DefaultKey`, `ITestEnvironment.MainServiceProviderKey`).
+- **Tests** use xunit v3 plus the custom layer `Anch.Testing.Xunit` (`[AnchFact]`, `[assembly: AnchTestFramework<TestEnvironment>]`). Details in [testing.md](modules/testing.md).
+- **CRLF**: `.gitattributes` forces `eol=crlf` for `*.cs`, `*.csproj`, etc.
+- Files start with a BOM (UTF-8 with BOM). Keep this in mind when editing or comparing by hand.
 
-## 6. Что НЕ является исходным кодом
+## 6. What is NOT source code
 
-- `graphify-out/`: в git хранится только `graph.json` (граф знаний кода; запрос: `graphify query`). `GRAPH_REPORT.md`, `graph.html` и кеш создаются локально (`graphify update .`) и в git не попадают.
-- `src/TestResults/`, `bin/`, `obj/`, `*.DotSettings.user` локальные артефакты.
-- `src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui/` Angular-приложение (UI конфигуратора), собирается `npm` и встраивается в сборку как embedded-ресурсы.
+- `graphify-out/`: only `graph.json` is stored in git (the code knowledge graph; query: `graphify query`). `GRAPH_REPORT.md`, `graph.html` and the cache are created locally (`graphify update .`) and are not committed.
+- `src/TestResults/`, `bin/`, `obj/`, `*.DotSettings.user` are local artifacts.
+- `src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui/` is an Angular application (the configurator UI), built with `npm` and embedded into the assembly as embedded resources.

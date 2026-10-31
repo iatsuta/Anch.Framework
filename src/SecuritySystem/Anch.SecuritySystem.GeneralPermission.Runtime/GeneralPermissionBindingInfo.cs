@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Describes how the application's permission entity is bound to its role.</summary>
 public record GeneralPermissionBindingInfo<TPermission, TSecurityRole> : GeneralPermissionBindingInfo<TPermission>
 {
     public sealed override Type SecurityRoleType { get; } = typeof(TSecurityRole);
@@ -11,11 +12,13 @@ public record GeneralPermissionBindingInfo<TPermission, TSecurityRole> : General
     public PropertyAccessors<TSecurityRole, string>? SecurityRoleDescription { get; init; }
 }
 
+/// <summary>Describes how the application's permission entity is bound to its role.</summary>
 public abstract record GeneralPermissionBindingInfo<TPermission> : GeneralPermissionBindingInfo
 {
     public sealed override Type PermissionType { get; } = typeof(TPermission);
 }
 
+/// <summary>Describes how the application's permission entity is bound to its role.</summary>
 public abstract record GeneralPermissionBindingInfo
 {
     public abstract Type PermissionType { get; }

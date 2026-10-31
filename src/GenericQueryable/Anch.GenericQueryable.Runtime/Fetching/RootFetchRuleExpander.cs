@@ -6,10 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.Fetching;
 
+/// <summary>The expander that the fetch service uses: returns property rules as they are and asks the registered expanders for any other rule. Results are cached.</summary>
+/// <param name="expanders">The registered expanders, tried in order.</param>
 public class RootFetchRuleExpander([FromKeyedServices(IFetchRuleExpander.ElementKey)] IEnumerable<IFetchRuleExpander> expanders) : IFetchRuleExpander
 {
     private readonly ConcurrentDictionary<Type, object> cache = [];
 
+    /// <inheritdoc/>
     public PropertyFetchRule<TSource>? TryExpand<TSource>(FetchRule<TSource> fetchRule)
     {
         if (fetchRule is PropertyFetchRule<TSource> propertyFetchRule)

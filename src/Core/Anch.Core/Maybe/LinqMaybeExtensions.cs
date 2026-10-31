@@ -1,6 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace Anch.Core;
 
+/// <summary>LINQ query syntax support for <see cref="Maybe{T}"/> (<c>from ... select</c>).</summary>
 public static class LinqMaybeExtensions
 {
     public static Maybe<TResult> Select<TSource, TResult>(this Maybe<TSource> source, Func<TSource, TResult> selector)

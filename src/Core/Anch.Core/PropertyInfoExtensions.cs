@@ -5,6 +5,7 @@ using Anch.Core.DictionaryCache;
 
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="System.Reflection.PropertyInfo"/>, such as building getter lambdas.</summary>
 public static class PropertyInfoExtensions
 {
     extension(PropertyInfo property)

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Starts and ends RunAs sessions after the validators accept the change.</summary>
 public class RunAsManager<TUser>(
     [FromKeyedServices(ICurrentUser.ImpersonatedKey)] ICurrentUser impersonatedCurrentUser,
     ISecuritySystemFactory securitySystemFactory,

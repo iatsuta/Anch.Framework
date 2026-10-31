@@ -5,6 +5,7 @@ using Anch.SecuritySystem.ExternalSystem.Management;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Extracts the identifier of a principal from stored principal data.</summary>
 public class PrincipalDataSecurityIdentityManager(IServiceProxyFactory serviceProxyFactory) : IPrincipalDataSecurityIdentityManager
 {
     private readonly ConcurrentDictionary<Type, IPrincipalDataSecurityIdentityManager> cache = [];
@@ -20,6 +21,7 @@ public class PrincipalDataSecurityIdentityManager(IServiceProxyFactory servicePr
     }
 }
 
+/// <summary>Extracts the identifier of a principal from stored principal data.</summary>
 public class PrincipalDataSecurityIdentityManager<TPrincipal>(ISecurityIdentityManager<TPrincipal> securityIdentityManager)
     : IPrincipalDataSecurityIdentityManager
 {

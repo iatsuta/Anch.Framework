@@ -1,122 +1,122 @@
 # SecuritySystem
 
-Папка `src/SecuritySystem/`. Самый большой модуль (около 450 .cs-файлов + Angular-UI). Система прав доступа на основе ролей и **контекстов безопасности** (security context): «пользователь X имеет роль R на подразделения A, B (и их дочерние)».
+Folder `src/SecuritySystem/`. The largest module (about 450 .cs files + an Angular UI). A permission system based on roles and **security contexts**: "user X has role R on departments A, B (and their children)".
 
-Если нужно быстро оценить, как оно используется целиком, читайте [`_Example/ExampleApp.Infrastructure/DependencyInjection/ServiceCollectionExtensions.cs`](../../src/SecuritySystem/_Example/ExampleApp.Infrastructure/DependencyInjection/ServiceCollectionExtensions.cs) (метод `AddSecuritySystem`): там настроено почти всё.
+To quickly see how it is used as a whole, read [`_Example/ExampleApp.Infrastructure/DependencyInjection/ServiceCollectionExtensions.cs`](../../src/SecuritySystem/_Example/ExampleApp.Infrastructure/DependencyInjection/ServiceCollectionExtensions.cs) (the `AddSecuritySystem` method): almost everything is configured there.
 
-## 1. Основные понятия
+## 1. Core concepts
 
-| Понятие | Тип | Смысл |
+| Concept | Type | Meaning |
 |---|---|---|
-| Контекст безопасности | `ISecurityContext` (маркер-интерфейс, `Anch.SecuritySystem.Domain`) | Доменный тип, по которому ограничиваются права: `BusinessUnit`, `Location`, … Регистрируется `AddSecurityContext<T>(guid, ...)` |
-| Роль | `SecurityRole(name)` | Именованная роль (`Administrator`, `SystemIntegration` встроены). Регистрируется `AddSecurityRole(role, SecurityRoleInfo)` |
-| Операция | `SecurityOperation(name)` | Именованная операция, которая может «входить» в роли (`SecurityRoleInfo.Operations`) |
-| Правило | `SecurityRule` / `DomainSecurityRule` (records) | **Описание требуемого доступа**: роль, набор ролей, операция, `View`/`Edit` для типа, текущий пользователь, And/Or/Negate и т.д. |
-| Путь безопасности | `SecurityPath<TDomain>` | Как от доменного объекта дойти до его контекстов безопасности: `x => x.BusinessUnit`, … |
-| Разрешение (permission) | зависит от источника | Выдача роли принципалу с ограничениями по контекстам. Источники: GeneralPermission (таблицы БД) и VirtualPermission (вычисляется из доменных данных) |
-| Provider | `ISecurityProvider<T>` | Проверка/фильтрация доступа к объектам типа `T` |
-| Принципал/пользователь | `User`, `UserCredential`, `IUserSource<TUser>` | Кто обращается |
+| Security context | `ISecurityContext` (marker interface, `Anch.SecuritySystem.Domain`) | A domain type by which permissions are restricted: `BusinessUnit`, `Location`, … Registered with `AddSecurityContext<T>(guid, ...)` |
+| Role | `SecurityRole(name)` | A named role (`Administrator`, `SystemIntegration` are built in). Registered with `AddSecurityRole(role, SecurityRoleInfo)` |
+| Operation | `SecurityOperation(name)` | A named operation that can be "included" in roles (`SecurityRoleInfo.Operations`) |
+| Rule | `SecurityRule` / `DomainSecurityRule` (records) | **A description of the required access**: a role, a set of roles, an operation, `View`/`Edit` for a type, the current user, And/Or/Negate, etc. |
+| Security path | `SecurityPath<TDomain>` | How to get from a domain object to its security contexts: `x => x.BusinessUnit`, … |
+| Permission | depends on the source | Granting a role to a principal with restrictions by contexts. Sources: GeneralPermission (database tables) and VirtualPermission (computed from domain data) |
+| Provider | `ISecurityProvider<T>` | Checks/filters access to objects of type `T` |
+| Principal/user | `User`, `UserCredential`, `IUserSource<TUser>` | Who is making the request |
 
-Идентификаторы: `SecurityIdentity` / `TypedSecurityIdentity<T>`; для ролей/контекстов обычно `Guid` (в примере задаются явно).
+Identifiers: `SecurityIdentity` / `TypedSecurityIdentity<T>`; for roles/contexts usually `Guid` (set explicitly in the example).
 
-## 2. Проекты
+## 2. Projects
 
-| Проект | Содержимое |
+| Project | Contents |
 |---|---|
-| `Anch.SecuritySystem.Domain` | Только `ISecurityContext` |
-| `Anch.SecuritySystem.Rules` | **Модель правил**: `SecurityRule`, `DomainSecurityRule` (+ вложенные records), `SecurityRole`, `SecurityOperation`, `SecurityPathRestriction`, `SecurityContextRestriction`, `SecurityRuleCredential`, `User`, `UserCredential`, `SecurityIdentity`, расширения `Or/And/Except/Negate/ToSecurityRule` |
-| `Anch.SecuritySystem.Abstractions` | Все публичные контракты: `ISecuritySystem`, `ISecurityProvider<T>`, `IDomainSecurityService<T>`, источники ролей/операций/контекстов, `IPrincipalManagementService`, `ISecurityContextStorage`, `IUserSource`, `IRunAsManager`, `IImpersonateService`, `IAccessDeniedExceptionService`, атрибуты `[ViewSecurity]`/`[EditSecurity]`, `AccessDeniedException`, валидаторы |
-| `Anch.SecuritySystem.Runtime` | **Основная реализация** (~170 файлов). Подпапки: `Builders` (построение фильтров), `DomainServices`, `Expanders`, `ExternalSystem` (абстракции источника прав + хранилища контекстов + управление принципалами), `PermissionOptimization`, `Providers`, `SecurityAccessor`, `SecurityPath`, `SecurityRuleInfo`, `Services` (46 файлов), `UserSource` |
-| `Anch.SecuritySystem` | **Точка входа DI**: `AddSecuritySystem(Action<ISecuritySystemSetup>)`, все `I*Setup` и их реализации |
-| `Anch.SecuritySystem.GeneralPermission.Abstractions/.Runtime` + `Anch.SecuritySystem.GeneralPermission` | Источник прав «общего вида»: Principal/Permission/Role/Restriction как сущности в БД приложения. `AddGeneralPermission(...)` |
-| `Anch.SecuritySystem.VirtualPermission.Runtime` + `Anch.SecuritySystem.VirtualPermission` | Источник прав, **вычисляемый из доменных объектов** приложения (например, «руководитель отдела»). `AddVirtualPermission<TPrincipal,TPermission>(...)` |
-| `Anch.SecuritySystem.Notification.Abstractions/.Domain/.Runtime` + `Anch.SecuritySystem.Notification` | Определение получателей уведомлений по правилам (`NotificationFilterGroup`, `NotificationExpandType`, `INotificationPermissionExtractor`…). `AddNotification()` |
-| `Anch.SecuritySystem.Configurator` | ASP.NET-админка прав: REST-обработчики (`Handlers/*`, `Interfaces/*`, `Models/*DTO`) + встроенный Angular-UI (`configurator-ui/`). `AddConfigurator()`, `UseConfigurator(route = "/admin/configurator")` |
-| `Anch.SecuritySystem.Testing` | Хелперы для тестов: `RootAuthManager`, `RootImpersonateService`, `TestingEvaluator`, `TestRootUserInfo`, DI: `AddSecuritySystemTesting(setup?)` (`ISecuritySystemTestingSetup.SetEvaluator`, `SetTestRootUserInfo`) |
-| `Anch.SecuritySystem.DiTests` | Юнит-тесты на in-memory окружении (`MainTests`, `SecurityPathTests`, `SecurityRoleTests`, оптимизаторы) |
-| `_Example/` | Демо-приложение + интеграционные тесты EF/NHibernate (см. §7) |
+| `Anch.SecuritySystem.Domain` | Only `ISecurityContext` |
+| `Anch.SecuritySystem.Rules` | **The rule model**: `SecurityRule`, `DomainSecurityRule` (+ nested records), `SecurityRole`, `SecurityOperation`, `SecurityPathRestriction`, `SecurityContextRestriction`, `SecurityRuleCredential`, `User`, `UserCredential`, `SecurityIdentity`, extensions `Or/And/Except/Negate/ToSecurityRule` |
+| `Anch.SecuritySystem.Abstractions` | All public contracts: `ISecuritySystem`, `ISecurityProvider<T>`, `IDomainSecurityService<T>`, role/operation/context sources, `IPrincipalManagementService`, `ISecurityContextStorage`, `IUserSource`, `IRunAsManager`, `IImpersonateService`, `IAccessDeniedExceptionService`, attributes `[ViewSecurity]`/`[EditSecurity]`, `AccessDeniedException`, validators |
+| `Anch.SecuritySystem.Runtime` | **The main implementation** (~170 files). Subfolders: `Builders` (filter construction), `DomainServices`, `Expanders`, `ExternalSystem` (permission source abstractions + context storage + principal management), `PermissionOptimization`, `Providers`, `SecurityAccessor`, `SecurityPath`, `SecurityRuleInfo`, `Services` (46 files), `UserSource` |
+| `Anch.SecuritySystem` | **DI entry point**: `AddSecuritySystem(Action<ISecuritySystemSetup>)`, all `I*Setup` and their implementations |
+| `Anch.SecuritySystem.GeneralPermission.Abstractions/.Runtime` + `Anch.SecuritySystem.GeneralPermission` | A "general" permission source: Principal/Permission/Role/Restriction as entities in the application database. `AddGeneralPermission(...)` |
+| `Anch.SecuritySystem.VirtualPermission.Runtime` + `Anch.SecuritySystem.VirtualPermission` | A permission source **computed from the application's domain objects** (for example, "department head"). `AddVirtualPermission<TPrincipal,TPermission>(...)` |
+| `Anch.SecuritySystem.Notification.Abstractions/.Domain/.Runtime` + `Anch.SecuritySystem.Notification` | Determining notification recipients by rules (`NotificationFilterGroup`, `NotificationExpandType`, `INotificationPermissionExtractor`…). `AddNotification()` |
+| `Anch.SecuritySystem.Configurator` | ASP.NET permission admin: REST handlers (`Handlers/*`, `Interfaces/*`, `Models/*DTO`) + embedded Angular UI (`configurator-ui/`). `AddConfigurator()`, `UseConfigurator(route = "/admin/configurator")` |
+| `Anch.SecuritySystem.Testing` | Test helpers: `RootAuthManager`, `RootImpersonateService`, `TestingEvaluator`, `TestRootUserInfo`, DI: `AddSecuritySystemTesting(setup?)` (`ISecuritySystemTestingSetup.SetEvaluator`, `SetTestRootUserInfo`) |
+| `Anch.SecuritySystem.DiTests` | Unit tests on an in-memory environment (`MainTests`, `SecurityPathTests`, `SecurityRoleTests`, optimizers) |
+| `_Example/` | Demo application + EF/NHibernate integration tests (see §9) |
 
-## 3. Правила (`DomainSecurityRule`)
+## 3. Rules (`DomainSecurityRule`)
 
-Правило это данные. Чтобы получить доступ, правило раскрывается (expand) до набора ролей и проверяется. Типы (в `Anch.SecuritySystem.Rules/DomainSecurityRule.cs`):
+A rule is data. To grant access, the rule is expanded into a set of roles and checked. Types (in `Anch.SecuritySystem.Rules/DomainSecurityRule.cs`):
 
-- **Роль/операция**: `NonExpandedRolesSecurityRule` (набор ролей, создаётся через `role.ToSecurityRule()` или неявно из `SecurityRole`/`SecurityRole[]`), `OperationSecurityRule`, `NonExpandedRoleGroupSecurityRule`, `ExpandedRolesSecurityRule`, `ExpandedRoleGroupSecurityRule` (после раскрытия), `AnyRoleSecurityRule` (`DomainSecurityRule.AnyRole`), `RoleFactorySecurityRule`.
-  Все наследуют `RoleBaseSecurityRule` с кастомизацией: `CustomExpandType` (`HierarchicalExpandType`, по умолчанию `Children`), `CustomRestriction` (`SecurityPathRestriction`), `CustomCredential`.
-- **Режим**: `SecurityRule.View`, `SecurityRule.Edit` (`ModeSecurityRule`) и `DomainModeSecurityRule(DomainType, Mode)`: «режим View для типа X». Реализация для типа задаётся `AddDomainSecurity<T>(b => b.SetView(...).SetEdit(...))`.
-- **Клиентские правила**: `ClientSecurityRule(name)`, `SecurityRuleHeader(name)`, соответствие «имя → реализация» (`AddSecurityRule(header, impl)`, `IClientSecurityRuleInfoSource`).
-- **Текущий пользователь**: `DomainSecurityRule.CurrentUser` (объект доступен, если он «принадлежит» пользователю; `RelativePathKey` задаёт путь).
-- **Провайдеры/условия**: `ProviderSecurityRule`, `ProviderFactorySecurityRule`, `ConditionFactorySecurityRule`, `RelativeConditionSecurityRule` (условие по связанному объекту), `FactorySecurityRule`; `DomainSecurityRule.AccessDenied` и `SecurityRule.Disabled` специальные провайдеры.
-- **Комбинаторы** (`SecurityRuleExtensions`): `.Or(...)`, `.And(...)`, `.Except(...)`, `.Negate()`, а также `.Or<T>(x => cond)` / `.And<T>(...)`.
-- `OverrideAccessDeniedMessageSecurityRule`: подмена текста отказа.
+- **Role/operation**: `NonExpandedRolesSecurityRule` (a set of roles, created via `role.ToSecurityRule()` or implicitly from `SecurityRole`/`SecurityRole[]`), `OperationSecurityRule`, `NonExpandedRoleGroupSecurityRule`, `ExpandedRolesSecurityRule`, `ExpandedRoleGroupSecurityRule` (after expansion), `AnyRoleSecurityRule` (`DomainSecurityRule.AnyRole`), `RoleFactorySecurityRule`.
+  All inherit `RoleBaseSecurityRule` with customization: `CustomExpandType` (`HierarchicalExpandType`, `Children` by default), `CustomRestriction` (`SecurityPathRestriction`), `CustomCredential`.
+- **Mode**: `SecurityRule.View`, `SecurityRule.Edit` (`ModeSecurityRule`) and `DomainModeSecurityRule(DomainType, Mode)`: "View mode for type X". The implementation for a type is set with `AddDomainSecurity<T>(b => b.SetView(...).SetEdit(...))`.
+- **Client rules**: `ClientSecurityRule(name)`, `SecurityRuleHeader(name)`, a "name → implementation" mapping (`AddSecurityRule(header, impl)`, `IClientSecurityRuleInfoSource`).
+- **Current user**: `DomainSecurityRule.CurrentUser` (an object is accessible if it "belongs" to the user; `RelativePathKey` sets the path).
+- **Providers/conditions**: `ProviderSecurityRule`, `ProviderFactorySecurityRule`, `ConditionFactorySecurityRule`, `RelativeConditionSecurityRule` (a condition on a related object), `FactorySecurityRule`; `DomainSecurityRule.AccessDenied` and `SecurityRule.Disabled` are special providers.
+- **Combinators** (`SecurityRuleExtensions`): `.Or(...)`, `.And(...)`, `.Except(...)`, `.Negate()`, and also `.Or<T>(x => cond)` / `.And<T>(...)`.
+- `OverrideAccessDeniedMessageSecurityRule`: overrides the denial message.
 
-Примеры:
+Examples:
 ```csharp
-SecurityRole.Administrator                                     // неявно → rule
-new[] { Role.TestManager, Role.BuManager }                     // любая из ролей
-Role.TestManager.ToSecurityRule(HierarchicalExpandType.All)    // с раскрытием иерархии контекстов
+SecurityRole.Administrator                                     // implicitly → rule
+new[] { Role.TestManager, Role.BuManager }                     // any of the roles
+Role.TestManager.ToSecurityRule(HierarchicalExpandType.All)    // with context hierarchy expansion
 Role.A.Or(Role.B).And<TestObject>(o => o.Active)
 DomainSecurityRule.CurrentUser
 ```
 
-**Раскрытие**: `ISecurityRuleExpander` (реализация `RootSecurityRuleExpander` в `Runtime/Expanders`) последовательно раскрывает Mode → Header → Client → Operation → RoleGroup → RoleFactory и т.д. `IDomainSecurityRoleExtractor.ExtractSecurityRule(rule)` даёт итоговую `ExpandedRoleGroupSecurityRule`. Оптимизаторы правил: `SecurityRuleBasicOptimizer`, `SecurityRuleDeepOptimizer`, `ExpandedRoleGroupSecurityRuleSetOptimizer`.
+**Expansion**: `ISecurityRuleExpander` (implementation `RootSecurityRuleExpander` in `Runtime/Expanders`) successively expands Mode → Header → Client → Operation → RoleGroup → RoleFactory, etc. `IDomainSecurityRoleExtractor.ExtractSecurityRule(rule)` yields the final `ExpandedRoleGroupSecurityRule`. Rule optimizers: `SecurityRuleBasicOptimizer`, `SecurityRuleDeepOptimizer`, `ExpandedRoleGroupSecurityRuleSetOptimizer`.
 
-## 4. Как проверяется доступ (два режима работы)
+## 4. How access is checked (two modes)
 
-### 4.1. Без доменного объекта: `ISecuritySystem`
+### 4.1. Without a domain object: `ISecuritySystem`
 ```csharp
 bool ok = await securitySystem.HasAccessAsync(SecurityRole.Administrator, ct);
-await securitySystem.CheckAccessAsync(rule, ct);   // бросает исключение из IAccessDeniedExceptionService
+await securitySystem.CheckAccessAsync(rule, ct);   // throws the exception from IAccessDeniedExceptionService
 ```
-`Runtime/SecuritySystem/SecuritySystem.cs`: правило раскрывается → у каждой `IPermissionSystem` берутся `IPermissionSource`, и достаточно, чтобы любой из них вернул `HasAccessAsync`.
+`Runtime/SecuritySystem/SecuritySystem.cs`: the rule is expanded → the `IPermissionSource`s are taken from every `IPermissionSystem`, and it is enough for any of them to return `HasAccessAsync`.
 
-### 4.2. Для доменных объектов: `IDomainSecurityService<T>` → `ISecurityProvider<T>`
+### 4.2. For domain objects: `IDomainSecurityService<T>` → `ISecurityProvider<T>`
 ```csharp
 ISecurityProvider<TestObject> provider = domainSecurityService.GetSecurityProvider(SecurityRule.View);
-IQueryable<TestObject> visible = provider.Inject(db.Query<TestObject>());      // фильтрация запроса в SQL
+IQueryable<TestObject> visible = provider.Inject(db.Query<TestObject>());      // query filtering in SQL
 bool has = await provider.HasAccessAsync(obj, ct);
-await provider.CheckAccessAsync(obj, accessDeniedExceptionService, ct);        // см. Example/Repository.cs
+await provider.CheckAccessAsync(obj, accessDeniedExceptionService, ct);        // see Example/Repository.cs
 ```
-`ISecurityProvider<T>` расширяет `IQueryableInjector<T>` (`Inject` добавляет `Where`), а проверка одного объекта по умолчанию сводится к `Inject(...).GenericContainsAsync(obj)` (используется [GenericQueryable](generic-queryable.md)). `GetAccessorDataAsync(obj)` возвращает, кто имеет доступ (`SecurityAccessorData`).
+`ISecurityProvider<T>` extends `IQueryableInjector<T>` (`Inject` adds a `Where`), and checking a single object by default boils down to `Inject(...).GenericContainsAsync(obj)` (uses [GenericQueryable](generic-queryable.md)). `GetAccessorDataAsync(obj)` returns who has access (`SecurityAccessorData`).
 
-Фильтр строится по `SecurityPath<T>` (какие контексты есть у объекта) и по разрешениям пользователя: `RoleBaseSecurityPathProvider<T>` (`Runtime/Providers`) через `ISecurityFilterFactory<T>` / `IAccessorsFilterFactory<T>` (`Runtime/Builders`).
+The filter is built from the `SecurityPath<T>` (which contexts the object has) and the user's permissions: `RoleBaseSecurityPathProvider<T>` (`Runtime/Providers`) via `ISecurityFilterFactory<T>` / `IAccessorsFilterFactory<T>` (`Runtime/Builders`).
 
-Папка `Runtime/Builders`: три семейства построителей фильтра: `QueryBuilder` (условия строятся выражениями для SQL), `MaterializedBuilder` (разрешения подгружаются в память), `MixedBuilder/SecurityExpressionBuilderFactory` (выбор между ними), плюс `AccessorsBuilder` (вычисление «кто имеет доступ»). Классы названы по узлам дерева условий: `And/Or/Condition/SingleContext/ManyContext/NestedMany/ByIdents`. (Назначение семейств выведено из имён и структуры, глубоко код не изучался.)
+The `Runtime/Builders` folder: three families of filter builders: `QueryBuilder` (conditions are built as expressions for SQL), `MaterializedBuilder` (permissions are loaded into memory), `MixedBuilder/SecurityExpressionBuilderFactory` (choice between them), plus `AccessorsBuilder` (computing "who has access"). Classes are named after the nodes of the condition tree: `And/Or/Condition/SingleContext/ManyContext/NestedMany/ByIdents`. (The purpose of the families is inferred from names and structure; the code was not studied in depth.)
 
-`DomainSecurityService`: `Runtime/DomainServices` (`DomainSecurityService`, `VisitedDomainSecurityService`, `DependencyDomainSecurityService` для зависимых типов через `SetDependency`).
+`DomainSecurityService`: `Runtime/DomainServices` (`DomainSecurityService`, `VisitedDomainSecurityService`, `DependencyDomainSecurityService` for dependent types via `SetDependency`).
 
-### 4.3. Атрибуты в DI
-`[ViewSecurity]`, `[EditSecurity]`, `[DisabledSecurity]` на параметре конструктора: внедряют `ISecurityProvider<T>` нужного режима как keyed-сервис (`FromKeyedServices(nameof(SecurityRule.View))`).
+### 4.3. Attributes in DI
+`[ViewSecurity]`, `[EditSecurity]`, `[DisabledSecurity]` on a constructor parameter: inject an `ISecurityProvider<T>` of the required mode as a keyed service (`FromKeyedServices(nameof(SecurityRule.View))`).
 
-## 5. Настройка (`ISecuritySystemSetup`)
+## 5. Configuration (`ISecuritySystemSetup`)
 
-`Anch.SecuritySystem/DependencyInjection/ISecuritySystemSetup.cs`. Основные методы:
+`Anch.SecuritySystem/DependencyInjection/ISecuritySystemSetup.cs`. Main methods:
 
-| Метод | Назначение |
+| Method | Purpose |
 |---|---|
-| `AddSecurityContext<T>(guid, ctx => ...)` | Зарегистрировать контекст. `ISecurityContextInfoSetup`: `SetName`, `SetDisplayFunc`, `SetIdentityPath`, `SetHierarchicalInfo(...)` (см. [hierarchical-expand.md](hierarchical-expand.md)) |
-| `AddSecurityRole(role, SecurityRoleInfo)` | Роль: `Identity`, `Restriction` (`SecurityPathRestriction`), `Operations`, `Children`, `Description`, `IsVirtual`, `CustomExpandType` |
-| `AddSecurityOperation(op, info)` | Операция |
-| `AddSecurityRule(header, impl)` | Именованное правило |
-| `AddDomainSecurity<T>(b => ...)` | Правила доступа к типу: `SetView`, `SetEdit`, `SetMode`, `SetPath(SecurityPath<T>)`, `SetDependency<TSource>[(path)]`, `SetCustomService<T>()` |
-| `AddUserSource<TUser>(u => ...)` | Откуда брать пользователей: `SetName`, `SetFilter`, `SetRunAs`, `SetMissedService` |
-| `AddPermissionSystem(...)` | Свой `IPermissionSystemFactory` (кроме встроенных General/Virtual) |
-| `AddPrincipalManagementService/Listener` | Управление принципалами (CRUD) и подписка на изменения |
-| `SetQueryableSource<T>()`, `SetGenericRepository<T>()` | Доступ к данным (`Anch.GenericRepository`, см. [core.md](core.md)) |
-| `SetRawCurrentUser<T>()`, `SetDefaultCurrentUser<T>()`, `SetDefaultCancellationTokenSource<T>()` | Кто текущий пользователь (`ICurrentUser`) и токен по умолчанию |
-| `AddRunAsValidator<T>()` | Проверка «запустить от имени» (RunAs) |
-| `SetAccessDeniedExceptionService<T>()` | Тип исключения при отказе |
-| `SetSecurityAdministratorRule(rule)` | Правило «администратор безопасности» |
-| `SetSecurityAccessorInfinityStorage<T>()` | Хранилище «бесконечных» accessor'ов |
-| `AddClientSecurityRuleInfoSource<T>()`, `SetClientDomainModeSecurityRuleSource<T>()` | Клиентские правила (для UI) |
-| `AddExtensions(services => ...)` | Произвольные регистрации |
-| `AutoAddSelfRelativePath`, `InitializeDefaultRoles` | Флаги |
+| `AddSecurityContext<T>(guid, ctx => ...)` | Register a context. `ISecurityContextInfoSetup`: `SetName`, `SetDisplayFunc`, `SetIdentityPath`, `SetHierarchicalInfo(...)` (see [hierarchical-expand.md](hierarchical-expand.md)) |
+| `AddSecurityRole(role, SecurityRoleInfo)` | Role: `Identity`, `Restriction` (`SecurityPathRestriction`), `Operations`, `Children`, `Description`, `IsVirtual`, `CustomExpandType` |
+| `AddSecurityOperation(op, info)` | Operation |
+| `AddSecurityRule(header, impl)` | Named rule |
+| `AddDomainSecurity<T>(b => ...)` | Access rules for a type: `SetView`, `SetEdit`, `SetMode`, `SetPath(SecurityPath<T>)`, `SetDependency<TSource>[(path)]`, `SetCustomService<T>()` |
+| `AddUserSource<TUser>(u => ...)` | Where to get users from: `SetName`, `SetFilter`, `SetRunAs`, `SetMissedService` |
+| `AddPermissionSystem(...)` | A custom `IPermissionSystemFactory` (besides the built-in General/Virtual) |
+| `AddPrincipalManagementService/Listener` | Principal management (CRUD) and change subscription |
+| `SetQueryableSource<T>()`, `SetGenericRepository<T>()` | Data access (`Anch.GenericRepository`, see [core.md](core.md)) |
+| `SetRawCurrentUser<T>()`, `SetDefaultCurrentUser<T>()`, `SetDefaultCancellationTokenSource<T>()` | Who the current user is (`ICurrentUser`) and the default token |
+| `AddRunAsValidator<T>()` | "Run as" (RunAs) validation |
+| `SetAccessDeniedExceptionService<T>()` | Exception type on denial |
+| `SetSecurityAdministratorRule(rule)` | The "security administrator" rule |
+| `SetSecurityAccessorInfinityStorage<T>()` | Storage of "infinite" accessors |
+| `AddClientSecurityRuleInfoSource<T>()`, `SetClientDomainModeSecurityRuleSource<T>()` | Client rules (for the UI) |
+| `AddExtensions(services => ...)` | Arbitrary registrations |
+| `AutoAddSelfRelativePath`, `InitializeDefaultRoles` | Flags |
 
-Расширения поверх `ISecuritySystemSetup`: `AddGeneralPermission(...)`, `AddVirtualPermission(...)`, `AddNotification()`.
+Extensions on top of `ISecuritySystemSetup`: `AddGeneralPermission(...)`, `AddVirtualPermission(...)`, `AddNotification()`.
 
-## 6. Источники прав
+## 6. Permission sources
 
 ### GeneralPermission
-Сущности приложения (в примере `ExampleApp.Domain/Auth/General`): `Principal`, `Permission` (ссылки на Principal и Role, период действия, комментарий, делегирование), `SecurityRole`, `PermissionRestriction` (тип контекста + Id объекта), `SecurityContextType`. Связывание через `PropertyAccessors`/лямбды:
+Application entities (in the example `ExampleApp.Domain/Auth/General`): `Principal`, `Permission` (references to Principal and Role, validity period, comment, delegation), `SecurityRole`, `PermissionRestriction` (context type + object Id), `SecurityContextType`. Linked via `PropertyAccessors`/lambdas:
 
 ```csharp
 .AddGeneralPermission(
@@ -126,13 +126,13 @@ await provider.CheckAccessAsync(obj, accessDeniedExceptionService, ct);        /
           .SetPermissionPeriod(p => p.StartDate, p => p.EndDate)
           .SetPermissionComment(p => p.Comment)
           .SetPermissionDelegation(p => p.DelegatedFrom)
-          .SetReadonly()                                   // запретить управление
+          .SetReadonly()                                   // disable management
           .SetCustomPermissionManagementService<MyService>())
 ```
-`GeneralPermission.Runtime`: управление (`IPermissionManagementService`), валидаторы (`Validation/Permission`, `Validation/Principal`), сравнение разрешений.
+`GeneralPermission.Runtime`: management (`IPermissionManagementService`), validators (`Validation/Permission`, `Validation/Principal`), permission comparison.
 
 ### VirtualPermission
-Права вычисляются из обычных доменных сущностей: «Employee в роли TestManager на BusinessUnit/Location из объекта `TestManager`».
+Permissions are computed from ordinary domain entities: "Employee in the TestManager role on the BusinessUnit/Location from a `TestManager` object".
 ```csharp
 .AddVirtualPermission<Employee, TestManager>(
     x => x.Employee,
@@ -140,51 +140,51 @@ await provider.CheckAccessAsync(obj, accessDeniedExceptionService, ct);        /
           .AddRestriction(x => x.Location)
           .AddSecurityRole(Role.TestManager))
 ```
-Роль с `IsVirtual = true` в `SecurityRoleInfo`. Реализация: `VirtualPermission.Runtime` (`VirtualPermissionSystem`, `VirtualPermissionSource`, `VirtualPrincipalSourceService`).
+A role with `IsVirtual = true` in `SecurityRoleInfo`. Implementation: `VirtualPermission.Runtime` (`VirtualPermissionSystem`, `VirtualPermissionSource`, `VirtualPrincipalSourceService`).
 
-### Общая абстракция
-`IPermissionSystem` (+ `IPermissionSystem<TPermission>`) → `IPermissionSource` (`HasAccessAsync`, `GetPermissionsAsync`, `GetPermissionQuery`). Файлы: `Runtime/ExternalSystem/*`. Создаёт `IPermissionSystemFactory.Create(SecurityRuleCredential)`.
+### Common abstraction
+`IPermissionSystem` (+ `IPermissionSystem<TPermission>`) → `IPermissionSource` (`HasAccessAsync`, `GetPermissionsAsync`, `GetPermissionQuery`). Files: `Runtime/ExternalSystem/*`. Created by `IPermissionSystemFactory.Create(SecurityRuleCredential)`.
 
-## 7. Пользователи, RunAs, Impersonate
+## 7. Users, RunAs, Impersonate
 
-- `ICurrentUser` (`Anch.Core.Auth`): три keyed-варианта: `Raw` (из окружения), `Impersonated`, `Default`. Реализации и источники: `Runtime/CurrentUser.cs`, `ImpersonatedCurrentUser.cs`, `UserSource/*`.
-- `IUserSource<TUser>`: поиск пользователя по `UserCredential` (имя или Id).
-- **RunAs**: `IRunAsManager.StartRunAsUserAsync/FinishRunAsUserAsync`, проверка `IRunAsValidator` (`ExistsOtherwiseUsersRunAsValidator`).
-- `IImpersonateService.WithImpersonateAsync(credential, func)`: выполнить код от имени другого пользователя.
-- `SecurityRuleCredential`: `CurrentUserWithRunAs`, `CurrentUserWithoutRunAs`, `AnyUser`, `CustomUser(credential)` (в правиле можно переопределить, чьи права проверять).
+- `ICurrentUser` (`Anch.Core.Auth`): three keyed variants: `Raw` (from the environment), `Impersonated`, `Default`. Implementations and sources: `Runtime/CurrentUser.cs`, `ImpersonatedCurrentUser.cs`, `UserSource/*`.
+- `IUserSource<TUser>`: looks up a user by `UserCredential` (name or Id).
+- **RunAs**: `IRunAsManager.StartRunAsUserAsync/FinishRunAsUserAsync`, validated by `IRunAsValidator` (`ExistsOtherwiseUsersRunAsValidator`).
+- `IImpersonateService.WithImpersonateAsync(credential, func)`: runs code on behalf of another user.
+- `SecurityRuleCredential`: `CurrentUserWithRunAs`, `CurrentUserWithoutRunAs`, `AnyUser`, `CustomUser(credential)` (a rule can override whose permissions are checked).
 
-## 8. Конфигуратор (админка прав)
+## 8. Configurator (permission admin)
 
 `Anch.SecuritySystem.Configurator` (C# + Angular):
-- Подключение: `services.AddConfigurator()`, `app.UseConfigurator("/admin/configurator")` (см. `_Example/ExampleApp.Api/Program.cs`).
-- Бэкенд: minimal-API обработчики `Handlers/*` (интерфейсы в `Interfaces/*`): принципалы (создание, изменение, удаление), разрешения, бизнес-роли, операции, контексты, модули, RunAs. Расширяется через `IConfiguratorModule` (`AddModule`).
-- Фронтенд: `configurator-ui/` (Angular, Angular Material, Tailwind). В UI есть раздел событий (`app/events`), но отдельного C#-обработчика «events» в `Handlers/` нет, он, вероятно, поставляется внешним модулем. Собирается `npm ci && npm run ng build` (так делает CI) и встраивается в сборку как embedded-ресурсы пространства `…configurator_ui.dist`.
-- Если меняете DTO (`Models/*Dto.cs`), синхронизируйте `configurator-ui/src/app/**/models` и `api-services`.
+- Setup: `services.AddConfigurator()`, `app.UseConfigurator("/admin/configurator")` (see `_Example/ExampleApp.Api/Program.cs`).
+- Backend: minimal-API handlers `Handlers/*` (interfaces in `Interfaces/*`): principals (create, update, delete), permissions, business roles, operations, contexts, modules, RunAs. Extended via `IConfiguratorModule` (`AddModule`).
+- Frontend: `configurator-ui/` (Angular, Angular Material, Tailwind). The UI has an events section (`app/events`), but there is no separate C# "events" handler in `Handlers/`; it is probably supplied by an external module. Built with `npm ci && npm run ng build` (as CI does) and embedded into the assembly as embedded resources of the `…configurator_ui.dist` namespace.
+- If you change DTOs (`Models/*Dto.cs`), synchronize `configurator-ui/src/app/**/models` and `api-services`.
 
-## 9. Пример и тесты
+## 9. Example and tests
 
-`_Example/` (в решении лежит как часть SecuritySystem; в пакеты не должен попадать):
+`_Example/` (part of SecuritySystem in the solution; must not end up in packages):
 
-| Проект | Роль |
+| Project | Role |
 |---|---|
-| `ExampleApp.Domain` | Домен: `BusinessUnit`, `ManagementUnit`, `Employee`, `Location`, `TestObject`, связи предков (`*DirectAncestorLink`, `*UndirectAncestorLink`), `Auth/General/*`, `Auth/Virtual/*` |
-| `ExampleApp.Application` | Роли (`ExampleSecurityRole`), `IRepository` |
-| `ExampleApp.Infrastructure` | **Главное место для чтения**: `AddInfrastructure` → `AddSecuritySystem(...)` (полная конфигурация), `Repository<T>` с проверкой `ISecurityProvider` |
-| `ExampleApp.Infrastructure.EntityFramework` / `.NHibernate` | Реализации под ORM (DbContext/NHibernate-маппинги) |
-| `ExampleApp.Api`, `.Api.EntityFramework`, `.Api.NHibernate` | ASP.NET host, `Program.cs` (`AddInfrastructure().AddConfigurator()`, Negotiate-аутентификация, Swagger) |
-| `ExampleApp.IntegrationTests` (+ `.EntityFramework`, `.NHibernate`) | Сценарные тесты на SQLite: `GeneralPermissionTests`, `VirtualPermissionTests`, `RestrictionFilterTests`, `RunAsTests`, `ImpersonateServiceTests`, `PermissionDelegatedFromTests`, `NotificationTests`, `ClientSecurityRuleTests`, `CustomCredentialTests`, `ConfiguratorApiTests`, … Лучший источник примеров «как вызвать» |
+| `ExampleApp.Domain` | Domain: `BusinessUnit`, `ManagementUnit`, `Employee`, `Location`, `TestObject`, ancestor links (`*DirectAncestorLink`, `*UndirectAncestorLink`), `Auth/General/*`, `Auth/Virtual/*` |
+| `ExampleApp.Application` | Roles (`ExampleSecurityRole`), `IRepository` |
+| `ExampleApp.Infrastructure` | **The main place to read**: `AddInfrastructure` → `AddSecuritySystem(...)` (full configuration), `Repository<T>` with an `ISecurityProvider` check |
+| `ExampleApp.Infrastructure.EntityFramework` / `.NHibernate` | ORM implementations (DbContext/NHibernate mappings) |
+| `ExampleApp.Api`, `.Api.EntityFramework`, `.Api.NHibernate` | ASP.NET host, `Program.cs` (`AddInfrastructure().AddConfigurator()`, Negotiate authentication, Swagger) |
+| `ExampleApp.IntegrationTests` (+ `.EntityFramework`, `.NHibernate`) | Scenario tests on SQLite: `GeneralPermissionTests`, `VirtualPermissionTests`, `RestrictionFilterTests`, `RunAsTests`, `ImpersonateServiceTests`, `PermissionDelegatedFromTests`, `NotificationTests`, `ClientSecurityRuleTests`, `CustomCredentialTests`, `ConfiguratorApiTests`, … The best source of "how to call it" examples |
 
-`Anch.SecuritySystem.DiTests`: проверка без БД (`TestPermissionSystem`, `TestQueryableSource` как in-memory источники).
+`Anch.SecuritySystem.DiTests`: checks without a database (`TestPermissionSystem`, `TestQueryableSource` as in-memory sources).
 
-## 10. Где что менять
+## 10. What to change where
 
-| Задача | Место |
+| Task | Place |
 |---|---|
-| Новый вид правила | `Rules/DomainSecurityRule.cs` + раскрытие в `Runtime/Expanders/*` + обработка в `Runtime/Services/SecurityRuleVisitor.cs`, оптимизаторах |
-| Новая настройка в `AddSecuritySystem` | `Anch.SecuritySystem/DependencyInjection/ISecuritySystemSetup.cs` + `SecuritySystemSetup.cs` |
-| Как строится SQL-фильтр доступа | `Runtime/Builders/**`, `Runtime/Providers/RoleBaseSecurityPathProvider.cs` |
-| Новый источник прав | реализовать `IPermissionSystemFactory`/`IPermissionSystem`/`IPermissionSource`, подключить `AddPermissionSystem` (образцы: GeneralPermission, VirtualPermission) |
-| Пути безопасности (`SecurityPath`) | `Runtime/SecurityPath/*` |
-| Управление принципалами | `Abstractions/ExternalSystem/Management/*`, `Runtime/ExternalSystem/Management/*` |
-| Исключение при отказе доступа | `Abstractions/AccessDenied/*`, `SetAccessDeniedExceptionService<T>()` |
-| Тестовый пользователь/права | `Anch.SecuritySystem.Testing` |
+| A new kind of rule | `Rules/DomainSecurityRule.cs` + expansion in `Runtime/Expanders/*` + handling in `Runtime/Services/SecurityRuleVisitor.cs`, the optimizers |
+| A new setting in `AddSecuritySystem` | `Anch.SecuritySystem/DependencyInjection/ISecuritySystemSetup.cs` + `SecuritySystemSetup.cs` |
+| How the SQL access filter is built | `Runtime/Builders/**`, `Runtime/Providers/RoleBaseSecurityPathProvider.cs` |
+| A new permission source | implement `IPermissionSystemFactory`/`IPermissionSystem`/`IPermissionSource`, plug in via `AddPermissionSystem` (samples: GeneralPermission, VirtualPermission) |
+| Security paths (`SecurityPath`) | `Runtime/SecurityPath/*` |
+| Principal management | `Abstractions/ExternalSystem/Management/*`, `Runtime/ExternalSystem/Management/*` |
+| Exception on access denial | `Abstractions/AccessDenied/*`, `SetAccessDeniedExceptionService<T>()` |
+| Test user/permissions | `Anch.SecuritySystem.Testing` |

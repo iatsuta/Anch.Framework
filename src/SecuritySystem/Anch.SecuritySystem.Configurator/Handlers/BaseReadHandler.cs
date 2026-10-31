@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>The base of the handlers that only read data.</summary>
 public abstract class BaseReadHandler : IHandler
 {
     public async Task Execute(HttpContext context, CancellationToken ct)

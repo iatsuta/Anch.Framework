@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
+/// <summary>Checks that the restricted context types are allowed for the role.</summary>
 public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,

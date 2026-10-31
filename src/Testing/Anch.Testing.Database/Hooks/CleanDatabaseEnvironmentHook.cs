@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Hooks;
 
+/// <summary>Removes the private database of a container after a test.</summary>
 public class CleanDatabaseEnvironmentHook(
     [FromKeyedServices(ITestEnvironment.MainServiceProviderKey)]
     IServiceProvider mainServiceProvider,

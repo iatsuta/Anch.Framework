@@ -1,81 +1,81 @@
 # HierarchicalExpand
 
-Папка `src/HierarchicalExpand/`. Раскрытие иерархий (деревья «родитель → дети») прямо в SQL-запросах за счёт предвычисленных таблиц/view связей «предок → потомок».
+Folder `src/HierarchicalExpand/`. Expands hierarchies ("parent → children" trees) directly in SQL queries using precomputed tables/views of "ancestor → descendant" links.
 
-Пример: у пользователя есть право на `BusinessUnit` «Россия». Нужно получить Id «Россия» + всех дочерних. Модуль строит такой запрос по таблице связей без рекурсии в БД.
+Example: a user has a permission on the `BusinessUnit` "Russia". You need the Id of "Russia" plus all its children. The module builds such a query over the link table without recursion in the database.
 
-## Проекты
+## Projects
 
-| Проект | Содержимое |
+| Project | Contents |
 |---|---|
 | `Anch.HierarchicalExpand.Domain` | `HierarchicalExpandType` ([Flags]: `None`, `Parents`, `Children`, `All`) |
-| `Anch.HierarchicalExpand.Abstractions` | Модели описания иерархии + контракты расширителей и денормализаторов |
-| `Anch.HierarchicalExpand.Runtime` | Реализации (расширители, денормализация связей) |
+| `Anch.HierarchicalExpand.Abstractions` | Hierarchy description models + contracts of expanders and denormalizers |
+| `Anch.HierarchicalExpand.Runtime` | Implementations (expanders, link denormalization) |
 | `Anch.HierarchicalExpand` | DI: `AddHierarchicalExpand(setup)`, `IHierarchicalExpandSetup` |
-| `Anch.HierarchicalExpand.Tests` | Юнит/DI-тесты на in-memory данных (`DomainObjectExpanderTests`, `AncestorLinkExtractorTests`, `DiTests`) |
-| `…IntegrationTests` (+ `.EntityFramework`, `.NHibernate`) | Тесты на реальной БД (SQLite) |
+| `Anch.HierarchicalExpand.Tests` | Unit/DI tests on in-memory data (`DomainObjectExpanderTests`, `AncestorLinkExtractorTests`, `DiTests`) |
+| `…IntegrationTests` (+ `.EntityFramework`, `.NHibernate`) | Tests on a real database (SQLite) |
 
-## Модель описания иерархии
+## Hierarchy description model
 
-Для каждого иерархического доменного типа регистрируются (`IHierarchicalExpandSetup.AddHierarchicalInfo`):
+For every hierarchical domain type the following are registered (`IHierarchicalExpandSetup.AddHierarchicalInfo`):
 
-| Тип | Что описывает |
+| Type | What it describes |
 |---|---|
-| `HierarchicalInfo<T>(ParentPath)` | Выражение `x => x.Parent` |
-| `AncestorLinkInfo<TDomain, TLink>(From, To)` | Таблица/сущность связей: из какого свойства link берётся «от» и «к» |
-| `FullAncestorLinkInfo<T, TDirected, TUndirected>` | Пара связей: **Directed** (предок → потомок) и **Undirected** (в обе стороны, обычно view) |
-| `DeepLevelInfo<T>(DeepLevel)` | Опционально: свойство «глубина узла» (`x => x.DeepLevel`) |
+| `HierarchicalInfo<T>(ParentPath)` | The expression `x => x.Parent` |
+| `AncestorLinkInfo<TDomain, TLink>(From, To)` | The link table/entity: which link property is "from" and which is "to" |
+| `FullAncestorLinkInfo<T, TDirected, TUndirected>` | A pair of links: **Directed** (ancestor → descendant) and **Undirected** (both ways, usually a view) |
+| `DeepLevelInfo<T>(DeepLevel)` | Optional: a "node depth" property (`x => x.DeepLevel`) |
 
-Регистрация (образец: `Anch.HierarchicalExpand.Tests/Environment/TestEnvironment.cs`):
+Registration (sample: `Anch.HierarchicalExpand.Tests/Environment/TestEnvironment.cs`):
 
 ```csharp
 services.AddHierarchicalExpand(b => b.AddHierarchicalInfo(
     v => v.Parent,
     new AncestorLinkInfo<BusinessUnit, BusinessUnitDirectAncestorLink>(l => l.Ancestor, l => l.Child),
     new AncestorLinkInfo<BusinessUnit, BusinessUnitUndirectAncestorLink>(v => v.Source, v => v.Target),
-    v => v.DeepLevel));   // deepLevelPath необязателен
+    v => v.DeepLevel));   // deepLevelPath is optional
 ```
 
-`AddHierarchicalExpand` автоматически вызывает `AddIdentitySource()` и `AddServiceProxyFactory()`. Требует, чтобы в контейнере были `IQueryableSource` (чтение данных; см. [core.md](core.md)) и `IGenericRepository`.
+`AddHierarchicalExpand` automatically calls `AddIdentitySource()` and `AddServiceProxyFactory()`. It requires `IQueryableSource` (data reading; see [core.md](core.md)) and `IGenericRepository` to be in the container.
 
-## Расширение по Id
+## Expansion by Id
 
-`IHierarchicalObjectExpander<TIdent>` (получение: `IHierarchicalObjectExpanderFactory.Create(domainType)`):
+`IHierarchicalObjectExpander<TIdent>` (obtained via `IHierarchicalObjectExpanderFactory.Create(domainType)`):
 
-| Метод | Результат |
+| Method | Result |
 |---|---|
-| `Expand(idents, expandType)` | Id с учётом режима раскрытия |
-| `GetExpandExpression(expandType)` | `Expression<Func<IEnumerable<TIdent>, IEnumerable<TIdent>>>` для встраивания в запросы |
-| `TryGetSingleExpandExpression(expandType)` | то же для одного Id, `null` если не поддерживается |
-| `ExpandWithParents(idents, expandType)` | Словарь `Id → Id родителя/источника` |
+| `Expand(idents, expandType)` | Ids taking the expansion mode into account |
+| `GetExpandExpression(expandType)` | `Expression<Func<IEnumerable<TIdent>, IEnumerable<TIdent>>>` to embed into queries |
+| `TryGetSingleExpandExpression(expandType)` | the same for a single Id, `null` if not supported |
+| `ExpandWithParents(idents, expandType)` | A dictionary `Id → Id of the parent/source` |
 
-Семантика `HierarchicalExpandType` (см. `HierarchicalObjectAncestorLinkExpander`):
-- `None`: без изменений;
-- `Children`: потомки по **Directed**-связям;
-- `Parents`: предки по **Directed**-связям в обратную сторону (`Directed.Reverse()`);
-- `All`: через **Undirected** (и предки, и потомки).
+Semantics of `HierarchicalExpandType` (see `HierarchicalObjectAncestorLinkExpander`):
+- `None`: unchanged;
+- `Children`: descendants via **Directed** links;
+- `Parents`: ancestors via **Directed** links in the reverse direction (`Directed.Reverse()`);
+- `All`: via **Undirected** (both ancestors and descendants).
 
-Если тип не иерархический, `HierarchicalObjectExpanderTypeResolver` выдаёт `PlainHierarchicalObjectExpander`, который возвращает вход без изменений. Поэтому вызывающий код может не проверять, иерархичен ли тип.
+If the type is not hierarchical, `HierarchicalObjectExpanderTypeResolver` returns `PlainHierarchicalObjectExpander`, which returns its input unchanged. So calling code does not need to check whether a type is hierarchical.
 
-`IDomainObjectExpander<TDomain>` (фабрика `IDomainObjectExpanderFactory<T>.Create()`) то же на уровне объектов: `GetAllParents(objects, ct)`, `GetAllChildren(objects, ct)`.
+`IDomainObjectExpander<TDomain>` (factory `IDomainObjectExpanderFactory<T>.Create()`) is the same at the object level: `GetAllParents(objects, ct)`, `GetAllChildren(objects, ct)`.
 
 `IHierarchicalInfoSource`: `GetHierarchicalInfo<T>()`, `IsHierarchical(Type)`.
 
-## Денормализация (поддержание таблиц связей)
+## Denormalization (keeping link tables up to date)
 
-Таблицы Directed-связей и поле `DeepLevel` хранятся в БД и должны синхронизироваться при изменении дерева:
+Directed link tables and the `DeepLevel` field are stored in the database and must be synchronized when the tree changes:
 
-- `IAncestorDenormalizer<T>.SyncAsync(updated, removed, ct)`: пересчитать связи для изменённых/удалённых узлов (`Runtime/Denormalization/AncestorDenormalizer.cs`, `AncestorLinkExtractor`, `SyncResult`).
+- `IAncestorDenormalizer<T>.SyncAsync(updated, removed, ct)`: recomputes links for changed/removed nodes (`Runtime/Denormalization/AncestorDenormalizer.cs`, `AncestorLinkExtractor`, `SyncResult`).
 - `IDeepLevelDenormalizer<T>.UpdateDeepLevels(objects, ct)`.
-- Оба наследуют `IInitializer`: `Initialize(ct)` инициализирует (пересчитывает) данные для всех зарегистрированных типов; используется в тестовых окружениях.
-- Недирективное представление (Undirected) в примерах это **SQL view** (`UndirectedAncestorViewScriptGenerator` в `_Example`), а не таблица, поддерживаемая кодом.
+- Both inherit `IInitializer`: `Initialize(ct)` initializes (recomputes) the data for all registered types; used in test environments.
+- The undirected representation (Undirected) in the examples is a **SQL view** (`UndirectedAncestorViewScriptGenerator` in `_Example`), not a table maintained by code.
 
-## Где что менять
+## What to change where
 
-- Новый режим раскрытия / оптимизация запроса: `Runtime/HierarchicalObjectAncestorLinkExpander.cs`.
-- Как выбирается реализация для типа: `Runtime/HierarchicalObjectExpanderTypeResolver.cs`, `HierarchicalObjectExpanderFactory.cs` (через `IServiceProxyFactory`, см. [dependency-injection.md](dependency-injection.md)).
-- Регистрации: `Anch.HierarchicalExpand/DependencyInjection/HierarchicalExpandSetup.cs`.
+- A new expansion mode / query optimization: `Runtime/HierarchicalObjectAncestorLinkExpander.cs`.
+- How the implementation for a type is chosen: `Runtime/HierarchicalObjectExpanderTypeResolver.cs`, `HierarchicalObjectExpanderFactory.cs` (via `IServiceProxyFactory`, see [dependency-injection.md](dependency-injection.md)).
+- Registrations: `Anch.HierarchicalExpand/DependencyInjection/HierarchicalExpandSetup.cs`.
 
-## Потребители
+## Consumers
 
-`Anch.SecuritySystem` (`ISecurityContextInfoSetup.SetHierarchicalInfo`, раскрытие контекстов безопасности по правилам с `HierarchicalExpandType`). См. [security-system.md](security-system.md).
+`Anch.SecuritySystem` (`ISecurityContextInfoSetup.SetHierarchicalInfo`, expansion of security contexts by rules with `HierarchicalExpandType`). See [security-system.md](security-system.md).

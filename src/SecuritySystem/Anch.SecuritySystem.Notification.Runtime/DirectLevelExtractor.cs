@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds, for a security context group of an event, the contexts that a permission may name directly.</summary>
 public class DirectLevelExtractor<TSecurityContext>(
     IServiceProxyFactory serviceProxyFactory,
     IHierarchicalInfoSource hierarchicalInfoSource,
@@ -27,6 +28,7 @@ public class DirectLevelExtractor<TSecurityContext>(
         this.lazyInnerService.Value.GetDirectLevelExpression(notificationFilterGroup);
 }
 
+/// <summary>Finds, for a security context group of an event, the contexts that a permission may name directly.</summary>
 public abstract class DirectLevelExtractor<TSecurityContext, TSecurityContextIdent>(
     INotificationFilterGroupConverter notificationFilterGroupConverter) : IDirectLevelExtractor<TSecurityContext>
     where TSecurityContextIdent : notnull

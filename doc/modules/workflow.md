@@ -1,13 +1,13 @@
-# Workflow: ПОКА НЕ ИЗУЧАТЬ
+# Workflow: DO NOT STUDY FOR NOW
 
-> **Для AI-агентов и разработчиков: подсистема `src/Workflow/` в данный момент вне зоны внимания. Не читайте её, не анализируйте, не используйте как образец и не включайте в обзоры/ревью, пока владелец репозитория не снимет это ограничение.** Документация по ней намеренно не пишется.
+> **For AI agents and developers: the `src/Workflow/` subsystem is currently out of scope. Do not read it, analyze it, use it as an example, or include it in overviews/reviews until the repository owner lifts this restriction.** Documentation for it is intentionally not written.
 
-Что можно знать, не заходя внутрь:
+What you can know without looking inside:
 
-- Папка `src/Workflow/` (проекты `Anch.Workflow.*`) полностью обособлена; остальные модули (Core, GenericQueryable, SecuritySystem, …) от неё **не зависят**.
-- Она входит в решение `Anch.Framework.slnx`, собирается и тестируется в CI (шаг «Workflow Unit tests»), публикуется как NuGet-пакеты вместе с остальными.
-- Если по задаче нужно что-то именно в Workflow, сначала спросите владельца репозитория.
+- The `src/Workflow/` folder (projects `Anch.Workflow.*`) is fully isolated; the other modules (Core, GenericQueryable, SecuritySystem, …) do **not** depend on it.
+- It is part of the `Anch.Framework.slnx` solution, is built and tested in CI (the "Workflow Unit tests" step), and is published as NuGet packages together with the rest.
+- If a task needs something specifically in Workflow, ask the repository owner first.
 
-При поиске по коду по всему репозиторию исключайте `src/Workflow/**`, чтобы не получать нерелевантный шум.
+When searching the whole repository, exclude `src/Workflow/**` to avoid irrelevant noise.
 
-Дополнительно: в графе `graphify-out/graph.json` есть узлы Workflow; игнорируйте их.
+Additionally: `graphify-out/graph.json` contains Workflow nodes; ignore them.

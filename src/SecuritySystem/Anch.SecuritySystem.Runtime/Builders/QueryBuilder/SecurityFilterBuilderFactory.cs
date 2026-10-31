@@ -8,6 +8,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a domain type from its security path (factory).</summary>
 public class SecurityFilterBuilderFactory<TDomainObject>(
     IServiceProxyFactory serviceProxyFactory,
     IEnumerable<IPermissionSystem> permissionSystems) :
@@ -37,6 +38,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
     }
 }
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a domain type from its security path (factory).</summary>
 public class SecurityFilterBuilderFactory<TDomainObject, TPermission>(
     IIdentityInfoSource identityInfoSource,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,

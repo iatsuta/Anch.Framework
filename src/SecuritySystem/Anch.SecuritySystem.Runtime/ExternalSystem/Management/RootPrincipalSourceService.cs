@@ -5,6 +5,7 @@ using Anch.SecuritySystem.UserSource;
 
 namespace Anch.SecuritySystem.ExternalSystem.Management;
 
+/// <summary>Reads principals across all permission systems.</summary>
 public class RootPrincipalSourceService(IEnumerable<IPrincipalSourceService> principalSourceServices) : IRootPrincipalSourceService
 {
     public IPrincipalSourceService ForPrincipal(Type principalType) => principalSourceServices.Single(pss => pss.PrincipalType == principalType);

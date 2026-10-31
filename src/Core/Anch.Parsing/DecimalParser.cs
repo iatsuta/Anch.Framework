@@ -2,6 +2,7 @@
 
 namespace Anch.Parsing;
 
+/// <summary>A parser of decimal numbers in a given culture.</summary>
 public class DecimalParser(CultureInfo culture) : CharParsers(culture)
 {
     private readonly string separator = culture.NumberFormat.NumberDecimalSeparator;

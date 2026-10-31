@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Anch.SecuritySystem.GeneralPermission.Initialize;
 
+/// <summary>Creates the missing security context type entities and handles the unexpected ones according to the settings.</summary>
 public class SecurityContextInitializer(IServiceProvider serviceProvider, IEnumerable<GeneralPermissionRestrictionBindingInfo> bindings)
     : ISecurityContextInitializer
 {
@@ -25,6 +26,7 @@ public class SecurityContextInitializer(IServiceProvider serviceProvider, IEnume
     }
 }
 
+/// <summary>Creates the missing security context type entities and handles the unexpected ones according to the settings.</summary>
 public class SecurityContextInitializer<TSecurityContextType>(
     IQueryableSource queryableSource,
     IGenericRepository genericRepository,

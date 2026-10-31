@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Provides the permissions of the current user that satisfy a rule.</summary>
 public class AvailablePermissionSource<TPermission>(
     IQueryableSource queryableSource,
     IAvailablePermissionFilterFactory<TPermission> availablePermissionFilterFactory) : IAvailablePermissionSource<TPermission>

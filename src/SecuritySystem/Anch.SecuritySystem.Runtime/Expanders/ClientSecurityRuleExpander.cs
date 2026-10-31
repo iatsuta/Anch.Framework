@@ -4,6 +4,7 @@ using Anch.SecuritySystem.SecurityRuleInfo;
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Replaces a client rule with the rule registered under its name.</summary>
 public class ClientSecurityRuleExpander(IClientSecurityRuleInfoSource clientSecurityRuleInfoSource) : IClientSecurityRuleExpander
 {
     private readonly FrozenDictionary<DomainSecurityRule.ClientSecurityRule, DomainSecurityRule> dict =

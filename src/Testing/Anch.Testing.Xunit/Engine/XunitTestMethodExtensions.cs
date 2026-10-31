@@ -5,6 +5,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Extensions for xunit test methods.</summary>
 public static class XunitTestMethodExtensions
 {
     public static IXunitTestCase WithServiceProviderPool(this IXunitTestCase testCase, IServiceProviderPool? serviceProviderPool)

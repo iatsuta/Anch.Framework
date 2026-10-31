@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="Func{TResult}"/> delegates.</summary>
 public static class FuncExtensions
 {
     extension<TResult>(Func<TResult> func)

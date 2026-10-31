@@ -5,10 +5,16 @@ using Anch.Core;
 
 namespace Anch.GenericQueryable.Services;
 
+/// <summary>
+/// Redirects <c>GenericXxxAsync</c> calls to the <c>System.Linq.AsyncEnumerable</c> operators: the query is first converted with <c>ToAsyncEnumerable</c>,
+/// and a <see cref="ValueTask{TResult}"/> result is converted to a <see cref="Task{TResult}"/>.
+/// </summary>
+/// <param name="targetMethodExtractor">Finds the <c>AsyncEnumerable</c> operator for a <c>GenericXxxAsync</c> method.</param>
 public class AsyncEnumerableMethodRedirector(ITargetMethodExtractor targetMethodExtractor) : MethodRedirector(targetMethodExtractor)
 {
     private static readonly MethodInfo ToAsyncEnumerableMethod = typeof(AsyncEnumerable).GetMethod(nameof(AsyncEnumerable.ToAsyncEnumerable))!;
 
+    /// <inheritdoc/>
     protected override Expression CreateCallExpression(MethodInfo targetMethod, IEnumerable<Expression> args)
     {
         var cachedArgs = args.ToList();
@@ -34,5 +40,6 @@ public class AsyncEnumerableMethodRedirector(ITargetMethodExtractor targetMethod
         return asTaskMethod is null ? callExpression : Expression.Call(callExpression, asTaskMethod);
     }
 
+    /// <summary>Redirector over <c>System.Linq.AsyncEnumerable</c> operators.</summary>
     public static IMethodRedirector Default { get; } = new AsyncEnumerableMethodRedirector(AsyncEnumerableTargetMethodExtractor.Default);
 }

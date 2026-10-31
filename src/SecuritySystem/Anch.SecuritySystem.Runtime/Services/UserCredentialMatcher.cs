@@ -4,6 +4,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Checks whether a user entity matches a user credential by name or identifier.</summary>
 public class UserCredentialMatcher<TUser>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfoSource identityInfoSource) : IUserCredentialMatcher<TUser>
@@ -20,6 +21,7 @@ public class UserCredentialMatcher<TUser>(
     public bool IsMatch(UserCredential userCredential, TUser user) => this.lazyInnerService.Value.IsMatch(userCredential, user);
 }
 
+/// <summary>Checks whether a user entity matches a user credential by name or identifier.</summary>
 public class UserCredentialMatcher<TUser, TIdent>(
     IIdentityInfo<TUser, TIdent> identityInfo,
     IVisualIdentityInfo<TUser> visualIdentityInfo,
