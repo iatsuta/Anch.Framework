@@ -24,7 +24,7 @@ Anch.Framework/
 │   ├── Testing/                    # инфраструктура интеграционных тестов (xunit v3)
 │   └── Workflow/                   # ⚠ ПОКА НЕ ИЗУЧАТЬ, см. modules/workflow.md
 ├── doc/                            # эта документация
-├── graphify-out/                   # артефакты graphify (граф знаний кода), не исходники
+├── graphify-out/                   # граф знаний: в git только graph.json, остальное генерируется локально
 └── .github/workflows/              # build.yml (CI), publish.yml (NuGet)
 ```
 
@@ -116,6 +116,6 @@ Core (Anch.Core, Threading, Parsing, RelativePath, GenericRepository)
 
 ## 6. Что НЕ является исходным кодом
 
-- `graphify-out/` кэш и отчёт инструмента graphify (граф знаний). Файл `graphify-out/GRAPH_REPORT.md` можно использовать как быструю карту «сообществ» классов, но он генерируется автоматически и может отставать.
+- `graphify-out/`: в git хранится только `graph.json` (граф знаний кода; запрос: `graphify query`). `GRAPH_REPORT.md`, `graph.html` и кеш создаются локально (`graphify update .`) и в git не попадают.
 - `src/TestResults/`, `bin/`, `obj/`, `*.DotSettings.user` локальные артефакты.
 - `src/SecuritySystem/Anch.SecuritySystem.Configurator/configurator-ui/` Angular-приложение (UI конфигуратора), собирается `npm` и встраивается в сборку как embedded-ресурсы.

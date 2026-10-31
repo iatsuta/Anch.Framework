@@ -251,3 +251,7 @@ ModelManifest.xml
 *.db-wal
 /src/.github/copilot-instructions.md
 /.github/copilot-instructions.md
+
+# graphify: tracking only the graph
+graphify-out/*
+!graphify-out/graph.json

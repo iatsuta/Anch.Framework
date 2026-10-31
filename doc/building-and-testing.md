@@ -61,6 +61,15 @@ dotnet build src/Anch.Framework.slnx -c Release
 4. Для тестового проекта: `<IsPackable>false</IsPackable>`, `<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>`, ссылка на `Anch.Testing.Xunit`, шаг в `build.yml`.
 5. Общие настройки (nullable, LangVersion, NoWarn, `CS4014/CS1998/CA2016` как ошибки) приходят из `src/Directory.Build.props` автоматически. Туда же линкуется `__RootSolutionItems/RootCommonAssemblyInfo.cs`.
 
+## Граф знаний (graphify)
+
+В git хранится только `graphify-out/graph.json`; отчёт, HTML и кеш создаются локально и игнорируются (`.gitignore`).
+
+- Обновить граф: `graphify update .` (только код, без LLM), затем `git add graphify-out/graph.json`.
+- Обновляйте граф **отдельным коммитом** после крупных изменений кода. Кто перегенерировал граф, тот его и коммитит.
+- Граф не мёржится. Конфликт в `graph.json` решается не правкой, а пересборкой: `graphify update .` и `git add graphify-out/graph.json`.
+- Слияние настроено как обычное (merge-драйвер graphify не используется); дифф файла скрыт (`-diff`, `linguist-generated`).
+
 ## Частые проблемы
 
 | Симптом | Причина / решение |

@@ -27,7 +27,7 @@
 ├── doc/                       ← документация (начинать с doc/README.md)
 ├── global.json                # test runner: Microsoft.Testing.Platform
 ├── .github/workflows/         # build.yml (CI), publish.yml (NuGet)
-├── graphify-out/              # автосгенерированный граф знаний (не исходники)
+├── graphify-out/              # граф знаний: в git только graph.json, остальное локально (не исходники)
 └── src/
     ├── Anch.Framework.slnx    # единственное решение
     ├── Directory.Build.props  # общие свойства: net10.0, Nullable, LangVersion=latest

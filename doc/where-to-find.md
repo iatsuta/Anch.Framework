@@ -66,4 +66,4 @@
 - **Где зарегистрирован сервис**: `Grep` по `AddScoped<IFoo` / `typeof(IFoo<>)` в `*Setup.cs`.
 - **Образец использования API**: тесты (`*.Tests`, `ExampleApp.IntegrationTests`) почти всегда содержат минимальный рабочий пример.
 - **Исключайте из поиска**: `bin/`, `obj/`, `graphify-out/`, `configurator-ui/node_modules`, `src/Workflow/**`.
-- `graphify-out/GRAPH_REPORT.md`: автосгенерированная карта «сообществ» классов; полезна для общего обзора, но может быть неактуальной.
+- `graphify-out/graph.json`: граф знаний кода, хранится в git; обновляется командой `graphify update .`. Отчёт `GRAPH_REPORT.md` создаётся той же командой локально и в git отсутствует.
