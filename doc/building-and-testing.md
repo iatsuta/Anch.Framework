@@ -53,6 +53,10 @@ dotnet build src/Anch.Framework.slnx -c Release
 
 `.github/workflows/publish.yml` (на публикацию GitHub Release): сборка UI → `dotnet pack src/Anch.Framework.slnx /p:PackageVersion=<tag релиза> /p:InformationalVersion=<sha>` → `dotnet nuget push` на nuget.org (секрет `NUGET_Anch`). Версия пакетов = **тег релиза**; значение `AssemblyVersion` в `src/__RootSolutionItems/RootCommonAssemblyInfo.cs` (сейчас `3.9.3.0`) задано вручную и с тегом не связано.
 
+### Метаданные NuGet-пакетов
+
+Общие (`Authors`, `Company`, `Copyright`, лицензия MIT, `PackageProjectUrl`, `PackageReadmeFile`) заданы в `src/Directory.Build.props`. `Description` и `PackageTags` вычисляются по `PackageId` в `src/Directory.Build.targets` (описание модуля + суффикс слоя); корневой `README.md` кладётся в каждый пакет. Свой `Description`/`PackageTags` в csproj имеет приоритет. Для нового модуля добавьте строку с описанием в `Directory.Build.targets`, иначе будет описание по умолчанию.
+
 ## Добавление нового проекта (чек-лист)
 
 1. Каталог `src/<Модуль>/Anch.<Модуль>[.<Слой>]/`, csproj с `<PackageId>` равным имени проекта (проверяется тестом `CsprojValidationTests`) и при необходимости `<RootNamespace>`.

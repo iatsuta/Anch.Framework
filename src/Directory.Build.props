@@ -7,6 +7,13 @@
     <RepositoryUrl>https://github.com/iatsuta/Anch.Framework</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
+    <Authors>Anch</Authors>
+    <Company>Anch</Company>
+    <Copyright>Copyright (c) 2026 Anch</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/iatsuta/Anch.Framework</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
