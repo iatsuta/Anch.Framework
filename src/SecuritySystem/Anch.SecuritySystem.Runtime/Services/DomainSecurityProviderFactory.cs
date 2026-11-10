@@ -15,7 +15,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
     IServiceProvider serviceProvider,
     IServiceProxyFactory serviceProxyFactory,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
-    ISecurityRuleDeepOptimizer deepOptimizer,
+    [FromKeyedServices(ISecurityRuleOptimizer.DeepKey)]ISecurityRuleOptimizer deepOptimizer,
     IRoleBaseSecurityProviderFactory<TDomainObject> roleBaseSecurityProviderFactory,
     ISecurityRuleExpander securityRuleExpander) : IDomainSecurityProviderFactory<TDomainObject>
 {

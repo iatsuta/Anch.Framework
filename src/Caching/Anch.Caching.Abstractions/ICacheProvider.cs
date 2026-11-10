@@ -4,9 +4,9 @@
 public interface ICacheProvider
 {
     /// <summary>Returns the cache registered under a name.</summary>
-    /// <param name="key">The name of the cache.</param>
+    /// <param name="rootKey">The name of the cache.</param>
     /// <typeparam name="TKey">The key type.</typeparam>
     /// <typeparam name="TValue">The value type.</typeparam>
-    ICache<TKey, TValue> GetCache<TKey, TValue>(object key)
+    ICache<TKey, TValue> GetCache<TKey, TValue>(object rootKey)
         where TKey : notnull;
 }

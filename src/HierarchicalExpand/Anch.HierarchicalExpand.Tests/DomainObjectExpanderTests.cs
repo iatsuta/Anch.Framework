@@ -26,7 +26,7 @@ public class DomainObjectExpanderTests
         var result = expandUp ? await expander.GetAllParents(startNodes, ct) : await expander.GetAllChildren(startNodes, ct);
 
         // Assert
-        Assert.Equivalent(expectedResult.OrderBy(v => v.Name), result.OrderBy(v => v.Name));
+        Assert.Equivalent(expectedResult.OrderBy(v => v.Name), result.OrderBy(v => v.Name), strict: true);
     }
 
     /*

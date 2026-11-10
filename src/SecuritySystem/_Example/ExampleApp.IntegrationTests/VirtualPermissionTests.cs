@@ -28,7 +28,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
         Assert.Equal(runAs, result.CurrentUserLogin);
 
         var buNameList = result.BuNames.OrderBy(v => v).ToList();
-        Assert.Equivalent(expectedBuList.OrderBy(v => v), buNameList);
+        Assert.Equivalent(expectedBuList.OrderBy(v => v), buNameList, strict: true);
     }
 
     public IEnumerable<object?[]> Impersonate_LoadTestObjects_DataCorrected_Cases()
@@ -59,7 +59,7 @@ public abstract class VirtualPermissionTests(IServiceProvider rootServiceProvide
         Assert.Equal(runAs, result.CurrentUserLogin);
 
         var buNameList = result.BuNames.OrderBy(v => v).ToList();
-        Assert.Equivalent(expectedBuList.OrderBy(v => v), buNameList);
+        Assert.Equivalent(expectedBuList.OrderBy(v => v), buNameList, strict: true);
     }
 
     public IEnumerable<object?[]> Impersonate_LoadBuByAncestorView_DataCorrected_Cases()

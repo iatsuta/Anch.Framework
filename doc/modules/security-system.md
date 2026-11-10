@@ -58,7 +58,7 @@ Role.A.Or(Role.B).And<TestObject>(o => o.Active)
 DomainSecurityRule.CurrentUser
 ```
 
-**Expansion**: `ISecurityRuleExpander` (implementation `RootSecurityRuleExpander` in `Runtime/Expanders`) successively expands Mode → Header → Client → Operation → RoleGroup → RoleFactory, etc. `IDomainSecurityRoleExtractor.ExtractSecurityRule(rule)` yields the final `ExpandedRoleGroupSecurityRule`. Rule optimizers: `SecurityRuleBasicOptimizer`, `SecurityRuleDeepOptimizer`, `ExpandedRoleGroupSecurityRuleSetOptimizer`.
+**Expansion**: `ISecurityRuleExpander` (implementation `RootSecurityRuleExpander` in `Runtime/Expanders`) successively expands Mode → Header → Client → Operation → RoleGroup → RoleFactory, etc. Rule optimizers implement `ISecurityRuleOptimizer` and are registered as keyed services: `SecurityRuleBasicOptimizer` (`BasicKey`, simplifies without expanding), `SecurityRuleAccessOptimizer` (`AccessKey`, expands operations, modes, headers and client rules up to non-expanded role rules, used by `ISecuritySystem`), `SecurityRuleDeepOptimizer` (`DeepKey`, full expansion, used for domain providers). `ExpandedRoleGroupSecurityRuleSetOptimizer` merges expanded role rules.
 
 ## 4. How access is checked (two modes)
 
@@ -67,7 +67,7 @@ DomainSecurityRule.CurrentUser
 bool ok = await securitySystem.HasAccessAsync(SecurityRole.Administrator, ct);
 await securitySystem.CheckAccessAsync(rule, ct);   // throws the exception from IAccessDeniedExceptionService
 ```
-`Runtime/SecuritySystem/SecuritySystem.cs`: the rule is expanded → the `IPermissionSource`s are taken from every `IPermissionSystem`, and it is enough for any of them to return `HasAccessAsync`.
+`Runtime/SecuritySystem/SecuritySystem.cs`: the rule is prepared by the access optimizer and evaluated with three-valued logic for `Or`/`And`/`Negate` (`null` = cannot be decided without a domain object, counts as allowed). A plain role rule without custom credential or restriction is checked against the roles from `IAvailableSecurityRoleSource` (cached per `SecuritySystem` instance); any other role rule goes to the `IPermissionSource`s of every `IPermissionSystem`, and it is enough for any of them to return `HasAccessAsync`. `IAvailableClientSecurityRuleSource` lists the client rules that pass `HasAccessAsync`; it does not expand rules itself: the usual primitive role rules are matched against the available roles, custom rules fall back to per-rule permission queries. Per-user instances are created by `ISecuritySystemFactory`, `IAvailableSecurityRoleSourceFactory` and `IAvailableClientSecurityRuleSourceFactory`.
 
 ### 4.2. For domain objects: `IDomainSecurityService<T>` → `ISecurityProvider<T>`
 ```csharp

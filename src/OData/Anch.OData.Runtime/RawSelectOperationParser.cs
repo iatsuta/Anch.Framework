@@ -16,12 +16,12 @@ namespace Anch.OData;
 public class RawSelectOperationParser(ICacheProvider cacheProvider, IParsingExceptionFactory errorParsingHandler, ICultureSource? cultureSource = null)
     : IRawSelectOperationParser
 {
-    private readonly ICache<string, SelectOperation> cache = cacheProvider.GetCache<string, SelectOperation>(typeof(IRawSelectOperationParser));
-
     private readonly RawSelectOperationParserParser rawParser = new(cultureSource?.Culture ?? CultureInfo.InvariantCulture, ParameterExpression.Default);
+
+    private ICache<string, SelectOperation> Cache => field ??= cacheProvider.GetCache<string, SelectOperation>(this);
 
     /// <inheritdoc/>
     public SelectOperation Parse(string input) =>
 
-        this.cache.GetOrAdd(input, _ => this.rawParser.MainParser.Parse(input, unparsedRest => errorParsingHandler.GetError(input, unparsedRest)));
+        this.Cache.GetOrAdd(input, _ => this.rawParser.MainParser.Parse(input, unparsedRest => errorParsingHandler.GetError(input, unparsedRest)));
 }

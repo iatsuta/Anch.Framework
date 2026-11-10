@@ -83,7 +83,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
 
         Assert.Equal(subPermission.Identity, managedPermission.Identity);
         Assert.Equal(subPermission.DelegatedFrom, managedPermission.DelegatedFrom);
-        Assert.Equivalent(subPermission.Restrictions, managedPermission.Restrictions);
+        Assert.Equivalent(subPermission.Restrictions, managedPermission.Restrictions, strict: true);
     }
 
     [AnchFact]

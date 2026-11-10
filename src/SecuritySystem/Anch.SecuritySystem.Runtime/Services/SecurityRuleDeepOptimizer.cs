@@ -2,13 +2,16 @@
 
 using Anch.SecuritySystem.Expanders;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Anch.SecuritySystem.Services;
 
 /// <summary>Expands a rule and simplifies it.</summary>
 public class SecurityRuleDeepOptimizer(
     ISecurityRuleExpander expander,
-    ISecurityRuleBasicOptimizer basicOptimizer)
-    : ISecurityRuleDeepOptimizer
+    [FromKeyedServices(ISecurityRuleOptimizer.BasicKey)]
+    ISecurityRuleOptimizer basicOptimizer)
+    : ISecurityRuleOptimizer
 {
     private readonly ConcurrentDictionary<DomainSecurityRule, DomainSecurityRule> cache = [];
 
@@ -19,7 +22,7 @@ public class SecurityRuleDeepOptimizer(
         return visitedRule == baseSecurityRule ? visitedRule : this.Visit(visitedRule);
     }
 
-    DomainSecurityRule ISecurityRuleDeepOptimizer.Optimize(DomainSecurityRule baseSecurityRule) =>
+    DomainSecurityRule ISecurityRuleOptimizer.Optimize(DomainSecurityRule baseSecurityRule) =>
 
         baseSecurityRule.WithDefaultCredential(securityRule => this.cache.GetOrAdd(securityRule, _ => this.Visit(securityRule)));
 }

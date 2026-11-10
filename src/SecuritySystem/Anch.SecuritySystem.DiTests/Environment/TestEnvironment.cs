@@ -62,7 +62,8 @@ public class TestEnvironment : ITestEnvironment
                     .AddSecurityOperation(
                         ExampleSecurityOperation.BusinessUnitView,
                         new SecurityOperationInfo { CustomExpandType = HierarchicalExpandType.None }))
-            .AddRelativeDomainPath((Employee employee) => employee).AddSingleton(typeof(TestCheckboxConditionFactory<>))
+            .AddRelativeDomainPath((Employee employee) => employee)
+            .AddSingleton(typeof(TestCheckboxConditionFactory<>))
             .AddSingleton<TestQueryableSource>()
             .AddSingleton<TestPermissionStorge>()
             .AddSingleton<BusinessUnitAncestorLinkSourceExecuteCounter>()
