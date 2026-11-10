@@ -8,6 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
 
       - uses: actions/checkout@v5
@@ -39,9 +43,15 @@ jobs:
         run: |
           dotnet pack Anch.Framework.slnx --no-restore /p:PackageVersion=${{ github.event.release.tag_name }} /p:InformationalVersion=${{ github.sha }} -c Release -o out
 
+      - name: NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ vars.NUGET_USER }}
+
       - name: Publish
         working-directory: ./src/out
         run: |
-          dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN}
+          dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json --api-key ${NUGET_TOKEN} --skip-duplicate
         env:
-          NUGET_TOKEN: ${{ secrets.NUGET_Anch }}
+          NUGET_TOKEN: ${{ steps.login.outputs.NUGET_API_KEY }}
