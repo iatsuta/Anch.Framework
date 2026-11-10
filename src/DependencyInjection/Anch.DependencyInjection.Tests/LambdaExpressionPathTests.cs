@@ -18,7 +18,7 @@ public class LambdaExpressionPathTests
         var path2 = new LambdaExpressionPath(array2);
 
         // Act & Assert
-        Assert.Equivalent(path2, path1);
+        Assert.Equivalent(path2, path1, strict: true);
 
         // Check Equals
         Assert.True(path1.Equals(path2));
@@ -47,7 +47,8 @@ public class LambdaExpressionPathTests
                 typeof(ObjB).GetRequiredProperty(nameof(ObjB.SubItem), BindingFlags.Public | BindingFlags.Instance),
                 typeof(ObjC).GetRequiredProperty(nameof(ObjC.Value), BindingFlags.Public | BindingFlags.Instance)
             },
-            parsedPath.Properties.Select(expr => expr.GetProperty()));
+            parsedPath.Properties.Select(expr => expr.GetProperty()),
+            strict: true);
     }
 
     public record ObjA(IEnumerable<ObjB> Items);

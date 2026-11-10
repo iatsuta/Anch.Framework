@@ -1,5 +1,4 @@
-﻿
-namespace Anch.SecuritySystem.Expanders;
+﻿namespace Anch.SecuritySystem.Expanders;
 
 /// <summary>Simplifies a set of expanded role rules, for example by dropping roles that another role already covers.</summary>
 public class ExpandedRoleGroupSecurityRuleSetOptimizer(ISecurityRoleSource securityRoleSource) : IExpandedRoleGroupSecurityRuleSetOptimizer
@@ -21,9 +20,9 @@ public class ExpandedRoleGroupSecurityRuleSetOptimizer(ISecurityRoleSource secur
 
             group role by new
             {
-                CustomCredential = roleRuleGroup.CustomCredential ?? roleRule.CustomCredential,
-                CustomExpandType = roleRuleGroup.CustomExpandType ?? roleRule.CustomExpandType ?? roleInfo.Information.CustomExpandType,
-                CustomRestriction = roleRuleGroup.CustomRestriction ?? roleRule.CustomRestriction ?? roleInfo.Information.Restriction
+                CustomCredential = roleRule.CustomCredential ?? roleRuleGroup.CustomCredential,
+                CustomExpandType = roleRule.CustomExpandType ?? roleRuleGroup.CustomExpandType ?? roleInfo.Information.CustomExpandType,
+                CustomRestriction = roleRule.CustomRestriction ?? roleRuleGroup.CustomRestriction ?? roleInfo.Information.Restriction
             }
 
             into g

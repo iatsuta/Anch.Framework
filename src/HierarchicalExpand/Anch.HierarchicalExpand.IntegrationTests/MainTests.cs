@@ -28,7 +28,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
 
         // Assert
         Assert.Single(dict);
-        Assert.Equivalent(new Dictionary<Guid, Guid> { { rootBuId, Guid.Empty } }, dict);
+        Assert.Equivalent(new Dictionary<Guid, Guid> { { rootBuId, Guid.Empty } }, dict, strict: true);
     }
 
     [AnchFact]
@@ -50,7 +50,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
         var result = hierarchicalObjectExpander.Expand([rootBuId], HierarchicalExpandType.Children).ToList();
 
         // Assert
-        Assert.Equivalent(expectedBuIdents, result.OrderBy(v => v));
+        Assert.Equivalent(expectedBuIdents, result.OrderBy(v => v), strict: true);
     }
 
     [AnchFact]
@@ -75,7 +75,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
         var result = hierarchicalObjectExpander.Expand([middleBuId], HierarchicalExpandType.All).ToList();
 
         // Assert
-        Assert.Equivalent(expectedBuIdents, result.OrderBy(v => v));
+        Assert.Equivalent(expectedBuIdents, result.OrderBy(v => v), strict: true);
     }
 
     [AnchFact]

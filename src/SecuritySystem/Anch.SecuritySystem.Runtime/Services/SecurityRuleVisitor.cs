@@ -50,7 +50,7 @@ public abstract class SecurityRuleVisitor
         }
         else
         {
-            return visitedLeft.Or(visitedRight);
+            return visitedLeft.Or(visitedRight).TryApply(baseSecurityRule.CustomCredential);
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class SecurityRuleVisitor
         }
         else
         {
-            return visitedLeft.And(visitedRight);
+            return visitedLeft.And(visitedRight).TryApply(baseSecurityRule.CustomCredential);
         }
     }
 
@@ -80,7 +80,7 @@ public abstract class SecurityRuleVisitor
         }
         else
         {
-            return visitedInner.Negate();
+            return visitedInner.Negate().TryApply(baseSecurityRule.CustomCredential);
         }
     }
 

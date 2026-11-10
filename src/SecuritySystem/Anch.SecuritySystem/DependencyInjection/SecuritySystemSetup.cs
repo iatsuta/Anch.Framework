@@ -457,9 +457,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddSingleton<IClientSecurityRuleNameExtractor, ClientSecurityRuleNameExtractor>()
             .AddSingleton<IClientSecurityRuleInfoSource, RootClientSecurityRuleInfoSource>()
             .AddKeyedSingleton<IClientSecurityRuleInfoSource, DomainModeClientSecurityRuleInfoSource>(IClientSecurityRuleInfoSource.ElementKey)
-            .AddSingleton<IClientSecurityRuleResolver, ClientSecurityRuleResolver>()
-            .AddSingleton<IDomainModeSecurityRuleResolver, DomainModeSecurityRuleResolver>()
-            .AddSingleton<IDomainSecurityRoleExtractor, DomainSecurityRoleExtractor>()
 
             .AddSingleton<IExpandedRoleGroupSecurityRuleSetOptimizer, ExpandedRoleGroupSecurityRuleSetOptimizer>()
 
@@ -474,8 +471,10 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddSingleton<ISecurityOperationInfoSource, SecurityOperationInfoSource>()
             .AddScoped<ISecurityContextSource, SecurityContextSource>()
             .AddSingleton<ISecurityContextInfoSource, SecurityContextInfoSource>()
-            .AddSingleton<ISecurityRuleBasicOptimizer, SecurityRuleBasicOptimizer>()
-            .AddSingleton<ISecurityRuleDeepOptimizer, SecurityRuleDeepOptimizer>()
+
+            .AddKeyedSingleton<ISecurityRuleOptimizer, SecurityRuleBasicOptimizer>(ISecurityRuleOptimizer.BasicKey)
+            .AddKeyedSingleton<ISecurityRuleOptimizer, SecurityRuleAccessOptimizer>(ISecurityRuleOptimizer.AccessKey)
+            .AddKeyedSingleton<ISecurityRuleOptimizer, SecurityRuleDeepOptimizer>(ISecurityRuleOptimizer.DeepKey)
 
             .AddScoped(typeof(IRoleBaseSecurityProviderFactory<>), typeof(RoleBaseSecurityProviderFactory<>))
             .AddScoped(typeof(IDomainSecurityProviderFactory<>), typeof(DomainSecurityProviderFactory<>))
@@ -531,8 +530,22 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddKeyedScoped<ISecurityAccessorResolver, RawSecurityAccessorResolver>(ISecurityAccessorResolver.RawKey)
             .AddScoped<ISecurityAccessorResolver, RootSecurityAccessorResolver>()
 
-            .AddScoped<IAvailableSecurityRoleSource, AvailableSecurityRoleSource>()
+            .AddScoped(sp =>
+            {
+                var factory = sp.GetRequiredService<IAvailableSecurityRoleSourceFactory>();
+                var securityRuleCredential = sp.GetRequiredService<SecurityRuleCredential>();
+
+                return factory.Create(securityRuleCredential);
+            })
+            .AddScoped<IAvailableSecurityRoleSourceFactory, AvailableSecurityRoleSourceFactory>()
             .AddScoped<IAvailableSecurityOperationSource, AvailableSecurityOperationSource>()
-            .AddScoped<IAvailableClientSecurityRuleSource, AvailableClientSecurityRuleSource>();
+            .AddScoped(sp =>
+            {
+                var factory = sp.GetRequiredService<IAvailableClientSecurityRuleSourceFactory>();
+                var securityRuleCredential = sp.GetRequiredService<SecurityRuleCredential>();
+
+                return factory.Create(securityRuleCredential);
+            })
+            .AddScoped<IAvailableClientSecurityRuleSourceFactory, AvailableClientSecurityRuleSourceFactory>();
     }
 }

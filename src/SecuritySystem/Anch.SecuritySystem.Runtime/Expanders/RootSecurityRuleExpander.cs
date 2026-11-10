@@ -15,6 +15,8 @@ public class RootSecurityRuleExpander(
     ISecurityRuleHeaderExpander securityRuleHeaderExpander)
     : ISecurityRuleExpander
 {
+    private SecurityRuleVisitor Visitor => field ??= new FullDomainExpandVisitor(this);
+
     private readonly Lazy<DomainSecurityRule.ExpandedRoleGroupSecurityRule> anyRoleExpandedSecurityRule = new(() =>
         new([new(securityRoleSource.SecurityRoles)]));
 
@@ -59,8 +61,7 @@ public class RootSecurityRuleExpander(
             _ => throw new ArgumentOutOfRangeException(nameof(securityRule))
         };
 
-    public DomainSecurityRule FullDomainExpand(DomainSecurityRule securityRule) =>
-        new FullDomainExpandVisitor(this).Visit(securityRule);
+    public DomainSecurityRule FullDomainExpand(DomainSecurityRule securityRule) => this.Visitor.Visit(securityRule);
 
     public DomainSecurityRule ToDomain<TDomainObject>(SecurityRule securityRule) =>
 

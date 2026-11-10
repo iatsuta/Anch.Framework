@@ -460,7 +460,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var principalNames = await this.GetNotificationPrincipalsAsync([notificationFilterGroup], ct);
 
         // Assert
-        Assert.Equivalent(new[] { testUserName }, principalNames);
+        Assert.Equivalent(new[] { testUserName }, principalNames, strict: true);
     }
 
     [AnchFact]
@@ -494,7 +494,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
             });
 
         // Assert
-        Assert.Equivalent(new[] { testUserName }, principalNames);
+        Assert.Equivalent(new[] { testUserName }, principalNames, strict: true);
     }
 
     [AnchFact]
@@ -519,7 +519,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         var expectedResult = new[] { "TestEmployee2" };
 
-        Assert.Equivalent(expectedResult, result.OrderBy(v => v));
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v), strict: true);
     }
 
     [AnchFact]
@@ -546,7 +546,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         var expectedResult = new[] { testUserName, "TestEmployee2" };
 
-        Assert.Equivalent(expectedResult, result.OrderBy(v => v));
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v), strict: true);
     }
 
     private Task<string[]> GetNotificationPrincipalsAsync(NotificationFilterGroup[] notificationFilterGroups, CancellationToken ct) =>

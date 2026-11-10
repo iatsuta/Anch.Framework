@@ -40,7 +40,7 @@ public class ImmutableExtensionsTests
 
         var result = await source.ToImmutableHashSetAsync(ct);
 
-        Assert.Equivalent(new[] { 1, 2, 3 }, result);
+        Assert.Equivalent(new[] { 1, 2, 3 }, result, strict: true);
     }
 
     [AnchFact]

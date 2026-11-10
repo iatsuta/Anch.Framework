@@ -64,10 +64,10 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
 
         // Act
         var availableSecurityRoles = await this.GetEvaluator<IAvailableSecurityRoleSource>().EvaluateAsync(TestingScopeMode.Read,
-            async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync(ct));
+            async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync<SecurityRole>(ct));
 
         // Assert
-        Assert.Equivalent(new[] { testRole }, availableSecurityRoles);
+        Assert.Equal(new[] { testRole }, availableSecurityRoles);
 
         var managedPrincipal = await this.AuthManager.For(principalName).GetPrincipalAsync(ct);
 
@@ -78,7 +78,7 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
         var managedPermission = Assert.Single(managedPrincipal.Permissions);
 
         Assert.False(managedPermission.IsVirtual);
-        Assert.Equivalent(testPermission.Restrictions, managedPermission.Restrictions);
+        Assert.Equivalent(testPermission.Restrictions, managedPermission.Restrictions, strict: true);
     }
 
     [AnchFact]
@@ -111,7 +111,7 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
 
             var result = await testObjectRepository.GetQueryable().GenericToListAsync(ct);
 
-            Assert.Equivalent(expectedResult.OrderBy(v => v.Id), result.OrderBy(v => v.Id));
+            Assert.Equivalent(expectedResult.OrderBy(v => v.Id), result.OrderBy(v => v.Id), strict: true);
 
             foreach (var testObject in result)
             {

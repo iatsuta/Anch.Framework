@@ -19,6 +19,6 @@ public class SelectOperationParser(ICacheProvider cacheProvider, IRawSelectOpera
     public SelectOperation<TDomainObject> Parse<TDomainObject>(string input) =>
         this.rootCache
             .GetOrAddAs(typeof(TDomainObject),
-                _ => cacheProvider.GetCache<string, SelectOperation<TDomainObject>>((typeof(SelectOperationParser), typeof(TDomainObject))))
+                _ => cacheProvider.GetCache<string, SelectOperation<TDomainObject>>((this, typeof(TDomainObject))))
             .GetOrAdd(input, _ => selectOperationConverter.Convert<TDomainObject>(rawParser.Parse(input)));
 }

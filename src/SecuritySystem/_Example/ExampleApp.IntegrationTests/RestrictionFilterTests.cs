@@ -77,7 +77,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
-        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
+        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList, strict: true);
     }
 
     [AnchFact]
@@ -91,7 +91,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
-        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
+        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList, strict: true);
     }
 
     //[AnchFact]

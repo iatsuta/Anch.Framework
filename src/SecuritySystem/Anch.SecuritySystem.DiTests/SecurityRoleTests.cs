@@ -38,8 +38,17 @@ public class SecurityRoleTests(IServiceProvider rootServiceProvider)
         // Act
         var expandResult = expander.Expand(ExampleSecurityRole.TestRole3);
 
+        // The order of roles inside a group is not part of the contract: sort them by name.
+        var sortedExpandResult = new DomainSecurityRule.ExpandedRoleGroupSecurityRule(
+            expandResult.Children.Select(child =>
+                new DomainSecurityRule.ExpandedRolesSecurityRule(child.SecurityRoles.OrderBy(role => role.Name))
+                {
+                    CustomRestriction = child.CustomRestriction,
+                    CustomExpandType = child.CustomExpandType
+                }));
+
         // Assert
-        Assert.Equivalent(expectedResult, expandResult);
+        Assert.Equal(expectedResult, sortedExpandResult);
     }
 
     [Fact]
@@ -52,7 +61,7 @@ public class SecurityRoleTests(IServiceProvider rootServiceProvider)
         var expandResult = expander.Expand(new DomainSecurityRule.OperationSecurityRule(ExampleSecurityOperation.EmployeeView));
 
         // Assert
-        Assert.Equivalent(new[] { ExampleSecurityRole.TestRole }, expandResult.SecurityRoles);
+        Assert.Equal(new[] { ExampleSecurityRole.TestRole }, expandResult.SecurityRoles);
     }
 
     [Fact]
@@ -65,7 +74,7 @@ public class SecurityRoleTests(IServiceProvider rootServiceProvider)
         var expandResult = expander.Expand(ExampleSecurityOperation.EmployeeView.ToSecurityRule(HierarchicalExpandType.None));
 
         // Assert
-        Assert.Equivalent(new[] { ExampleSecurityRole.TestRole }.ToSecurityRule(HierarchicalExpandType.None), expandResult);
+        Assert.Equal(new[] { ExampleSecurityRole.TestRole }.ToSecurityRule(HierarchicalExpandType.None), expandResult);
     }
 
     [Fact]
@@ -89,7 +98,7 @@ public class SecurityRoleTests(IServiceProvider rootServiceProvider)
         var expandResult = expander.FullRoleExpand(ExampleSecurityOperation.EmployeeView.ToSecurityRule(customExpandType));
 
         // Assert
-        Assert.Equivalent(expectedResult, expandResult);
+        Assert.Equal(expectedResult, expandResult);
     }
 
     [Fact]
@@ -113,6 +122,6 @@ public class SecurityRoleTests(IServiceProvider rootServiceProvider)
         ]);
 
         // Assert
-        Assert.Equivalent(expectedResult, expandResult);
+        Assert.Equal(expectedResult, expandResult);
     }
 }
