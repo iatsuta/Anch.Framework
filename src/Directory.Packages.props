@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <DotNet>10.0.14</DotNet>
+    <DotNet>11.0.0</DotNet>
   </PropertyGroup>
   <!-- DotNet -->
   <ItemGroup>
@@ -12,7 +12,6 @@
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="$(DotNet)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(DotNet)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(DotNet)" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(DotNet)" />
   </ItemGroup>
   <!-- Other -->
   <ItemGroup>
