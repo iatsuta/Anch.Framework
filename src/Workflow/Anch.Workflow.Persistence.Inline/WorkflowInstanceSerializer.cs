@@ -6,7 +6,6 @@ using Anch.Workflow.States;
 namespace Anch.Workflow.Persistence.Inline;
 
 public class WorkflowInstanceSerializer<TSource, TStatus>(
-    IServiceProvider serviceProvider,
     IWorkflowDefinition<TSource, TStatus> workflow,
     IStateInstanceSerializerFactory<TSource, TStatus> stateInstanceSerializerFactory,
     IIdentityInfo<TSource, Guid> identityInfo)
@@ -29,72 +28,20 @@ public class WorkflowInstanceSerializer<TSource, TStatus>(
         var currentState = this.stateInstanceSerializer.Deserialize(workflowInstance);
 
         workflowInstance.CurrentState = currentState;
-        workflowInstance.Status = this.GetWorkflowStatus(currentState.Definition);
+        workflowInstance.Status = GetWorkflowStatus(currentState.Definition);
 
         return workflowInstance;
     }
 
-    private WorkflowStatus GetWorkflowStatus(IStateDefinition currentStateDefinition)
-    {
-        var isFinished = currentStateDefinition.StateType == typeof(FinalState);
-        var isTerminated = currentStateDefinition.StateType == typeof(TerminateState);
+    /// <summary>
+    /// The status enum is written to the domain object by the engine on state entry; the state data is written by the state serializer.
+    /// </summary>
+    public void Serialize(WorkflowInstance wi) => this.stateInstanceSerializer.Serialize(wi.CurrentState);
 
-        if (isTerminated)
-        {
-            return WorkflowStatus.Terminated;
-        }
-        else if (isFinished)
-        {
-            return WorkflowStatus.Finished;
-        }
-        else if (currentStateDefinition.StateType == typeof(TaskState))
-            //&& currentStateDefinition.AdditionalInfo.TryGetValue(TaskState.CommandsKey, out var untypedEventHeaders)
-            //&& untypedEventHeaders is IReadOnlyList<EventHeader> eventHeaders)
-        {
-            //foreach (var eventHeader in eventHeaders)
-            //{
-            //    result.CurrentState.WaitEvents.Add(new WaitEventInfo(eventHeader, null, result.CurrentState));
-            //}
+    private static WorkflowStatus GetWorkflowStatus(IStateDefinition currentStateDefinition) =>
 
-            return WorkflowStatus.WaitEvent;
-        }
-        else
-        {
-            throw new ArgumentOutOfRangeException(nameof(currentStateDefinition), $"Unexpected state type: {currentStateDefinition.StateType}");
-            //return WorkflowStatus.Runnable;
-        }
-    }
-
-    public void Serialize(WorkflowInstance wi)
-    {
-        var source = (TSource)wi.Source;
-
-        //this.workflowInfoSerializer.SetInfo(source, new InlineWorkflowInfo
-        //{
-        //    IsTerminated = wi.Status == WorkflowStatus.Terminated,
-        //    IsFinished = wi.Status == WorkflowStatus.Finished,
-        //});
-
-        //if (Enum.TryParse<TaskApproveStatus>(wi.CurrentState.Definition.Name, out var status))
-        //{
-        //    source.Status = status;
-        //}
-    }
+        currentStateDefinition.StateType == typeof(TerminateState) ? WorkflowStatus.Terminated
+        : currentStateDefinition.StateType == typeof(FinalState) ? WorkflowStatus.Finished
+        : currentStateDefinition.StateType == typeof(TaskState) ? WorkflowStatus.WaitEvent
+        : WorkflowStatus.Runnable;
 }
-
-//public class TerminateStateInstanceSerializer<TWorkflow, TSource, TElement> : IStateInstanceSerializer<TWorkflow, TSource, StartWorkflowsState<TSource, TElement>, TElement>
-//    where TWorkflow : IWorkflow<TSource>;
-
-//public class TerminateStateInstanceSerializer<TWorkflow, TSource> : IStateInstanceSerializer<TWorkflow, TSource, TerminateState, Ignore>
-//    where TWorkflow : IWorkflow<TSource>;
-
-//public class FinalStateInstanceSerializer<TWorkflow, TSource> : IStateInstanceSerializer<TWorkflow, TSource, FinalState, Ignore>
-//    where TWorkflow : IWorkflow<TSource>;
-
-//public class TaskStateInstanceSerializer<TWorkflow, TSource> : IStateInstanceSerializer<TWorkflow, TSource, TaskState, Ignore>
-//    where TWorkflow : IWorkflow<TSource>;
-
-//public interface IStateInstanceSerializer<TWorkflow, TSource, TState, TElement>
-//    where TWorkflow : IWorkflow<TSource>;
-
-//public interface IWorkflowStatusSerializer;

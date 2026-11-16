@@ -1,12 +1,13 @@
-﻿using Anch.Core;
-using Anch.Workflow.Domain;
-using Anch.Workflow.Domain.Definition;
+﻿using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.States;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Workflow.Persistence.Inline;
 
 public class StateInstanceSerializer<TSource, TStatus>(
+    IServiceProvider serviceProvider,
     IWorkflowDefinition<TSource, TStatus> workflowDefinition,
     IStateDefinitionResolverFactory stateDefinitionResolverFactory) : IStateInstanceSerializer
     where TSource : class
@@ -20,7 +21,7 @@ public class StateInstanceSerializer<TSource, TStatus>(
 
         var currentStateDefinition = this.stateDefinitionResolver.GetCurrentStateDefinition(source);
 
-        var isFinal = new[] { typeof(FinalState), typeof(TerminateState) }.Contains(currentStateDefinition.StateType);
+        var isFinal = currentStateDefinition.StateType == typeof(FinalState) || currentStateDefinition.StateType == typeof(TerminateState);
 
         var stateInstance = new StateInstance
         {
@@ -31,25 +32,46 @@ public class StateInstanceSerializer<TSource, TStatus>(
             OutputProcessed = isFinal
         };
 
-        stateInstance.WaitEvents.AddRange(this.GetWaitEvents(stateInstance));
+        this.GetDataSerializer(currentStateDefinition.StateType).Restore(source, stateInstance);
 
         return stateInstance;
     }
 
-    private IEnumerable<WaitEventInfo> GetWaitEvents(StateInstance stateInstance)
+    public void Serialize(StateInstance stateInstance)
     {
-        if (stateInstance.Definition.StateType == typeof(TaskState))
+        var source = (TSource)stateInstance.Workflow.Source;
+
+        this.GetDataSerializer(stateInstance.Definition.StateType).Store(source, stateInstance);
+    }
+
+    private IStateDataSerializer<TSource> GetDataSerializer(Type stateType)
+    {
+        var custom = serviceProvider.GetService(typeof(IStateDataSerializer<,>).MakeGenericType(typeof(TSource), stateType));
+
+        if (custom is not null)
         {
-            throw new NotImplementedException();
+            return (IStateDataSerializer<TSource>)custom;
+        }
+        else if (stateType == typeof(TaskState))
+        {
+            return new TaskStateDataSerializer<TSource>();
         }
         else
         {
-            throw new NotImplementedException();
+            return EmptyStateDataSerializer.Instance;
         }
     }
 
-    public void Serialize(StateInstance workflowInstance)
+    private sealed class EmptyStateDataSerializer : IStateDataSerializer<TSource>
     {
-        throw new NotImplementedException();
+        public static readonly EmptyStateDataSerializer Instance = new();
+
+        public void Restore(TSource source, StateInstance stateInstance)
+        {
+        }
+
+        public void Store(TSource source, StateInstance stateInstance)
+        {
+        }
     }
 }

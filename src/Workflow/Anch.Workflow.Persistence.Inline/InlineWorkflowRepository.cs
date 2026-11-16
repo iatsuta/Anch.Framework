@@ -44,29 +44,19 @@ public class InlineWorkflowRepository<TSource, TStatus>(
         await persistSource.Save((TSource)workflowInstance.Source, ct);
     }
 
-    public IAsyncEnumerable<WaitEventInfo> GetWaitEvents()
-    {
-        throw new NotImplementedException();
-    }
+    public IAsyncEnumerable<WaitEventInfo> GetWaitEvents() => AsyncEnumerable.Empty<WaitEventInfo>();
 
     public IAsyncEnumerable<WaitEventInfo> GetWaitEvents(PushEventInfo pushEventInfo)
     {
-        var definition = pushEventInfo.TargetState?.Definition;
-
-        if (pushEventInfo.TargetState is { } targetState)
+        // Wait events are not stored but derived from the current state of the domain object.
+        // A targeted event is answered from the target state; broadcast events have no inline waiters yet.
+        if (pushEventInfo.TargetState is { } targetState && targetState.Workflow.Definition == this.WorkflowDefinition)
         {
-            if (targetState.Workflow.Definition == this.WorkflowDefinition)
-            {
-                return targetState.WaitEvents.ToAsyncEnumerable();
-            }
-            else
-            {
-                return AsyncEnumerable.Empty<WaitEventInfo>();
-            }
+            return targetState.WaitEvents.ToAsyncEnumerable();
         }
         else
         {
-            throw new NotImplementedException();
+            return AsyncEnumerable.Empty<WaitEventInfo>();
         }
     }
 
@@ -149,4 +139,4 @@ public class InlineWorkflowRepository<TSource, TStatus>(
     {
         await persistSource.FlushChanges(ct);
     }
-}
+}
