@@ -3,8 +3,11 @@ using Anch.Workflow.Domain;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Execution;
-using Anch.Workflow.Serialization;
-using Anch.Workflow.StateFactory;
+using Anch.Workflow.Persistence;
+using Anch.Workflow.StateProcessing;
+using Anch.Workflow.States;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Workflow.Engine;
 
@@ -99,7 +102,7 @@ public class WorkflowMachine(
                 await codeStateProcessor.BindOutput(executionContext.CancellationToken);
             }
 
-            var leaveResult = await codeStateProcessor.CodeState.LeavePolicy.Leave(serviceProvider, executionContext);
+            var leaveResult = await this.ProcessLeavePolicy(codeStateProcessor.CodeState.LeavePolicy, executionContext);
 
             currentState.ReleaseWaitEvents();
 
@@ -108,6 +111,33 @@ public class WorkflowMachine(
         else
         {
             return WorkflowProcessResult.Empty;
+        }
+    }
+
+    protected virtual async ValueTask<WorkflowProcessResult> ProcessLeavePolicy(StateLeavePolicy leavePolicy, IExecutionContext executionContext)
+    {
+        if (leavePolicy == StateLeavePolicy.Forget)
+        {
+            return WorkflowProcessResult.Empty;
+        }
+        else if (leavePolicy == StateLeavePolicy.TerminateChild)
+        {
+            var workflowMachineFactory = serviceProvider.GetRequiredService<IWorkflowMachineFactory>();
+
+            var notFinishedInstances = executionContext.StateInstance.Children.Where(wi => wi.Status.Role != WorkflowStatusRole.Finished).ToList();
+
+            var result = new List<WorkflowProcessResult>();
+
+            foreach (var wi in notFinishedInstances)
+            {
+                result.Add(await workflowMachineFactory.Create(wi).Terminate(executionContext.CancellationToken));
+            }
+
+            return result.Aggregate();
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(leavePolicy), leavePolicy, null);
         }
     }
 

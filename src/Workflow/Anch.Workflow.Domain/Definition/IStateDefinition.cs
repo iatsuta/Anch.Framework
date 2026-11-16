@@ -1,7 +1,7 @@
 ﻿namespace Anch.Workflow.Domain.Definition;
 
 public interface IStateDefinition<TSource, TStatus, in TState> : IStateDefinition<TSource, TStatus>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     IReadOnlyList<Func<IServiceProvider, TSource, TState, CancellationToken, ValueTask>> InputActions { get; }
@@ -12,7 +12,7 @@ public interface IStateDefinition<TSource, TStatus, in TState> : IStateDefinitio
 }
 
 public interface IStateDefinition<TSource, TStatus> : IStateDefinition
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     new IWorkflowDefinition<TSource, TStatus> Workflow { get; }
@@ -31,7 +31,7 @@ public interface IStateDefinition<TSource, TStatus> : IStateDefinition
 }
 
 //public interface IStateDefinition<TSource> : IStateDefinition
-//    where TSource : notnull
+//    where TSource : class
 //{
 //    new IWorkflowDefinition<TSource> Workflow { get; }
 

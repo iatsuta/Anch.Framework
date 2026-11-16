@@ -1,9 +1,8 @@
 ﻿using Anch.DependencyInjection;
 using Anch.Workflow.Domain.Runtime;
 using Anch.Workflow.Engine;
-using Anch.Workflow.Serialization;
-using Anch.Workflow.Serialization.Memory;
-using Anch.Workflow.StateFactory;
+using Anch.Workflow.Persistence;
+using Anch.Workflow.StateProcessing;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +10,8 @@ namespace Anch.Workflow.DependencyInjection;
 
 public class WorkflowSetup : IWorkflowSetup, IServiceInitializer
 {
+    private IWorkflowDatabaseProvider? databaseProvider;
+
     private readonly List<Action<IServiceCollection>> initActions = [];
 
     public void Initialize(IServiceCollection services)
@@ -31,14 +32,18 @@ public class WorkflowSetup : IWorkflowSetup, IServiceInitializer
 
             .AddSingleton<IWorkflowSource, WorkflowSource>()
 
-            .AddScoped<IInstanceIdGenerator<WorkflowInstance>, RandomIdGenerator<WorkflowInstance>>()
-            .AddScoped<IInstanceIdGenerator<StateInstance>, RandomIdGenerator<StateInstance>>()
-
             .AddKeyedScoped<IWorkflowRepositoryFactory, CachedWorkflowRepositoryFactory>(IWorkflowRepositoryFactory.CacheKey)
-            .AddKeyedScoped<IWorkflowRepository, WorkflowRootRepository>(IWorkflowRepository.RootKey)
+            .AddKeyedScoped<IWorkflowRepository, WorkflowRootRepository>(IWorkflowRepository.RootKey);
 
-            .AddSingleton<MemoryWorkflowRootState>()
-            .AddScoped<IWorkflowRepositoryFactory, MemoryWorkflowRepositoryFactory>();
+        (this.databaseProvider ?? throw new InvalidOperationException("Database provider is not set")).AddServices(services);
+    }
+
+    public IWorkflowSetup SetDatabaseProvider<TWorkflowDatabaseProvider>()
+        where TWorkflowDatabaseProvider : IWorkflowDatabaseProvider, new()
+    {
+        this.databaseProvider = new TWorkflowDatabaseProvider();
+
+        return this;
     }
 
     public IWorkflowSetup Add<TWorkflow>()

@@ -105,3 +105,7 @@ jobs:
       - name: Workflow Unit tests
         run: |
           dotnet test --project src/Workflow/Anch.Workflow.Tests --no-build --verbosity normal -c Release
+
+      - name: Workflow Inline Integration tests
+        run: |
+          dotnet test --project src/Workflow/Anch.Workflow.IntegrationTests.EntityFramework --no-build --verbosity normal -c Release

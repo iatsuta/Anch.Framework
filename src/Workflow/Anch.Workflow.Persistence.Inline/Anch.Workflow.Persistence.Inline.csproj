@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Workflow.Persistence.Inline</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Anch.GenericRepository\Anch.GenericRepository.csproj" />
+    <ProjectReference Include="..\..\GenericQueryable\Anch.GenericQueryable.Abstractions\Anch.GenericQueryable.Abstractions.csproj" />
+    <ProjectReference Include="..\..\IdentitySource\Anch.IdentitySource\Anch.IdentitySource.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.Persistence\Anch.Workflow.Persistence.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.States\Anch.Workflow.States.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,7 +2,7 @@
 using Anch.Core.DictionaryCache;
 using Anch.Workflow.Domain.Definition;
 using Anch.Workflow.Domain.Runtime;
-using Anch.Workflow.Serialization;
+using Anch.Workflow.Persistence;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +22,7 @@ public class WorkflowMachineFactory(
     public IWorkflowMachine Create(WorkflowInstance workflowInstance) => this.cache[workflowInstance];
 
     public IWorkflowMachine Create<TSource>(TSource source, IWorkflowDefinition<TSource> workflowDefinition)
-        where TSource : notnull
+        where TSource : class
     {
         var wi = new WorkflowInstance
         {

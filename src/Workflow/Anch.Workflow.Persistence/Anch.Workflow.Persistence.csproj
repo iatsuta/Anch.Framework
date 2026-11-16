@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Workflow.Persistence</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anch.Workflow.Domain\Anch.Workflow.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

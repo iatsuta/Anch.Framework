@@ -3,7 +3,7 @@
 namespace Anch.Workflow.Domain.Definition;
 
 public interface IWorkflowDefinition<TSource, TStatus> : IWorkflowDefinition<TSource>
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     PropertyAccessors<TSource, TStatus>? StatusAccessors { get; }
@@ -20,7 +20,7 @@ public interface IWorkflowDefinition<TSource, TStatus> : IWorkflowDefinition<TSo
 }
 
 public interface IWorkflowDefinition<TSource> : IWorkflowDefinition
-    where TSource : notnull
+    where TSource : class
 {
     PropertyAccessors<TSource, long>? VersionAccessors { get; }
 
