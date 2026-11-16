@@ -2,20 +2,23 @@
 
 namespace Anch.VisualIdentitySource;
 
+/// <summary>Finds the name as the first public <see cref="string"/> property whose name is in the configured list.</summary>
+/// <param name="settings">The convention settings.</param>
 public class VisualIdentityPropertyExtractor(VisualIdentityPropertySourceSettings settings) : IVisualIdentityPropertyExtractor
 {
-	public PropertyInfo? TryExtract(Type domainType)
-	{
-		var request =
+    /// <inheritdoc/>
+    public PropertyInfo? TryExtract(Type domainType)
+    {
+        var request =
 
-			from propertyName in settings.PropertyNameList
+            from propertyName in settings.PropertyNameList
 
-			let property = domainType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
+            let property = domainType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
 
-			where property != null && property.PropertyType == typeof(string)
+            where property is not null && property.PropertyType == typeof(string)
 
-			select property;
+            select property;
 
-		return request.FirstOrDefault();
-	}
+        return request.FirstOrDefault();
+    }
 }

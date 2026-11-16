@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
+/// <summary>Checks that the restricted objects pass the filter that the role allows for the context type.</summary>
 public class AllowedFilterPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,
@@ -12,7 +13,7 @@ public class AllowedFilterPermissionRestrictionValidator<TPermissionRestriction,
     IIdentityInfoSource identityInfoSource) : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public async Task ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         var permission = restrictionBindingInfo.Permission.Getter(permissionRestriction);
 
@@ -32,6 +33,8 @@ public class AllowedFilterPermissionRestrictionValidator<TPermissionRestriction,
                 }
             }
         }
+
+        return ValueTask.CompletedTask;
     }
 
     private bool IsAllowed(TSecurityContextObjectIdent securityContextId, SecurityContextRestrictionFilterInfo restrictionFilterInfo)

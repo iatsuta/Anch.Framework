@@ -6,5 +6,6 @@ public class MainConnectionStringSource(IConfiguration configuration) : IMainCon
 {
     public const string DefaultName = "DefaultConnection";
 
-    public string ConnectionString { get; } = configuration.GetRequiredConnectionString(DefaultName);
+    public string ConnectionString { get; } = configuration.GetConnectionString(DefaultName) ??
+                                              throw new InvalidOperationException($"Connection string '{DefaultName}' not found.");
 }

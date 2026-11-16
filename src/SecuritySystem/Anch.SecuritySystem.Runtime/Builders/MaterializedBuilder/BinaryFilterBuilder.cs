@@ -3,9 +3,10 @@ using System.Linq.Expressions;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for a security path that combines two others.</summary>
 public abstract class BinaryFilterBuilder<TDomainObject, TSecurityPath>(
     SecurityFilterBuilderFactory<TDomainObject> builderFactory,
-    TSecurityPath securityPath,IReadOnlyList<SecurityContextRestriction> securityContextRestrictions)
+    TSecurityPath securityPath, IReadOnlyList<SecurityContextRestriction> securityContextRestrictions)
     : SecurityFilterBuilder<TDomainObject>
     where TSecurityPath : SecurityPath<TDomainObject>.BinarySecurityPath
 {

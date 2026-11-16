@@ -7,6 +7,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 
 namespace Anch.SecuritySystem.Providers.DependencySecurity;
 
+/// <summary>Provides access to objects through the provider of another type that is linked by identifier.</summary>
 public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject, TIdent>(
     IQueryableSource queryableSource,
     ISecurityProvider<TBaseDomainObject> baseSecurityProvider,
@@ -29,21 +30,18 @@ public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject,
         return queryable.Where(filterExpr);
     }
 
-    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        return (await baseSecurityProvider.GetAccessResultAsync(this.GetBaseObject(domainObject), cancellationToken)).TryOverrideDomainObject(domainObject);
+        return (await baseSecurityProvider.GetAccessResultAsync(this.GetBaseObject(domainObject), ct)).TryOverrideDomainObject(domainObject);
     }
 
-    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken)
-    {
-        return (this.availableIdentsCache ??= await this.GetAvailableIdentsQ().GenericToHashSetAsync(cancellationToken))
-            .Contains(domainIdentityInfo.Id.Getter(domainObject));
-    }
+    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
 
-    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
-    {
-        return baseSecurityProvider.GetAccessorDataAsync(this.GetBaseObject(domainObject), cancellationToken);
-    }
+        (this.availableIdentsCache ??= await this.GetAvailableIdentsQ().GenericToHashSetAsync(ct))
+        .Contains(domainIdentityInfo.Id.Getter(domainObject));
+
+    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) =>
+        baseSecurityProvider.GetAccessorDataAsync(this.GetBaseObject(domainObject), ct);
 
     private TBaseDomainObject GetBaseObject(TDomainObject domainObject)
     {
@@ -56,13 +54,11 @@ public class UntypedDependencySecurityProvider<TDomainObject, TBaseDomainObject,
             baseDomainObject => ee.Evaluate(eqIdExp, ee.Evaluate(baseDomainIdentityInfo.Id.Path, baseDomainObject), id));
 
         return queryableSource
-                   .GetQueryable<TBaseDomainObject>()
-                   .SingleOrDefault(filterExpr)
-                   .FromMaybe(() => $"{typeof(TBaseDomainObject).Name} with id = '{id}' not found");
+            .GetQueryable<TBaseDomainObject>()
+            .SingleOrDefault(filterExpr)
+            .FromMaybe(() => $"{typeof(TBaseDomainObject).Name} with id = '{id}' not found");
     }
 
-    protected virtual IQueryable<TIdent> GetAvailableIdentsQ()
-    {
-        return queryableSource.GetQueryable<TBaseDomainObject>().Pipe(baseSecurityProvider.Inject).Select(baseDomainIdentityInfo.Id.Path);
-    }
+    private IQueryable<TIdent> GetAvailableIdentsQ() =>
+        queryableSource.GetQueryable<TBaseDomainObject>().Pipe(baseSecurityProvider.Inject).Select(baseDomainIdentityInfo.Id.Path);
 }

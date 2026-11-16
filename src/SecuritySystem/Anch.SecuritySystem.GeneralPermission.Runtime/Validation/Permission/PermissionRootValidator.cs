@@ -6,21 +6,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Permission;
 
+/// <summary>Runs all permission validators and the restriction validators.</summary>
 public class PermissionRootValidator<TPermission, TPermissionRestriction>(
-    [FromKeyedServices(ISecurityValidator.ElementKey)]IEnumerable<IPermissionValidator<TPermission, TPermissionRestriction>> validators,
+    [FromKeyedServices(ISecurityValidator.ElementKey)] IEnumerable<IPermissionValidator<TPermission, TPermissionRestriction>> validators,
     IPermissionRestrictionValidator<TPermissionRestriction> permissionRestrictionRootValidator)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
         foreach (var validator in validators)
         {
-            await validator.ValidateAsync(permissionData, cancellationToken);
+            await validator.ValidateAsync(permissionData, ct);
         }
 
         foreach (var restriction in permissionData.Restrictions)
         {
-            await permissionRestrictionRootValidator.ValidateAsync(restriction, cancellationToken);
+            await permissionRestrictionRootValidator.ValidateAsync(restriction, ct);
         }
     }
 }

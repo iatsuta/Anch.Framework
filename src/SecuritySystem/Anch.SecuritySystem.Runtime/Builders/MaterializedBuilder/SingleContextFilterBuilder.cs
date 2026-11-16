@@ -5,29 +5,30 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for a path to a single security context object.</summary>
 public class SingleContextFilterBuilder<TDomainObject, TSecurityContext, TSecurityContextIdent>(
-	SecurityPath<TDomainObject>.SingleSecurityPath<TSecurityContext> securityPath,
-	SecurityContextRestriction<TSecurityContext>? securityContextRestriction,
-	IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo)
-	: ByIdentsFilterBuilder<TDomainObject, TSecurityContext, TSecurityContextIdent>(securityContextRestriction)
-	where TSecurityContext : class, ISecurityContext
-	where TSecurityContextIdent : notnull
+    SecurityPath<TDomainObject>.SingleSecurityPath<TSecurityContext> securityPath,
+    SecurityContextRestriction<TSecurityContext>? securityContextRestriction,
+    IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo)
+    : ByIdentsFilterBuilder<TDomainObject, TSecurityContext, TSecurityContextIdent>(securityContextRestriction)
+    where TSecurityContext : class, ISecurityContext
+    where TSecurityContextIdent : notnull
 {
-	protected override Expression<Func<TDomainObject, bool>> GetSecurityFilterExpression(IEnumerable<TSecurityContextIdent> permissionIdents)
-	{
-		var singleFilter = identityInfo.CreateFilter(permissionIdents);
+    protected override Expression<Func<TDomainObject, bool>> GetSecurityFilterExpression(IEnumerable<TSecurityContextIdent> permissionIdents)
+    {
+        var singleFilter = identityInfo.CreateFilter(permissionIdents);
 
-		var containsFilterExpr = securityPath.Expression!.Select(singleFilter);
+        var containsFilterExpr = securityPath.Expression!.Select(singleFilter);
 
-		if (securityPath.Required)
-		{
-			return containsFilterExpr;
-		}
-		else
-		{
-			var unrestrictedFilter = securityPath.Expression.Select(securityObject => securityObject == null);
+        if (securityPath.Required)
+        {
+            return containsFilterExpr;
+        }
+        else
+        {
+            var unrestrictedFilter = securityPath.Expression.Select(securityObject => securityObject == null);
 
-			return unrestrictedFilter.BuildOr(containsFilterExpr);
-		}
-	}
+            return unrestrictedFilter.BuildOr(containsFilterExpr);
+        }
+    }
 }

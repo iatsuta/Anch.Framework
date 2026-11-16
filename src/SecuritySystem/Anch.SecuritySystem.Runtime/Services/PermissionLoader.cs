@@ -4,6 +4,7 @@ using Anch.GenericRepository;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Loads the permissions of a principal from the database.</summary>
 public class PermissionLoader<TPrincipal, TPermission>(
     IQueryableSource queryableSource,
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo) : IPermissionLoader<TPrincipal, TPermission>

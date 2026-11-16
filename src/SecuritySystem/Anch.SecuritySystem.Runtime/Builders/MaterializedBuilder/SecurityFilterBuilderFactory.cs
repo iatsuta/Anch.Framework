@@ -12,9 +12,10 @@ using Anch.SecuritySystem.PermissionOptimization;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for a domain type from its security path (factory).</summary>
 public class SecurityFilterBuilderFactory<TDomainObject>(
     IIdentityInfoSource identityInfoSource,
-	IExpressionEvaluatorStorage expressionEvaluatorStorage,
+    IExpressionEvaluatorStorage expressionEvaluatorStorage,
     IEnumerable<IPermissionSystem> permissionSystems,
     IHierarchicalObjectExpanderFactory hierarchicalObjectExpanderFactory,
     IRuntimePermissionOptimizationService permissionOptimizationService) :
@@ -24,10 +25,10 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
     private readonly IExpressionEvaluator expressionEvaluator =
         expressionEvaluatorStorage.GetForType(typeof(SecurityFilterBuilderFactory<TDomainObject>));
 
-    public async ValueTask<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var securityContextRestrictions = securityRule.GetSafeSecurityContextRestrictions().ToList();
 
@@ -35,7 +36,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
             .ToAsyncEnumerable()
             .SelectMany(ps => ps.GetPermissionSources(securityRule))
             .SelectMany(ps => ps.GetPermissionsAsync(securityPath.UsedSecurityContextTypes))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         var optimizedPermissions = permissionOptimizationService.Optimize(rawPermissions);
 

@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\__RootSolutionItems\XunitParallelSettings.cs" Link="Properties\XunitParallelSettings.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Testing\Anch.Testing.Xunit\Anch.Testing.Xunit.csproj" />
@@ -14,7 +19,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit.v3" />
-    <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
   <ItemGroup>

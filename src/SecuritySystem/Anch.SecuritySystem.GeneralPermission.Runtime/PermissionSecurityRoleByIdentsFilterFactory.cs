@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Builds the filter that selects the permissions of given role identifiers.</summary>
 public class PermissionSecurityRoleByIdentsFilterFactory<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     GeneralPermissionBindingInfo<TPermission> generalBindingInfo,
@@ -27,6 +28,7 @@ public class PermissionSecurityRoleByIdentsFilterFactory<TPermission>(
         this.lazyInnerService.Value.CreateFilter(identType, idents);
 }
 
+/// <summary>Builds the filter that selects the permissions of given role identifiers.</summary>
 public class PermissionSecurityRoleByIdentsFilterFactory<TPermission, TSecurityRole, TSecurityRoleIdent>(
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,
     ISecurityIdentityConverter<TSecurityRoleIdent> securityIdentityConverter,

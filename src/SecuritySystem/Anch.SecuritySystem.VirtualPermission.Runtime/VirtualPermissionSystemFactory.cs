@@ -3,6 +3,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Creates the VirtualPermission system for a user credential.</summary>
 public class VirtualPermissionSystemFactory<TPermission>(IServiceProxyFactory serviceProxyFactory) : IPermissionSystemFactory
     where TPermission : class
 {

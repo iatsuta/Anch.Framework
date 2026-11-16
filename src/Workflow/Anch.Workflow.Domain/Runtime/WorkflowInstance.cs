@@ -12,7 +12,7 @@ public class WorkflowInstance
 
     public Guid Id { get; set; }
 
-    public WorkflowInstanceIdentity Identity => new (this.Id, this.Definition.Identity);
+    public WorkflowInstanceIdentity Identity => new(this.Id, this.Definition.Identity);
 
     public StateInstance CurrentState { get; set; } = null!;
 

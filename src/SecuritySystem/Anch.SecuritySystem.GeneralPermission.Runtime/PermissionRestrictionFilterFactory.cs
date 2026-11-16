@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Builds the filter that selects the restrictions that allow given security context objects.</summary>
 public class PermissionRestrictionFilterFactory<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent> restrictionBindingInfo,
     IIdentityInfoSource identityInfoSource,

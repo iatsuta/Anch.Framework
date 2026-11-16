@@ -3,6 +3,7 @@ using Anch.SecuritySystem.Providers;
 
 namespace Anch.SecuritySystem.DomainServices.DependencySecurity._Base;
 
+/// <summary>The base of the services that protect a type through another type.</summary>
 public abstract class DependencyDomainSecurityServiceBase<TDomainObject, TBaseDomainObject>(
     ISecurityRuleExpander securityRuleExpander,
     IDomainSecurityService<TBaseDomainObject> baseDomainSecurityService)

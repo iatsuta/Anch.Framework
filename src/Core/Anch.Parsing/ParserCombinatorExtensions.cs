@@ -1,5 +1,6 @@
 ﻿namespace Anch.Parsing;
 
+/// <summary>Extensions that combine parsers.</summary>
 public static class ParserCombinatorExtensions
 {
     extension<TInput, TValue>(Parser<TInput, TValue> parser)

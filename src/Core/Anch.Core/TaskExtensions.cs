@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="Task"/> and <see cref="Task{TResult}"/>.</summary>
 public static class TaskExtensions
 {
     public static Func<Task<object?>> ToDefaultTask(this Func<Task> func) =>
@@ -17,6 +18,34 @@ public static class TaskExtensions
         };
 
     public static Func<T1, T2, Task<object?>> ToDefaultTask<T1, T2>(this Func<T1, T2, Task> func) =>
+        async (arg1, arg2) =>
+        {
+            await func(arg1, arg2);
+            return null;
+        };
+
+    public static Func<T1, T2, Task<object?>> ToDefaultValueTask<T1, T2>(this Func<T1, T2, Task> func) =>
+        async (arg1, arg2) =>
+        {
+            await func(arg1, arg2);
+            return null;
+        };
+
+    public static Func<ValueTask<object?>> ToDefaultValueTask(this Func<ValueTask> func) =>
+        async () =>
+        {
+            await func();
+            return null;
+        };
+
+    public static Func<T1, ValueTask<object?>> ToDefaultValueTask<T1>(this Func<T1, ValueTask> func) =>
+        async arg =>
+        {
+            await func(arg);
+            return null;
+        };
+
+    public static Func<T1, T2, ValueTask<object?>> ToDefaultValueTask<T1, T2>(this Func<T1, T2, ValueTask> func) =>
         async (arg1, arg2) =>
         {
             await func(arg1, arg2);

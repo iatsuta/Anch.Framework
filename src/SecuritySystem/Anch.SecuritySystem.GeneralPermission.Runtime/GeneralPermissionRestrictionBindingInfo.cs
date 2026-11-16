@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Describes how the application's permission restriction entity is bound to its permission, security context type and object identifier.</summary>
 public record GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>
 
     : GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>
@@ -11,6 +12,7 @@ public record GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TS
     public sealed override Type PermissionType { get; } = typeof(TPermission);
 }
 
+/// <summary>Describes how the application's permission restriction entity is bound to its permission, security context type and object identifier.</summary>
 public abstract record GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>
     : GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType>
 {
@@ -19,6 +21,7 @@ public abstract record GeneralPermissionRestrictionBindingInfo<TPermissionRestri
     public sealed override Type SecurityContextObjectIdentType { get; } = typeof(TSecurityContextObjectIdent);
 }
 
+/// <summary>Describes how the application's permission restriction entity is bound to its permission, security context type and object identifier.</summary>
 public abstract record GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType>
     : GeneralPermissionRestrictionBindingInfo
 {
@@ -30,6 +33,7 @@ public abstract record GeneralPermissionRestrictionBindingInfo<TPermissionRestri
     public sealed override Type SecurityContextTypeType { get; } = typeof(TSecurityContextType);
 }
 
+/// <summary>Describes how the application's permission restriction entity is bound to its permission, security context type and object identifier.</summary>
 public abstract record GeneralPermissionRestrictionBindingInfo
 {
     public abstract Type PermissionType { get; }

@@ -5,47 +5,37 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>The xunit test framework that runs tests with containers from a pool built by a test environment.</summary>
 public class AnchTestFramework : XunitTestFramework
 {
-    private readonly ConcurrentDictionary<Assembly, ITestEnvironment?> testEnvironmentCache = [];
+    private readonly ConcurrentDictionary<Assembly, IServiceProviderPool?> serviceProviderPoolCache = [];
 
-    private readonly ConcurrentDictionary<Assembly, IServiceProviderPool?> rootServiceProviderPoolCache = [];
+    private readonly ConcurrentDictionary<Assembly, ITestFrameworkExecutor> executorCache = [];
 
-    private ITestEnvironment? GetTestEnvironment(Assembly assembly)
-    {
-        return this.testEnvironmentCache.GetOrAdd(assembly, asm =>
-        {
-            var commonTestFrameworkAttribute = asm.GetCustomAttribute<AnchTestFrameworkAttribute>()
-                                               ?? throw new InvalidOperationException(
-                                                   $"Assembly '{asm.FullName}' must be decorated with '{typeof(AnchTestFrameworkAttribute).FullName}' attribute");
-
-            return commonTestFrameworkAttribute.TestEnvironmentType == null
-                ? null
-                : Activator.CreateInstance(commonTestFrameworkAttribute.TestEnvironmentType) as ITestEnvironment
-                  ?? throw new InvalidOperationException(
-                      $"Failed to create initializer of type '{commonTestFrameworkAttribute.TestEnvironmentType.FullName}'");
-        });
-    }
+    private readonly ConcurrentDictionary<Assembly, ITestFrameworkDiscoverer> discovererCache = [];
 
     private IServiceProviderPool? GetServiceProviderPool(Assembly assembly) =>
 
-        this.rootServiceProviderPoolCache.GetOrAdd(assembly,
-            _ => this.GetTestEnvironment(assembly) is { } testEnvironment
-                ? new ServiceProviderPool(testEnvironment)
-                : null);
+        this.serviceProviderPoolCache.GetOrAdd(assembly,
+            _ => assembly.TryCreateTestEnvironment() is var (testEnvironment, poolFactory) ? poolFactory.Create(assembly, testEnvironment) : null);
 
-    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly)
-    {
-        var rootRunner =
-            new AnchTestAssemblyRunner(
-                new AnchTestCollectionRunner(
-                    new AnchTestClassRunner(), this.GetServiceProviderPool(assembly)));
+    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly) =>
+        this.executorCache.GetOrAdd(assembly,
+            _ =>
+            {
+                var serviceProviderPool = this.GetServiceProviderPool(assembly);
 
-        return new AnchFrameworkExecutor(new XunitTestAssembly(assembly), rootRunner);
-    }
+                var rootRunner =
+                    new AnchTestAssemblyRunner(
+                        new AnchTestCollectionRunner(
+                            new AnchTestClassRunner(serviceProviderPool)));
+
+                return new AnchFrameworkExecutor(new XunitTestAssembly(assembly, null), rootRunner, serviceProviderPool);
+            });
 
     protected override ITestFrameworkDiscoverer CreateDiscoverer(Assembly assembly) =>
-
-        new AnchFrameworkDiscoverer(new XunitTestAssembly(assembly, null, assembly.GetName().Version),
-            this.GetServiceProviderPool(assembly));
+        this.discovererCache.GetOrAdd(assembly,
+            _ =>
+                new AnchFrameworkDiscoverer(new XunitTestAssembly(assembly, null),
+                    this.GetServiceProviderPool(assembly)));
 }

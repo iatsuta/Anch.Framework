@@ -6,17 +6,18 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchTestClassRunner : XunitTestClassRunnerBase<AnchTestClassRunnerContext, IXunitTestClass, IXunitTestMethod, IXunitTestCase>
+/// <summary>Runs a test class with a container from the pool.</summary>
+public class AnchTestClassRunner(IServiceProviderPool? serviceProviderPool) : XunitTestClassRunnerBase<XunitTestClassRunnerContext, IXunitTestClass, IXunitTestMethod, IXunitTestCase>
 {
     protected override async ValueTask<object?> GetConstructorArgument(
-        AnchTestClassRunnerContext ctxt,
+        XunitTestClassRunnerContext ctxt,
         ConstructorInfo constructor,
         int index,
         ParameterInfo parameter)
     {
-        if (ctxt.ServiceProvider != null && parameter.ParameterType == typeof(IServiceProvider))
+        if (parameter.ParameterType == typeof(IServiceProvider))
         {
-            return ctxt.ServiceProvider;
+            return HandledServiceProvider.Instance;
         }
         else
         {
@@ -24,8 +25,8 @@ public class AnchTestClassRunner : XunitTestClassRunnerBase<AnchTestClassRunnerC
         }
     }
 
-    protected override async ValueTask<RunSummary> RunTestMethod(AnchTestClassRunnerContext ctxt, IXunitTestMethod? testMethod,
-        IReadOnlyCollection<IXunitTestCase> testCases, object?[] constructorArguments)
+    protected override async ValueTask<RunSummary> RunTestMethod(XunitTestClassRunnerContext ctxt, IXunitTestMethod? testMethod,
+        IReadOnlyCollection<IXunitTestCase> testCases)
     {
         Guard.ArgumentNotNull(ctxt);
 
@@ -42,15 +43,17 @@ public class AnchTestClassRunner : XunitTestClassRunnerBase<AnchTestClassRunnerC
 
         //await ExecutionTimer.MeasureAsync(null);
 
-        return await AnchTestMethodRunner.Instance.Run(
+        return await new AnchTestMethodRunner(serviceProviderPool).Run(
             testMethod,
             testCases,
             ctxt.ExplicitOption,
             ctxt.MessageBus,
             ctxt.Aggregator.Clone(),
             ctxt.CancellationTokenSource,
-            constructorArguments,
-            ctxt.ServiceProvider);
+            ctxt.ParallelMode,
+            ctxt.Scheduler,
+            ctxt.ConstructorArguments,
+            ctxt.ClassFixtureMappings);
     }
 
     public async ValueTask<RunSummary> Run(
@@ -58,29 +61,28 @@ public class AnchTestClassRunner : XunitTestClassRunnerBase<AnchTestClassRunnerC
         IReadOnlyCollection<IXunitTestCase> testCases,
         ExplicitOption explicitOption,
         IMessageBus messageBus,
-        ITestCaseOrderer testCaseOrderer,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
-        FixtureMappingManager assemblyFixtureMappings,
-        IServiceProvider? serviceProvider)
+        FixtureMappingManager assemblyFixtureMappings)
     {
         Guard.ArgumentNotNull(testClass);
         Guard.ArgumentNotNull(testCases);
         Guard.ArgumentNotNull(messageBus);
-        Guard.ArgumentNotNull(testCaseOrderer);
         Guard.ArgumentNotNull(cancellationTokenSource);
         Guard.ArgumentNotNull(assemblyFixtureMappings);
 
-        await using var ctxt = new AnchTestClassRunnerContext(
+        await using var ctxt = new XunitTestClassRunnerContext(
             testClass,
             testCases,
             explicitOption,
             messageBus,
-            testCaseOrderer,
             aggregator,
             cancellationTokenSource,
-            assemblyFixtureMappings,
-            serviceProvider);
+            parallelMode,
+            scheduler,
+            assemblyFixtureMappings);
 
         await ctxt.InitializeAsync();
 

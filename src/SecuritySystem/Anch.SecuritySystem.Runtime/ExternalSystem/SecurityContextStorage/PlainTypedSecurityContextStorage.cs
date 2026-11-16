@@ -5,6 +5,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>Reads the objects of a non-hierarchical security context type.</summary>
 public class PlainTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>(
     IQueryableSource queryableSource,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,

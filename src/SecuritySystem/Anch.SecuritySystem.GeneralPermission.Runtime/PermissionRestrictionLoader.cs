@@ -4,6 +4,7 @@ using Anch.GenericRepository;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Loads the restriction entities of a permission.</summary>
 public class PermissionRestrictionLoader<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     IQueryableSource queryableSource,
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo)

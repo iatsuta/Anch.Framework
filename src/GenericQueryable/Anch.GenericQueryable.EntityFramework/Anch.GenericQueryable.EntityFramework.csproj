@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>EF1001</NoWarn>
+    <NoWarn>$(NoWarn);EF1001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

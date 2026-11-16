@@ -8,7 +8,7 @@ using Anch.Testing.Xunit;
 using Microsoft.Extensions.DependencyInjection;
 
 using NHibernate;
-[assembly:AnchTestFramework<NHibTestEnvironment>]
+[assembly: AnchTestFramework<NHibTestEnvironment>]
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;
 
@@ -20,13 +20,15 @@ public class NHibTestEnvironment : TestEnvironment
             .AddSingleton<NHibConfigurationSource>()
             .AddSingletonFrom((NHibConfigurationSource configurationSource) => configurationSource.BuildConfiguration())
             .AddSingletonFrom((global::NHibernate.Cfg.Configuration cfg) => cfg.BuildSessionFactory())
-            .AddScopedFrom((ISessionFactory sessionFactory) => sessionFactory.OpenSession()).AddSingleton(typeof(IDomainObjectSaveStrategy<>), typeof(DomainObjectSaveStrategy<>))
+            .AddScopedFrom((ISessionFactory sessionFactory) => sessionFactory.OpenSession())
+            .AddSingleton(typeof(IDomainObjectSaveStrategy<>), typeof(DomainObjectSaveStrategy<>))
             .BindServiceProxy(typeof(IDomainObjectSaveStrategy<>), typeof(DomainObjectSaveStrategyServiceProxyBinder<>))
 
             .AddScoped<IGenericRepository, NHibGenericRepository>()
             .AddScoped<IQueryableSource, NHibQueryableSource>()
+            .AddSingleton<INHibExpressionVisitorSource, NHibExpressionVisitorSource>()
 
             .AddSingleton<IEmptySchemaInitializer, NHibEmptySchemaInitializer>()
 
-            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Configure);
+            .AddNHibernateGenericQueryable(new GenericQueryableSetupConfigurator().Initialize);
 }

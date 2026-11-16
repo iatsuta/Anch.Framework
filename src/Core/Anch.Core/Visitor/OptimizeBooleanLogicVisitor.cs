@@ -2,18 +2,15 @@
 
 namespace Anch.Core.Visitor;
 
+/// <summary>Folds conditions and boolean operators whose operands are constants (for example <c>false &amp;&amp; x</c> becomes <c>false</c>).</summary>
 public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 {
-    private OptimizeBooleanLogicVisitor()
-    {
-    }
-
     protected override Expression VisitConditional(ConditionalExpression node)
     {
         var visitedTest = this.Visit(node.Test);
 
         var evalReq =
-            
+
             from testObj in visitedTest.GetConstantValue<bool>()
 
             select this.Visit(testObj ? node.IfTrue : node.IfFalse);
@@ -41,7 +38,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
 
         var leftValue = left.TryGetConstantExpression();
 
-        if (leftValue != null)
+        if (leftValue is not null)
         {
             switch (node.NodeType)
             {
@@ -55,20 +52,20 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
         var right = this.Visit(node.Right);
         var rightValue = right.TryGetConstantExpression();
 
-        if (leftValue != null && rightValue != null)
+        if (leftValue is not null && rightValue is not null)
         {
             var methodResult = node.Method?.Invoke(null, [leftValue.Value, rightValue.Value])
                                ?? node.NodeType.GetBinaryMethod()?.Invoke(leftValue.Value!, rightValue.Value!);
 
-            if (methodResult != null)
+            if (methodResult is not null)
             {
                 return Expression.Constant(methodResult);
             }
         }
 
-        if (node.Method == null)
+        if (node.Method is null)
         {
-            if (leftValue != null)
+            if (leftValue is not null)
             {
                 switch (node.NodeType)
                 {
@@ -79,7 +76,7 @@ public class OptimizeBooleanLogicVisitor : ExpressionVisitor
                 }
             }
 
-            if (rightValue != null)
+            if (rightValue is not null)
             {
                 switch (node.NodeType)
                 {

@@ -5,28 +5,30 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Builds filters on the identifier of a domain type from security identifiers.</summary>
 public class SecurityIdentityFilterFactory<TDomainObject>(IServiceProxyFactory serviceProxyFactory, IIdentityInfo<TDomainObject> identityInfo)
-	: ISecurityIdentityFilterFactory<TDomainObject>
+    : ISecurityIdentityFilterFactory<TDomainObject>
 {
-	private readonly Lazy<ISecurityIdentityFilterFactory<TDomainObject>> lazyInnerService = new(() =>
-	{
-		var innerServiceType = typeof(SecurityIdentityFilterFactory<,>).MakeGenericType(typeof(TDomainObject), identityInfo.IdentityType);
+    private readonly Lazy<ISecurityIdentityFilterFactory<TDomainObject>> lazyInnerService = new(() =>
+    {
+        var innerServiceType = typeof(SecurityIdentityFilterFactory<,>).MakeGenericType(typeof(TDomainObject), identityInfo.IdentityType);
 
-		return  serviceProxyFactory.Create<ISecurityIdentityFilterFactory<TDomainObject>>(innerServiceType);
-	});
+        return serviceProxyFactory.Create<ISecurityIdentityFilterFactory<TDomainObject>>(innerServiceType);
+    });
 
-	public Expression<Func<TDomainObject, bool>> CreateFilter(SecurityIdentity securityIdentity) =>
-		this.lazyInnerService.Value.CreateFilter(securityIdentity);
+    public Expression<Func<TDomainObject, bool>> CreateFilter(SecurityIdentity securityIdentity) =>
+        this.lazyInnerService.Value.CreateFilter(securityIdentity);
 }
 
+/// <summary>Builds filters on the identifier of a domain type from security identifiers.</summary>
 public class SecurityIdentityFilterFactory<TDomainObject, TIdent>(
-	IIdentityInfo<TDomainObject, TIdent> identityInfo,
-	ISecurityIdentityConverter<TIdent> securityIdentityConverter) : ISecurityIdentityFilterFactory<TDomainObject>
-	where TDomainObject : class
-	where TIdent : notnull
+    IIdentityInfo<TDomainObject, TIdent> identityInfo,
+    ISecurityIdentityConverter<TIdent> securityIdentityConverter) : ISecurityIdentityFilterFactory<TDomainObject>
+    where TDomainObject : class
+    where TIdent : notnull
 {
-	public Expression<Func<TDomainObject, bool>> CreateFilter(SecurityIdentity securityIdentity)
-	{
-		return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(securityIdentityConverter.Convert(securityIdentity).Id));
-	}
+    public Expression<Func<TDomainObject, bool>> CreateFilter(SecurityIdentity securityIdentity)
+    {
+        return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(securityIdentityConverter.Convert(securityIdentity).Id));
+    }
 }

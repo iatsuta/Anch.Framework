@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Replaces a role factory rule with the role rule that the factory creates.</summary>
 public class RoleFactorySecurityRuleExpander(IServiceProvider serviceProvider) : IRoleFactorySecurityRuleExpander
 {
     public DomainSecurityRule.RoleBaseSecurityRule Expand(DomainSecurityRule.RoleFactorySecurityRule securityRule)

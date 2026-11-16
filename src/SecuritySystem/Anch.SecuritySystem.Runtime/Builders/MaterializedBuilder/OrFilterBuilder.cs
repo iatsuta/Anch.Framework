@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for the alternative of two security paths.</summary>
 public class OrFilterBuilder<TDomainObject>(
     SecurityFilterBuilderFactory<TDomainObject> builderFactory,
     SecurityPath<TDomainObject>.OrSecurityPath securityPath,

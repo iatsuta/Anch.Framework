@@ -3,6 +3,7 @@ using Anch.Core.DictionaryCache;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>Extensions for typed security context storages.</summary>
 public static class TypedSecurityContextStorageExtensions
 {
     public static ITypedSecurityContextStorage<TIdent> WithCache<TIdent>(this ITypedSecurityContextStorage<TIdent> source)

@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Helpers for creating delegates.</summary>
 public static class FuncHelper
 {
     public static Func<TResult> Create<TResult>(Func<TResult> func)

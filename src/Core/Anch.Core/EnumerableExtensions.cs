@@ -2,6 +2,7 @@
 
 namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="IEnumerable{T}"/>.</summary>
 public static class EnumerableExtensions
 {
     //public static FrozenDictionary<TKey, TValue> ToFrozenDictionary<TKey, TValue>(this IEnumerable<Tuple<TKey, TValue>> pairs, IEqualityComparer<TKey>? comparer = null)
@@ -59,6 +60,13 @@ public static class EnumerableExtensions
         return source.SelectMany(child => child.GetAllElements(getChildFunc));
     }
 
+    public static IEnumerable<T> GetAllElements<T>(this T source, Func<T, IEnumerable<T>> getChildFunc, bool skipFirstElement)
+    {
+        var baseElements = source.GetAllElements(getChildFunc);
+
+        return skipFirstElement ? baseElements.Skip(1) : baseElements;
+    }
+
     public static IEnumerable<T> GetAllElements<T>(this T source, Func<T, IEnumerable<T>> getChildFunc)
     {
         yield return source;
@@ -80,7 +88,7 @@ public static class EnumerableExtensions
     public static IEnumerable<T> GetAllElements<T>(this T? source, Func<T, T?> getNextFunc)
         where T : class
     {
-        for (var state = source; state != null; state = getNextFunc(state))
+        for (var state = source; state is not null; state = getNextFunc(state))
         {
             yield return state;
         }
@@ -99,7 +107,6 @@ public static class EnumerableExtensions
             throw new Exception("Empty source");
         }
     }
-
 
     public static Maybe<TSource> SingleMaybe<TSource>(this IEnumerable<TSource> source)
     {

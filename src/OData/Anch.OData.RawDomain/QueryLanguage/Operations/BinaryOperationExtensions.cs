@@ -3,9 +3,12 @@ using System.Runtime.Serialization;
 
 namespace Anch.OData.Domain.QueryLanguage.Operations;
 
+/// <summary>Extensions for <see cref="BinaryOperation"/>.</summary>
 [DataContract]
 public static class BinaryOperationExtensions
 {
+    /// <summary>Returns the operator as written in the text form of the tree.</summary>
+    /// <param name="operation">The operation.</param>
     public static string ToFormatString(this BinaryOperation operation) =>
         operation switch
         {
@@ -25,6 +28,8 @@ public static class BinaryOperationExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(operation))
         };
 
+    /// <summary>Returns the matching LINQ node type.</summary>
+    /// <param name="operation">The operation.</param>
     public static ExpressionType ToExpressionType(this BinaryOperation operation) =>
         operation switch
         {
@@ -44,6 +49,8 @@ public static class BinaryOperationExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(operation))
         };
 
+    /// <summary>Returns the precedence of the operation: a larger number binds tighter; logical operators are lowest.</summary>
+    /// <param name="operation">The operation.</param>
     public static int GetPriority(this BinaryOperation operation) =>
         operation switch
         {

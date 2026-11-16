@@ -2,19 +2,20 @@
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>A per-scope cache of security context objects by identifier.</summary>
 public class LocalStorage<TSecurityContext, TSecurityContextIdent>(IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo)
-	where TSecurityContext : ISecurityContext
-	where TSecurityContextIdent : notnull
+    where TSecurityContext : ISecurityContext
+    where TSecurityContextIdent : notnull
 {
-	private readonly HashSet<TSecurityContext> items = [];
+    private readonly HashSet<TSecurityContext> items = [];
 
-	public bool IsExists(TSecurityContextIdent securityEntityId)
-	{
-		return this.items.Select(identityInfo.Id.Getter).Contains(securityEntityId);
-	}
+    public bool IsExists(TSecurityContextIdent securityEntityId)
+    {
+        return this.items.Select(identityInfo.Id.Getter).Contains(securityEntityId);
+    }
 
-	public bool Register(TSecurityContext securityContext)
-	{
-		return this.items.Add(securityContext);
-	}
+    public bool Register(TSecurityContext securityContext)
+    {
+        return this.items.Add(securityContext);
+    }
 }

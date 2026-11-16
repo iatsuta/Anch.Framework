@@ -1,56 +1,64 @@
-﻿using Anch.DependencyInjection;
-using Anch.GenericQueryable.DependencyInjection;
+﻿using Anch.GenericQueryable.DependencyInjection;
 
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.GenericQueryable.EntityFramework;
 
-public class GenericQueryableOptionsExtension : IDbContextOptionsExtension
+/// <summary>The EF Core options extension that registers GenericQueryable services in the context's internal service provider.</summary>
+/// <param name="setupAction">Optional settings.</param>
+public class GenericQueryableOptionsExtension(Action<IEfGenericQueryableExtensionSetup>? setupAction) : IDbContextOptionsExtension
 {
-    private readonly Action<IGenericQueryableSetup>? setupAction;
+    public DbContextOptionsExtensionInfo Info => field ??= new ExtensionInfo(this);
 
-    public GenericQueryableOptionsExtension(Action<IGenericQueryableSetup>? setupAction)
+    private EfGenericQueryableExtensionSetup ExtensionSetup
     {
-        this.setupAction = setupAction;
-        this.Info = new ExtensionInfo(this);
-    }
-
-	public DbContextOptionsExtensionInfo Info { get; }
-
-	public void ApplyServices(IServiceCollection services)
-	{
-		services.AddGenericQueryable(v =>
+        get
         {
-            v.SetFetchService<EfFetchService>().SetTargetMethodExtractor<EfTargetMethodExtractor>();
+            if (field == null)
+            {
+                field = new EfGenericQueryableExtensionSetup();
+                setupAction?.Invoke(field);
+            }
 
-            this.setupAction?.Invoke(v);
-        });
-
-        services.ReplaceScoped<IAsyncQueryProvider, VisitedEfQueryProvider>();
+            return field;
+        }
     }
 
-	public void Validate(IDbContextOptions options)
-	{
-	}
+    public void ApplyServices(IServiceCollection services)
+    {
+        services.AddGenericQueryable(s =>
+        {
+            s.SetFetchService<EfFetchService>();
+            s.SetTargetMethodExtractor<EfTargetMethodExtractor>();
+            s.SetQueryProvider<VisitedEfQueryProvider>();
 
-	private sealed class ExtensionInfo(IDbContextOptionsExtension extension) : DbContextOptionsExtensionInfo(extension)
-	{
-		public override bool IsDatabaseProvider => false;
+            this.ExtensionSetup.CreateInstance?.Invoke().Initialize(s);
+        });
+    }
 
-		public override string LogFragment => "using GenericQueryable ";
+    public void Validate(IDbContextOptions options)
+    {
+    }
 
-		public override int GetServiceProviderHashCode() => 0;
+    private sealed class ExtensionInfo(GenericQueryableOptionsExtension extension) : DbContextOptionsExtensionInfo(extension)
+    {
+        private EfGenericQueryableExtensionSetup ExtensionSetup => extension.ExtensionSetup;
 
-		public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-		{
-			return true;
-		}
+        public override bool IsDatabaseProvider => false;
 
-		public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
-		{
-			debugInfo["GenericQueryable"] = "1";
-		}
-	}
+        public override string LogFragment => "using GenericQueryable ";
+
+        public override int GetServiceProviderHashCode() => (this.ExtensionSetup.SetupType ?? typeof(ExtensionInfo)).GetHashCode();
+
+        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo untypedOther)
+        {
+            return untypedOther is ExtensionInfo other && this.ExtensionSetup.SetupType == other.ExtensionSetup.SetupType;
+        }
+
+        public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
+        {
+            debugInfo["GenericQueryable"] = this.GetServiceProviderHashCode().ToString();
+        }
+    }
 }

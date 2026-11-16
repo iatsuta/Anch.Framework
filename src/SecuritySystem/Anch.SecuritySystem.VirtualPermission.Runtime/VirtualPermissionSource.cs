@@ -8,10 +8,12 @@ using Anch.GenericRepository;
 using Anch.IdentitySource;
 using Anch.SecuritySystem.ExternalSystem;
 using Anch.SecuritySystem.Services;
+using Anch.SecuritySystem.UserSource;
 using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Reads the virtual permissions that satisfy a rule.</summary>
 public class VirtualPermissionSource<TPrincipal, TPermission>(
     IServiceProvider serviceProvider,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
@@ -25,6 +27,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
     VirtualPermissionSecurityRoleItemBindingInfo<TPermission> itemBindingInfo,
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
     DomainSecurityRule.RoleBaseSecurityRule securityRule,
+    UserSourceInfo<TPrincipal> userSourceInfo,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : IPermissionSource<TPermission>
     where TPermission : class
 {
@@ -32,7 +35,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
 
     private readonly Expression<Func<TPermission, string>> fullNamePath = bindingInfo.Principal.Path.Select(principalVisualIdentityInfo.Name.Path);
 
-    public async ValueTask<bool> HasAccessAsync(CancellationToken cancellationToken) => await this.GetPermissionQuery().GenericAnyAsync(cancellationToken);
+    public async Task<bool> HasAccessAsync(CancellationToken ct) => await this.GetPermissionQuery().GenericAnyAsync(ct);
 
     public IAsyncEnumerable<Dictionary<Type, Array>> GetPermissionsAsync(ImmutableArray<Type> securityContextTypes)
     {
@@ -50,6 +53,7 @@ public class VirtualPermissionSource<TPrincipal, TPermission>(
         //TODO: inject SecurityContextRestrictionFilterInfo
         return queryableSource
             .GetQueryable<TPermission>()
+            .Where(bindingInfo.Principal.Path.Select(userSourceInfo.FilterPath))
             .Where(itemBindingInfo.Filter(serviceProvider))
             .Where(bindingInfo.GetPeriodFilter(timeProvider.GetLocalNow().Date))
             .PipeMaybe(

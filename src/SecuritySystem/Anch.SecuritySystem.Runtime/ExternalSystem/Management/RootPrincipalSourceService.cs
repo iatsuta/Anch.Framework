@@ -5,6 +5,7 @@ using Anch.SecuritySystem.UserSource;
 
 namespace Anch.SecuritySystem.ExternalSystem.Management;
 
+/// <summary>Reads principals across all permission systems.</summary>
 public class RootPrincipalSourceService(IEnumerable<IPrincipalSourceService> principalSourceServices) : IRootPrincipalSourceService
 {
     public IPrincipalSourceService ForPrincipal(Type principalType) => principalSourceServices.Single(pss => pss.PrincipalType == principalType);
@@ -21,15 +22,15 @@ public class RootPrincipalSourceService(IEnumerable<IPrincipalSourceService> pri
             .Take(limit);
     }
 
-    public async ValueTask<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken ct)
     {
         var request =
 
             from pss in principalSourceServices.ToAsyncEnumerable()
 
-            from principal in pss.TryGetPrincipalAsync(userCredential, cancellationToken).ToAsyncEnumerable()
+            from principal in pss.TryGetPrincipalAsync(userCredential, ct).ToAsyncEnumerable()
 
-            where principal != null
+            where principal is not null
 
             group principal by principal.Header with { IsVirtual = false }
 
@@ -39,7 +40,7 @@ public class RootPrincipalSourceService(IEnumerable<IPrincipalSourceService> pri
                 g.Key with { IsVirtual = g.All(p => p.Header.IsVirtual) },
                 [.. g.SelectMany(p => p.Permissions)]);
 
-        var preResult = await request.ToListAsync(cancellationToken);
+        var preResult = await request.ToListAsync(ct);
 
         return preResult.SingleOrDefault(() => throw new UserSourceException($"More one principal {userCredential}"));
     }

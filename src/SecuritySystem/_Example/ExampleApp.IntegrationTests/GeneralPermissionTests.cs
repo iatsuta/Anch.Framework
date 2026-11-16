@@ -7,6 +7,7 @@ using Anch.Testing.Xunit;
 
 using ExampleApp.Application;
 using ExampleApp.Domain;
+using ExampleApp.Infrastructure.Services;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,21 @@ namespace ExampleApp.IntegrationTests;
 
 public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvider) : TestBase(rootServiceProvider)
 {
+    [AnchFact]
+    public async Task SetRoleAsync_ShouldNotifyPrincipalCreated(CancellationToken ct)
+    {
+        // Arrange
+        var testPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
+        var listenerState = rootServiceProvider.GetRequiredService<ExamplePrincipalManagementListenerState>();
+
+        // Act
+        var principalIdentity = await this.AuthManager.For("TestPrincipal").SetRoleAsync(testPermission, ct);
+
+        // Assert
+        Assert.Single(listenerState.CreatedPrincipals);
+        Assert.Contains((Guid)principalIdentity.GetId(), listenerState.CreatedPrincipals);
+    }
+
     [AnchFact]
     public async Task SetRoleAsync_ShouldPreservePermissionIdentity(CancellationToken ct)
     {
@@ -48,10 +64,10 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
 
         // Act
         var availableSecurityRoles = await this.GetEvaluator<IAvailableSecurityRoleSource>().EvaluateAsync(TestingScopeMode.Read,
-            async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync(ct));
+            async availableSecurityRoleSource => await availableSecurityRoleSource.GetAvailableSecurityRoles().ToArrayAsync<SecurityRole>(ct));
 
         // Assert
-        Assert.Equivalent(new[] { testRole }, availableSecurityRoles);
+        Assert.Equal(new[] { testRole }, availableSecurityRoles);
 
         var managedPrincipal = await this.AuthManager.For(principalName).GetPrincipalAsync(ct);
 
@@ -62,7 +78,7 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
         var managedPermission = Assert.Single(managedPrincipal.Permissions);
 
         Assert.False(managedPermission.IsVirtual);
-        Assert.Equivalent(testPermission.Restrictions, managedPermission.Restrictions);
+        Assert.Equivalent(testPermission.Restrictions, managedPermission.Restrictions, strict: true);
     }
 
     [AnchFact]
@@ -95,7 +111,7 @@ public abstract class GeneralPermissionTests(IServiceProvider rootServiceProvide
 
             var result = await testObjectRepository.GetQueryable().GenericToListAsync(ct);
 
-            Assert.Equivalent(expectedResult.OrderBy(v => v.Id), result.OrderBy(v => v.Id));
+            Assert.Equivalent(expectedResult.OrderBy(v => v.Id), result.OrderBy(v => v.Id), strict: true);
 
             foreach (var testObject in result)
             {

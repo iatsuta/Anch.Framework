@@ -53,6 +53,6 @@ public class DeepEqualsCollectionTests
         // Act;
 
         // Assert
-        Assert.Equivalent(col2, col1);
+        Assert.Equivalent(col2, col1, strict: true);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator;
 
+/// <summary>Serves the configurator: the REST handlers and the embedded UI under a route.</summary>
 public sealed class ConfiguratorMiddleware(RequestDelegate next, string route)
 {
     private const string StartPage = "index.html";
@@ -36,7 +37,7 @@ public sealed class ConfiguratorMiddleware(RequestDelegate next, string route)
 
     private static void PatchContentType(HttpContext context, string path)
     {
-        // patch Request.ContentType since running on IIS gives ContentType == null
+        // patch Request.ContentType since running on IIS gives ContentType is null
         if (context.Response.StatusCode != (int)HttpStatusCode.OK)
         {
             return;

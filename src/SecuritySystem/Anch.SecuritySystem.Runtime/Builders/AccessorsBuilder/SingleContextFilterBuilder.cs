@@ -5,6 +5,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a path to a single security context object.</summary>
 public class SingleContextFilterBuilder<TDomainObject, TPermission, TSecurityContext, TSecurityContextIdent>(
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     IPermissionSystem<TPermission> permissionSystem,
@@ -24,7 +25,7 @@ public class SingleContextFilterBuilder<TDomainObject, TPermission, TSecurityCon
     {
         var securityObject = this.expressionEvaluator.Evaluate(securityPath.Expression, domainObject);
 
-        if (securityObject != null)
+        if (securityObject is not null)
         {
             yield return securityObject;
         }

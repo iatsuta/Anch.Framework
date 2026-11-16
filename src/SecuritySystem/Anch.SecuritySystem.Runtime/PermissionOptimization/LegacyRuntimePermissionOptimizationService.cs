@@ -1,10 +1,11 @@
 ﻿namespace Anch.SecuritySystem.PermissionOptimization;
 
+/// <summary>A permission optimizer that returns the permissions unchanged.</summary>
 public class LegacyRuntimePermissionOptimizationService : IRuntimePermissionOptimizationService
 {
-    public IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<Dictionary<Type, Array>> permissions)
+    public IEnumerable<Dictionary<Type, Array>> Optimize(IEnumerable<IReadOnlyDictionary<Type, Array>> permissions)
     {
-        var cachedPermissions = permissions.ToList();
+        var cachedPermissions = permissions.Select(permission => permission.ToDictionary()).ToList();
 
         var groupedPermissionsRequest =
 

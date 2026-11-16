@@ -7,7 +7,6 @@ using Anch.SecuritySystem.Notification.DependencyInjection;
 using Anch.SecuritySystem.UserSource;
 using Anch.SecuritySystem.VirtualPermission.DependencyInjection;
 
-using AuthGeneral = ExampleApp.Domain.Auth.General;
 using ExampleApp.Application;
 using ExampleApp.Domain;
 using ExampleApp.Domain.Auth.Virtual;
@@ -16,6 +15,8 @@ using ExampleApp.Infrastructure.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using AuthGeneral = ExampleApp.Domain.Auth.General;
 
 namespace ExampleApp.Infrastructure.DependencyInjection;
 
@@ -33,6 +34,7 @@ public static class ServiceCollectionExtensions
                 .AddHttpContextAccessor()
                 .AddSingleton<ITestDataInitializer, TestDataInitializer>()
                 .AddKeyedScoped<IInitializer, ExampleDataInitializer>(ExampleDataInitializer.Key)
+                .AddSingleton<ExamplePrincipalManagementListenerState>()
                 .AddSecuritySystem()
                 .AddRepository();
         }
@@ -109,14 +111,17 @@ public static class ServiceCollectionExtensions
 
                         .AddSecurityRole(ExampleSecurityRole.TestManager,
                             new SecurityRoleInfo(new Guid("{16EBA629-4319-4C15-AED3-032E4E09866D}"))
-                                { IsVirtual = true })
+                            { IsVirtual = true })
 
                         .AddSecurityRole(ExampleSecurityRole.BuManager,
                             new SecurityRoleInfo(new Guid("{72D24BB5-F661-446A-A458-53D301805971}"))
-                                { Restriction = SecurityPathRestriction.Create<BusinessUnit>(true) })
+                            { Restriction = SecurityPathRestriction.Create<BusinessUnit>(true) })
 
                         .AddSecurityRole(ExampleSecurityRole.DefaultRole,
                             new SecurityRoleInfo(new Guid("{C6BE7D52-7F34-430C-9EEF-9CE6FD4D1FE5}")))
+
+                        .AddSecurityRole(ExampleSecurityRole.OtherRole,
+                            new SecurityRoleInfo(new Guid("{E0921742-1C93-4C62-BE64-95B9E4B9ECA8}")))
 
                         .AddSecurityRole(ExampleSecurityRole.NotificationRole,
                             new SecurityRoleInfo(new Guid("{E028CE61-C806-4603-B6B9-52E4DE302273}")))
@@ -157,6 +162,8 @@ public static class ServiceCollectionExtensions
                                 .SetPermissionComment(v => v.Comment)
                                 .SetPermissionDelegation(v => v.DelegatedFrom)
                                 .SetCustomPermissionManagementService<CustomPermissionManagementService>())
+
+                        .AddPrincipalManagementListener<ExamplePrincipalManagementListener>()
 
                         .AddNotification());
         }

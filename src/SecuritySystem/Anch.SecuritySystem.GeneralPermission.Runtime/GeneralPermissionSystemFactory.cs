@@ -3,6 +3,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Creates the GeneralPermission system for a user credential.</summary>
 public class GeneralPermissionSystemFactory(IServiceProxyFactory serviceProxyFactory, PermissionBindingInfo bindingInfo)
     : IPermissionSystemFactory
 {

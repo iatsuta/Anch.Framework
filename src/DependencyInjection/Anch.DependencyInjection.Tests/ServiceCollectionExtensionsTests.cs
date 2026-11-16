@@ -6,7 +6,7 @@ public sealed class ServiceCollectionExtensionsTests
 {
     private sealed class Source
     {
-        public Service Service { get; set; } = new ();
+        public Service Service { get; set; } = new();
     }
 
     public sealed class OriginalService : IService;

@@ -5,6 +5,7 @@ using Anch.HierarchicalExpand;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a path through nested objects (applies the nested path to each of them).</summary>
 public class NestedManyFilterBuilder<TDomainObject, TPermission, TNestedObject>(
     SecurityFilterBuilderFactory<TNestedObject, TPermission> nestedBuilderFactory,
     SecurityPath<TDomainObject>.NestedManySecurityPath<TNestedObject> securityPath,

@@ -10,7 +10,7 @@ public class MemoryWorkflowRepository(
     IInstanceIdGenerator<StateInstance> stateInstanceIdGenerator,
     WorkflowDefinitionIdentity workflowDefinitionIdentity) : IWorkflowRepository
 {
-    public ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken cancellationToken)
+    public ValueTask SaveWorkflowInstance(WorkflowInstance workflowInstance, CancellationToken ct)
     {
         if (workflowInstance.Definition.Identity != workflowDefinitionIdentity)
         {
@@ -36,9 +36,9 @@ public class MemoryWorkflowRepository(
         return ValueTask.CompletedTask;
     }
 
-    public async ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken cancellationToken)
+    public async ValueTask<WorkflowInstance?> TryGetWorkflowInstance(WorkflowInstanceIdentity identity, CancellationToken ct)
     {
-        if (identity.Definition != null && identity.Definition != workflowDefinitionIdentity)
+        if (identity.Definition is not null && identity.Definition != workflowDefinitionIdentity)
         {
             return null;
         }
@@ -50,9 +50,9 @@ public class MemoryWorkflowRepository(
         }
     }
 
-    public async ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken cancellationToken)
+    public async ValueTask<StateInstance?> TryGetStateInstance(StateInstanceIdentity identity, CancellationToken ct)
     {
-        if (identity.Definition != null && identity.Definition != workflowDefinitionIdentity)
+        if (identity.Definition is not null && identity.Definition != workflowDefinitionIdentity)
         {
             return null;
         }

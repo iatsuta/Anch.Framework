@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Core.ExpressionEvaluate;
 
+/// <summary>Makes member chains in expressions null-safe.</summary>
 public static class InjectMaybeExpressionExtensions
 {
     private static readonly MethodInfo SelectMethod = new Func<Maybe<object>, Func<object, object>, Maybe<object>>(LinqMaybeExtensions.Select).Method.GetGenericMethodDefinition();
@@ -13,7 +14,7 @@ public static class InjectMaybeExpressionExtensions
     {
         var elementType = expression.Type.GetMaybeElementType();
 
-        if (elementType == null)
+        if (elementType is null)
         {
             return expression;
         }
@@ -29,7 +30,7 @@ public static class InjectMaybeExpressionExtensions
     {
         var nullableType = expression.Type.GetNullableElementType();
 
-        if (nullableType != null)
+        if (nullableType is not null)
         {
             var wrapMethod = new Func<Ignore?, Maybe<Ignore>>(Maybe.ToMaybe).Method;
 

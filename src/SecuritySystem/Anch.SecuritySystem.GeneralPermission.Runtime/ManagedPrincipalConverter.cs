@@ -4,6 +4,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Converts a stored principal with its permissions into a managed principal.</summary>
 public class ManagedPrincipalConverter<TPrincipal, TPermission, TPermissionRestriction>(
     IManagedPrincipalHeaderConverter<TPrincipal> headerConverter,
     IPermissionLoader<TPrincipal, TPermission> permissionLoader,
@@ -11,12 +12,12 @@ public class ManagedPrincipalConverter<TPrincipal, TPermission, TPermissionRestr
     where TPrincipal : class
     where TPermission : class
 {
-    public async ValueTask<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken ct)
     {
         var permissions = await permissionLoader
             .LoadAsync(dbPrincipal)
-            .Select(permissionManagementService.ToManagedPermissionAsync)
-            .ToImmutableArrayAsync(cancellationToken);
+            .Select(async (v, lct) => await permissionManagementService.ToManagedPermissionAsync(v, lct))
+            .ToImmutableArrayAsync(ct);
 
         return new ManagedPrincipal(headerConverter.Convert(dbPrincipal), permissions);
     }

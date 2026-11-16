@@ -30,6 +30,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>Collects the settings of the security system and turns them into registrations.</summary>
 public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 {
     private readonly List<DomainSecurityServiceSetup> domainBuilders = [];
@@ -47,7 +48,8 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
     private Action<IServiceCollection> registerRawCurrentUserAction = sc => sc.AddKeyedScoped<ICurrentUser, RawCurrentUser>(ICurrentUser.RawKey);
 
     private Action<IServiceCollection> registerDefaultCurrentUserAction =
-        sc => sc.AddKeyedSingleton<ICurrentUser>(ICurrentUser.DefaultKey, (_, __) => FixedCurrentUser.CurrentMachine); // TODO: remove factory after fix https://github.com/dotnet/runtime/issues/126960
+        sc => sc.AddKeyedSingleton<ICurrentUser>(ICurrentUser.DefaultKey,
+            (_, __) => FixedCurrentUser.CurrentMachine); // TODO: remove factory after fix https://github.com/dotnet/runtime/issues/126960
 
     private Action<IServiceCollection>? registerGenericRepositoryAction;
 
@@ -58,8 +60,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
     private Type clientDomainModeSecurityRuleSource = typeof(ClientDomainModeSecurityRuleSource);
 
     private Type securityAccessorInfinityStorageType = typeof(FakeSecurityAccessorInfinityStorage);
-
-    private Type principalManagementServiceType = typeof(FakePrincipalManagementService);
 
 
     private readonly List<Action<IHierarchicalExpandSetup>> hierarchicalSetupActions = [];
@@ -88,17 +88,17 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         setup?.Invoke(builder);
 
-        if (builder.IdentitySetupAction != null)
+        if (builder.IdentitySetupAction is not null)
         {
             this.identitySetupActions.Add(builder.IdentitySetupAction);
         }
 
-        if (builder.VisualIdentitySetupAction != null)
+        if (builder.VisualIdentitySetupAction is not null)
         {
             this.visualIdentitySetupActions.Add(builder.VisualIdentitySetupAction);
         }
 
-        if (builder.HierarchicalSetupAction != null)
+        if (builder.HierarchicalSetupAction is not null)
         {
             this.hierarchicalSetupActions.Add(builder.HierarchicalSetupAction);
         }
@@ -197,7 +197,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         setupUserSource?.Invoke(userSourceBuilder);
 
-        if (userSourceBuilder.VisualIdentitySetupAction != null)
+        if (userSourceBuilder.VisualIdentitySetupAction is not null)
         {
             this.visualIdentitySetupActions.Add(userSourceBuilder.VisualIdentitySetupAction);
         }
@@ -214,9 +214,9 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             sc.AddScoped(typeof(IMissedUserService<TUser>), userSourceBuilder.MissedUserServiceType);
         });
 
-        if (userSourceBuilder.RunAsPath != null)
+        if (userSourceBuilder.RunAsPath is not null)
         {
-            if (this.registerRunAsManagerAction == null)
+            if (this.registerRunAsManagerAction is null)
             {
                 this.registerRunAsManagerAction = sc =>
                 {
@@ -241,10 +241,18 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
         return this;
     }
 
-    public ISecuritySystemSetup SetPrincipalManagementService<TPrincipalManagementService>()
+    public ISecuritySystemSetup AddPrincipalManagementListener<TPrincipalManagementListener>()
+        where TPrincipalManagementListener : class, IPrincipalManagementListener
+    {
+        this.registerActions.Add(sc => sc.AddScoped<IPrincipalManagementListener, TPrincipalManagementListener>());
+
+        return this;
+    }
+
+    public ISecuritySystemSetup AddPrincipalManagementService<TPrincipalManagementService>()
         where TPrincipalManagementService : class, IPrincipalManagementService
     {
-        this.principalManagementServiceType = typeof(TPrincipalManagementService);
+        this.registerActions.Add(sc => sc.AddKeyedScoped<IPrincipalManagementService, TPrincipalManagementService>(IPrincipalManagementService.ElementKey));
 
         return this;
     }
@@ -329,15 +337,15 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
         return this;
     }
 
-    private void AddSecurityRole(IServiceCollection serviceCollection, FullSecurityRole fullSecurityRole)
+    private void AddSecurityRole(IServiceCollection services, FullSecurityRole fullSecurityRole)
     {
         if (this.InitializeDefaultRoles)
         {
-            serviceCollection.AddSingleton(new PreInitializerFullSecurityRole(fullSecurityRole));
+            services.AddSingleton(new PreInitializerFullSecurityRole(fullSecurityRole));
         }
         else
         {
-            serviceCollection.AddSingleton(fullSecurityRole);
+            services.AddSingleton(fullSecurityRole);
         }
     }
 
@@ -360,7 +368,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
         this.registerActions.ForEach(v => v(services));
 
-        if (this.registerRunAsManagerAction != null)
+        if (this.registerRunAsManagerAction is not null)
         {
             this.registerRunAsManagerAction(services);
         }
@@ -374,8 +382,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
         services.AddSingleton(typeof(IAccessDeniedExceptionService), this.accessDeniedExceptionServiceType);
 
         services.AddScoped(typeof(ISecurityAccessorInfinityStorage), this.securityAccessorInfinityStorageType);
-
-        services.AddScoped(typeof(IPrincipalManagementService), this.principalManagementServiceType);
 
         services.AddSingleton(this.defaultSecurityRuleCredential);
 
@@ -407,6 +413,9 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddScoped<IUserNameResolver, UserNameResolver>()
             .AddScoped<ISyncUserNameResolver, SyncUserNameResolver>()
 
+            .AddScoped<IRawPrincipalManagementListener, RootPrincipalManagementListener>()
+            .AddScoped<IPrincipalManagementService, RootPrincipalManagementService>()
+
             .AddSingleton(typeof(IManagedPrincipalHeaderConverterFactory<>), typeof(ManagedPrincipalHeaderConverterFactory<>))
             .AddSingleton(typeof(IManagedPrincipalHeaderConverter<>), typeof(ManagedPrincipalHeaderConverter<>))
             .AddScoped(typeof(IPrincipalDomainService<>), typeof(PrincipalDomainService<>))
@@ -434,7 +443,8 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddScoped(typeof(IUserQueryableSource<>), typeof(UserQueryableSource<>))
             .AddScoped(typeof(IUserNameResolver<>), typeof(UserNameResolver<>))
             .AddScoped(typeof(IUserFilterFactory<>), typeof(UserFilterFactory<>))
-            .AddKeyedScoped(typeof(ICurrentUserSource<>), nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential), typeof(WithoutRunAsCurrentUserSource<>))
+            .AddKeyedScoped(typeof(ICurrentUserSource<>), nameof(SecurityRuleCredential.CurrentUserWithoutRunAsCredential),
+                typeof(WithoutRunAsCurrentUserSource<>))
             .AddSingleton<SecurityAdministratorRuleFactory>()
 
             .AddSingleton(typeof(IUserCredentialMatcher<>), typeof(UserCredentialMatcher<>))
@@ -447,9 +457,6 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddSingleton<IClientSecurityRuleNameExtractor, ClientSecurityRuleNameExtractor>()
             .AddSingleton<IClientSecurityRuleInfoSource, RootClientSecurityRuleInfoSource>()
             .AddKeyedSingleton<IClientSecurityRuleInfoSource, DomainModeClientSecurityRuleInfoSource>(IClientSecurityRuleInfoSource.ElementKey)
-            .AddSingleton<IClientSecurityRuleResolver, ClientSecurityRuleResolver>()
-            .AddSingleton<IDomainModeSecurityRuleResolver, DomainModeSecurityRuleResolver>()
-            .AddSingleton<IDomainSecurityRoleExtractor, DomainSecurityRoleExtractor>()
 
             .AddSingleton<IExpandedRoleGroupSecurityRuleSetOptimizer, ExpandedRoleGroupSecurityRuleSetOptimizer>()
 
@@ -464,8 +471,10 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddSingleton<ISecurityOperationInfoSource, SecurityOperationInfoSource>()
             .AddScoped<ISecurityContextSource, SecurityContextSource>()
             .AddSingleton<ISecurityContextInfoSource, SecurityContextInfoSource>()
-            .AddSingleton<ISecurityRuleBasicOptimizer, SecurityRuleBasicOptimizer>()
-            .AddSingleton<ISecurityRuleDeepOptimizer, SecurityRuleDeepOptimizer>()
+
+            .AddKeyedSingleton<ISecurityRuleOptimizer, SecurityRuleBasicOptimizer>(ISecurityRuleOptimizer.BasicKey)
+            .AddKeyedSingleton<ISecurityRuleOptimizer, SecurityRuleAccessOptimizer>(ISecurityRuleOptimizer.AccessKey)
+            .AddKeyedSingleton<ISecurityRuleOptimizer, SecurityRuleDeepOptimizer>(ISecurityRuleOptimizer.DeepKey)
 
             .AddScoped(typeof(IRoleBaseSecurityProviderFactory<>), typeof(RoleBaseSecurityProviderFactory<>))
             .AddScoped(typeof(IDomainSecurityProviderFactory<>), typeof(DomainSecurityProviderFactory<>))
@@ -483,7 +492,11 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
                 nameof(DomainSecurityRule.AccessDenied),
                 typeof(AccessDeniedSecurityProvider<>))
             .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.Disabled), typeof(DisabledSecurityProvider<>))
+
             .AddSingleton(typeof(ISecurityProvider<>), typeof(DisabledSecurityProvider<>))
+
+            .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.View), typeof(ViewSecurityProvider<>))
+            .AddKeyedSingleton(typeof(ISecurityProvider<>), nameof(SecurityRule.Edit), typeof(EditSecurityProvider<>))
             .AddScoped(typeof(IDomainSecurityService<>), typeof(DomainSecurityService<>))
 
             .AddScoped<ISecuritySystemFactory, SecuritySystemFactory>()
@@ -502,7 +515,7 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
 
             .AddScoped(sp =>
             {
-                var factoryList = sp.GetRequiredService<IEnumerable<IPermissionSystemFactory>>();
+                var factoryList = sp.GetServices<IPermissionSystemFactory>();
                 var securityRuleCredential = sp.GetRequiredService<SecurityRuleCredential>();
 
                 return factoryList.Select(factory => factory.Create(securityRuleCredential));
@@ -517,8 +530,22 @@ public class SecuritySystemSetup : ISecuritySystemSetup, IServiceInitializer
             .AddKeyedScoped<ISecurityAccessorResolver, RawSecurityAccessorResolver>(ISecurityAccessorResolver.RawKey)
             .AddScoped<ISecurityAccessorResolver, RootSecurityAccessorResolver>()
 
-            .AddScoped<IAvailableSecurityRoleSource, AvailableSecurityRoleSource>()
+            .AddScoped(sp =>
+            {
+                var factory = sp.GetRequiredService<IAvailableSecurityRoleSourceFactory>();
+                var securityRuleCredential = sp.GetRequiredService<SecurityRuleCredential>();
+
+                return factory.Create(securityRuleCredential);
+            })
+            .AddScoped<IAvailableSecurityRoleSourceFactory, AvailableSecurityRoleSourceFactory>()
             .AddScoped<IAvailableSecurityOperationSource, AvailableSecurityOperationSource>()
-            .AddScoped<IAvailableClientSecurityRuleSource, AvailableClientSecurityRuleSource>();
+            .AddScoped(sp =>
+            {
+                var factory = sp.GetRequiredService<IAvailableClientSecurityRuleSourceFactory>();
+                var securityRuleCredential = sp.GetRequiredService<SecurityRuleCredential>();
+
+                return factory.Create(securityRuleCredential);
+            })
+            .AddScoped<IAvailableClientSecurityRuleSourceFactory, AvailableClientSecurityRuleSourceFactory>();
     }
 }

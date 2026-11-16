@@ -5,7 +5,7 @@ public static class DatabaseInitModeHelper
     public static DatabaseInitMode DatabaseInitMode =>
 
 #if DEBUG
-        DatabaseInitMode.ReuseSnapshot
+        DatabaseInitMode.RebuildSnapshot
 #else
         DatabaseInitMode.RebuildSnapshot
 #endif

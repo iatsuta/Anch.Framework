@@ -112,7 +112,8 @@ public class WorkflowBuilder<TSource, TStatus>(WorkflowDefinitionBuilder<TSource
         var baseCasesList = cases
             .Select((pair, i) => new
             {
-                Value = pair.CaseValue, Setup = pair.CaseSetupWorkflowBuilder,
+                Value = pair.CaseValue,
+                Setup = pair.CaseSetupWorkflowBuilder,
                 EventHeader = new EventHeader($"Case_{i}")
             })
             .ToList();

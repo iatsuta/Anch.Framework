@@ -4,13 +4,14 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Permission;
 
+/// <summary>Checks that a permission specifies the security contexts that its role requires.</summary>
 public class PermissionRequiredContextValidator<TPermission, TPermissionRestriction>(
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,
     ISecurityContextInfoSource securityContextInfoSource,
     IPermissionRestrictionSecurityContextTypeResolver<TPermissionRestriction> permissionRestrictionSecurityContextTypeResolver)
     : IPermissionValidator<TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
         var securityRole = permissionSecurityRoleResolver.Resolve(permissionData.Permission);
 
@@ -33,5 +34,7 @@ public class PermissionRequiredContextValidator<TPermission, TPermissionRestrict
                 throw new SecuritySystemValidationException($"{typeof(TPermission).Name} must contain the required contexts: {missedTypes}");
             }
         }
+
+        return ValueTask.CompletedTask;
     }
 }

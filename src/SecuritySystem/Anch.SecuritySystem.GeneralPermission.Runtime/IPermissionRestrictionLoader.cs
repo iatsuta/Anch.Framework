@@ -3,13 +3,14 @@ using Anch.SecuritySystem.ExternalSystem.Management;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Loads the restriction entities of a permission.</summary>
 public interface IPermissionRestrictionLoader<TPermission, TPermissionRestriction>
 {
     IAsyncEnumerable<TPermissionRestriction> LoadAsync(TPermission permission);
 
-    async ValueTask<PermissionData<TPermission, TPermissionRestriction>> ToPermissionData(TPermission dbPermission, CancellationToken cancellationToken)
+    async Task<PermissionData<TPermission, TPermissionRestriction>> ToPermissionData(TPermission dbPermission, CancellationToken ct)
     {
-        var dbRestrictions = await this.LoadAsync(dbPermission).ToImmutableArrayAsync(cancellationToken);
+        var dbRestrictions = await this.LoadAsync(dbPermission).ToImmutableArrayAsync(ct);
 
         return new PermissionData<TPermission, TPermissionRestriction>(dbPermission, dbRestrictions);
     }

@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds the direct contexts of a hierarchical security context type, using the stored depth to find the nearest ancestors.</summary>
 public class HierarchicalDirectLevelExtractor<TSecurityContext, TSecurityContextIdent>(
     INotificationFilterGroupConverter notificationFilterGroupConverter,
     IHierarchicalObjectExpanderFactory hierarchicalObjectExpanderFactory,

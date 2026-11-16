@@ -10,7 +10,9 @@ public class InlineStorage<TSource>(IGenericRepository genericRepository, IQuery
     : IInlineStorage<TSource>
     where TSource : class
 {
-    public async ValueTask Save(TSource source, CancellationToken cancellationToken) => await genericRepository.SaveAsync(source, cancellationToken);
+    public async ValueTask Save(TSource source, CancellationToken ct) => await genericRepository.SaveAsync(source, ct);
+
+    public ValueTask FlushChanges(CancellationToken ct) => ValueTask.CompletedTask;
 
     public IQueryable<TSource> GetQueryable() => queryableSource.GetQueryable<TSource>();
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.SecuritySystem.Testing.DependencyInjection;
 
+/// <summary>Collects the settings of the testing helpers.</summary>
 public class SecuritySystemTestingSetup : ISecuritySystemTestingSetup, IServiceInitializer
 {
     private Type evaluatorType = typeof(TestingEvaluator<>);
@@ -35,8 +36,6 @@ public class SecuritySystemTestingSetup : ISecuritySystemTestingSetup, IServiceI
 
             .Replace(ServiceDescriptor.KeyedScoped<ICurrentUser, TestingRawCurrentUser>(ICurrentUser.RawKey))
             .Replace(ServiceDescriptor.KeyedSingleton<ICurrentUser, TestingDefaultCurrentUser>(ICurrentUser.DefaultKey))
-
-            .AddScoped(typeof(UserCredentialManager))
 
             .AddSingleton<RootAuthManager>()
             .AddSingleton(AdministratorsRoleList.Default)

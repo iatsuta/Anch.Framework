@@ -118,5 +118,5 @@ public class DuplicateServiceUsageValidatorTests
 
     private class KeyedConsumer([FromKeyedServices(IInnerService.RootKey)] IInnerService _);
 
-    private class KeyedConsumerCollection([FromKeyedServices(IInnerService.RootKey)]IEnumerable<IInnerService> _);
+    private class KeyedConsumerCollection([FromKeyedServices(IInnerService.RootKey)] IEnumerable<IInnerService> _);
 }

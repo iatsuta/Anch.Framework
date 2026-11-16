@@ -7,22 +7,18 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: update principal.</summary>
 public class UpdatePrincipalHandler(
-	[WithoutRunAs] ISecuritySystem securitySystem,
-	IPrincipalManagementService principalManagementService,
-	IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null)
-	: BaseWriteHandler, IUpdatePrincipalHandler
+    [WithoutRunAs] ISecuritySystem securitySystem,
+    IPrincipalManagementService principalManagementService)
+    : BaseWriteHandler, IUpdatePrincipalHandler
 {
-	public async Task Execute(HttpContext context, CancellationToken cancellationToken)
-	{
-		await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+    public async Task Execute(HttpContext context, CancellationToken ct)
+    {
+        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 
-		var principalName = await this.ParseRequestBodyAsync<string>(context);
+        var principalName = await this.ParseRequestBodyAsync<string>(context);
 
-		var principal = await principalManagementService.UpdatePrincipalNameAsync(context.ExtractSecurityIdentity(), principalName,
-			cancellationToken);
-
-		if (configuratorIntegrationEvents != null)
-			await configuratorIntegrationEvents.PrincipalChangedAsync(principal, cancellationToken);
-	}
+        await principalManagementService.UpdatePrincipalNameAsync(context.ExtractSecurityIdentity(), principalName, ct);
+    }
 }

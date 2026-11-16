@@ -1,5 +1,6 @@
 ﻿namespace Anch.Parsing;
 
+/// <summary>A string slice that shares the memory of the source text, so parsers consume input without copying.</summary>
 public record SharedMemoryString(ReadOnlyMemory<char> Chars) : IComparable<SharedMemoryString>
 {
     public SharedMemoryString(string value)
@@ -55,7 +56,7 @@ public record SharedMemoryString(ReadOnlyMemory<char> Chars) : IComparable<Share
 
     public string ToString(int charLimit)
     {
-        return new string(this.Chars.Span[.. Math.Min(this.Length, charLimit)]);
+        return new string(this.Chars.Span[..Math.Min(this.Length, charLimit)]);
     }
 
     public override int GetHashCode()

@@ -5,6 +5,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Builds the filter that selects the valid virtual permissions (those within their period).</summary>
 public class VirtualPermissionFilterFactory<TPermission>(
     IServiceProvider serviceProvider,
     VirtualPermissionBindingInfo<TPermission> virtualPermissionBindingInfo) : IPermissionFilterFactory<TPermission>
@@ -19,7 +20,7 @@ public class VirtualPermissionFilterFactory<TPermission>(
         SecurityContextRestriction<TSecurityContext> securityContextRestriction)
         where TSecurityContext : class, ISecurityContext
     {
-        if (securityContextRestriction.Filter != null)
+        if (securityContextRestriction.Filter is not null)
         {
             var restrictionFilter = this.CreateFilter(securityContextRestriction.Filter.GetPureFilter(serviceProvider));
 

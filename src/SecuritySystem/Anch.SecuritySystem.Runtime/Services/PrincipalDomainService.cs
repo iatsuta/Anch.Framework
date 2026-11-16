@@ -7,6 +7,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Creates and removes principal entities.</summary>
 public class PrincipalDomainService<TPrincipal>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfo<TPrincipal> identityInfo,
@@ -28,60 +29,87 @@ public class PrincipalDomainService<TPrincipal>(
 
     private IPrincipalDomainService<TPrincipal> InnerService => this.lazyInnerService.Value;
 
-    public Task<TPrincipal> GetOrCreateAsync(string name, CancellationToken cancellationToken) =>
-        this.InnerService.GetOrCreateAsync(name, cancellationToken);
+    public Task<TPrincipal> GetOrCreateAsync(UserCredential userCredential, CancellationToken ct) =>
+        this.InnerService.GetOrCreateAsync(userCredential, ct);
 
-    public Task RemoveAsync(TPrincipal principal, bool force, CancellationToken cancellationToken) =>
-        this.InnerService.RemoveAsync(principal, force, cancellationToken);
+    public Task RemoveAsync(TPrincipal principal, bool force, CancellationToken ct) =>
+        this.InnerService.RemoveAsync(principal, force, ct);
 }
 
+/// <summary>Creates and removes principal entities.</summary>
 public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     IQueryableSource queryableSource,
-	IGenericRepository genericRepository,
-	IEnumerable<IUserSource> userSources,
-	ISecurityIdentityConverter<TPrincipalIdent> identityConverter,
-	IIdentityInfo<TPrincipal, TPrincipalIdent> identityInfo,
-	IVisualIdentityInfo<TPrincipal> visualIdentityInfo) : IPrincipalDomainService<TPrincipal>
-	where TPrincipal : class, new()
-	where TPrincipalIdent : notnull
-	where TPermission : class
+    IGenericRepository genericRepository,
+    IEnumerable<IUserSource> userSources,
+    ISecurityIdentityConverter<TPrincipalIdent> identityConverter,
+    IIdentityInfo<TPrincipal, TPrincipalIdent> identityInfo,
+    IUserFilterFactory<TPrincipal> principalFilterFactory,
+    IVisualIdentityInfo<TPrincipal> visualIdentityInfo) : IPrincipalDomainService<TPrincipal>
+    where TPrincipal : class, new()
+    where TPrincipalIdent : notnull
+    where TPermission : class
 {
-	public async Task<TPrincipal> GetOrCreateAsync(string name, CancellationToken cancellationToken)
-	{
-		var principal = await queryableSource.GetQueryable<TPrincipal>()
-			.GenericSingleOrDefaultAsync(visualIdentityInfo.Name.Path.Select(ExpressionHelper.GetEqualityWithExpr(name)), cancellationToken);
-
-		if (principal is null)
-		{
-			principal = new TPrincipal();
-
-			visualIdentityInfo.Name.Setter(principal, name);
-
-            await this.TryInitIdent(principal, cancellationToken);
-
-			await genericRepository.SaveAsync(principal, cancellationToken);
-		}
-
-		return principal;
-	}
-
-    private async Task TryInitIdent(TPrincipal principal, CancellationToken cancellationToken)
+    public async Task<TPrincipal> GetOrCreateAsync(UserCredential userCredential, CancellationToken ct)
     {
-        var ident = await this.TryExtractIdent(visualIdentityInfo.Name.Getter(principal), cancellationToken);
+        var principal = await queryableSource.GetQueryable<TPrincipal>()
+            .GenericSingleOrDefaultAsync(principalFilterFactory.CreateFilter(userCredential), ct);
 
-        if (ident is not null)
+        if (principal is null)
         {
-            identityInfo.Id.Setter(principal, ident);
+            principal = new TPrincipal();
+
+            switch (userCredential)
+            {
+                case UserCredential.FullUserCredential { User: { Name: var userName, Identity: var userIdentity } }:
+                    {
+                        visualIdentityInfo.Name.Setter(principal, userName);
+
+                        identityInfo.Id.Setter(principal, identityConverter.Convert(userIdentity).Id);
+
+                        break;
+                    }
+
+                case UserCredential.NamedUserCredential { Name: var userName }:
+                    {
+                        visualIdentityInfo.Name.Setter(principal, userName);
+
+                        if (await this.TryExtractIdent(userName, ct) is { } userIdent)
+                        {
+                            identityInfo.Id.Setter(principal, userIdent);
+                        }
+
+                        break;
+                    }
+
+                case UserCredential.IdentUserCredential { Identity: var userIdentity }:
+                    {
+                        if (await this.TryExtractName(userIdentity, ct) is { } userName)
+                        {
+                            visualIdentityInfo.Name.Setter(principal, userName);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"User with identity = '{userIdentity}' not found");
+                        }
+
+                        identityInfo.Id.Setter(principal, identityConverter.Convert(userIdentity).Id);
+                        break;
+                    }
+            }
+
+            await genericRepository.SaveAsync(principal, ct);
         }
+
+        return principal;
     }
 
-    private async Task<TPrincipalIdent?> TryExtractIdent(string name, CancellationToken cancellationToken)
+    private async Task<TPrincipalIdent?> TryExtractIdent(string userName, CancellationToken ct)
     {
         var tryCandidates = userSources
             .ToAsyncEnumerable()
             .Where(userSource => userSource.UserType != typeof(TPrincipal))
-            .Select((userSource, ct) => userSource.ToSimple().TryGetUserAsync(name, ct));
+            .Select(async (userSource, lct) => await userSource.ToSimple().TryGetUserAsync(userName, lct));
 
         var identRequest =
 
@@ -89,23 +117,45 @@ public class PrincipalDomainService<TPrincipal, TPermission, TPrincipalIdent>(
 
             where tryUser is not null
 
-            let ident = identityConverter.TryConvert(tryUser.Identity)
+            let userIdentity = identityConverter.TryConvert(tryUser.Identity)
 
-            where ident is not null
+            where userIdentity is not null
 
-            select ident.Id;
+            select userIdentity.Id;
 
-        return await identRequest.SingleOrDefaultAsync(cancellationToken);
+        return await identRequest.SingleOrDefaultAsync(ct);
     }
 
-    public async Task RemoveAsync(TPrincipal principal, bool force, CancellationToken cancellationToken)
-	{
-		if (!force && await queryableSource.GetQueryable<TPermission>()
-			    .GenericAnyAsync(bindingInfo.Principal.Path.Select(p => p == principal), cancellationToken))
-		{
-			throw new SecuritySystemException($"Removing principal \"{visualIdentityInfo.Name.Getter(principal)}\" must be empty");
-		}
+    private async Task<string?> TryExtractName(SecurityIdentity userIdentity, CancellationToken ct)
+    {
+        var tryCandidates = userSources
+            .ToAsyncEnumerable()
+            .Where(userSource => userSource.UserType != typeof(TPrincipal))
+            .Select(async (userSource, lct) => await userSource.ToSimple().TryGetUserAsync(userIdentity, lct));
 
-		await genericRepository.RemoveAsync(principal, cancellationToken);
-	}
+        var nameRequest =
+
+            from tryUser in tryCandidates
+
+            where tryUser is not null
+
+            let userName = tryUser.Name
+
+            where userName is not null
+
+            select userName;
+
+        return await nameRequest.SingleOrDefaultAsync(ct);
+    }
+
+    public async Task RemoveAsync(TPrincipal principal, bool force, CancellationToken ct)
+    {
+        if (!force && await queryableSource.GetQueryable<TPermission>()
+                .GenericAnyAsync(bindingInfo.Principal.Path.Select(p => p == principal), ct))
+        {
+            throw new SecuritySystemException($"Removing principal \"{visualIdentityInfo.Name.Getter(principal)}\" must be empty");
+        }
+
+        await genericRepository.RemoveAsync(principal, ct);
+    }
 }

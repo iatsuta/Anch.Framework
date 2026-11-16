@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.SecurityAccessor;
 
+/// <summary>Optimizes accessor data and then resolves it into user names.</summary>
 public class RootSecurityAccessorResolver(
     ISecurityAccessorDataOptimizer optimizer,
     [FromKeyedServices(ISecurityAccessorResolver.RawKey)]

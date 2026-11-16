@@ -7,6 +7,9 @@ using Anch.Parsing;
 
 namespace Anch.OData.InternalParser;
 
+/// <summary>The grammar of the query string: parses <c>$filter</c>, <c>$orderby</c>, <c>$top</c> and <c>$skip</c> into an untyped <see cref="SelectOperation"/>.</summary>
+/// <param name="culture">The culture used to parse numbers and dates.</param>
+/// <param name="rootParameter">The lambda parameter that property names refer to.</param>
 public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpression rootParameter) : CharParsers(culture)
 {
     private readonly LambdaExpressionInternalParser rootLambdaExpressionParser = new(culture, rootParameter, [rootParameter]);
@@ -24,12 +27,6 @@ public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpres
             this.GetElementParser("orderby", this.GetLazy(() => this.OrdersParser))
                 .ToRow(() => SelectOperation.Default.Orders),
 
-            this.GetElementParser("expand", this.GetLazy(() => this.ExpandsParser))
-                .ToRow(() => SelectOperation.Default.Expands),
-
-            this.GetElementParser("select", this.GetLazy(() => this.SelectsParser))
-                .ToRow(() => SelectOperation.Default.Selects),
-
             this.GetElementParser("skip", this.Int32Parser)
                 .ToRow(() => SelectOperation.Default.SkipCount),
 
@@ -38,9 +35,9 @@ public class RawSelectOperationParserParser(CultureInfo culture, ParameterExpres
 
             this.PreSpaces(this.Char('&')),
 
-            (filter, orders, expands, selects, skipCount, takeCount) =>
+            (filter, orders, skipCount, takeCount) =>
 
-                new SelectOperation(filter, [.. orders], skipCount, takeCount) { Expands = [.. expands], Selects = [.. selects] })
+                new SelectOperation(filter, [.. orders], skipCount, takeCount))
 
         from _ in this.PreSpaces(this.Eof)
 

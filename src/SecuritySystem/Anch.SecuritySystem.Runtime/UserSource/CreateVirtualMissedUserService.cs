@@ -3,6 +3,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Supplies a virtual user when none is found.</summary>
 public class CreateVirtualMissedUserService<TUser>(
     IMissedUserErrorSource missedUserErrorSource,
     IVisualIdentityInfo<TUser> visualIdentityInfo,

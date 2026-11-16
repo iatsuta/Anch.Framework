@@ -44,22 +44,20 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
     protected override async ValueTask InitializeAsync(CancellationToken ct)
     {
-        await base.InitializeAsync(ct);
-
         this.rootBusinessUnit = await this.SaveBusinessUnit(nameof(this.rootBusinessUnit), null, ct);
         this.child_1_0_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_0_BusinessUnit), this.rootBusinessUnit, ct);
-		this.child_1_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_1_BusinessUnit), this.child_1_0_BusinessUnit, ct);
-		this.child_2_0_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_2_0_BusinessUnit), this.rootBusinessUnit, ct);
-		this.child_2_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_2_1_BusinessUnit), this.child_2_0_BusinessUnit, ct);
+        this.child_1_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_1_1_BusinessUnit), this.child_1_0_BusinessUnit, ct);
+        this.child_2_0_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_2_0_BusinessUnit), this.rootBusinessUnit, ct);
+        this.child_2_1_BusinessUnit = await this.SaveBusinessUnit(nameof(this.child_2_1_BusinessUnit), this.child_2_0_BusinessUnit, ct);
 
-		this.rootManagementUnit = await this.SaveManagementUnit(nameof(this.rootManagementUnit), null, ct);
-		this.child_1_0_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_1_0_ManagementUnit), this.rootManagementUnit, ct);
-		this.child_1_1_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_1_1_ManagementUnit), this.child_1_0_ManagementUnit, ct);
-		this.child_2_0_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_2_0_ManagementUnit), this.rootManagementUnit, ct);
-		this.child_2_1_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_2_1_ManagementUnit), this.child_2_0_ManagementUnit, ct);
+        this.rootManagementUnit = await this.SaveManagementUnit(nameof(this.rootManagementUnit), null, ct);
+        this.child_1_0_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_1_0_ManagementUnit), this.rootManagementUnit, ct);
+        this.child_1_1_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_1_1_ManagementUnit), this.child_1_0_ManagementUnit, ct);
+        this.child_2_0_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_2_0_ManagementUnit), this.rootManagementUnit, ct);
+        this.child_2_1_ManagementUnit = await this.SaveManagementUnit(nameof(this.child_2_1_ManagementUnit), this.child_2_0_ManagementUnit, ct);
 
-		this.rootEmployee = await this.SaveEmployee(nameof(this.rootEmployee), ct);
-	}
+        this.rootEmployee = await this.SaveEmployee(nameof(this.rootEmployee), ct);
+    }
 
     [AnchFact]
     public async Task GetPrincipals_Direct_Test1_Searched(CancellationToken ct)
@@ -462,7 +460,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         var principalNames = await this.GetNotificationPrincipalsAsync([notificationFilterGroup], ct);
 
         // Assert
-        Assert.Equivalent(new[] { testUserName }, principalNames);
+        Assert.Equivalent(new[] { testUserName }, principalNames, strict: true);
     }
 
     [AnchFact]
@@ -474,7 +472,6 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
 
         var searchBuIdentity =
             await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2-Child", ct);
-
 
         var testUserName = nameof(this.NotificationPrincipalExtractor_ReturnsUser_ForAssignedRoleAndBusinessUnit);
 
@@ -493,45 +490,70 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
                     ExpandType = NotificationExpandType.DirectOrFirstParent
                 };
 
-                return await extractor.GetPrincipalsAsync([this.testSecurityRole], [notificationFilterGroup]).Select(p => p.Name).ToArrayAsync(ct);
+                return await extractor.GetPrincipalsAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [notificationFilterGroup]).Select(p => p.Name).ToArrayAsync(ct);
             });
 
         // Assert
-        Assert.Equivalent(new[] { testUserName }, principalNames);
+        Assert.Equivalent(new[] { testUserName }, principalNames, strict: true);
     }
 
-    //[AnchFact]
-    //public async Task VirtualPermissionTest()
-    //{
-    //    // Arrange
-    //    var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", ct);
+    [AnchFact]
+    public async Task VirtualPermissionTest_Test01(CancellationToken ct)
+    {
+        // Arrange
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", ct);
 
-    //    var notificationFilterGroup = new NotificationFilterGroup<Guid>
-    //    {
-    //        SecurityContextType = typeof(BusinessUnit),
-    //        Idents = [buIdentity.Id],
-    //        ExpandType = NotificationExpandType.DirectOrFirstParent
-    //    };
+        var notificationFilterGroup = new NotificationFilterGroup<Guid>
+        {
+            SecurityContextType = typeof(BusinessUnit),
+            Idents = [buIdentity.Id],
+            ExpandType = NotificationExpandType.DirectOrFirstParent
+        };
 
-    //    // Act
-    //    var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>()
-    //        .EvaluateAsync(TestingScopeMode.Read, async extractor =>
-    //            await extractor.GetPrincipalsAsync([testSecurityRole], [notificationFilterGroup])
-    //                .Select(employee => employee.Login)
-    //                .ToArrayAsync(ct));
+        // Act
+        var result = await this.GetEvaluator<INotificationPrincipalExtractor<Employee>>()
+            .EvaluateAsync(TestingScopeMode.Read, async extractor =>
+                await extractor.GetPrincipalsAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [notificationFilterGroup])
+                    .Select(employee => employee.Login)
+                    .ToArrayAsync(ct));
 
-    //    // Assert
+        var expectedResult = new[] { "TestEmployee2" };
 
-    //    return;
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v), strict: true);
+    }
 
-    //    //Assert.Equivalent(expectedResult, result.OrderBy(v => v.Name));
-    //}
+    [AnchFact]
+    public async Task ComplexPermissionTest_Test01(CancellationToken ct)
+    {
+        // Arrange
+        var buIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}2", ct);
+
+        var notificationFilterGroup = new NotificationFilterGroup<Guid>
+        {
+            SecurityContextType = typeof(BusinessUnit),
+            Idents = [buIdentity.Id],
+            ExpandType = NotificationExpandType.DirectOrFirstParent
+        };
+
+        var testUserName = nameof(this.ComplexPermissionTest_Test01);
+
+        await this.AuthManager.For(testUserName).AddRoleAsync(new TestPermission(this.testSecurityRole) { BusinessUnit = buIdentity }, ct);
+
+        // Act
+        var result = await this.GetEvaluator<INotificationPrincipalNameExtractor>()
+            .EvaluateAsync(TestingScopeMode.Read,
+                async extractor => await extractor.GetPrincipalNamesAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [notificationFilterGroup]).ToArrayAsync(ct));
+
+        var expectedResult = new[] { testUserName, "TestEmployee2" };
+
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v), strict: true);
+    }
 
     private Task<string[]> GetNotificationPrincipalsAsync(NotificationFilterGroup[] notificationFilterGroups, CancellationToken ct) =>
 
         this.GetEvaluator<INotificationPrincipalExtractor<Domain.Auth.General.Principal>>()
             .EvaluateAsync(TestingScopeMode.Read, async extractor =>
-                await extractor.GetPrincipalsAsync([this.testSecurityRole], [.. notificationFilterGroups])
+                await extractor.GetPrincipalsAsync(new DomainSecurityRule.ExpandedRolesSecurityRule([this.testSecurityRole]), [.. notificationFilterGroups])
                     .Select(p => p.Name)
                     .ToArrayAsync(ct));
 
@@ -540,7 +562,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         this.AuthManager.SaveSecurityContextAsync<BusinessUnit, Guid>(async sp => new BusinessUnit
         {
             Name = name,
-            Parent = parent == null ? null : await sp.GetRequiredService<ISecurityRepository<BusinessUnit>>().GetObjectAsync(parent, ct)
+            Parent = parent is null ? null : await sp.GetRequiredService<ISecurityRepository<BusinessUnit>>().GetObjectAsync(parent, ct)
         }, ct);
 
     private Task<TypedSecurityIdentity<Guid>> SaveManagementUnit(string name, TypedSecurityIdentity<Guid>? parent, CancellationToken ct) =>
@@ -548,7 +570,7 @@ public abstract class NotificationTests(IServiceProvider rootServiceProvider) : 
         this.AuthManager.SaveSecurityContextAsync<ManagementUnit, Guid>(async sp => new ManagementUnit
         {
             Name = name,
-            Parent = parent == null ? null : await sp.GetRequiredService<ISecurityRepository<ManagementUnit>>().GetObjectAsync(parent, ct)
+            Parent = parent is null ? null : await sp.GetRequiredService<ISecurityRepository<ManagementUnit>>().GetObjectAsync(parent, ct)
         }, ct);
 
     private Task<TypedSecurityIdentity<Guid>> SaveEmployee(string login, CancellationToken ct) =>

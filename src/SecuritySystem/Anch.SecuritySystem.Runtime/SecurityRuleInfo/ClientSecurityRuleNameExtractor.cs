@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Derives client rule names from the properties and modes that declare them.</summary>
 public class ClientSecurityRuleNameExtractor : IClientSecurityRuleNameExtractor
 {
     public string ExtractName(PropertyInfo propertyInfo) => propertyInfo.Name;

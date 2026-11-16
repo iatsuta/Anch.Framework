@@ -13,9 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Grants access to the objects that belong to the current user, found through a relative path.</summary>
 public class CurrentUserSecurityProvider<TDomainObject>(
     IServiceProvider serviceProvider,
-	IServiceProxyFactory serviceProxyFactory,
+    IServiceProxyFactory serviceProxyFactory,
     IEnumerable<UserSourceInfo> userSourceInfoList,
     IIdentityInfoSource identityInfoSource,
     SecurityRuleCredential? securityRuleCredential = null,
@@ -23,10 +24,10 @@ public class CurrentUserSecurityProvider<TDomainObject>(
 {
     private readonly Lazy<ISecurityProvider<TDomainObject>> lazyInnerService = new(() =>
     {
-	    var (actualUserSourceInfo, actualRelativeDomainPathInfo) =
-		    TryGetActualUserSourceInfo() ?? throw new SecuritySystemException($"Can't found RelativePath for {typeof(TDomainObject)}");
+        var (actualUserSourceInfo, actualRelativeDomainPathInfo) =
+            TryGetActualUserSourceInfo() ?? throw new SecuritySystemException($"Can't found RelativePath for {typeof(TDomainObject)}");
 
-	    var userIdentityInfo = identityInfoSource.GetIdentityInfo(actualUserSourceInfo.UserType);
+        var userIdentityInfo = identityInfoSource.GetIdentityInfo(actualUserSourceInfo.UserType);
 
         var innerServiceType =
             typeof(CurrentUserSecurityProvider<,,>).MakeGenericType(typeof(TDomainObject), actualUserSourceInfo.UserType, userIdentityInfo.IdentityType);
@@ -35,45 +36,46 @@ public class CurrentUserSecurityProvider<TDomainObject>(
             {
                 actualRelativeDomainPathInfo,
                 securityRuleCredential
-            }.Where(arg => arg != null)
+            }.Where(arg => arg is not null)
             .Select(arg => arg!)
             .ToArray();
 
         return serviceProxyFactory.Create<ISecurityProvider<TDomainObject>>(innerServiceType, innerServiceArgs);
 
-		(UserSourceInfo, object)? TryGetActualUserSourceInfo()
-		{
-			foreach (var userSourceInfo in userSourceInfoList)
-			{
-				var relativeDomainPathInfoType = typeof(IRelativeDomainPathInfo<,>).MakeGenericType(typeof(TDomainObject), userSourceInfo.UserType);
+        (UserSourceInfo, object)? TryGetActualUserSourceInfo()
+        {
+            foreach (var userSourceInfo in userSourceInfoList)
+            {
+                var relativeDomainPathInfoType = typeof(IRelativeDomainPathInfo<,>).MakeGenericType(typeof(TDomainObject), userSourceInfo.UserType);
 
-				var relativePathKey = key?.Name;
+                var relativePathKey = key?.Name;
 
-				var relativeDomainPathInfo = relativePathKey == null
-					? serviceProvider.GetService(relativeDomainPathInfoType)
-					: serviceProvider.GetKeyedService(relativeDomainPathInfoType, relativePathKey);
+                var relativeDomainPathInfo = relativePathKey is null
+                    ? serviceProvider.GetService(relativeDomainPathInfoType)
+                    : serviceProvider.GetKeyedService(relativeDomainPathInfoType, relativePathKey);
 
-				if (relativeDomainPathInfo != null)
-				{
-					return (userSourceInfo, relativeDomainPathInfo);
-				}
-			}
+                if (relativeDomainPathInfo is not null)
+                {
+                    return (userSourceInfo, relativeDomainPathInfo);
+                }
+            }
 
-			return null;
-		}
-	});
+            return null;
+        }
+    });
 
-	private ISecurityProvider<TDomainObject> InnerService => this.lazyInnerService.Value;
+    private ISecurityProvider<TDomainObject> InnerService => this.lazyInnerService.Value;
 
     public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => this.InnerService.Inject(queryable);
 
-    public ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.GetAccessResultAsync(domainObject, cancellationToken);
+    public ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.GetAccessResultAsync(domainObject, ct);
 
-    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.HasAccessAsync(domainObject, cancellationToken);
+    public ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.HasAccessAsync(domainObject, ct);
 
-    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.InnerService.GetAccessorDataAsync(domainObject, cancellationToken);
+    public ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct) => this.InnerService.GetAccessorDataAsync(domainObject, ct);
 }
 
+/// <summary>Grants access to the objects that belong to the current user, found through a relative path.</summary>
 public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     IRelativeDomainPathInfo<TDomainObject, TUser> relativeDomainPathInfo,
@@ -95,7 +97,7 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
 
                 var userName = await userNameResolver.GetUserNameAsync(securityRuleCredential, ct);
 
-                if (userName == null)
+                if (userName is null)
                 {
                     return _ => true;
                 }
@@ -111,13 +113,13 @@ public class CurrentUserSecurityProvider<TDomainObject, TUser, TIdent>(
             })
             .Pipe(relativeDomainPathInfo.CreateCondition);
 
-    public override async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public override async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct)
     {
         var users = await relativeDomainPathInfo
             .GetRelativeObjects(domainObject)
             .ToAsyncEnumerable()
             .Select(visualIdentityInfo.Name.Getter)
-            .ToImmutableArrayAsync(cancellationToken);
+            .ToImmutableArrayAsync(ct);
 
         return SecurityAccessorData.Return(users);
     }

@@ -1,4 +1,5 @@
-﻿using Anch.GenericQueryable.IntegrationTests.Domain;
+﻿using Anch.GenericQueryable.Fetching;
+using Anch.GenericQueryable.IntegrationTests.Domain;
 using Anch.GenericQueryable.IntegrationTests.Environment;
 using Anch.GenericRepository;
 using Anch.Testing.Xunit;
@@ -12,6 +13,22 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
     private readonly Guid testObjId = rootServiceProvider.GetRequiredService<ITestDataInitializer>().TestObjId;
 
     [AnchFact]
+    public async Task Where_LinkId_Should_Be_Translated_To_Id_And_Return_Matching_Object(CancellationToken ct)
+    {
+        // Arrange
+        await using var scope = rootServiceProvider.CreateAsyncScope();
+        var queryableSource = scope.ServiceProvider.GetRequiredService<IQueryableSource>();
+        var testSet = queryableSource.GetQueryable<TestObject>();
+
+        // Act
+        var result = await testSet.Where(testObj => testObj.LinkId == this.testObjId).GenericToArrayAsync(ct);
+
+        // Assert
+        Assert.Single(result, testObj => testObj.Id == this.testObjId);
+    }
+
+
+    [AnchFact]
     public async Task DefaultGenericQueryable_InvokeToArrayAsync_MethodInvoked(CancellationToken ct)
     {
         // Arrange
@@ -21,7 +38,7 @@ public abstract class MainTests(IServiceProvider rootServiceProvider)
 
         // Act
         var result = await testSet
-            .WithFetch(AppFetchRule.TestFetchRule)
+            .WithFetch(r => r.Fetch(x => x.FetchObject).CompositeWith(AppFetchRule.TestFetchRule))
             .GenericToArrayAsync(ct);
 
         // Assert

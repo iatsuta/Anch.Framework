@@ -3,10 +3,11 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner, IServiceProviderPool? serviceProviderPool) :
-    XunitTestCollectionRunner
+/// <summary>Runs a test collection.</summary>
+public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner) : XunitTestCollectionRunner
 {
-    protected override async ValueTask<RunSummary> RunTestClass(XunitTestCollectionRunnerContext ctxt, IXunitTestClass? testClass, IReadOnlyCollection<IXunitTestCase> testCases)
+    protected override async ValueTask<RunSummary> RunTestClass(XunitTestCollectionRunnerContext ctxt, IXunitTestClass? testClass,
+        IReadOnlyCollection<IXunitTestCase> testCases)
     {
         Guard.ArgumentNotNull(ctxt);
 
@@ -18,28 +19,17 @@ public class AnchTestCollectionRunner(AnchTestClassRunner commonTestClassRunner,
                 ctxt.CancellationTokenSource,
                 testCases,
                 "Test case '{0}' does not have an associated class and cannot be run by XunitTestClassRunner",
-                sendTestClassMessages: true
-            );
+                sendTestClassMessages: true);
 
-        var serviceProvider = serviceProviderPool == null ? null : await serviceProviderPool.GetAsync(ctxt.CancellationTokenSource.Token);
-
-        try
-        {
-            return await commonTestClassRunner.Run(
-                testClass,
-                testCases,
-                ctxt.ExplicitOption,
-                ctxt.MessageBus,
-                ctxt.TestCaseOrderer,
-                ctxt.Aggregator.Clone(),
-                ctxt.CancellationTokenSource,
-                ctxt.CollectionFixtureMappings,
-                serviceProvider);
-        }
-        finally
-        {
-            if (serviceProviderPool != null && serviceProvider is not null)
-                serviceProviderPool.Release(serviceProvider);
-        }
+        return await commonTestClassRunner.Run(
+            testClass,
+            testCases,
+            ctxt.ExplicitOption,
+            ctxt.MessageBus,
+            ctxt.ParallelMode,
+            ctxt.Scheduler,
+            ctxt.Aggregator.Clone(),
+            ctxt.CancellationTokenSource,
+            ctxt.CollectionFixtureMappings);
     }
 }

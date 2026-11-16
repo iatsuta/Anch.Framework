@@ -4,9 +4,10 @@ using Anch.Core;
 
 namespace Anch.RelativePath;
 
+/// <summary>A relative path through a single-valued property.</summary>
 public record SingleRelativeDomainPathInfo<TFrom, TTo>(Expression<Func<TFrom, TTo>> Path) : IRelativeDomainPathInfo<TFrom, TTo>
 {
-	private readonly Lazy<Func<TFrom, TTo>> lazyPathFunc = new(Path.Compile);
+    private readonly Lazy<Func<TFrom, TTo>> lazyPathFunc = new(Path.Compile);
 
     public IRelativeDomainPathInfo<TNewFrom, TTo> OverrideInput<TNewFrom>(Expression<Func<TNewFrom, TFrom>> selector)
     {
@@ -32,7 +33,7 @@ public record SingleRelativeDomainPathInfo<TFrom, TTo>(Expression<Func<TFrom, TT
     {
         var relativeObject = this.lazyPathFunc.Value(source);
 
-        if (relativeObject != null)
+        if (relativeObject is not null)
         {
             yield return relativeObject;
         }

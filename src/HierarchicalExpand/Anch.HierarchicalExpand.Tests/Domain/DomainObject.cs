@@ -2,11 +2,11 @@
 
 public class DomainObject
 {
-	public required string Name { get; init; }
+    public required string Name { get; init; }
 
-	public DomainObject? Parent { get; set; }
+    public DomainObject? Parent { get; set; }
 
-	public int Id { get; init; }
+    public int Id { get; init; }
 
-	public override string ToString() => this.Name;
+    public override string ToString() => this.Name;
 }

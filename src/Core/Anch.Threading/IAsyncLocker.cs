@@ -1,6 +1,9 @@
 ﻿namespace Anch.Threading;
 
-public interface IAsyncLocker
+/// <summary>An asynchronous mutual-exclusion lock.</summary>
+public interface IAsyncLocker : IDisposable
 {
-    ValueTask<IDisposable> CreateScope();
+    /// <summary>Waits for the lock and returns a scope that releases it when disposed.</summary>
+    /// <param name="ct">Cancellation token.</param>
+    Task<IDisposable> CreateScope(CancellationToken ct);
 }

@@ -1,0 +1,39 @@
+<Project>
+
+  <!-- Evaluated after the project body, so PackageId is already known. A Description set in a csproj wins. -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'false' And '$(PackageId)' != ''">
+    <_AnchModuleDescription Condition="$(PackageId.StartsWith('Anch.SecuritySystem.Notification'))">Notifications about security permission changes for Anch.SecuritySystem</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.SecuritySystem.GeneralPermission'))">Permissions stored in the application database for Anch.SecuritySystem</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.SecuritySystem.VirtualPermission'))">Permissions computed from domain data for Anch.SecuritySystem</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.SecuritySystem.Configurator'">REST API and web UI for managing principals and permissions of Anch.SecuritySystem</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.SecuritySystem.Testing'">Test helpers for applications built on Anch.SecuritySystem</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.SecuritySystem.Rules'">Security rule and role model for Anch.SecuritySystem</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.SecuritySystem'))">Role-based access control with security contexts, RunAs and domain object security</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.GenericQueryable'))">ORM-independent async LINQ and eager loading (WithFetch) for Entity Framework Core and NHibernate</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.HierarchicalExpand'))">Expansion of ancestor/descendant hierarchies in LINQ queries</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.OData'))">Parser that converts OData $filter, $orderby, $top and $skip into LINQ expressions</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.VisualIdentitySource'))">Resolves the display name of arbitrary domain objects</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.IdentitySource'))">Resolves the identifier of arbitrary domain objects</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.Caching'))">Cache abstraction and default implementation</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And $(PackageId.StartsWith('Anch.Testing'))">Test infrastructure: DI container pool, database snapshots and xunit v3 integration</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.DependencyInjection'">Dependency injection helpers: AddXxx(setup) pattern, service proxy factory and registration validation</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.GenericRepository'">Repository and queryable source abstractions</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.Parsing'">Parser combinators</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.RelativePath'">Relative domain path abstractions</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.Threading'">Async synchronization primitives</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == '' And '$(PackageId)' == 'Anch.Core'">Core utilities: expression tools, Maybe, data access interfaces and async helpers</_AnchModuleDescription>
+    <_AnchModuleDescription Condition="'$(_AnchModuleDescription)' == ''">Anch.Framework library</_AnchModuleDescription>
+
+    <_AnchLayerSuffix Condition="$(PackageId.EndsWith('.Abstractions'))"> (abstractions)</_AnchLayerSuffix>
+    <_AnchLayerSuffix Condition="$(PackageId.EndsWith('.Domain')) Or $(PackageId.EndsWith('.RawDomain'))"> (domain models)</_AnchLayerSuffix>
+    <_AnchLayerSuffix Condition="$(PackageId.EndsWith('.Runtime'))"> (implementation)</_AnchLayerSuffix>
+
+    <Description Condition="'$(Description)' == ''">$(_AnchModuleDescription)$(_AnchLayerSuffix)</Description>
+    <PackageTags Condition="'$(PackageTags)' == ''">anch;dotnet;$(PackageId.Replace('Anch.', '').Replace('.', ';').ToLowerInvariant())</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)..\README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>

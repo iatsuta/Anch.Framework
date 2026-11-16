@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>Runs test code in a new scope of the root container.</summary>
 public class TestingEvaluator<TService>(IServiceProvider rootServiceProvider) : ITestingEvaluator<TService>
     where TService : notnull
 {
@@ -11,7 +12,7 @@ public class TestingEvaluator<TService>(IServiceProvider rootServiceProvider) : 
     {
         await using var scope = rootServiceProvider.CreateAsyncScope();
 
-        if (userCredential == null)
+        if (userCredential is null)
         {
             var service = scope.ServiceProvider.GetRequiredService<TService>();
 

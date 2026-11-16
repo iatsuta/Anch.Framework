@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.SecurityRuleInfo;
 
+/// <summary>Combines all client rule sources.</summary>
 public class RootClientSecurityRuleInfoSource(
     [FromKeyedServices(IClientSecurityRuleInfoSource.ElementKey)]
     IEnumerable<IClientSecurityRuleInfoSource> elements)

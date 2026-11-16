@@ -3,10 +3,11 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <RootNamespace>ExampleApp.IntegrationTests</RootNamespace>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\__RootSolutionItems\XunitParallelSettings.cs" Link="Environment\XunitParallelSettings.cs" />
+    <Compile Include="..\..\..\__RootSolutionItems\XunitParallelSettings.cs" Link="Properties\XunitParallelSettings.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,6 +8,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Creates and changes the permission entities of a principal, including their restrictions.</summary>
 public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     GeneralPermissionBindingInfo<TPermission, TSecurityRole> generalBindingInfo,
@@ -33,7 +34,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
     where TSecurityContextType : class
     where TSecurityContextObjectIdent : notnull
 {
-    public virtual async ValueTask<ManagedPermission> ToManagedPermissionAsync(TPermission dbPermission, CancellationToken cancellationToken) =>
+    public virtual async Task<ManagedPermission> ToManagedPermissionAsync(TPermission dbPermission, CancellationToken ct) =>
         new()
         {
             Identity = permissionSecurityIdentityManager.GetIdentity(dbPermission),
@@ -44,13 +45,13 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
             DelegatedFrom = bindingInfo.DelegatedFrom?.Getter.Invoke(dbPermission) is { } delegatedFromPermission
                 ? permissionIdentityManager.GetIdentity(delegatedFromPermission)
                 : SecurityIdentity.Default,
-            Restrictions = (await rawPermissionRestrictionLoader.LoadAsync(dbPermission, cancellationToken)).ToImmutableDictionary()
+            Restrictions = (await rawPermissionRestrictionLoader.LoadAsync(dbPermission, ct)).ToImmutableDictionary()
         };
 
-    public virtual async ValueTask<PermissionData<TPermission, TPermissionRestriction>> CreatePermissionAsync(
+    public virtual async Task<PermissionData<TPermission, TPermissionRestriction>> CreatePermissionAsync(
         TPrincipal dbPrincipal,
         ManagedPermission managedPermission,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         if (managedPermission.IsVirtual || (!managedPermission.Identity.IsDefault && !managedPermission.ForceApplyIdentity))
         {
@@ -59,7 +60,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
 
         var securityRole = securityRoleSource.GetSecurityRole(managedPermission.SecurityRole);
 
-        var dbRole = await securityRoleRepository.GetObjectAsync(securityRole.Identity, cancellationToken);
+        var dbRole = await securityRoleRepository.GetObjectAsync(securityRole.Identity, ct);
 
         var newDbPermission = new TPermission();
 
@@ -79,12 +80,12 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
         {
             var delegatedFromAccessors = bindingInfo.DelegatedFrom ?? throw new InvalidOperationException("Delegated Permission Binding not initialized");
 
-            var delegatedFromPermission = await permissionRepository.GetObjectAsync(managedPermission.DelegatedFrom, cancellationToken);
+            var delegatedFromPermission = await permissionRepository.GetObjectAsync(managedPermission.DelegatedFrom, ct);
 
             delegatedFromAccessors.Setter(newDbPermission, delegatedFromPermission);
         }
 
-        await genericRepository.SaveAsync(newDbPermission, cancellationToken);
+        await genericRepository.SaveAsync(newDbPermission, ct);
 
         var newPermissionRestrictions = await managedPermission.Restrictions.ToAsyncEnumerable().SelectMany(async (restrictionGroup, ct) =>
         {
@@ -104,15 +105,15 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
             await genericRepository.SaveAsync(newDbPermissionRestriction, ct);
 
             return newDbPermissionRestriction;
-        }).ToImmutableArrayAsync(cancellationToken);
+        }).ToImmutableArrayAsync(ct);
 
         return new PermissionData<TPermission, TPermissionRestriction>(newDbPermission, newPermissionRestrictions);
     }
 
-    public virtual async ValueTask<(PermissionData<TPermission, TPermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
+    public virtual async Task<(PermissionData<TPermission, TPermissionRestriction> PermissonData, bool Updated)> UpdatePermission(
         TPermission dbPermission,
         ManagedPermission managedPermission,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         if (managedPermission.IsVirtual || managedPermission.Identity.IsDefault)
         {
@@ -123,7 +124,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
         {
             var delegatedFromAccessors = bindingInfo.DelegatedFrom ?? throw new InvalidOperationException("Delegated Permission Binding not initialized");
 
-            var delegatedFromPermission = await permissionRepository.GetObjectAsync(managedPermission.DelegatedFrom, cancellationToken);
+            var delegatedFromPermission = await permissionRepository.GetObjectAsync(managedPermission.DelegatedFrom, ct);
 
             if (delegatedFromPermission != delegatedFromAccessors.Getter(dbPermission))
             {
@@ -144,7 +145,7 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
 
         var dbRestrictions = await queryableSource.GetQueryable<TPermissionRestriction>()
             .Where(restrictionBindingInfo.Permission.Path.Select(p => p == dbPermission))
-            .GenericToListAsync(cancellationToken);
+            .GenericToListAsync(ct);
 
         var restrictionMergeResult = dbRestrictions.GetMergeResult<TPermissionRestriction, (TypedSecurityIdentity Key, TSecurityContextObjectIdent securityContextId), (TypedSecurityIdentity, TSecurityContextObjectIdent)>(managedPermission.Restrictions
                 .ChangeKey(t => securityContextInfoSource.GetSecurityContextInfo(t).Identity)
@@ -155,9 +156,9 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
             pair => pair);
 
         if (restrictionMergeResult.IsEmpty
-            && (bindingInfo.PermissionComment == null || bindingInfo.PermissionComment.Getter(dbPermission) == managedPermission.Comment)
-            && (bindingInfo.PermissionStartDate == null || bindingInfo.PermissionStartDate.Getter(dbPermission) == managedPermission.Period.StartDate)
-            && (bindingInfo.PermissionEndDate == null || bindingInfo.PermissionEndDate.Getter(dbPermission) == managedPermission.Period.EndDate))
+            && (bindingInfo.PermissionComment is null || bindingInfo.PermissionComment.Getter(dbPermission) == managedPermission.Comment)
+            && (bindingInfo.PermissionStartDate is null || bindingInfo.PermissionStartDate.Getter(dbPermission) == managedPermission.Period.StartDate)
+            && (bindingInfo.PermissionEndDate is null || bindingInfo.PermissionEndDate.Getter(dbPermission) == managedPermission.Period.EndDate))
         {
             var permissionData = new PermissionData<TPermission, TPermissionRestriction>(
                 dbPermission,
@@ -185,17 +186,17 @@ public class PermissionManagementService<TPrincipal, TPermission, TSecurityRole,
                 await genericRepository.SaveAsync(newPermissionRestriction, ct);
 
                 return newPermissionRestriction;
-            }).ToArrayAsync(cancellationToken);
+            }).ToArrayAsync(ct);
 
             foreach (var dbRestriction in restrictionMergeResult.RemovingItems)
             {
-                await genericRepository.RemoveAsync(dbRestriction, cancellationToken);
+                await genericRepository.RemoveAsync(dbRestriction, ct);
             }
 
             var permissionData = new PermissionData<TPermission, TPermissionRestriction>(dbPermission,
                 [.. restrictionMergeResult.CombineItems.Select(v => v.Item1), .. newPermissionRestrictions]);
 
-            await genericRepository.SaveAsync(dbPermission, cancellationToken);
+            await genericRepository.SaveAsync(dbPermission, ct);
 
             return (permissionData, true);
         }

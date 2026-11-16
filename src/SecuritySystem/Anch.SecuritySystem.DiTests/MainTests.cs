@@ -91,8 +91,8 @@ public class MainTests
         var securityProvider = employeeDomainSecurityService.GetSecurityProvider(SecurityRule.View);
 
         // Assert
-        await Assert.ThrowsAsync<AccessDeniedException>(() =>
-            securityProvider.CheckAccessAsync(this.employee3, accessDeniedExceptionService, ct));
+        await Assert.ThrowsAsync<AccessDeniedException>(async () =>
+            await securityProvider.CheckAccessAsync(this.employee3, accessDeniedExceptionService, ct));
     }
 
 

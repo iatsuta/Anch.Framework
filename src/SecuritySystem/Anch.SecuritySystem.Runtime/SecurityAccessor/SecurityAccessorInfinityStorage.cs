@@ -3,6 +3,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.SecurityAccessor;
 
+/// <summary>Supplies all users of the user entity type as the accessors with unrestricted access.</summary>
 public class SecurityAccessorInfinityStorage<TUser>(
     IQueryableSource queryableSource,
     IVisualIdentityInfo<TUser> visualIdentityInfo)

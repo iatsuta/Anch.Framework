@@ -4,6 +4,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Checks whether a user entity matches a user credential by name or identifier.</summary>
 public class UserCredentialMatcher<TUser>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfoSource identityInfoSource) : IUserCredentialMatcher<TUser>
@@ -20,6 +21,7 @@ public class UserCredentialMatcher<TUser>(
     public bool IsMatch(UserCredential userCredential, TUser user) => this.lazyInnerService.Value.IsMatch(userCredential, user);
 }
 
+/// <summary>Checks whether a user entity matches a user credential by name or identifier.</summary>
 public class UserCredentialMatcher<TUser, TIdent>(
     IIdentityInfo<TUser, TIdent> identityInfo,
     IVisualIdentityInfo<TUser> visualIdentityInfo,
@@ -31,10 +33,17 @@ public class UserCredentialMatcher<TUser, TIdent>(
     {
         switch (userCredential)
         {
-            case UserCredential.IdentUserCredential { Identity : var identity } when securityIdentityConverter.TryConvert(identity) is { } typedIdentity:
-            {
-                return EqualityComparer<TIdent>.Default.Equals(identityInfo.Id.Getter(user), typedIdentity.Id);
-            }
+            case UserCredential.IdentUserCredential { Identity: var identity } when securityIdentityConverter.TryConvert(identity) is { } typedIdentity:
+                {
+                    return EqualityComparer<TIdent>.Default.Equals(identityInfo.Id.Getter(user), typedIdentity.Id);
+                }
+
+            case UserCredential.FullUserCredential { User: { Identity: var identity, Name: var name } }
+                when securityIdentityConverter.TryConvert(identity) is { } typedIdentity:
+                {
+                    return EqualityComparer<TIdent>.Default.Equals(identityInfo.Id.Getter(user), typedIdentity.Id)
+                           && name.Equals(visualIdentityInfo.Name.Getter(user), StringComparison.CurrentCultureIgnoreCase);
+                }
 
             case UserCredential.NamedUserCredential { Name: var name }:
                 return name.Equals(visualIdentityInfo.Name.Getter(user), StringComparison.CurrentCultureIgnoreCase);

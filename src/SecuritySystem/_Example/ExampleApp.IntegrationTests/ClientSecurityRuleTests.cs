@@ -15,6 +15,7 @@ public abstract class ClientSecurityRuleTests(IServiceProvider rootServiceProvid
         var expectedResult = new DomainSecurityRule.ClientSecurityRule[]
         {
             new(nameof(BusinessUnit) + SecurityRule.View),
+            new(nameof(Employee) + SecurityRule.View),
             new(nameof(TestObject) + SecurityRule.View)
         };
 
@@ -24,6 +25,6 @@ public abstract class ClientSecurityRuleTests(IServiceProvider rootServiceProvid
                 await availableClientSecurityRuleSource.GetAvailableSecurityRules().ToArrayAsync(ct));
 
         // Assert
-        Assert.Equivalent(expectedResult, result.OrderBy(v => v.Name));
+        Assert.Equivalent(expectedResult, result.OrderBy(v => v.Name), strict: true);
     }
 }

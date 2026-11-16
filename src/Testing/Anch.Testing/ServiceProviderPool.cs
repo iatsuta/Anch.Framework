@@ -1,65 +1,45 @@
-﻿using System.Collections.Concurrent;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing;
 
-public class ServiceProviderPool(ITestEnvironment testEnvironment) : IServiceProviderPool
+/// <summary>The default pool: creates the main container from the test environment.</summary>
+public class ServiceProviderPool(ITestEnvironment testEnvironment, bool? allowParallelization) : IServiceProviderPool
 {
-    private int lastIndex;
-
-    private readonly ConcurrentBag<IServiceProvider> pool = [];
-
-    private readonly RootSharedServiceSource rootSharedServiceSource = new();
-
-    private readonly SemaphoreSlim? parallelSemaphoreSlim = testEnvironment.AllowParallelization ? null : new SemaphoreSlim(1, 1);
-
-    public IServiceProvider Get()
+    private readonly Lazy<IServiceProviderPool> lazyInternalServiceProviderPool = new(() =>
     {
-        this.parallelSemaphoreSlim?.Wait();
+        var serviceProviderBuildContext = ServiceProviderBuildContext.Main;
 
-        try
+        var services = new ServiceCollection()
+            .AddKeyedSingleton<IServiceProvider>(ITestEnvironment.MainServiceProviderKey, (sp, _) => sp)
+            .AddSingleton(serviceProviderBuildContext.Index)
+            .AddSingleton<IParallelizationSettings, ParallelizationSettings>();
+
+        if (allowParallelization is not null)
         {
-            return this.pool.TryTake(out var serviceProvider)
-                ? serviceProvider
-                : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
+            services.AddSingleton(new AllowParallelizationConstraint(allowParallelization.Value));
         }
-        catch
+
+        var mainServiceProvider = testEnvironment.BuildServiceProvider(services, serviceProviderBuildContext);
+
+        var mainServiceProviderSettings = mainServiceProvider.GetService<IMainServiceProviderSettings>();
+
+        return new InternalServiceProviderPool(
+            testEnvironment,
+            mainServiceProvider,
+            mainServiceProvider.GetRequiredService<IParallelizationSettings>(),
+            mainServiceProviderSettings?.ReturnToPool ?? true);
+    });
+
+    public ValueTask<IServiceProvider> GetAsync(CancellationToken ct) => this.lazyInternalServiceProviderPool.Value.GetAsync(ct);
+
+    public ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct) =>
+        this.lazyInternalServiceProviderPool.Value.ReleaseAsync(serviceProvider, ct);
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this.lazyInternalServiceProviderPool.IsValueCreated)
         {
-            this.parallelSemaphoreSlim?.Release();
-            throw;
+            await this.lazyInternalServiceProviderPool.Value.DisposeAsync();
         }
     }
-
-    public async ValueTask<IServiceProvider> GetAsync(CancellationToken ct)
-    {
-        if (this.parallelSemaphoreSlim != null)
-        {
-            await this.parallelSemaphoreSlim.WaitAsync(ct);
-        }
-
-        try
-        {
-            return this.pool.TryTake(out var serviceProvider)
-                ? serviceProvider
-                : testEnvironment.BuildServiceProvider(this.CreateServiceCollection());
-        }
-        catch
-        {
-            this.parallelSemaphoreSlim?.Release();
-            throw;
-        }
-    }
-
-    public void Release(IServiceProvider serviceProvider)
-    {
-        this.pool.Add(serviceProvider);
-
-        this.parallelSemaphoreSlim?.Release();
-    }
-
-    private IServiceCollection CreateServiceCollection() =>
-        new ServiceCollection()
-            .AddSingleton<ISharedServiceSource>(sp => new SharedServiceSource(this.rootSharedServiceSource, sp))
-            .AddSingleton(new ServiceProviderIndex(Interlocked.Increment(ref this.lastIndex) - 1));
 }

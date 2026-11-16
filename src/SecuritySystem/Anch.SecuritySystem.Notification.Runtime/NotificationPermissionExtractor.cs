@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Finds the permissions to notify for an event and applies the expansion mode of each context group.</summary>
 public class NotificationPermissionExtractor<TPermission>(
     INotificationPermissionFilterFactory<TPermission> notificationPermissionFilterFactory,
     IServiceProxyFactory serviceProxyFactory,
@@ -18,11 +19,11 @@ public class NotificationPermissionExtractor<TPermission>(
     private const string LevelValueSeparator = ":";
 
     public IAsyncEnumerable<TPermission> GetPermissionsAsync(
-        ImmutableArray<SecurityRole> securityRoles,
+        DomainSecurityRule.RoleBaseSecurityRule securityRule,
         ImmutableArray<NotificationFilterGroup> notificationFilterGroups)
     {
         var startPermissionQ = queryableSource.GetQueryable<TPermission>()
-            .Where(notificationPermissionFilterFactory.Create(securityRoles))
+            .Where(notificationPermissionFilterFactory.Create(securityRule))
             .Select(p => new PermissionLevelInfo<TPermission> { Permission = p, LevelInfo = "" });
 
         var typeArr = notificationFilterGroups.Select(g => g.GetSecurityContextType()).ToArray();
@@ -32,15 +33,15 @@ public class NotificationPermissionExtractor<TPermission>(
 
         var parsedLevelInfoResult =
             permissionInfoResult.Select(principalInfo => new
-                {
-                    principalInfo.Permission,
-                    LevelDict = principalInfo.LevelInfo
+            {
+                principalInfo.Permission,
+                LevelDict = principalInfo.LevelInfo
                         .Split(LevelsSeparator, StringSplitOptions.RemoveEmptyEntries)
                         .Select<string, string[]>(levelData => levelData.Split(LevelValueSeparator))
                         .ToDictionary(
                             levelParts => typeArr[int.Parse(levelParts[0])],
                             levelParts => int.Parse(levelParts[1]))
-                });
+            });
 
         var optimalRequest = notificationFilterGroups.Aggregate(parsedLevelInfoResult, (state, notificationFilterGroup) =>
         {
@@ -66,7 +67,7 @@ public class NotificationPermissionExtractor<TPermission>(
             }
         });
 
-        return optimalRequest.Select(pair => pair.Permission).Distinct<TPermission>();
+        return optimalRequest.Select(pair => pair.Permission).Distinct();
     }
 
     private IQueryable<PermissionLevelInfo<TPermission>> ApplyNotificationFilter(

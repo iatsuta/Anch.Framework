@@ -1,7 +1,10 @@
 ﻿namespace Anch.OData.Domain.QueryLanguage;
 
+/// <summary>Extensions for <see cref="MethodExpressionType"/>.</summary>
 public static class MethodExpressionTypeExtensions
 {
+    /// <summary>Returns the method name as written in a query.</summary>
+    /// <param name="type">The method.</param>
     public static string ToFormatString(this MethodExpressionType type) =>
         type switch
         {

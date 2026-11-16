@@ -10,11 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Creates the provider that enforces a rule for a domain type: custom providers, conditions, role-based providers and the combinators.</summary>
 public class DomainSecurityProviderFactory<TDomainObject>(
     IServiceProvider serviceProvider,
     IServiceProxyFactory serviceProxyFactory,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
-    ISecurityRuleDeepOptimizer deepOptimizer,
+    [FromKeyedServices(ISecurityRuleOptimizer.DeepKey)]ISecurityRuleOptimizer deepOptimizer,
     IRoleBaseSecurityProviderFactory<TDomainObject> roleBaseSecurityProviderFactory,
     ISecurityRuleExpander securityRuleExpander) : IDomainSecurityProviderFactory<TDomainObject>
 {
@@ -35,7 +36,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
                         securityRule.RelativePathKey.Maybe(v => new CurrentUserSecurityProviderRelativeKey(v)),
                         securityRule.CustomCredential
                     }
-                    .Where(arg => arg != null)
+                    .Where(arg => arg is not null)
                     .Select(arg => arg!)
                     .ToArray();
 
@@ -46,7 +47,7 @@ public class DomainSecurityProviderFactory<TDomainObject>(
             {
                 var securityProviderType = (securityRule.GenericSecurityProviderType ?? typeof(ISecurityProvider<>)).MakeGenericType(typeof(TDomainObject));
 
-                var securityProvider = securityRule.Key == null
+                var securityProvider = securityRule.Key is null
                     ? serviceProvider.GetRequiredService(securityProviderType)
                     : serviceProvider.GetRequiredKeyedService(securityProviderType, securityRule.Key);
 
@@ -59,13 +60,13 @@ public class DomainSecurityProviderFactory<TDomainObject>(
                     securityRule.GenericSecurityProviderFactoryType.MakeGenericType(typeof(TDomainObject));
 
                 var securityProviderFactoryUntyped =
-                    securityRule.Key == null
+                    securityRule.Key is null
                         ? serviceProvider.GetRequiredService(securityProviderFactoryType)
                         : serviceProvider.GetRequiredKeyedService(securityProviderFactoryType, securityRule.Key);
 
-                var securityProviderFactory = (IFactory<ISecurityProvider<TDomainObject>>)securityProviderFactoryUntyped;
+                var securityProviderFactory = (IFactory<SecurityRuleCredential?, ISecurityProvider<TDomainObject>>)securityProviderFactoryUntyped;
 
-                return securityProviderFactory.Create();
+                return securityProviderFactory.Create(securityRule.CustomCredential);
             }
 
             case DomainSecurityRule.ConditionFactorySecurityRule securityRule:
@@ -101,27 +102,27 @@ public class DomainSecurityProviderFactory<TDomainObject>(
 
                 var dynamicRoleFactory = (IFactory<DomainSecurityRule>)dynamicRoleFactoryUntyped;
 
-                var dynamicRole = dynamicRoleFactory.Create();
+                var dynamicRole = dynamicRoleFactory.Create().TryApply(securityRule.CustomCredential);
 
-                return this.CreateInternal(dynamicRole.ForceApply(securityRule.CustomCredential), securityPath);
+                return this.CreateInternal(dynamicRole, securityPath);
             }
 
             case DomainSecurityRule.OverrideAccessDeniedMessageSecurityRule securityRule:
             {
-                return this.CreateInternal(securityRule.BaseSecurityRule.ForceApply(securityRule.CustomCredential), securityPath)
+                return this.CreateInternal(securityRule.BaseSecurityRule.TryApply(securityRule.CustomCredential), securityPath)
                     .OverrideAccessDeniedResult(accessDeniedResult => accessDeniedResult with { CustomMessage = securityRule.CustomMessage });
             }
 
             case DomainSecurityRule.OrSecurityRule securityRule:
-                return this.CreateInternal(securityRule.Left.ForceApply(securityRule.CustomCredential), securityPath)
-                    .Or(this.CreateInternal(securityRule.Right.ForceApply(securityRule.CustomCredential), securityPath));
+                return this.CreateInternal(securityRule.Left.TryApply(securityRule.CustomCredential), securityPath)
+                    .Or(this.CreateInternal(securityRule.Right.TryApply(securityRule.CustomCredential), securityPath));
 
             case DomainSecurityRule.AndSecurityRule securityRule:
-                return this.CreateInternal(securityRule.Left.ForceApply(securityRule.CustomCredential), securityPath)
-                    .And(this.CreateInternal(securityRule.Right.ForceApply(securityRule.CustomCredential), securityPath));
+                return this.CreateInternal(securityRule.Left.TryApply(securityRule.CustomCredential), securityPath)
+                    .And(this.CreateInternal(securityRule.Right.TryApply(securityRule.CustomCredential), securityPath));
 
             case DomainSecurityRule.NegateSecurityRule securityRule:
-                return this.CreateInternal(securityRule.InnerRule.ForceApply(securityRule.CustomCredential), securityPath).Negate();
+                return this.CreateInternal(securityRule.InnerRule.TryApply(securityRule.CustomCredential), securityPath).Negate();
 
             case DomainSecurityRule.DomainModeSecurityRule:
             case DomainSecurityRule.SecurityRuleHeader:

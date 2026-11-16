@@ -2,11 +2,13 @@
 
 namespace Anch.Core.ExpressionComparers;
 
+/// <summary>Structural comparer of member bindings in object initializers.</summary>
+/// <param name="rootComparer">The comparer used for the child expressions.</param>
 public class MemberBindingComparer(ExpressionComparer rootComparer) : IEqualityComparer<MemberBinding>
 {
-	private readonly ElementInitComparer elementInitComparer = new (rootComparer);
+    private readonly ElementInitComparer elementInitComparer = new(rootComparer);
 
-	public bool Equals(MemberBinding? preX, MemberBinding? preY)
+    public bool Equals(MemberBinding? preX, MemberBinding? preY)
     {
         if (ReferenceEquals(preX, preY)) return true;
         if (preX is null || preY is null) return false;
@@ -17,9 +19,9 @@ public class MemberBindingComparer(ExpressionComparer rootComparer) : IEqualityC
 
                (from x in (preX as MemberAssignment).ToMaybe()
 
-                 from y in (preY as MemberAssignment).ToMaybe()
+                from y in (preY as MemberAssignment).ToMaybe()
 
-                 select rootComparer.Equals(x.Expression, y.Expression))
+                select rootComparer.Equals(x.Expression, y.Expression))
 
                .Or(() => from x in (preX as MemberListBinding).ToMaybe()
 

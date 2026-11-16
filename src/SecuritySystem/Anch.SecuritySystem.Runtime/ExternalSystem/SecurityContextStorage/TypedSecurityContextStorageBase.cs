@@ -4,52 +4,53 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>The base of the security context storages: loading by identifier, existence checks and caching.</summary>
 public abstract class TypedSecurityContextStorageBase<TSecurityContext, TSecurityContextIdent>(
-	IQueryableSource queryableSource,
+    IQueryableSource queryableSource,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,
-	ISecurityIdentityConverter<TSecurityContextIdent> securityIdentityConverter,
+    ISecurityIdentityConverter<TSecurityContextIdent> securityIdentityConverter,
     LocalStorage<TSecurityContext, TSecurityContextIdent> localStorage)
-	: ITypedSecurityContextStorage<TSecurityContextIdent>
-	where TSecurityContext : class, ISecurityContext
-	where TSecurityContextIdent : notnull
+    : ITypedSecurityContextStorage<TSecurityContextIdent>
+    where TSecurityContext : class, ISecurityContext
+    where TSecurityContextIdent : notnull
 {
-	protected abstract SecurityContextData<TSecurityContextIdent> CreateSecurityContextData(TSecurityContext securityContext);
+    protected abstract SecurityContextData<TSecurityContextIdent> CreateSecurityContextData(TSecurityContext securityContext);
 
-	public IEnumerable<SecurityContextData<TSecurityContextIdent>> GetSecurityContexts()
-	{
-		return queryableSource.GetQueryable<TSecurityContext>().ToList().Select(this.CreateSecurityContextData);
-	}
+    public IEnumerable<SecurityContextData<TSecurityContextIdent>> GetSecurityContexts()
+    {
+        return queryableSource.GetQueryable<TSecurityContext>().ToList().Select(this.CreateSecurityContextData);
+    }
 
-	public IEnumerable<SecurityContextData<TSecurityContextIdent>> GetSecurityContextsByIdents(IEnumerable<TSecurityContextIdent> preSecurityEntityIdents)
-	{
-		var filter = identityInfo.CreateFilter(preSecurityEntityIdents);
+    public IEnumerable<SecurityContextData<TSecurityContextIdent>> GetSecurityContextsByIdents(IEnumerable<TSecurityContextIdent> preSecurityEntityIdents)
+    {
+        var filter = identityInfo.CreateFilter(preSecurityEntityIdents);
 
-		return queryableSource.GetQueryable<TSecurityContext>().Where(filter).ToList().Select(this.CreateSecurityContextData);
-	}
+        return queryableSource.GetQueryable<TSecurityContext>().Where(filter).ToList().Select(this.CreateSecurityContextData);
+    }
 
-	public IEnumerable<SecurityContextData<TSecurityContextIdent>> GetSecurityContextsWithMasterExpand(TSecurityContextIdent startSecurityEntityId)
-	{
-		var filter = identityInfo.CreateFilter(startSecurityEntityId);
+    public IEnumerable<SecurityContextData<TSecurityContextIdent>> GetSecurityContextsWithMasterExpand(TSecurityContextIdent startSecurityEntityId)
+    {
+        var filter = identityInfo.CreateFilter(startSecurityEntityId);
 
-		var securityObject = queryableSource.GetQueryable<TSecurityContext>().Single(filter);
+        var securityObject = queryableSource.GetQueryable<TSecurityContext>().Single(filter);
 
-		return this.GetSecurityContextsWithMasterExpand(securityObject).Select(this.CreateSecurityContextData);
-	}
+        return this.GetSecurityContextsWithMasterExpand(securityObject).Select(this.CreateSecurityContextData);
+    }
 
-	public bool IsExists(TSecurityContextIdent securityContextId)
-	{
-		var filter = identityInfo.CreateFilter(securityContextId);
+    public bool IsExists(TSecurityContextIdent securityContextId)
+    {
+        var filter = identityInfo.CreateFilter(securityContextId);
 
-		return localStorage.IsExists(securityContextId)
-		       || queryableSource.GetQueryable<TSecurityContext>().Any(filter);
-	}
+        return localStorage.IsExists(securityContextId)
+               || queryableSource.GetQueryable<TSecurityContext>().Any(filter);
+    }
 
-	protected abstract IEnumerable<TSecurityContext> GetSecurityContextsWithMasterExpand(TSecurityContext startSecurityObject);
+    protected abstract IEnumerable<TSecurityContext> GetSecurityContextsWithMasterExpand(TSecurityContext startSecurityObject);
 
-	IEnumerable<SecurityContextData<object>> ITypedSecurityContextStorage.GetSecurityContextsByIdents(Array securityContextIdents)
-	{
-		return this.GetSecurityContextsByIdents(securityContextIdents.Cast<TSecurityContextIdent>()).Select(scd => scd.UpCast());
-	}
+    IEnumerable<SecurityContextData<object>> ITypedSecurityContextStorage.GetSecurityContextsByIdents(Array securityContextIdents)
+    {
+        return this.GetSecurityContextsByIdents(securityContextIdents.Cast<TSecurityContextIdent>()).Select(scd => scd.UpCast());
+    }
 
     public bool IsExists(SecurityIdentity securityIdentity)
     {
@@ -57,7 +58,7 @@ public abstract class TypedSecurityContextStorageBase<TSecurityContext, TSecurit
     }
 
     IEnumerable<SecurityContextData<object>> ITypedSecurityContextStorage.GetSecurityContexts()
-	{
-		return this.GetSecurityContexts().Select(scd => scd.UpCast());
-	}
+    {
+        return this.GetSecurityContexts().Select(scd => scd.UpCast());
+    }
 }

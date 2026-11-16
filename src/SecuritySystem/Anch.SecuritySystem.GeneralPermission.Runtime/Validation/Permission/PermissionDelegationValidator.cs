@@ -8,6 +8,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Permission;
 
+/// <summary>Checks that a delegated permission stays within the rights of the permission it was delegated from.</summary>
 public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionRestriction>(
     PermissionBindingInfo<TPermission, TPrincipal> permissionBindingInfo,
     IPermissionRestrictionRawConverter<TPermissionRestriction> permissionRestrictionRawConverter,
@@ -23,9 +24,9 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
     where TPrincipal : class
     where TPermission : class
 {
-    public async Task ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PermissionData<TPermission, TPermissionRestriction> permissionData, CancellationToken ct)
     {
-        if (permissionBindingInfo.DelegatedFrom == null)
+        if (permissionBindingInfo.DelegatedFrom is null)
         {
             return;
         }
@@ -34,14 +35,14 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
 
         var delegatedFrom = permissionBindingInfo.DelegatedFrom.Getter(permission);
 
-        if (delegatedFrom != null)
+        if (delegatedFrom is not null)
         {
             if (permissionBindingInfo.Principal.Getter(delegatedFrom) == permissionBindingInfo.Principal.Getter(permission))
             {
                 throw new SecuritySystemValidationException("Invalid delegation target: the permission cannot be delegated to its original principal");
             }
 
-            var delegatedFromData = await permissionRestrictionLoader.ToPermissionData(delegatedFrom, cancellationToken);
+            var delegatedFromData = await permissionRestrictionLoader.ToPermissionData(delegatedFrom, ct);
 
             this.ValidatePermissionDelegatedFrom(permissionData, delegatedFromData);
         }
@@ -49,11 +50,11 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
         var subPermissions = await queryableSource
             .GetQueryable<TPermission>()
             .Where(permissionBindingInfo.DelegatedFrom.Path.Select(p => p == permission))
-            .GenericToListAsync(cancellationToken);
+            .GenericToListAsync(ct);
 
         foreach (var subPermission in subPermissions)
         {
-            var subPermissionData = await permissionRestrictionLoader.ToPermissionData(subPermission, cancellationToken);
+            var subPermissionData = await permissionRestrictionLoader.ToPermissionData(subPermission, ct);
 
             this.ValidatePermissionDelegatedFrom(subPermissionData, permissionData);
         }
@@ -125,11 +126,11 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
         {
             var delegatedFromRestrictions = delegatedFromRestrictionDict.GetValueOrDefault(securityContextInfo.Type);
 
-            if (delegatedFromRestrictions != null)
+            if (delegatedFromRestrictions is not null)
             {
                 var subRestrictions = subPermissionRestrictionDict.GetValueOrDefault(securityContextInfo.Type);
 
-                if (subRestrictions == null)
+                if (subRestrictions is null)
                 {
                     yield return new(securityContextInfo, Array.Empty<object>());
                 }
@@ -143,7 +144,7 @@ public class PermissionDelegationValidator<TPrincipal, TPermission, TPermissionR
 
                     if (missedAccessElements.Length > 0)
                     {
-                        yield return new (securityContextInfo, missedAccessElements);
+                        yield return new(securityContextInfo, missedAccessElements);
                     }
                 }
             }

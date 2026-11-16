@@ -7,6 +7,7 @@ using Anch.IdentitySource.DependencyInjection;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
+
 [assembly: AnchTestFramework<NHibTestEnvironment>]
 
 namespace Anch.HierarchicalExpand.IntegrationTests.Environment;

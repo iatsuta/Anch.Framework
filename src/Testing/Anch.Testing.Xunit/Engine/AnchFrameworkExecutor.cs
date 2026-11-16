@@ -5,11 +5,15 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
-public class AnchFrameworkExecutor(IXunitTestAssembly testAssembly, AnchTestAssemblyRunner commonXunitTestAssemblyRunner) : XunitTestFrameworkExecutor(testAssembly)
+/// <summary>Runs the tests of an assembly with the Anch runners.</summary>
+public class AnchFrameworkExecutor(
+    IXunitTestAssembly testAssembly,
+    AnchTestAssemblyRunner commonXunitTestAssemblyRunner,
+    IServiceProviderPool? serviceProviderPool) : XunitTestFrameworkExecutor(testAssembly)
 {
     public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases, IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         SetEnvironment(EnvironmentVariables.AssertEquivalentMaxDepth, executionOptions.AssertEquivalentMaxDepth());
         SetEnvironment(EnvironmentVariables.PrintMaxEnumerableLength, executionOptions.PrintMaxEnumerableLength());
@@ -17,7 +21,17 @@ public class AnchFrameworkExecutor(IXunitTestAssembly testAssembly, AnchTestAsse
         SetEnvironment(EnvironmentVariables.PrintMaxObjectMemberCount, executionOptions.PrintMaxObjectMemberCount());
         SetEnvironment(EnvironmentVariables.PrintMaxStringLength, executionOptions.PrintMaxStringLength());
 
-        await commonXunitTestAssemblyRunner.Run(this.TestAssembly, testCases, executionMessageSink, executionOptions, cancellationToken);
+        try
+        {
+            await commonXunitTestAssemblyRunner.Run(this.TestAssembly, testCases, executionMessageSink, executionOptions, ct);
+        }
+        finally
+        {
+            if (serviceProviderPool is not null)
+            {
+                await serviceProviderPool.DisposeAsync();
+            }
+        }
     }
 
     private static void SetEnvironment(

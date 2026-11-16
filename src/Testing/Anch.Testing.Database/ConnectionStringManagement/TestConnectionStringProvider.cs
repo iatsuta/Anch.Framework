@@ -1,13 +1,15 @@
-﻿namespace Anch.Testing.Database.ConnectionStringManagement;
+﻿using System.Collections.Concurrent;
 
+namespace Anch.Testing.Database.ConnectionStringManagement;
+
+/// <summary>Supplies the connection strings of the test databases by role.</summary>
 public class TestConnectionStringProvider(
-    ITestDatabaseConnectionStringBuilder testDatabaseConnectionStringBuilder,
-    ServiceProviderIndex serviceProviderIndex,
-    TestDatabaseSettings settings) : ITestConnectionStringProvider
+    ITestConnectionStringFactory testConnectionStringFactory,
+    ITestConnectionStringPostfixFactory testConnectionStringPostfixFactory)
+    : ITestConnectionStringProvider
 {
-    public TestDatabaseConnectionString EmptySnapshot { get; } = testDatabaseConnectionStringBuilder.AddPostfix("_empty");
+    private readonly ConcurrentDictionary<TestConnectionStringRole, TestConnectionString> connectionStrings = [];
 
-    public TestDatabaseConnectionString FilledSnapshot => settings.DefaultConnectionString;
-
-    public TestDatabaseConnectionString Actual { get; } = testDatabaseConnectionStringBuilder.AddPostfix($"_pool_{serviceProviderIndex.Index:D5}");
+    public TestConnectionString GetConnectionString(TestConnectionStringRole role) =>
+        this.connectionStrings.GetOrAdd(role, _ => testConnectionStringFactory.Create(testConnectionStringPostfixFactory.Create(role)));
 }

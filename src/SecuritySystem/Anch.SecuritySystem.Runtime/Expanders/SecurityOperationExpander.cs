@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.Expanders;
 
+/// <summary>Replaces an operation with the roles that include it.</summary>
 public class SecurityOperationExpander(ISecurityRoleSource securityRoleSource, ISecurityOperationInfoSource securityOperationInfoSource)
     : ISecurityOperationExpander
 {

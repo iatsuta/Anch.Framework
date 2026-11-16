@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core.DictionaryCache;
 
+/// <summary>Extensions for <see cref="DictionaryCache.IDictionaryCache{TKey, TValue}"/>, such as wrapping it with a lock.</summary>
 public static class DictionaryCacheExtensions
 {
     public static TValue GetValue<TK1, TK2, TValue>(this IDictionaryCache<Tuple<TK1, TK2>, TValue> cache, TK1 tk1, TK2 tk2)

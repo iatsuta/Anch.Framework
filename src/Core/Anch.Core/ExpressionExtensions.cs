@@ -6,6 +6,7 @@ using Anch.Core.Visitor;
 
 namespace Anch.Core;
 
+/// <summary>Extensions for expression trees: reading constants, building property accessors and rewriting.</summary>
 public static class ExpressionExtensions
 {
     public static Expression<Func<TArg1, TArg2, TResult>> UnCurrying<TArg1, TArg2, TResult>(
@@ -44,7 +45,7 @@ public static class ExpressionExtensions
 
     public static IEnumerable<Expression> GetChildren(this MethodCallExpression expression)
     {
-        if (expression.Object != null)
+        if (expression.Object is not null)
         {
             yield return expression.Object;
         }
@@ -66,6 +67,21 @@ public static class ExpressionExtensions
         public Expression<Func<T, bool>> BuildOr() =>
 
             source.Match(() => _ => false,
+                single => single,
+                many => many.Aggregate(BuildOr));
+    }
+
+    extension<T1, T2>(IEnumerable<Expression<Func<T1, T2, bool>>> source)
+    {
+        public Expression<Func<T1, T2, bool>> BuildAnd() =>
+
+            source.Match(() => (_, _) => true,
+                single => single,
+                many => many.Aggregate(BuildAnd));
+
+        public Expression<Func<T1, T2, bool>> BuildOr() =>
+
+            source.Match(() => (_, _) => false,
                 single => single,
                 many => many.Aggregate(BuildOr));
     }
@@ -126,17 +142,27 @@ public static class ExpressionExtensions
             return Expression.Lambda<Func<IEnumerable<T>, IEnumerable<T>>>(Expression.Call(null, whereMethod, param, expr), param);
         }
 
-        public Expression<Func<T, bool>> BuildAnd(Expression<Func<T, bool>> expr2) =>
+        public Expression<Func<T, bool>> BuildAnd(Expression<Func<T, bool>> otherExpr) => expr.BuildBinary(otherExpr, true);
 
-            from v1 in expr
-            from v2 in expr2
-            select v1 && v2;
+        public Expression<Func<T, bool>> BuildOr(Expression<Func<T, bool>> otherExpr) => expr.BuildBinary(otherExpr, false);
 
-        public Expression<Func<T, bool>> BuildOr(Expression<Func<T, bool>> expr2) =>
+        private Expression<Func<T, bool>> BuildBinary(Expression<Func<T, bool>> otherExpr, bool isAnd) =>
 
-            from v1 in expr
-            from v2 in expr2
-            select v1 || v2;
+            expr.TryFoldConstant(otherExpr, isAnd).Or(() => otherExpr.TryFoldConstant(expr, isAnd))
+                .GetValueOrDefault(() =>
+                {
+                    var p = expr.Parameters.Single();
+
+                    return Expression.Lambda<Func<T, bool>>(
+                        Expression.MakeBinary(isAnd ? ExpressionType.AndAlso : ExpressionType.OrElse, expr.Body,
+                            otherExpr.Body.Override(otherExpr.Parameters.Single(), p)), p);
+                });
+
+        private Maybe<Expression<Func<T, bool>>> TryFoldConstant(Expression<Func<T, bool>> otherExpr, bool isAnd) =>
+
+            from constValue in expr.Body.GetConstantValue<bool>()
+
+            select constValue == isAnd ? otherExpr : expr;
     }
 
     extension<TDelegate>(Expression<TDelegate> expression)
@@ -219,7 +245,7 @@ public static class ExpressionExtensions
 
                     result,
 
-                MemberExpression { Expression: {} baseExpr, Member : { IsStatic: false } member }
+                MemberExpression { Expression: { } baseExpr, Member: { IsStatic: false } member }
 
                     when baseExpr.TryGetConstantExpression() is { Value: { } baseValue }
 

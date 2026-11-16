@@ -4,6 +4,7 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Runs the test collections of an assembly.</summary>
 public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectionRunner) : XunitTestAssemblyRunnerBase<AnchTestAssemblyRunnerContext, IXunitTestAssembly, IXunitTestCollection, IXunitTestCase>
 {
     public async ValueTask<RunSummary> Run(
@@ -11,7 +12,7 @@ public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectio
         IReadOnlyCollection<IXunitTestCase> testCases,
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         Guard.ArgumentNotNull(testAssembly);
         Guard.ArgumentNotNull(testCases);
@@ -23,7 +24,7 @@ public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectio
             testCases,
             executionMessageSink,
             executionOptions,
-            cancellationToken, commonTestCollectionRunner
+            ct, commonTestCollectionRunner
         );
 
         await ctxt.InitializeAsync();
@@ -37,7 +38,7 @@ public class AnchTestAssemblyRunner(AnchTestCollectionRunner commonTestCollectio
         Guard.ArgumentNotNull(testCollection);
         Guard.ArgumentNotNull(testCases);
 
-        var testCaseOrderer = ctxt.AssemblyTestCaseOrderer ?? DefaultTestCaseOrderer.Instance;
+        var testCaseOrderer = RegisteredEngineConfig.GetAssemblyTestCaseOrderer(ctxt.TestAssembly.Assembly) ?? DefaultTestCaseOrderer.Instance;
 
         return ctxt.RunTestCollection(testCollection, testCases, testCaseOrderer);
     }

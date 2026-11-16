@@ -4,10 +4,11 @@ using Anch.GenericQueryable.IntegrationTests.Domain;
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;
 
-public class GenericQueryableSetupConfigurator : IGenericQueryableSetupConfigurator
+public class GenericQueryableSetupConfigurator
 {
-    public void Configure(IGenericQueryableSetup builder) =>
+    public virtual void Initialize(IGenericQueryableSetup builder) =>
         builder
+
             .AddFetchRuleExpander<AppFetchRuleExpander>()
             .AddFetchRule(AppFetchRule.TestFetchRule, FetchRule<TestObject>.Create(v => v.DeepFetchObjects).ThenFetch(v => v.FetchObject));
 }

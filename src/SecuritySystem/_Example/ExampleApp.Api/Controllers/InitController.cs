@@ -11,9 +11,9 @@ public class InitController(
     ITestDataInitializer testDataInitializer) : ControllerBase
 {
     [HttpPost]
-    public async Task TestInitialize(CancellationToken cancellationToken)
+    public async Task TestInitialize(CancellationToken ct)
     {
-        await emptySchemaInitializer.Initialize(cancellationToken);
-        await testDataInitializer.Initialize(cancellationToken);
+        await emptySchemaInitializer.Initialize(ct);
+        await testDataInitializer.Initialize(ct);
     }
 }

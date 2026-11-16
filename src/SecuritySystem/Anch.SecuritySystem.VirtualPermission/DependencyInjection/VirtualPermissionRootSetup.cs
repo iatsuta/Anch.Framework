@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.SecuritySystem.VirtualPermission.DependencyInjection;
 
+/// <summary>Collects the settings of a virtual permission and turns them into registrations.</summary>
 public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccessors<TPermission, TPrincipal> principalAccessors)
     : IVirtualPermissionRootSetup<TPermission>, IServiceInitializer<ISecuritySystemSetup>
     where TPermission : class
@@ -27,7 +28,7 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
         Expression<Func<TPermission, IEnumerable<TSecurityContext>>> path)
         where TSecurityContext : ISecurityContext
     {
-        this.virtualBindingInit.Add(permissionBinding => permissionBinding with { Restrictions = [..permissionBinding.Restrictions, path] });
+        this.virtualBindingInit.Add(permissionBinding => permissionBinding with { Restrictions = [.. permissionBinding.Restrictions, path] });
 
         return this;
     }
@@ -36,7 +37,7 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
         Expression<Func<TPermission, TSecurityContext?>> path)
         where TSecurityContext : ISecurityContext
     {
-        this.virtualBindingInit.Add(permissionBinding => permissionBinding with { Restrictions = [..permissionBinding.Restrictions, path] });
+        this.virtualBindingInit.Add(permissionBinding => permissionBinding with { Restrictions = [.. permissionBinding.Restrictions, path] });
 
         return this;
     }
@@ -55,8 +56,8 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
         Expression<Func<TPermission, DateTime?>>? startDatePath,
         Expression<Func<TPermission, DateTime?>>? endDatePath) =>
         this.SetPeriod(
-            startDatePath == null ? null : new PropertyAccessors<TPermission, DateTime?>(startDatePath),
-            endDatePath == null ? null : new PropertyAccessors<TPermission, DateTime?>(endDatePath));
+            startDatePath is null ? null : new PropertyAccessors<TPermission, DateTime?>(startDatePath),
+            endDatePath is null ? null : new PropertyAccessors<TPermission, DateTime?>(endDatePath));
 
     public IVirtualPermissionRootSetup<TPermission> SetComment(Expression<Func<TPermission, string>> commentPath)
     {
@@ -92,7 +93,7 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
         var bindingInfo = this.permissionBindingInit.Aggregate(new PermissionBindingInfo<TPermission, TPrincipal> { IsReadonly = true, Principal = principalAccessors },
                 (state, f) => f(state));
 
-        var virtualBindingInfo = this.virtualBindingInit.Aggregate(new VirtualPermissionBindingInfo<TPermission> { Items = [..this.itemBindingInfoList] },
+        var virtualBindingInfo = this.virtualBindingInit.Aggregate(new VirtualPermissionBindingInfo<TPermission> { Items = [.. this.itemBindingInfoList] },
             (state, f) => f(state));
 
         securitySystemSetup.AddExtensions(services =>
@@ -108,7 +109,7 @@ public class VirtualPermissionRootSetup<TPrincipal, TPermission>(PropertyAccesso
             });
             services.AddSingletonFrom<VirtualPermissionBindingInfo, VirtualPermissionBindingInfo<TPermission>>();
 
-            services.AddSingleton<IPermissionTypedRestrictionBindingInfo<TPermission>, VirtualPermissionTypedRestrictionBindingInfo<TPermission>>();
+            services.AddScoped<IPermissionTypedRestrictionBindingInfo<TPermission>, VirtualPermissionTypedRestrictionBindingInfo<TPermission>>();
 
             services.AddScopedServiceProxy<IPermissionSource<TPermission>, VirtualPermissionSource<TPrincipal, TPermission>>();
 

@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>The roles registered before initialization, with their final registration data.</summary>
 public class InitializedSecurityRoleSource(IEnumerable<PreInitializerFullSecurityRole> securityRoles) : IInitializedSecurityRoleSource
 {
     public IEnumerable<FullSecurityRole> GetSecurityRoles()
@@ -20,10 +21,10 @@ public class InitializedSecurityRoleSource(IEnumerable<PreInitializerFullSecurit
             var otherRoles = securityRoles.Select(sr => sr.FullSecurityRole).Except(this.ExceptAdministratorRoles);
 
             var newInfo = securityRole.Information with
-                          {
-                              Children = [..info.Children.Concat(otherRoles).Distinct()],
-                              Restriction = SecurityPathRestriction.Ignored
-                          };
+            {
+                Children = [.. info.Children.Concat(otherRoles).Distinct()],
+                Restriction = SecurityPathRestriction.Ignored
+            };
 
             return new FullSecurityRole(securityRole.Name, newInfo);
         }

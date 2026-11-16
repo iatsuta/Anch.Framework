@@ -3,16 +3,17 @@ using Anch.SecuritySystem.Builders._Filter;
 
 namespace Anch.SecuritySystem.Builders.MixedBuilder;
 
+/// <summary>Combines two filter factories: one for restricting queries and one for checking single objects.</summary>
 public class SecurityFilterFactory<TDomainObject>(
     ISecurityFilterFactory<TDomainObject> queryFactory,
     ISecurityFilterFactory<TDomainObject> hasAccessFactory)
     : ISecurityFilterFactory<TDomainObject>
 {
-    public async ValueTask<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
-        SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule,
+        SecurityPath<TDomainObject> securityPath, CancellationToken ct)
     {
         return new SecurityFilterInfo<TDomainObject>(
-            (await queryFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken)).InjectFunc,
-            (await hasAccessFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken)).HasAccessFunc);
+            (await queryFactory.CreateFilterAsync(securityRule, securityPath, ct)).InjectFunc,
+            (await hasAccessFactory.CreateFilterAsync(securityRule, securityPath, ct)).HasAccessFunc);
     }
 }

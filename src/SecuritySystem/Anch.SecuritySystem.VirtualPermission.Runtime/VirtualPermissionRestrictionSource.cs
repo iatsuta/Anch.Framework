@@ -7,6 +7,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Reads the restrictions of virtual permissions from the properties of the entity.</summary>
 public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, TSecurityContextIdent>(
     IServiceProvider serviceProvider,
     IIdentityInfo<TSecurityContext, TSecurityContextIdent> identityInfo,
@@ -50,7 +51,7 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
         {
             if (restrictionPath is Expression<Func<TPermission, TSecurityContext>> singlePath)
             {
-                if (this.restrictionFilterInfo == null)
+                if (this.restrictionFilterInfo is null)
                 {
                     yield return singlePath.Select(filterExpr);
                 }
@@ -66,7 +67,7 @@ public class VirtualPermissionRestrictionSource<TPermission, TSecurityContext, T
             {
                 yield return ExpressionEvaluateHelper.InlineEvaluate(ee =>
                 {
-                    if (this.restrictionFilterInfo == null)
+                    if (this.restrictionFilterInfo is null)
                     {
                         return manyPath.Select(securityContexts => securityContexts.Any(securityContext => ee.Evaluate(filterExpr, securityContext)));
                     }

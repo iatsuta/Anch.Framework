@@ -5,6 +5,7 @@ using Anch.SecuritySystem.Providers;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Creates the provider for a role-based rule from the access filters of the type and the restrictions of the roles.</summary>
 public class RoleBaseSecurityProviderFactory<TDomainObject>(
     ISecurityFilterFactory<TDomainObject> securityFilterFactory,
     IAccessorsFilterFactory<TDomainObject> accessorsFilterFactory,

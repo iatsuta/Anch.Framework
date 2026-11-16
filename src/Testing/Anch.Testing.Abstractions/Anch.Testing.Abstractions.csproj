@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Anch.Testing.Abstractions</PackageId>
+    <RootNamespace>Anch.Testing</RootNamespace>
+  </PropertyGroup>
+
+</Project>

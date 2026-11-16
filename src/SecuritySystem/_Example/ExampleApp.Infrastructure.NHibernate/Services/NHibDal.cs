@@ -10,18 +10,18 @@ public class NHibDal<TDomainObject>(
     INHibExpressionVisitorSource? nhibExpressionVisitorSource = null) : IDal<TDomainObject>
     where TDomainObject : class
 {
-    public Task SaveAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        saveStrategy.SaveAsync(session.NativeSession, domainObject, cancellationToken);
+    public Task SaveAsync(TDomainObject domainObject, CancellationToken ct) =>
+        saveStrategy.SaveAsync(session.NativeSession, domainObject, ct);
 
-    public Task RemoveAsync(TDomainObject domainObject, CancellationToken cancellationToken) =>
-        session.NativeSession.DeleteAsync(domainObject, cancellationToken);
+    public Task RemoveAsync(TDomainObject domainObject, CancellationToken ct) =>
+        session.NativeSession.DeleteAsync(domainObject, ct);
 
     public IQueryable<TDomainObject> GetQueryable()
     {
         var queryable = session.NativeSession.Query<TDomainObject>();
 
-        var queryProvider = queryable.Provider as VisitedNHibQueryProvider ??
-                            throw new InvalidOperationException($"Register {nameof(VisitedNHibQueryProvider)} in Nhib configuration");
+        var queryProvider = queryable.Provider as IVisitedNHibQueryProvider ??
+                            throw new InvalidOperationException($"Register {nameof(IVisitedNHibQueryProvider)} in Nhib configuration");
 
         queryProvider.Visitor = nhibExpressionVisitorSource?.Visitor;
         queryProvider.Executor = genericQueryableExecutor;

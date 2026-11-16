@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.Configurator;
 
+/// <summary>Collects the configurator modules.</summary>
 public class ConfiguratorSetup : IConfiguratorSetup
 {
     private readonly List<IConfiguratorModule> modules = [];

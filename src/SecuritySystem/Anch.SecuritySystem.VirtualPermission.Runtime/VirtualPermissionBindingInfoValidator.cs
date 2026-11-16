@@ -3,6 +3,7 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Checks that the roles of a virtual permission are registered and marked virtual.</summary>
 public class VirtualPermissionBindingInfoValidator(ISecurityRoleSource securityRoleSource) : IVirtualPermissionBindingInfoValidator
 {
     public void Validate(VirtualPermissionBindingInfo virtualBindingInfo)
@@ -21,7 +22,7 @@ public class VirtualPermissionBindingInfoValidator(ISecurityRoleSource securityR
             .Restriction
             .SecurityContextRestrictions;
 
-        if (securityContextRestrictions != null)
+        if (securityContextRestrictions is not null)
         {
             var bindingContextTypes = virtualBindingInfo.SecurityContextTypes;
 

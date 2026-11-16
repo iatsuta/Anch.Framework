@@ -6,21 +6,23 @@ using Anch.Core;
 
 namespace Anch.GenericQueryable.Fetching;
 
+/// <summary>Expands a named fetch rule using the paths registered with <c>AddFetchRule</c>.</summary>
+/// <param name="fetchRuleHeaderInfoList">The registered named rules.</param>
 public class FetchRuleHeaderExpander(IEnumerable<FetchRuleHeaderInfo> fetchRuleHeaderInfoList) : IFetchRuleExpander
 {
     private readonly FrozenDictionary<Type, ImmutableArray<FetchRuleHeaderInfo>> headersDict =
-        fetchRuleHeaderInfoList.GroupBy(v => v.SourceType).ToFrozenDictionary(g => g.Key, ImmutableArray<FetchRuleHeaderInfo> (g) => [..g]);
+        fetchRuleHeaderInfoList.GroupBy(v => v.SourceType).ToFrozenDictionary(g => g.Key, ImmutableArray<FetchRuleHeaderInfo> (g) => [.. g]);
 
     private readonly ConcurrentDictionary<Type, object> cache = [];
 
+    /// <inheritdoc/>
     public PropertyFetchRule<TSource>? TryExpand<TSource>(FetchRule<TSource> fetchRule)
     {
         if (fetchRule is FetchRuleHeader<TSource> fetchRuleHeader)
         {
             return this.cache
                 .GetOrAddAs(fetchRuleHeader.GetType(), _ => this.headersDict
-                    .GetValueOrDefault(typeof(TSource))
-                    .EmptyIfNull()
+                    .GetValueOrDefault(typeof(TSource), ImmutableArray<FetchRuleHeaderInfo>.Empty)
                     .Cast<FetchRuleHeaderInfo<TSource>>()
                     .ToFrozenDictionary(info => info.Header, info => info.Implementation))
                 .GetValueOrDefault(fetchRuleHeader);

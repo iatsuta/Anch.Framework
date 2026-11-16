@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Extensions for <see cref="IDefaultCancellationTokenSource"/>.</summary>
 public static class DefaultCancellationTokenSourceExtensions
 {
     public static CancellationToken GetSafeDefaultCancellationTokenSource(this IDefaultCancellationTokenSource? defaultCancellationTokenSource)
@@ -8,13 +9,13 @@ public static class DefaultCancellationTokenSourceExtensions
     }
 
     public static TResult RunSync<TResult>(this IDefaultCancellationTokenSource? defaultCancellationTokenSource,
-        Func<CancellationToken, ValueTask<TResult>> eval)
+        Func<CancellationToken, Task<TResult>> eval)
     {
         return eval(defaultCancellationTokenSource.GetSafeDefaultCancellationTokenSource()).GetAwaiter().GetResult();
     }
 
     public static void RunSync(this IDefaultCancellationTokenSource? defaultCancellationTokenSource,
-        Func<CancellationToken, ValueTask> eval)
+        Func<CancellationToken, Task> eval)
     {
         eval(defaultCancellationTokenSource.GetSafeDefaultCancellationTokenSource()).GetAwaiter().GetResult();
     }

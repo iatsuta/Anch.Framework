@@ -4,6 +4,7 @@ using Anch.Core;
 // ReSharper disable once CheckNamespace
 namespace Anch.SecuritySystem;
 
+/// <summary>The registry of operations.</summary>
 public class SecurityOperationInfoSource(IEnumerable<FullSecurityOperation> securityOperations) : ISecurityOperationInfoSource
 {
     private readonly FrozenDictionary<SecurityOperation, SecurityOperationInfo> dict = securityOperations.ToFrozenDictionary(

@@ -1,10 +1,12 @@
-﻿using SExpressions = System.Linq.Expressions;
-using System.Reflection;
+﻿using System.Reflection;
 
 using Anch.Core;
 
+using SExpressions = System.Linq.Expressions;
+
 namespace Anch.OData;
 
+/// <summary>Helpers for building LINQ expressions during conversion, such as aligning the types of operands.</summary>
 public static class StandardExpressionExtensions
 {
     internal static SExpressions.Expression TryNormalize(this SExpressions.Expression baseExpression, Type leftType, Type rightType)
@@ -15,18 +17,18 @@ public static class StandardExpressionExtensions
 
         var request = from nullableType in tryNullableType.ToMaybe()
 
-            select LiftToNullable(baseExpression, nullableType);
+                      select LiftToNullable(baseExpression, nullableType);
 
         return request.Or(() => from enumType in tryEnumType.ToMaybe()
 
-                select baseExpression.TryConvertToEnumExpression(enumType))
+                                select baseExpression.TryConvertToEnumExpression(enumType))
 
 
             .Or(() => from superType in leftType.GetSuperSet(rightType, false).ToMaybe()
 
-                where baseExpression.Type != superType
+                      where baseExpression.Type != superType
 
-                select UpToSuperType(baseExpression, superType))
+                      select UpToSuperType(baseExpression, superType))
 
             .GetValueOrDefault(baseExpression);
     }
@@ -54,11 +56,11 @@ public static class StandardExpressionExtensions
     {
         var request = from value in baseExpression.GetConstantValue()
 
-            where value != null && enumType.IsEnum && value.GetType() != enumType
+                      where value is not null && enumType.IsEnum && value.GetType() != enumType
 
-            from enumValue in TryConvertToEnum(value!, enumType)
+                      from enumValue in TryConvertToEnum(value!, enumType)
 
-            select SExpressions.Expression.Constant(enumValue);
+                      select SExpressions.Expression.Constant(enumValue);
 
 
         return request.GetValueOrDefault(baseExpression);
@@ -73,12 +75,12 @@ public static class StandardExpressionExtensions
 
             .Or(() => from underType in Convert.ChangeType(value, Enum.GetUnderlyingType(enumType), null).ToMaybe()
 
-                select Enum.ToObject(enumType, underType));
+                      select Enum.ToObject(enumType, underType));
     }
 
     private static SExpressions.Expression LiftToNullable(SExpressions.Expression expression, Type expectedNullableType)
     {
-        if (expression == null) throw new ArgumentNullException(nameof(expression));
+        if (expression is null) throw new ArgumentNullException(nameof(expression));
 
         if (expression.Type.IsNullable())
         {
@@ -92,7 +94,7 @@ public static class StandardExpressionExtensions
 
         return expression.GetConstantValue().Select(value =>
         {
-            if (value == null)
+            if (value is null)
             {
                 return SExpressions.Expression.Constant(null, expectedNullableType);
             }

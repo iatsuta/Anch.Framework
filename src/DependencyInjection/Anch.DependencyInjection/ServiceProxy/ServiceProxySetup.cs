@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.DependencyInjection.ServiceProxy;
 
+/// <summary>Collects the redirects of service types and registers the proxy factory.</summary>
 public class ServiceProxySetup : IServiceProxySetup, IServiceInitializer
 {
     private readonly List<Action<IServiceCollection>> registerRedirects = [];

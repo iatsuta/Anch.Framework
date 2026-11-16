@@ -42,7 +42,7 @@ public class VisualIdentitySourceSetup : IVisualIdentitySourceSetup, IServiceIni
     {
         if (services.AlreadyInitialized<IVisualIdentityInfoSource>())
         {
-            if (this.customSettings != null)
+            if (this.customSettings is not null)
             {
                 services.ReplaceSingleton(this.customSettings);
             }

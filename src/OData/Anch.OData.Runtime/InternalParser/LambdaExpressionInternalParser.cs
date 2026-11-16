@@ -1,6 +1,4 @@
-﻿using MapFunc = System.Func<Anch.OData.Domain.QueryLanguage.Expression, Anch.OData.Domain.QueryLanguage.Expression>;
-using SExpressions = System.Linq.Expressions;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Globalization;
 
 using Anch.Core;
@@ -9,11 +7,15 @@ using Anch.OData.Domain.QueryLanguage.Constant;
 using Anch.OData.Domain.QueryLanguage.Constant.Base;
 using Anch.OData.Domain.QueryLanguage.Operations;
 using Anch.Parsing;
+
 using ExpressionMapParser = Anch.Parsing.Parser<Anch.Parsing.SharedMemoryString, System.Func<Anch.OData.Domain.QueryLanguage.Expression, Anch.OData.Domain.QueryLanguage.Expression>>;
 using ExpressionParser = Anch.Parsing.Parser<Anch.Parsing.SharedMemoryString, Anch.OData.Domain.QueryLanguage.Expression>;
+using MapFunc = System.Func<Anch.OData.Domain.QueryLanguage.Expression, Anch.OData.Domain.QueryLanguage.Expression>;
+using SExpressions = System.Linq.Expressions;
 
 namespace Anch.OData.InternalParser;
 
+/// <summary>The grammar of expressions inside a query: operators with precedence, constants, properties, nested lambdas and method calls.</summary>
 public class LambdaExpressionInternalParser(
     CultureInfo culture,
     ParameterExpression currentParameter,
@@ -66,15 +68,15 @@ public class LambdaExpressionInternalParser(
 
             return from unaryOperation in this.PreSpaces(this.UnaryOperationParser)
 
-                from rootResult in this.GetMainParser((operand, isRoot) => new { Operand = operand, IsRoot = isRoot })
+                   from rootResult in this.GetMainParser((operand, isRoot) => new { Operand = operand, IsRoot = isRoot })
 
-                from mapOperandFunc in this.PreSpaces(this.BinaryExpressionParser).Or(this.GetIdentityFunc<Expression>())
+                   from mapOperandFunc in this.PreSpaces(this.BinaryExpressionParser).Or(this.GetIdentityFunc<Expression>())
 
-                from overridePriorityFunc in rootResult.IsRoot ? this.GetIdentityFunc<Expression, UnaryExpression>() : this.Return(applyPriorityFunc)
+                   from overridePriorityFunc in rootResult.IsRoot ? this.GetIdentityFunc<Expression, UnaryExpression>() : this.Return(applyPriorityFunc)
 
-                let baseExpression = new UnaryExpression(unaryOperation, mapOperandFunc(rootResult.Operand))
+                   let baseExpression = new UnaryExpression(unaryOperation, mapOperandFunc(rootResult.Operand))
 
-                select overridePriorityFunc(baseExpression);
+                   select overridePriorityFunc(baseExpression);
         }
     }
 
@@ -100,18 +102,18 @@ public class LambdaExpressionInternalParser(
 
             return from binaryOperation in this.BinaryOperationParser
 
-                from rootResult in this.GetMainParser((right, isRoot) => new { Right = right, IsRoot = isRoot })
+                   from rootResult in this.GetMainParser((right, isRoot) => new { Right = right, IsRoot = isRoot })
 
-                from mapRightFunc in this.PreSpaces(this.BinaryExpressionParser).Or(this.GetIdentityFunc<Expression>())
+                   from mapRightFunc in this.PreSpaces(this.BinaryExpressionParser).Or(this.GetIdentityFunc<Expression>())
 
-                from overridePriorityFunc in rootResult.IsRoot ? this.GetIdentityFunc<Expression, BinaryExpression>() : this.Return(applyPriorityFunc)
+                   from overridePriorityFunc in rootResult.IsRoot ? this.GetIdentityFunc<Expression, BinaryExpression>() : this.Return(applyPriorityFunc)
 
-                select new MapFunc(left =>
-                {
-                    var baseExpression = new BinaryExpression(binaryOperation, left, mapRightFunc(rootResult.Right));
+                   select new MapFunc(left =>
+                   {
+                       var baseExpression = new BinaryExpression(binaryOperation, left, mapRightFunc(rootResult.Right));
 
-                    return overridePriorityFunc(baseExpression);
-                });
+                       return overridePriorityFunc(baseExpression);
+                   });
         }
     }
 
@@ -212,13 +214,13 @@ public class LambdaExpressionInternalParser(
 
             return from properties in this.SepBy(propWithAlias.Or(propWithoutAlias), '/')
 
-                select properties.Aggregate(
-                    (Expression)currentParameter,
-                    (source, propertyPair) =>
+                   select properties.Aggregate(
+                       (Expression)currentParameter,
+                       (source, propertyPair) =>
 
-                        propertyPair.Alias == null
-                            ? new PropertyExpression(source, propertyPair.PropertyName)
-                            : new SelectExpression(source, propertyPair.PropertyName, propertyPair.Alias));
+                           propertyPair.Alias is null
+                               ? new PropertyExpression(source, propertyPair.PropertyName)
+                               : new SelectExpression(source, propertyPair.PropertyName, propertyPair.Alias));
         }
     }
 
@@ -243,11 +245,11 @@ public class LambdaExpressionInternalParser(
 
             .Or(() => from startElementName in this.PreSpaces(this.Variable)
 
-                let startElementParameter = new ParameterExpression(startElementName)
+                      let startElementParameter = new ParameterExpression(startElementName)
 
-                where usedParameters.Contains(startElementParameter)
+                      where usedParameters.Contains(startElementParameter)
 
-                select Tuple.Create(startElementParameter, true))
+                      select Tuple.Create(startElementParameter, true))
 
             .Or(() => this.Return(Tuple.Create(currentParameter, false)));
 
@@ -358,11 +360,11 @@ public class LambdaExpressionInternalParser(
 
         var query = from name in new[] { preName }.Concat(Enumerable.InfiniteSequence(0, 1).Select(index => preName + index))
 
-            let parameter = new ParameterExpression(name)
+                    let parameter = new ParameterExpression(name)
 
-            where !usedParameters.Contains(parameter)
+                    where !usedParameters.Contains(parameter)
 
-            select parameter;
+                    select parameter;
 
         return query.First();
     }

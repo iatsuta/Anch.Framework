@@ -6,8 +6,9 @@ namespace Anch.GenericQueryable.IntegrationTests.Domain;
 [Table(nameof(TestObject), Schema = "app")]
 public class TestObject
 {
-    [Key]
-    public virtual Guid Id { get; set; }
+    [Key] public virtual Guid Id { get; set; }
+
+    public virtual Guid LinkId => this.Id;
 
     public virtual FetchObject? FetchObject { get; set; }
 

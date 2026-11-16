@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.IdentitySource.DependencyInjection;
 
+/// <summary>Collects the settings of the identity source and turns them into registrations.</summary>
 public class IdentitySourceSetup : IIdentitySourceSetup, IServiceInitializer
 {
     private IdentityPropertySourceSettings? customSettings;
@@ -33,7 +34,7 @@ public class IdentitySourceSetup : IIdentitySourceSetup, IServiceInitializer
     {
         if (services.AlreadyInitialized<IIdentityInfoSource>())
         {
-            if (this.customSettings != null)
+            if (this.customSettings is not null)
             {
                 services.ReplaceSingleton(this.customSettings);
             }

@@ -10,85 +10,86 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get principal.</summary>
 public class GetPrincipalHandler(
-	IRootPrincipalSourceService principalSourceService,
-	ISecurityContextStorage securityContextStorage,
-	ISecurityRoleSource securityRoleSource,
-	ISecurityContextInfoSource securityContextInfoSource,
-	[WithoutRunAs] ISecuritySystem securitySystem) : BaseReadHandler, IGetPrincipalHandler
+    IRootPrincipalSourceService principalSourceService,
+    ISecurityContextStorage securityContextStorage,
+    ISecurityRoleSource securityRoleSource,
+    ISecurityContextInfoSource securityContextInfoSource,
+    [WithoutRunAs] ISecuritySystem securitySystem) : BaseReadHandler, IGetPrincipalHandler
 {
-	protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken)) return new PrincipalDetailsDto { Permissions = [] };
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct)) return new PrincipalDetailsDto { Permissions = [] };
 
-		var permissions = await this.GetPermissionsAsync(context.ExtractSecurityIdentity(), cancellationToken);
+        var permissions = await this.GetPermissionsAsync(context.ExtractSecurityIdentity(), ct);
 
-		return new PrincipalDetailsDto { Permissions = permissions };
-	}
+        return new PrincipalDetailsDto { Permissions = permissions };
+    }
 
-	private async Task<List<PermissionDto>> GetPermissionsAsync(UserCredential userCredential, CancellationToken cancellationToken)
-	{
-		var principal = await principalSourceService.GetPrincipalAsync(userCredential, cancellationToken);
+    private async Task<List<PermissionDto>> GetPermissionsAsync(UserCredential userCredential, CancellationToken ct)
+    {
+        var principal = await principalSourceService.GetPrincipalAsync(userCredential, ct);
 
-		var allSecurityContextDict = this.GetSecurityContextDict(principal);
+        var allSecurityContextDict = this.GetSecurityContextDict(principal);
 
-		return principal
-			.Permissions
-			.Select(permission =>
-				new PermissionDto
-				{
-					Id = permission.Identity.GetId().ToString()!,
-					IsVirtual = permission.IsVirtual,
-					Role = permission.SecurityRole.Name,
-					RoleId = securityRoleSource.GetSecurityRole(permission.SecurityRole).Identity.GetId().ToString()!,
-					Comment = permission.Comment,
+        return principal
+            .Permissions
+            .Select(permission =>
+                new PermissionDto
+                {
+                    Id = permission.Identity.GetId().ToString()!,
+                    IsVirtual = permission.IsVirtual,
+                    Role = permission.SecurityRole.Name,
+                    RoleId = securityRoleSource.GetSecurityRole(permission.SecurityRole).Identity.GetId().ToString()!,
+                    Comment = permission.Comment,
                     DelegatedFromId = permission.DelegatedFrom.GetId().ToString()!,
                     StartDate = permission.Period.StartDate,
-					EndDate = permission.Period.EndDate,
-					Contexts = permission
+                    EndDate = permission.Period.EndDate,
+                    Contexts = permission
                         .Restrictions
-						.Select(restriction =>
-						{
-							var typedCache = allSecurityContextDict[restriction.Key];
+                        .Select(restriction =>
+                        {
+                            var typedCache = allSecurityContextDict[restriction.Key];
 
-							var securityContextInfo = securityContextInfoSource.GetSecurityContextInfo(restriction.Key);
+                            var securityContextInfo = securityContextInfoSource.GetSecurityContextInfo(restriction.Key);
 
-							return new ContextDto
-							{
-								Id = securityContextInfo.Identity.GetId().ToString()!,
-								Name = securityContextInfo.Name,
-								Entities = restriction.Value.Cast<object>().Select(securityContextId =>
-										new RestrictionDto { Id = securityContextId.ToString()!, Name = typedCache[securityContextId] })
-									.ToList()
-							};
-						})
-						.ToList()
-				})
-			.ToList();
-	}
+                            return new ContextDto
+                            {
+                                Id = securityContextInfo.Identity.GetId().ToString()!,
+                                Name = securityContextInfo.Name,
+                                Entities = restriction.Value.Cast<object>().Select(securityContextId =>
+                                        new RestrictionDto { Id = securityContextId.ToString()!, Name = typedCache[securityContextId] })
+                                    .ToList()
+                            };
+                        })
+                        .ToList()
+                })
+            .ToList();
+    }
 
-	private Dictionary<Type, Dictionary<object, string>> GetSecurityContextDict(ManagedPrincipal principal)
-	{
-		var request =
+    private Dictionary<Type, Dictionary<object, string>> GetSecurityContextDict(ManagedPrincipal principal)
+    {
+        var request =
 
-			from permission in principal.Permissions
+            from permission in principal.Permissions
 
-			from restrictionGroup in permission.Restrictions
+            from restrictionGroup in permission.Restrictions
 
-			from object securityContextId in restrictionGroup.Value
+            from object securityContextId in restrictionGroup.Value
 
-			group securityContextId by new { SecurityContextType = restrictionGroup.Key, IdentType = restrictionGroup.Value.GetType().GetElementType()! }
+            group securityContextId by new { SecurityContextType = restrictionGroup.Key, IdentType = restrictionGroup.Value.GetType().GetElementType()! }
 
-			into g
+            into g
 
-			let typedSecurityContextStorage = securityContextStorage.GetTyped(g.Key.SecurityContextType)
+            let typedSecurityContextStorage = securityContextStorage.GetTyped(g.Key.SecurityContextType)
 
-			let identsDict = typedSecurityContextStorage
-				.GetSecurityContextsByIdents(g.Distinct().ToArray(g.Key.IdentType))
-				.ToDictionary(scd => scd.Id, scd => scd.Name)
+            let identsDict = typedSecurityContextStorage
+                .GetSecurityContextsByIdents(g.Distinct().ToArray(g.Key.IdentType))
+                .ToDictionary(scd => scd.Id, scd => scd.Name)
 
-			select (g.Key.SecurityContextType, identsDict);
+            select (g.Key.SecurityContextType, identsDict);
 
-		return request.ToDictionary();
-	}
+        return request.ToDictionary();
+    }
 }

@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Testing.Xunit.Engine;
 
+/// <summary>Extensions for <see cref="System.Reflection.MethodInfo"/>.</summary>
 public static class MethodInfoExtensions
 {
     private static readonly ConcurrentDictionary<MethodInfo, bool> IsCtCache = [];

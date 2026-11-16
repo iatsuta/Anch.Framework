@@ -2,8 +2,12 @@
 
 namespace Anch.OData.Domain.QueryLanguage.Operations;
 
+/// <summary>Extensions for LINQ node types.</summary>
 public static class ExpressionTypeExtensions
 {
+    /// <summary>Maps a LINQ binary node type to the query language operation.</summary>
+    /// <param name="expressionType">The node type.</param>
+    /// <exception cref="ArgumentOutOfRangeException">The node type is not supported.</exception>
     public static BinaryOperation ToBinaryOperation(this SExpressions.ExpressionType expressionType) =>
         expressionType switch
         {

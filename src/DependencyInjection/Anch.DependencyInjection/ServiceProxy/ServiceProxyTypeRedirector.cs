@@ -5,9 +5,10 @@ using Anch.Core;
 
 namespace Anch.DependencyInjection.ServiceProxy;
 
+/// <summary>Finds the redirect target of a type from the configured redirects; supports open generic types and binders.</summary>
 public class ServiceProxyTypeRedirector(IEnumerable<ServiceProxyTypeRedirectInfo> infoList, INativeActivator nativeActivator) : IServiceProxyTypeRedirector
 {
-    private readonly ImmutableArray<ServiceProxyTypeRedirectInfo> cachedList = [..infoList];
+    private readonly ImmutableArray<ServiceProxyTypeRedirectInfo> cachedList = [.. infoList];
 
     private readonly ConcurrentDictionary<Type, Type?> cache = [];
 
@@ -20,7 +21,7 @@ public class ServiceProxyTypeRedirector(IEnumerable<ServiceProxyTypeRedirectInfo
         this.GetRedirectCandidates(sourceType)
             .Aggregate(default(ServiceProxyTypeRedirectInfo?), (prev, next) =>
             {
-                if (prev == null)
+                if (prev is null)
                 {
                     return next.Replace ? throw new InvalidOperationException("The first candidate cannot perform a replacement") : next;
                 }

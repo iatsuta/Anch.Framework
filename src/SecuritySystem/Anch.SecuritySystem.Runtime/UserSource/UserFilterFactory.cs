@@ -7,6 +7,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Builds filters that find users by name or identifier.</summary>
 public class UserFilterFactory<TUser>(
     IServiceProxyFactory serviceProxyFactory,
     IIdentityInfo<TUser> identityInfo) : IUserFilterFactory<TUser>
@@ -17,6 +18,7 @@ public class UserFilterFactory<TUser>(
     public Expression<Func<TUser, bool>> CreateFilter(UserCredential userCredential) => this.lazyInnerService.Value.CreateFilter(userCredential);
 }
 
+/// <summary>Builds filters that find users by name or identifier.</summary>
 public class UserFilterFactory<TUser, TIdent>(
     IIdentityInfo<TUser, TIdent> identityInfo,
     IVisualIdentityInfo<TUser> visualIdentityInfo,
@@ -32,18 +34,33 @@ public class UserFilterFactory<TUser, TIdent>(
                 return visualIdentityInfo.Name.Path.Select(objName => objName == name);
 
             case UserCredential.IdentUserCredential { Identity: var identity }:
-            {
-                var convertedIdentity = identityConverter.TryConvert(identity);
+                {
+                    var convertedIdentity = identityConverter.TryConvert(identity);
 
-                if (convertedIdentity is null)
-                {
-                    return _ => false;
+                    if (convertedIdentity is null)
+                    {
+                        return _ => false;
+                    }
+                    else
+                    {
+                        return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id));
+                    }
                 }
-                else
+
+            case UserCredential.FullUserCredential { User: { Identity: var identity, Name: var name } }:
                 {
-                    return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id));
+                    var convertedIdentity = identityConverter.TryConvert(identity);
+
+                    if (convertedIdentity is null)
+                    {
+                        return _ => false;
+                    }
+                    else
+                    {
+                        return identityInfo.Id.Path.Select(ExpressionHelper.GetEqualityWithExpr(convertedIdentity.Id))
+                            .BuildAnd(visualIdentityInfo.Name.Path.Select(objName => objName == name));
+                    }
                 }
-            }
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(userCredential));

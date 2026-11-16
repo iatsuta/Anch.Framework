@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.HierarchicalExpand.DependencyInjection;
 
+/// <summary>Collects the hierarchy descriptions and turns them into registrations.</summary>
 public class HierarchicalExpandSetup : IHierarchicalExpandSetup, IServiceInitializer
 {
     private readonly List<Action<IServiceCollection>> actions = [];
@@ -48,7 +49,7 @@ public class HierarchicalExpandSetup : IHierarchicalExpandSetup, IServiceInitial
             services.AddSingleton(directLinkType, fullAncestorLinkInfo);
             services.AddSingleton(withUndirectLinkType, fullAncestorLinkInfo);
 
-            if (deepLevelInfo != null)
+            if (deepLevelInfo is not null)
             {
                 services.AddSingleton<DeepLevelInfo>(deepLevelInfo);
                 services.AddSingleton(deepLevelInfo);

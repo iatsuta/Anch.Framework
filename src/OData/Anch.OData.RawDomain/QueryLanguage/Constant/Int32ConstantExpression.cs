@@ -2,4 +2,6 @@
 
 namespace Anch.OData.Domain.QueryLanguage.Constant;
 
+/// <summary>A 32-bit integer constant.</summary>
+/// <param name="Value">The value.</param>
 public record Int32ConstantExpression(int Value) : ConstantExpression<int>(Value);

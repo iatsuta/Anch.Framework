@@ -1,7 +1,7 @@
 ﻿namespace Anch.SecuritySystem.Providers;
 
 /// <summary>
-/// Провайдер доступа с фиксированным ответом для одного типа
+/// Security provider with a fixed answer for a single type.
 /// </summary>
 /// <typeparam name="TDomainObject"></typeparam>
 public class ConstSecurityProvider<TDomainObject>(bool hasAccess) : ISecurityProvider<TDomainObject>
@@ -11,5 +11,5 @@ public class ConstSecurityProvider<TDomainObject>(bool hasAccess) : ISecurityPro
         return queryable.Where(_ => hasAccess);
     }
 
-    public async ValueTask<bool> HasAccess(TDomainObject _, CancellationToken cancellationToken) => hasAccess;
+    public ValueTask<bool> HasAccessAsync(TDomainObject _, CancellationToken __) => new(hasAccess);
 }

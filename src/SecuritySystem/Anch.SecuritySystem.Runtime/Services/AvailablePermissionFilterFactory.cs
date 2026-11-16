@@ -1,10 +1,12 @@
 ﻿using System.Linq.Expressions;
 
 using Anch.Core;
+using Anch.SecuritySystem.UserSource;
 using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Builds the filter that selects the permissions of the current user that are valid now and satisfy a rule.</summary>
 public class AvailablePermissionFilterFactory<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     PermissionBindingInfo<TPermission> bindingInfo) : IAvailablePermissionFilterFactory<TPermission>
@@ -20,6 +22,7 @@ public class AvailablePermissionFilterFactory<TPermission>(
         this.lazyInnerService.Value.CreateFilter(securityRule);
 }
 
+/// <summary>Builds the filter that selects the permissions of the current user that are valid now and satisfy a rule.</summary>
 public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
     PermissionBindingInfo<TPermission, TPrincipal> bindingInfo,
     TimeProvider timeProvider,
@@ -28,6 +31,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
     IPermissionFilterFactory<TPermission> permissionFilterFactory,
     SecurityRuleCredential defaultSecurityRuleCredential,
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
+    UserSourceInfo<TPrincipal> userSourceInfo,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null) : IAvailablePermissionFilterFactory<TPermission>
 {
     public Expression<Func<TPermission, bool>> CreateFilter(DomainSecurityRule.RoleBaseSecurityRule securityRule) =>
@@ -35,7 +39,9 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
 
     private IEnumerable<Expression<Func<TPermission, bool>>> GetFilterElements(DomainSecurityRule.RoleBaseSecurityRule securityRule)
     {
-        if (bindingInfo.PermissionStartDate != null)
+        yield return bindingInfo.Principal.Path.Select(userSourceInfo.FilterPath);
+
+        if (bindingInfo.PermissionStartDate is not null)
         {
             yield return bindingInfo.GetPeriodFilter(timeProvider.GetUtcNow().Date);
         }
@@ -43,7 +49,7 @@ public class AvailablePermissionFilterFactory<TPrincipal, TPermission>(
         var principalName =
             defaultCancellationTokenSource.RunSync(ct => userNameResolver.GetUserNameAsync(securityRule.CustomCredential ?? defaultSecurityRuleCredential, ct));
 
-        if (principalName != null)
+        if (principalName is not null)
         {
             yield return bindingInfo.Principal.Path.Select(principalVisualIdentityInfo.Name.Path).Select(name => name == principalName);
         }

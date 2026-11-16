@@ -5,6 +5,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>A permission system whose permissions are computed from domain entities.</summary>
 public class VirtualPermissionSystem<TPermission>(
     IServiceProxyFactory serviceProxyFactory,
     ISecurityRuleExpander securityRuleExpander,
@@ -37,7 +38,7 @@ public class VirtualPermissionSystem<TPermission>(
 
             where expandedRolesSecurityRule.SecurityRoles.Contains(itemBindingInfo.SecurityRole)
 
-            select this.CreatePermissionSource(expandedRolesSecurityRule, itemBindingInfo);
+            select this.CreatePermissionSource(expandedRolesSecurityRule.TryApply(securityRule.CustomCredential), itemBindingInfo);
     }
 
     public IAsyncEnumerable<SecurityRole> GetAvailableSecurityRoles() =>

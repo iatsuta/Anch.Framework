@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Anch.Core.ExpressionEvaluate;
 
+/// <summary>Rewrites member chains so that a <c>null</c> in the middle yields a default value instead of throwing (null-safe navigation).</summary>
 public class InjectMaybeVisitor : ExpressionVisitor
 {
     //private static readonly MethodInfo BoolOrMethodSimple = new Func<Maybe<bool>, Func<bool>, Maybe<bool>>(MaybeExtensions.Or).Method;
@@ -20,17 +21,10 @@ public class InjectMaybeVisitor : ExpressionVisitor
     private static readonly MethodInfo OfConditionMethod = new Func<bool, Func<Maybe<object>>, Func<Maybe<object>>, Maybe<object>>(Maybe.OfCondition).Method.GetGenericMethodDefinition();
 
 
-    private InjectMaybeVisitor()
-    {
-
-    }
-
-
     public Expression<TDelegate> VisitAndGetValueOrDefault<TDelegate>(Expression<TDelegate> expr)
     {
         return (Expression<TDelegate>)this.VisitAndGetValueOrDefaultBase(expr);
     }
-
 
 
     public LambdaExpression VisitAndGetValueOrDefaultBase(LambdaExpression expr)
@@ -44,76 +38,80 @@ public class InjectMaybeVisitor : ExpressionVisitor
 
     protected override Expression VisitMember(MemberExpression node)
     {
-        var baseVisitedExpression = this.Visit(node.Expression);
-
-        var isWrapped = baseVisitedExpression!.Type.IsMaybe();
-
-        var isValueSource = node.Expression!.Type.IsValueType;
-
-        var param = Expression.Parameter(node.Expression.Type);
-
-
-        if (isWrapped)
+        if (node.Expression is { } nodeExpression && this.Visit(node.Expression) is { } baseVisitedExpression)
         {
-            if (isValueSource)
-            {
-                var nullableType = node.Expression.Type.GetNullableElementType();
+            var isWrapped = baseVisitedExpression.Type.IsMaybe();
 
-                if (nullableType != null && node.Member.Name == "Value")
+            var isValueSource = nodeExpression.Type.IsValueType;
+
+            var param = Expression.Parameter(nodeExpression.Type);
+
+            if (isWrapped)
+            {
+                if (isValueSource)
                 {
-                    return baseVisitedExpression.OverrideSelect(v => v.ToMaybeReturn());
+                    var nullableType = nodeExpression.Type.GetNullableElementType();
+
+                    if (nullableType is not null && node.Member.Name == "Value")
+                    {
+                        return baseVisitedExpression.OverrideSelect(v => v.ToMaybeReturn());
+                    }
+                    else
+                    {
+                        var method = new Func<Maybe<object>, Func<object, object>, Maybe<object>>(LinqMaybeExtensions.Select).CreateGenericMethod(param.Type, node.Type);
+
+                        var lambda = Expression.Lambda(Expression.MakeMemberAccess(param, node.Member), param);
+
+                        return Expression.Call(method, baseVisitedExpression, lambda);
+                    }
                 }
                 else
                 {
+                    var visitedExpression = baseVisitedExpression.OverrideSelect(ex => ex.ToMaybeReturn());
+
+                    var method = SelectMethod.MakeGenericMethod(param.Type, node.Type);
+
+                    var lambda = Expression.Lambda(Expression.MakeMemberAccess(param, node.Member), param);
+
+                    return Expression.Call(method, visitedExpression, lambda);
+                }
+            }
+            else
+            {
+                if (isValueSource)
+                {
+                    var nullableType = nodeExpression.Type.GetNullableElementType();
+
+                    if (nullableType is not null && node.Member.Name == "Value")
+                    {
+                        return baseVisitedExpression.OverrideSelect(v => v.ToMaybeReturn());
+                    }
+                    else
+                    {
+                        return base.VisitMember(node);
+                    }
+                }
+                else
+                {
+                    var visitedExpression = baseVisitedExpression.ToMaybeReturn();
+
                     var method = new Func<Maybe<object>, Func<object, object>, Maybe<object>>(LinqMaybeExtensions.Select).CreateGenericMethod(param.Type, node.Type);
 
                     var lambda = Expression.Lambda(Expression.MakeMemberAccess(param, node.Member), param);
 
-                    return Expression.Call(method, baseVisitedExpression, lambda);
+                    return Expression.Call(method, visitedExpression, lambda);
                 }
-            }
-            else
-            {
-                var visitedExpression = baseVisitedExpression.OverrideSelect(ex => ex.ToMaybeReturn());
-
-                var method = SelectMethod.MakeGenericMethod(param.Type, node.Type);
-
-                var lambda = Expression.Lambda(Expression.MakeMemberAccess(param, node.Member), param);
-
-                return Expression.Call(method, visitedExpression, lambda);
             }
         }
         else
         {
-            if (isValueSource)
-            {
-                var nullableType = node.Expression.Type.GetNullableElementType();
-
-                if (nullableType != null && node.Member.Name == "Value")
-                {
-                    return baseVisitedExpression.OverrideSelect(v => v.ToMaybeReturn());
-                }
-                else
-                {
-                    return base.VisitMember(node);
-                }
-            }
-            else
-            {
-                var visitedExpression = baseVisitedExpression.ToMaybeReturn();
-
-                var method = new Func<Maybe<object>, Func<object, object>, Maybe<object>>(LinqMaybeExtensions.Select).CreateGenericMethod(param.Type, node.Type);
-
-                var lambda = Expression.Lambda(Expression.MakeMemberAccess(param, node.Member), param);
-
-                return Expression.Call(method, visitedExpression, lambda);
-            }
+            return node;
         }
     }
 
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
-        return node.GetChildren().Select(this.Visit)!.OverrideSelect(elements => node.Method.ToCallExpression(elements));
+        return node.GetChildren().Select(v => this.Visit(v)).OverrideSelect(elements => node.Method.ToCallExpression(elements));
     }
 
     protected override Expression VisitBinary(BinaryExpression node)
@@ -126,50 +124,50 @@ public class InjectMaybeVisitor : ExpressionVisitor
             switch (node.NodeType)
             {
                 case ExpressionType.OrElse:
-                {
-                    var wrappedLeft = visitedLeft.SafeWrapToMaybe();
-                    var wrappedRight = Expression.Lambda(visitedRight.SafeWrapToMaybe());
+                    {
+                        var wrappedLeft = visitedLeft.SafeWrapToMaybe();
+                        var wrappedRight = Expression.Lambda(visitedRight.SafeWrapToMaybe());
 
-                    if (visitedLeft.Type.IsMaybe() || visitedRight.Type.IsMaybe())
-                    {
-                        return Expression.Call(LogicOrMethod, wrappedLeft, wrappedRight);
+                        if (visitedLeft.Type.IsMaybe() || visitedRight.Type.IsMaybe())
+                        {
+                            return Expression.Call(LogicOrMethod, wrappedLeft, wrappedRight);
+                        }
+                        else
+                        {
+                            return Expression.OrElse(visitedLeft, visitedRight);
+                        }
                     }
-                    else
-                    {
-                        return Expression.OrElse(visitedLeft, visitedRight);
-                    }
-                }
 
                 case ExpressionType.AndAlso:
-                {
-                    var wrappedLeft = visitedLeft.SafeWrapToMaybe();
-                    var wrappedRight = Expression.Lambda(visitedRight.SafeWrapToMaybe());
+                    {
+                        var wrappedLeft = visitedLeft.SafeWrapToMaybe();
+                        var wrappedRight = Expression.Lambda(visitedRight.SafeWrapToMaybe());
 
-                    if (visitedLeft.Type.IsMaybe() || visitedRight.Type.IsMaybe())
-                    {
-                        return Expression.Call(LogicAndMethod, wrappedLeft, wrappedRight);
+                        if (visitedLeft.Type.IsMaybe() || visitedRight.Type.IsMaybe())
+                        {
+                            return Expression.Call(LogicAndMethod, wrappedLeft, wrappedRight);
+                        }
+                        else
+                        {
+                            return Expression.AndAlso(visitedLeft, visitedRight);
+                        }
                     }
-                    else
-                    {
-                        return Expression.AndAlso(visitedLeft, visitedRight);
-                    }
-                }
 
                 case ExpressionType.Equal:
-                {
-                    var unwrappedLeft = visitedLeft.TryGetValueOrDefault();
-                    var unwrappedRight = visitedRight.TryGetValueOrDefault();
+                    {
+                        var unwrappedLeft = visitedLeft.TryGetValueOrDefault();
+                        var unwrappedRight = visitedRight.TryGetValueOrDefault();
 
-                    return Expression.Equal(unwrappedLeft, unwrappedRight, false, node.Method);
-                }
+                        return Expression.Equal(unwrappedLeft, unwrappedRight, false, node.Method);
+                    }
 
                 case ExpressionType.NotEqual:
-                {
-                    var unwrappedLeft = visitedLeft.TryGetValueOrDefault();
-                    var unwrappedRight = visitedRight.TryGetValueOrDefault();
+                    {
+                        var unwrappedLeft = visitedLeft.TryGetValueOrDefault();
+                        var unwrappedRight = visitedRight.TryGetValueOrDefault();
 
-                    return Expression.NotEqual(unwrappedLeft, unwrappedRight, false, node.Method);
-                }
+                        return Expression.NotEqual(unwrappedLeft, unwrappedRight, false, node.Method);
+                    }
             }
         }
 
@@ -211,14 +209,14 @@ public class InjectMaybeVisitor : ExpressionVisitor
 
     protected override Expression VisitNewArray(NewArrayExpression node)
     {
-        return node.Expressions.Select(this.Visit)!.OverrideSelect(items =>
+        return node.Expressions.Select(v => this.Visit(v)).OverrideSelect(items =>
 
             Expression.NewArrayInit(node.Type.GetElementType()!, items));
     }
 
     protected override Expression VisitNew(NewExpression node)
     {
-        return node.Arguments.Select(this.Visit)!.OverrideSelect(args => Expression.New(node.Constructor!, args));
+        return node.Arguments.Select(v => this.Visit(v)).OverrideSelect(args => Expression.New(node.Constructor!, args));
     }
 
     protected override Expression VisitListInit(ListInitExpression node)

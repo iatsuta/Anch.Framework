@@ -48,7 +48,7 @@ public class NHibConfigurationSource(IMainConnectionStringSource mainConnectionS
                 })
             .BuildConfiguration();
 
-        cfg.SessionFactory().ParsingLinqThrough<VisitedNHibQueryProvider>();
+        cfg.SetGenericQueryProvider();
 
         SchemaMetadataUpdater.QuoteTableAndColumns(cfg, Dialect.GetDialect(cfg.Properties));
 

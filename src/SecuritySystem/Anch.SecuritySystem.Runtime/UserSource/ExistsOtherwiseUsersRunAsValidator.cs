@@ -1,13 +1,14 @@
 ﻿namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Allows RunAs only to users that exist.</summary>
 public class ExistsOtherwiseUsersRunAsValidator<TUser>(IEnumerable<IUserSource<TUser>> userSources, IMissedUserErrorSource missedUserErrorSource)
     : IRunAsValidator
 {
-    public async Task ValidateAsync(UserCredential value, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(UserCredential value, CancellationToken ct)
     {
         foreach (var userSource in userSources.Where(userSource => userSource.UserType != typeof(TUser)))
         {
-            var user = await userSource.TryGetUserAsync(value, cancellationToken);
+            var user = await userSource.TryGetUserAsync(value, ct);
 
             if (user is null)
             {

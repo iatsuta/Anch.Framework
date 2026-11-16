@@ -3,16 +3,16 @@ using Anch.SecuritySystem.ExternalSystem.Management;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>Creates and removes the testing root user with the administrator roles.</summary>
 public class RootUserCredentialManager(
     AdministratorsRoleList administratorsRoleList,
-    ITestingEvaluator<UserCredentialManager> baseEvaluator,
+    ITestingEvaluator<IServiceProxyFactory> baseEvaluator,
     RootImpersonateServiceState rootImpersonateServiceState,
     Tuple<UserCredential?> userCredential,
     IDefaultCancellationTokenSource? defaultCancellationTokenSource = null)
 {
     private ITestingEvaluator<UserCredentialManager> ManagerEvaluator { get; } =
-
-        baseEvaluator.Select(service => userCredential.Item1 == null ? service : service.ReplaceCurrentUser(userCredential.Item1));
+        baseEvaluator.Select(service => service.Create<UserCredentialManager>(userCredential));
 
     public void LoginAs() =>
 
@@ -22,58 +22,58 @@ public class RootUserCredentialManager(
 
         defaultCancellationTokenSource.RunSync(async ct => await this.CreatePrincipalAsync(ct));
 
-    public Task<SecurityIdentity> CreatePrincipalAsync(CancellationToken cancellationToken = default) =>
+    public Task<SecurityIdentity> CreatePrincipalAsync(CancellationToken ct) =>
 
-        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Write, manager => manager.CreatePrincipalAsync(cancellationToken));
+        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Write, manager => manager.CreatePrincipalAsync(ct));
 
     public SecurityIdentity SetAdminRole() =>
 
         defaultCancellationTokenSource.RunSync(async ct => await this.SetAdminRoleAsync(ct));
 
-    public Task<SecurityIdentity> SetAdminRoleAsync(CancellationToken cancellationToken = default) =>
+    public Task<SecurityIdentity> SetAdminRoleAsync(CancellationToken ct) =>
 
-        this.SetRoleAsync(administratorsRoleList.Roles.Select(securityRole => (ManagedPermission)securityRole).ToArray(), cancellationToken);
+        this.SetRoleAsync(administratorsRoleList.Roles.Select(securityRole => (ManagedPermission)securityRole).ToArray(), ct);
 
     public SecurityIdentity SetRole(params ManagedPermission[] permissions) =>
 
         defaultCancellationTokenSource.RunSync(async ct => await this.SetRoleAsync(permissions, ct));
 
-    public Task<SecurityIdentity> SetRoleAsync(ManagedPermission permission, CancellationToken cancellationToken = default) =>
+    public Task<SecurityIdentity> SetRoleAsync(ManagedPermission permission, CancellationToken ct) =>
 
-        this.SetRoleAsync([permission], cancellationToken);
+        this.SetRoleAsync([permission], ct);
 
-    public async Task<SecurityIdentity> SetRoleAsync(ManagedPermission[] permissions, CancellationToken cancellationToken = default)
+    public async Task<SecurityIdentity> SetRoleAsync(ManagedPermission[] permissions, CancellationToken ct)
     {
-        await this.ClearRolesAsync(cancellationToken);
+        await this.ClearRolesAsync(ct);
 
-        return await this.AddRoleAsync(permissions, cancellationToken);
+        return await this.AddRoleAsync(permissions, ct);
     }
 
     public SecurityIdentity AddRole(params ManagedPermission[] permissions) =>
 
         defaultCancellationTokenSource.RunSync(async ct => await this.AddRoleAsync(permissions, ct));
 
-    public Task<SecurityIdentity> AddRoleAsync(ManagedPermission permission, CancellationToken cancellationToken = default) =>
+    public Task<SecurityIdentity> AddRoleAsync(ManagedPermission permission, CancellationToken ct) =>
 
-        this.AddRoleAsync([permission], cancellationToken);
+        this.AddRoleAsync([permission], ct);
 
-    public Task<SecurityIdentity> AddRoleAsync(ManagedPermission[] permissions, CancellationToken cancellationToken = default) =>
+    public Task<SecurityIdentity> AddRoleAsync(ManagedPermission[] permissions, CancellationToken ct) =>
 
-        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Write, manager => manager.AddUserRoleAsync(permissions, cancellationToken));
+        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Write, manager => manager.AddUserRoleAsync(permissions, ct));
 
     public void ClearRoles() =>
 
         defaultCancellationTokenSource.RunSync(async ct => await this.ClearRolesAsync(ct));
 
-    public Task ClearRolesAsync(CancellationToken cancellationToken = default) =>
+    public Task ClearRolesAsync(CancellationToken ct) =>
 
-        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Write, manager => manager.RemovePermissionsAsync(cancellationToken));
+        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Write, manager => manager.RemovePermissionsAsync(ct));
 
     public ManagedPrincipal GetPrincipal() =>
 
         defaultCancellationTokenSource.RunSync(async ct => await this.GetPrincipalAsync(ct));
 
-    public Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken cancellationToken = default) =>
+    public Task<ManagedPrincipal> GetPrincipalAsync(CancellationToken ct) =>
 
-        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Read, manager => manager.GetPrincipalAsync(cancellationToken));
+        this.ManagerEvaluator.EvaluateAsync(TestingScopeMode.Read, manager => manager.GetPrincipalAsync(ct));
 }

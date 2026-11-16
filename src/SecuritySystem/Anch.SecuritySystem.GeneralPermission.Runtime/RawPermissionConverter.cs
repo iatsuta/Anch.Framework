@@ -3,6 +3,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Converts a permission and its restrictions into the raw form.</summary>
 public class RawPermissionConverter<TPermissionRestriction, TSecurityContextObjectIdent>(
     ISecurityContextSource securityContextSource,
     IIdentityInfoSource identityInfoSource,
@@ -26,7 +27,7 @@ public class RawPermissionConverter<TPermissionRestriction, TSecurityContextObje
 
                 var baseIdents = rawRestrictions.GetValueOrDefault(securityContextType, Array.Empty<TSecurityContextObjectIdent>());
 
-                if (securityContextRestrictionFilterInfo == null)
+                if (securityContextRestrictionFilterInfo is null)
                 {
                     return baseIdents;
                 }

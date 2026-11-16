@@ -8,21 +8,22 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a domain type from its security path (factory).</summary>
 public class AccessorsFilterBuilderFactory<TDomainObject>(IServiceProxyFactory serviceProxyFactory, IEnumerable<IPermissionSystem> permissionSystems) :
     IAccessorsFilterFactory<TDomainObject>
 {
-    public async ValueTask<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
+    public async Task<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken ct)
     {
         var accessorsFilterInfoList = await permissionSystems
             .ToAsyncEnumerable()
-            .Select((permissionSystem, ct) =>
+            .Select(async (permissionSystem, ct) =>
         {
             var factoryType = typeof(AccessorsFilterBuilderFactory<,>).MakeGenericType(typeof(TDomainObject), permissionSystem.PermissionType);
 
             var factory = serviceProxyFactory.Create<IAccessorsFilterFactory<TDomainObject>>(factoryType, permissionSystem);
 
-            return factory.CreateFilterAsync(securityRule, securityPath, ct);
-        }).ToListAsync(cancellationToken);
+            return await factory.CreateFilterAsync(securityRule, securityPath, ct);
+        }).ToListAsync(ct);
 
         return new(domainObject => accessorsFilterInfoList
             .ToAsyncEnumerable()
@@ -31,6 +32,7 @@ public class AccessorsFilterBuilderFactory<TDomainObject>(IServiceProxyFactory s
     }
 }
 
+/// <summary>Computes who has access to an object (the accessors), for a domain type from its security path (factory).</summary>
 public class AccessorsFilterBuilderFactory<TDomainObject, TPermission>(
     IIdentityInfoSource identityInfoSource,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
@@ -39,10 +41,10 @@ public class AccessorsFilterBuilderFactory<TDomainObject, TPermission>(
     FilterBuilderFactoryBase<TDomainObject, AccessorsFilterBuilder<TDomainObject, TPermission>>(identityInfoSource),
     IAccessorsFilterFactory<TDomainObject>
 {
-    public async ValueTask<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(
+    public async Task<AccessorsFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var securityContextRestrictions = securityRule.GetSafeSecurityContextRestrictions().ToList();
 

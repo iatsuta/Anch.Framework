@@ -3,6 +3,7 @@ using Anch.GenericRepository;
 using Anch.Testing.Xunit;
 
 using Microsoft.Extensions.DependencyInjection;
+
 [assembly: AnchTestFramework<EfTestEnvironment>]
 
 namespace Anch.GenericQueryable.IntegrationTests.Environment;
@@ -17,4 +18,5 @@ public class EfTestEnvironment : TestEnvironment
             .AddScoped<IQueryableSource, EfQueryableSource>()
 
             .AddSingleton<IEmptySchemaInitializer, EfEmptySchemaInitializer>();
+
 }

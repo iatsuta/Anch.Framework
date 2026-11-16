@@ -75,7 +75,7 @@ public class MainTests
         var result = await qSource.GenericToHashSetAsync(ct);
 
         // Assert
-        Assert.Equivalent(baseSource, result);
+        Assert.Equivalent(baseSource, result, strict: true);
     }
 
     [AnchFact]
@@ -89,7 +89,7 @@ public class MainTests
         var result = await qSource.GenericToHashSetAsync(StringComparer.OrdinalIgnoreCase, ct);
 
         // Assert
-        Assert.Equivalent(baseSource, result);
+        Assert.Equivalent(baseSource, result, strict: true);
         Assert.Same(StringComparer.OrdinalIgnoreCase, result.Comparer);
     }
 
@@ -104,7 +104,7 @@ public class MainTests
         var result = await qSource.GenericToDictionaryAsync(v => v, ct);
 
         // Assert
-        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result, strict: true);
     }
 
     [AnchFact]
@@ -118,7 +118,7 @@ public class MainTests
         var result = await qSource.GenericToDictionaryAsync(v => v, StringComparer.OrdinalIgnoreCase, ct);
 
         // Assert
-        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result, strict: true);
         Assert.Same(StringComparer.OrdinalIgnoreCase, result.Comparer);
     }
 
@@ -133,7 +133,7 @@ public class MainTests
         var result = await qSource.GenericToDictionaryAsync(v => v, v => v, ct);
 
         // Assert
-        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result, strict: true);
     }
 
     [AnchFact]
@@ -147,7 +147,7 @@ public class MainTests
         var result = await qSource.GenericToDictionaryAsync(v => v, v => v, StringComparer.OrdinalIgnoreCase, ct);
 
         // Assert
-        Assert.Equivalent(baseSource.ToDictionary(v => v), result);
+        Assert.Equivalent(baseSource.ToDictionary(v => v), result, strict: true);
         Assert.Same(StringComparer.OrdinalIgnoreCase, result.Comparer);
     }
 

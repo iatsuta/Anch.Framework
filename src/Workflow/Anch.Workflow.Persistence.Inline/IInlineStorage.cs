@@ -7,7 +7,9 @@ namespace Anch.Workflow.Persistence.Inline;
 public interface IInlineStorage<TSource>
     where TSource : class
 {
-    ValueTask Save(TSource source, CancellationToken cancellationToken);
+    ValueTask Save(TSource source, CancellationToken ct);
+
+    ValueTask FlushChanges(CancellationToken ct);
 
     IQueryable<TSource> GetQueryable();
 

@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Services;
 
 namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Builds the filter that selects the valid stored permissions.</summary>
 public class GeneralPermissionFilterFactory<TPermission, TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IQueryableSource queryableSource,
@@ -23,7 +24,7 @@ public class GeneralPermissionFilterFactory<TPermission, TPermissionRestriction,
         SecurityContextRestriction<TSecurityContext> securityContextRestriction)
         where TSecurityContext : class, ISecurityContext
     {
-        if (securityContextRestriction.Filter != null)
+        if (securityContextRestriction.Filter is not null)
         {
             var restrictionFilter = this.CreateFilter(permissionRestrictionFilterFactory.CreateFilter(securityContextRestriction.Filter));
 

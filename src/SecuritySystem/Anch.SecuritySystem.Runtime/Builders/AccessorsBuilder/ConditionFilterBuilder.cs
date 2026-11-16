@@ -5,6 +5,7 @@ using Anch.HierarchicalExpand;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a plain condition on the object.</summary>
 public class ConditionFilterBuilder<TDomainObject, TPermission>(
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
     SecurityPath<TDomainObject>.ConditionPath securityPath)

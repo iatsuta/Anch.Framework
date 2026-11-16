@@ -3,6 +3,7 @@ using Anch.Core.Auth;
 
 namespace Anch.SecuritySystem.Testing;
 
+/// <summary>The default current user in tests: the test root user unless a user is impersonated.</summary>
 public class TestingDefaultCurrentUser(
     TestRootUserInfo testRootUserInfo,
     RootImpersonateServiceState rootImpersonateServiceState,
@@ -11,7 +12,7 @@ public class TestingDefaultCurrentUser(
 {
     public string Name =>
 
-        rootImpersonateServiceState.CustomUserCredential == null
+        rootImpersonateServiceState.CustomUserCredential is null
             ? testRootUserInfo.Name
             : rootImpersonateServiceState.Cache.TryGetValue(rootImpersonateServiceState.CustomUserCredential, out var cachedUserName)
                 ? cachedUserName

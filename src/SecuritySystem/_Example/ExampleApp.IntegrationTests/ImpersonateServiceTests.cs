@@ -1,7 +1,10 @@
 ﻿using Anch.Core.Auth;
+using Anch.SecuritySystem;
+using Anch.SecuritySystem.UserSource;
 using Anch.Testing.Xunit;
 
 using ExampleApp.Application;
+using ExampleApp.Domain.Auth.General;
 
 namespace ExampleApp.IntegrationTests;
 
@@ -19,5 +22,25 @@ public abstract class ImpersonateServiceTests(IServiceProvider rootServiceProvid
 
         // Assert
         Assert.Equal(userName, result);
+    }
+
+
+    [AnchFact]
+    public async Task EvaluateAsync_ShouldResolveUserWithImpersonatedIdAndName(CancellationToken ct)
+    {
+        // Arrange
+        var userName = nameof(this.EvaluateAsync_ShouldReturnImpersonatedUserName);
+        var userId = Guid.NewGuid();
+        var user = new User(userName, userId);
+
+        var userSecurityIdentity = await this.AuthManager.For(user).SetRoleAsync(ExampleSecurityRole.DefaultRole, ct);
+
+        // Act
+        var result = await this.GetEvaluator<ICurrentUserSource<Principal>>()
+            .EvaluateAsync(TestingScopeMode.Read, user, async service => service.ToSimple().CurrentUser);
+
+        // Assert
+        Assert.Equal(user, result);
+        Assert.Equal(user.Identity, userSecurityIdentity);
     }
 }

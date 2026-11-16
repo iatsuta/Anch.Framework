@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.OData.DependencyInjection;
 
+/// <summary>Collects the settings of the OData module and turns them into registrations.</summary>
 public class ODataSetup : IODataSetup, IServiceInitializer
 {
     private Type? parsingExceptionFactoryType;
@@ -22,7 +23,7 @@ public class ODataSetup : IODataSetup, IServiceInitializer
                 .AddSingleton<ISelectOperationParser, SelectOperationParser>();
         }
 
-        if (this.parsingExceptionFactoryType != null)
+        if (this.parsingExceptionFactoryType is not null)
         {
             services.ReplaceSingleton(typeof(IParsingExceptionFactory), this.parsingExceptionFactoryType);
         }

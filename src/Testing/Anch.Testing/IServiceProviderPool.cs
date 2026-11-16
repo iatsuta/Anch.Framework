@@ -1,10 +1,9 @@
 ﻿namespace Anch.Testing;
 
-public interface IServiceProviderPool
+/// <summary>A pool of service containers: each test takes a free one and returns it afterwards, so tests can run in parallel.</summary>
+public interface IServiceProviderPool : IAsyncDisposable
 {
-    IServiceProvider Get();
-
     ValueTask<IServiceProvider> GetAsync(CancellationToken ct);
 
-    void Release(IServiceProvider serviceProvider);
+    ValueTask ReleaseAsync(IServiceProvider serviceProvider, CancellationToken ct);
 }

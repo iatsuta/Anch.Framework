@@ -3,6 +3,7 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.AvailableSecurity;
 
+/// <summary>Lists the roles that the current user has, collected from all permission systems.</summary>
 public class AvailableSecurityRoleSource(IEnumerable<IPermissionSystem> permissionSystems, ISecurityRoleSource securityRoleSource)
     : IAvailableSecurityRoleSource
 {

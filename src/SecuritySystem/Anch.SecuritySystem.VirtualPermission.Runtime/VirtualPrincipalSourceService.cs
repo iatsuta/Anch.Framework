@@ -14,6 +14,7 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.VirtualPermission;
 
+/// <summary>Reads the principals that have virtual permissions, together with those permissions.</summary>
 public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
     IServiceProvider serviceProvider,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
@@ -64,11 +65,11 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
             ? _ => true
             : principalVisualIdentityInfo.Name.Path.Select(principalName => principalName.Contains(nameFilter));
 
-    public async ValueTask<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken cancellationToken)
+    public async Task<ManagedPrincipal?> TryGetPrincipalAsync(UserCredential userCredential, CancellationToken ct)
     {
-        var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(cancellationToken);
+        var principal = await userQueryableSource.GetQueryable(userCredential).GenericSingleOrDefaultAsync(ct);
 
-        if (principal == null)
+        if (principal is null)
         {
             return null;
         }
@@ -84,7 +85,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
                     .Where(bindingInfo.Principal.Path.Select<TPermission, TPrincipal, bool>(p => p == principal))
                     .GenericAsAsyncEnumerable()
                     .Select<TPermission, ManagedPermission>(permission => this.ToManagedPermission(permission, itemBindingInfo.SecurityRole)))
-                .ToImmutableArrayAsync(cancellationToken);
+                .ToImmutableArrayAsync(ct);
 
             return new ManagedPrincipal(header, managedPermissions);
         }
@@ -148,7 +149,7 @@ public class VirtualPrincipalSourceService<TPrincipal, TPermission>(
             {
                 var securityContext = this.expressionEvaluator.Evaluate(singlePath, permission);
 
-                if (securityContext != null)
+                if (securityContext is not null)
                 {
                     yield return identityInfo.Id.Getter(securityContext);
                 }

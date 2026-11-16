@@ -4,6 +4,7 @@ using Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation;
 
+/// <summary>Formats a permission as text for validation messages.</summary>
 public class DisplayPermissionService<TPermission, TPermissionRestriction>(
     PermissionBindingInfo<TPermission> bindingInfo,
     IPermissionSecurityRoleResolver<TPermission> securityRoleResolver,
@@ -23,12 +24,12 @@ public class DisplayPermissionService<TPermission, TPermissionRestriction>(
 
         yield return $"Role: {securityRoleResolver.Resolve(permissionData.Permission).Name}";
 
-        if (bindingInfo.PermissionStartDate != null)
+        if (bindingInfo.PermissionStartDate is not null)
         {
             yield return $"StartDate: {bindingInfo.PermissionStartDate.Getter(permission)}";
         }
 
-        if (bindingInfo.PermissionEndDate != null)
+        if (bindingInfo.PermissionEndDate is not null)
         {
             yield return $"EndDate: {bindingInfo.PermissionEndDate.Getter(permission)}";
         }

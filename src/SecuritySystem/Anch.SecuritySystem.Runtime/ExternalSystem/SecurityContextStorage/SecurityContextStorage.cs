@@ -5,6 +5,7 @@ using Anch.IdentitySource;
 
 namespace Anch.SecuritySystem.ExternalSystem.SecurityContextStorage;
 
+/// <summary>Finds the storage of a security context type.</summary>
 public class SecurityContextStorage : ISecurityContextStorage
 {
     private readonly IServiceProvider serviceProvider;
@@ -45,7 +46,7 @@ public class SecurityContextStorage : ISecurityContextStorage
     {
         var hierarchicalInfo = this.serviceProvider.GetService(typeof(HierarchicalInfo<>).MakeGenericType(typeof(TSecurityContext)));
 
-        var (serviceType, args) = hierarchicalInfo == null
+        var (serviceType, args) = hierarchicalInfo is null
             ? (typeof(PlainTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>), Array.Empty<object>())
             : (typeof(HierarchicalTypedSecurityContextStorage<TSecurityContext, TSecurityContextIdent>), [hierarchicalInfo]);
 

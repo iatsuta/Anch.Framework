@@ -1,5 +1,6 @@
 ﻿namespace Anch.Core;
 
+/// <summary>Compares arrays element by element.</summary>
 public class ArrayComparer<T>(IEqualityComparer<T> itemComparer) : IEqualityComparer<T[]>
 {
     public bool Equals(T[]? x, T[]? y)

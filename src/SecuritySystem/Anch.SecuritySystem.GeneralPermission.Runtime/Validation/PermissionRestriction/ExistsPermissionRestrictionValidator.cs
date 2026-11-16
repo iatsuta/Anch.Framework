@@ -3,6 +3,7 @@ using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
+/// <summary>Checks that the restricted objects exist.</summary>
 public class ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent> restrictionBindingInfo,
     ISecurityContextStorage securityContextStorage,
@@ -10,7 +11,7 @@ public class ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecur
     : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public async Task ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         var securityContextObjectId = restrictionBindingInfo.SecurityContextObjectId.Getter(permissionRestriction);
 
@@ -21,6 +22,10 @@ public class ExistsPermissionRestrictionValidator<TPermissionRestriction, TSecur
         if (!typedSecurityContextStorage.IsExists(TypedSecurityIdentity.Create(securityContextObjectId)))
         {
             throw new SecuritySystemValidationException($"{securityContextType.Name} with id '{securityContextObjectId}' not exists");
+        }
+        else
+        {
+            return ValueTask.CompletedTask;
         }
     }
 }

@@ -1,24 +1,17 @@
-﻿using Anch.Core;
-using Anch.Testing.Database.ConnectionStringManagement;
-using Anch.Testing.Database.Initializers;
+﻿using Anch.Testing.Database.Initializers;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.Testing.Database.Hooks;
 
+/// <summary>Restores the private database of a container from the filled snapshot before a test.</summary>
 public class PrepareDatabaseEnvironmentHook(
-    ISharedServiceSource sharedServiceSource,
-    IDatabaseManager databaseManager,
-    ITestConnectionStringProvider connectionStringProvider) : ITestEnvironmentHook
+    [FromKeyedServices(ITestEnvironment.MainServiceProviderKey)]
+    IServiceProvider mainServiceProvider,
+    ServiceProviderIndex serviceProviderIndex)
+    : ITestEnvironmentHook
 {
-    private readonly IInitializer emptySchemaInitializer = sharedServiceSource.GetSharedService<IInitializer>(TestDatabaseInitializer.CachedEmptySchemaKey);
+    private readonly IDatabaseSnapshotManager databaseSnapshotManager = mainServiceProvider.GetRequiredService<IDatabaseSnapshotManager>();
 
-    private readonly IInitializer testDataInitializer = sharedServiceSource.GetSharedService<IInitializer>(TestDatabaseInitializer.CachedTestDataKey);
-
-    public async ValueTask Process(CancellationToken ct)
-    {
-        await this.emptySchemaInitializer.Initialize(ct);
-
-        await this.testDataInitializer.Initialize(ct);
-
-        await databaseManager.Copy(connectionStringProvider.FilledSnapshot, connectionStringProvider.Actual, true, ct);
-    }
+    public ValueTask Process(CancellationToken ct) => this.databaseSnapshotManager.RestoreDatabaseSnapshot(serviceProviderIndex, ct);
 }

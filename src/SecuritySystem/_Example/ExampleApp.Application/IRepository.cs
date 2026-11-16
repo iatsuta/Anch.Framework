@@ -2,9 +2,9 @@
 
 public interface IRepository<TDomainObject>
 {
-    Task SaveAsync(TDomainObject domainObject, CancellationToken cancellationToken = default);
+    Task SaveAsync(TDomainObject domainObject, CancellationToken ct);
 
-    Task RemoveAsync(TDomainObject domainObject, CancellationToken cancellationToken = default);
+    Task RemoveAsync(TDomainObject domainObject, CancellationToken ct);
 
     IQueryable<TDomainObject> GetQueryable();
 }

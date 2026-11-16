@@ -4,6 +4,7 @@ using Anch.HierarchicalExpand;
 
 namespace Anch.SecuritySystem.Builders.AccessorsBuilder;
 
+/// <summary>Computes who has access to an object (the accessors), for a security path that combines two others.</summary>
 public abstract class BinaryFilterBuilder<TDomainObject, TPermission, TSecurityPath>(
     AccessorsFilterBuilderFactory<TDomainObject, TPermission> builderFactory,
     TSecurityPath securityPath,

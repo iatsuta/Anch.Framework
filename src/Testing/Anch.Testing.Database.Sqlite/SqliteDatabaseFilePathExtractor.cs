@@ -4,9 +4,12 @@ using Anch.Testing.Database.ConnectionStringManagement;
 
 namespace Anch.Testing.Database.Sqlite;
 
-public class SqliteDatabaseFilePathExtractor : IDatabaseFilePathExtractor
+/// <summary>Extracts the file path of a SQLite database from the test connection string.</summary>
+public class SqliteDatabaseFilePathExtractor(ITestConnectionStringProvider testConnectionStringProvider) : IDatabaseFilePathExtractor
 {
-    public string Extract(TestDatabaseConnectionString connectionString)
+    public string Extract(TestConnectionStringRole connectionStringRole) => this.Extract(testConnectionStringProvider.GetConnectionString(connectionStringRole));
+
+    private string Extract(TestConnectionString connectionString)
     {
         var builder = new DbConnectionStringBuilder
         {
@@ -16,7 +19,7 @@ public class SqliteDatabaseFilePathExtractor : IDatabaseFilePathExtractor
         if (!builder.TryGetValue("Data Source", out var value))
             throw new InvalidOperationException("Data Source is missing.");
 
-        var dataSource = value?.ToString();
+        var dataSource = value.ToString();
 
         if (string.IsNullOrWhiteSpace(dataSource))
             throw new InvalidOperationException("Data Source is empty.");

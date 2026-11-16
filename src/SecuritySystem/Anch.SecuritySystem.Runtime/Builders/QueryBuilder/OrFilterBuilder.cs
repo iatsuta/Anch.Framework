@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for the alternative of two security paths.</summary>
 public class OrFilterBuilder<TDomainObject, TPermission>(
     SecurityFilterBuilderFactory<TDomainObject, TPermission> builderFactory,
     SecurityPath<TDomainObject>.OrSecurityPath securityPath,

@@ -224,7 +224,7 @@ public class WorkflowDefinitionBuilder<TSource, TStatus> : IWorkflowDefinition<T
             throw new InvalidOperationException("Invalid events");
         }
 
-        if (typeof(TStatus) != typeof(Ignore) && this.StatusAccessors == null)
+        if (typeof(TStatus) != typeof(Ignore) && this.StatusAccessors is null)
         {
             throw new InvalidOperationException($"{nameof(this.StatusAccessors)} must be initialized");
         }
@@ -234,7 +234,7 @@ public class WorkflowDefinitionBuilder<TSource, TStatus> : IWorkflowDefinition<T
     {
         var stateDigitCount = (int)Math.Log10(this.States.Count);
 
-        if (this.IsAutoIdentity && ownerInfo != null)
+        if (this.IsAutoIdentity && ownerInfo is not null)
         {
             var newName = $"{ownerInfo.Value.State.Workflow.Identity.Name}-{ownerInfo.Value.State.Name}"
                           + ownerInfo.Value.Index.MaybeNullable(index => $"-{index}")

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get business role.</summary>
 public class GetBusinessRoleHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     ISecurityRoleSource securityRoleSource,
@@ -15,9 +16,9 @@ public class GetBusinessRoleHandler(
     IRootPrincipalSourceService principalSourceService)
     : BaseReadHandler, IGetBusinessRoleHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken))
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct))
         {
             return new BusinessRoleDetailsDto { Operations = [], Principals = [] };
         }
@@ -37,7 +38,7 @@ public class GetBusinessRoleHandler(
                     .OrderBy(x => x.Name)
                     .ToArray();
 
-            var principals = await principalSourceService.GetLinkedPrincipalsAsync([securityRole]).ToArrayAsync(cancellationToken);
+            var principals = await principalSourceService.GetLinkedPrincipalsAsync([securityRole]).ToArrayAsync(ct);
 
             return new BusinessRoleDetailsDto { Operations = operations, Principals = principals };
         }

@@ -4,10 +4,14 @@ using Anch.Core;
 
 namespace Anch.VisualIdentitySource;
 
+/// <summary>Finds how a type is displayed: an explicitly registered function wins, then the name property, then <c>ToString()</c>. Results are cached.</summary>
+/// <param name="visualIdentityInfoSource">Finds the name property.</param>
+/// <param name="customDisplayObjectInfoList">The explicitly registered display functions.</param>
 public class DisplayObjectInfoSource(IVisualIdentityInfoSource visualIdentityInfoSource, IEnumerable<DisplayObjectInfo> customDisplayObjectInfoList) : IDisplayObjectInfoSource
 {
     private readonly ConcurrentDictionary<Type, DisplayObjectInfo> cache = [];
 
+    /// <inheritdoc/>
     public DisplayObjectInfo<TDomainObject> GetDisplayObjectInfo<TDomainObject>()
         where TDomainObject : class
     {

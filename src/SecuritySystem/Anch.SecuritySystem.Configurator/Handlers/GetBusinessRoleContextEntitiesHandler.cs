@@ -8,15 +8,16 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get business role context entities.</summary>
 public class GetBusinessRoleContextEntitiesHandler(
     ISecurityContextStorage securityContextStorage,
     ISecurityContextInfoSource securityContextInfoSource,
     [WithoutRunAs] ISecuritySystem securitySystem)
     : BaseReadHandler, IGetBusinessRoleContextEntitiesHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken))
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct))
         {
             return Array.Empty<EntityDto>();
         }
@@ -39,7 +40,7 @@ public class GetBusinessRoleContextEntitiesHandler(
                 .OrderByDescending(x => x.Name.Equals(searchToken, StringComparison.OrdinalIgnoreCase))
                 .ThenBy(x => x.Name)
                 .Take(70)
-                .ToArrayAsync(cancellationToken);
+                .ToArrayAsync(ct);
         }
     }
 }

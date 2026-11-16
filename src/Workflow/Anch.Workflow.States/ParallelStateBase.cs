@@ -21,7 +21,7 @@ public abstract class ParallelStateBase<TSource> : IState
 
         if (!isBreak && notProcessedWorkflow.Any())
         {
-            if (executionContext.CallbackEventInfo == null)
+            if (executionContext.CallbackEventInfo is null)
             {
                 return new MultiExecutionResult([.. notProcessedWorkflow.Select(subWf => new WaitEventResult(EventHeader.WorkflowFinished, subWf))])
                 {
@@ -43,7 +43,7 @@ public abstract class ParallelStateBase<TSource> : IState
 
     private async ValueTask<WorkflowProcessResult> TryStart(IExecutionContext executionContext)
     {
-        if (executionContext.CallbackEventInfo != null)
+        if (executionContext.CallbackEventInfo is not null)
         {
             return WorkflowProcessResult.Empty;
         }

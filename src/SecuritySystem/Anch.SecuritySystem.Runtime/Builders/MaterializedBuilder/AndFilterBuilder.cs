@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Builders.MaterializedBuilder;
 
+/// <summary>Builds the access filter with the permissions of the user loaded into memory first, for the conjunction of two security paths.</summary>
 public class AndFilterBuilder<TDomainObject>(
     SecurityFilterBuilderFactory<TDomainObject> builderFactory,
     SecurityPath<TDomainObject>.AndSecurityPath securityPath,

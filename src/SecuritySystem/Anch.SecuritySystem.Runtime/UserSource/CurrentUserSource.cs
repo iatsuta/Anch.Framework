@@ -3,6 +3,7 @@ using Anch.Core.Auth;
 
 namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Finds the user entity of the current user.</summary>
 public class CurrentUserSource<TUser>(
     ICurrentUser currentUser,
     IUserSource<TUser> userSource,

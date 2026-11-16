@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.UserSource;
 
+/// <summary>Throws when a user is not found.</summary>
 public class ErrorMissedUserService<TUser>(IMissedUserErrorSource missedUserErrorSource) : IMissedUserService<TUser>
 {
     public virtual TUser GetUser(UserCredential userCredential)

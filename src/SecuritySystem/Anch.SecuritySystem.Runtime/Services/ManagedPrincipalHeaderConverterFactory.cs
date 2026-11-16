@@ -2,6 +2,7 @@
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Creates converters of principal entities into managed principal headers.</summary>
 public class ManagedPrincipalHeaderConverterFactory<TPrincipal>(IServiceProxyFactory serviceProxyFactory)
     : IManagedPrincipalHeaderConverterFactory<TPrincipal>
 {

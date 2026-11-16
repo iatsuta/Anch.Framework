@@ -10,13 +10,13 @@ public interface IWorkflowMachine
 
     void SetStartState();
 
-    ValueTask Save(CancellationToken cancellationToken = default);
+    ValueTask Save(CancellationToken ct);
 
-    ValueTask<WorkflowProcessResult> ProcessWorkflow(CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> ProcessWorkflow(CancellationToken ct);
 
-    ValueTask<WorkflowProcessResult> ProcessWorkflow(ExecutionResult executionResult, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> ProcessWorkflow(ExecutionResult executionResult, CancellationToken ct);
 
-    ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> PushReleasedEvent(WaitEventInfo releasedEventInfo, CancellationToken ct);
 
-    ValueTask<WorkflowProcessResult> Terminate(CancellationToken cancellationToken = default);
+    ValueTask<WorkflowProcessResult> Terminate(CancellationToken ct);
 }

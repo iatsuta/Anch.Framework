@@ -8,12 +8,13 @@ using Anch.SecuritySystem.ExternalSystem;
 
 namespace Anch.SecuritySystem.Builders.QueryBuilder;
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a domain type from its security path (factory).</summary>
 public class SecurityFilterBuilderFactory<TDomainObject>(
     IServiceProxyFactory serviceProxyFactory,
     IEnumerable<IPermissionSystem> permissionSystems) :
     ISecurityFilterFactory<TDomainObject>
 {
-    public async ValueTask<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken cancellationToken)
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(DomainSecurityRule.RoleBaseSecurityRule securityRule, SecurityPath<TDomainObject> securityPath, CancellationToken ct)
     {
         var securityFilterInfoList = await permissionSystems
             .ToAsyncEnumerable()
@@ -24,7 +25,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
                 var factory = serviceProxyFactory.Create<ISecurityFilterFactory<TDomainObject>>(factoryType, permissionSystem);
 
                 return await factory.CreateFilterAsync(securityRule, securityPath, ct);
-            }).ToListAsync(cancellationToken);
+            }).ToListAsync(ct);
 
         return new SecurityFilterInfo<TDomainObject>(
             q => securityFilterInfoList
@@ -37,6 +38,7 @@ public class SecurityFilterBuilderFactory<TDomainObject>(
     }
 }
 
+/// <summary>Builds the access filter as an expression that the database evaluates, for a domain type from its security path (factory).</summary>
 public class SecurityFilterBuilderFactory<TDomainObject, TPermission>(
     IIdentityInfoSource identityInfoSource,
     IExpressionEvaluatorStorage expressionEvaluatorStorage,
@@ -47,10 +49,10 @@ public class SecurityFilterBuilderFactory<TDomainObject, TPermission>(
 {
     private readonly IExpressionEvaluator expressionEvaluator = expressionEvaluatorStorage.GetForType(typeof(SecurityFilterBuilderFactory<TDomainObject, TPermission>));
 
-    public async ValueTask<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
+    public async Task<SecurityFilterInfo<TDomainObject>> CreateFilterAsync(
         DomainSecurityRule.RoleBaseSecurityRule securityRule,
         SecurityPath<TDomainObject> securityPath,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var securityContextRestrictions = securityRule.GetSafeSecurityContextRestrictions().ToList();
 

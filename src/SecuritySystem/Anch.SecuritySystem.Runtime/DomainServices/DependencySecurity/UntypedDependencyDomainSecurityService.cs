@@ -7,6 +7,7 @@ using Anch.SecuritySystem.Providers.DependencySecurity;
 
 namespace Anch.SecuritySystem.DomainServices.DependencySecurity;
 
+/// <summary>Protects a type through another type that is linked only by matching identifiers (used for projections).</summary>
 public class UntypedDependencyDomainSecurityService<TDomainObject, TBaseDomainObject>(
     IServiceProxyFactory serviceProxyFactory,
     ISecurityRuleExpander securityRuleExpander,

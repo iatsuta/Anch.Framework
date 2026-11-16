@@ -9,68 +9,69 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.DependencyInjection;
 
+/// <summary>Collects the settings of one security context type.</summary>
 public class SecurityContextInfoSetup<TSecurityContext>(TypedSecurityIdentity identity) : ISecurityContextInfoSetup<TSecurityContext>
-	where TSecurityContext : class, ISecurityContext
+    where TSecurityContext : class, ISecurityContext
 {
-	private readonly List<Action<IServiceCollection>> extensions = [];
+    private readonly List<Action<IServiceCollection>> extensions = [];
 
-	private string name = typeof(TSecurityContext).Name;
+    private string name = typeof(TSecurityContext).Name;
 
-	public Action<IHierarchicalExpandSetup>? HierarchicalSetupAction { get; private set; }
+    public Action<IHierarchicalExpandSetup>? HierarchicalSetupAction { get; private set; }
 
-	public Action<IIdentitySourceSetup>? IdentitySetupAction { get; private set; }
+    public Action<IIdentitySourceSetup>? IdentitySetupAction { get; private set; }
 
-	public Action<IVisualIdentitySourceSetup>? VisualIdentitySetupAction { get; private set; }
+    public Action<IVisualIdentitySourceSetup>? VisualIdentitySetupAction { get; private set; }
 
-	public ISecurityContextInfoSetup<TSecurityContext> SetName(string newName)
-	{
-		this.name = newName;
+    public ISecurityContextInfoSetup<TSecurityContext> SetName(string newName)
+    {
+        this.name = newName;
 
-		return this;
-	}
+        return this;
+    }
 
-	public ISecurityContextInfoSetup<TSecurityContext> SetDisplayFunc(Func<TSecurityContext, string> displayFunc)
-	{
-		this.VisualIdentitySetupAction = s => s.SetDisplay(displayFunc);
+    public ISecurityContextInfoSetup<TSecurityContext> SetDisplayFunc(Func<TSecurityContext, string> displayFunc)
+    {
+        this.VisualIdentitySetupAction = s => s.SetDisplay(displayFunc);
 
-		return this;
-	}
+        return this;
+    }
 
-	public ISecurityContextInfoSetup<TSecurityContext> SetIdentityPath<TSecurityContextIdent>(Expression<Func<TSecurityContext, TSecurityContextIdent>> identityPath)
-		where TSecurityContextIdent : struct
-	{
-		this.IdentitySetupAction = s => s.SetId(identityPath);
+    public ISecurityContextInfoSetup<TSecurityContext> SetIdentityPath<TSecurityContextIdent>(Expression<Func<TSecurityContext, TSecurityContextIdent>> identityPath)
+        where TSecurityContextIdent : struct
+    {
+        this.IdentitySetupAction = s => s.SetId(identityPath);
 
-		return this;
-	}
+        return this;
+    }
 
-	public ISecurityContextInfoSetup<TSecurityContext> SetHierarchicalInfo(
-		HierarchicalInfo<TSecurityContext> newHierarchicalInfo,
-		FullAncestorLinkInfo<TSecurityContext> newFullAncestorLinkInfo,
+    public ISecurityContextInfoSetup<TSecurityContext> SetHierarchicalInfo(
+        HierarchicalInfo<TSecurityContext> newHierarchicalInfo,
+        FullAncestorLinkInfo<TSecurityContext> newFullAncestorLinkInfo,
         DeepLevelInfo<TSecurityContext>? deepLevelInfo = null)
-	{
-		this.HierarchicalSetupAction = s => s.AddHierarchicalInfo(newHierarchicalInfo, newFullAncestorLinkInfo, deepLevelInfo);
+    {
+        this.HierarchicalSetupAction = s => s.AddHierarchicalInfo(newHierarchicalInfo, newFullAncestorLinkInfo, deepLevelInfo);
 
-		return this;
-	}
+        return this;
+    }
 
-	public ISecurityContextInfoSetup<TSecurityContext> AddExtension(Action<IServiceCollection> extension)
-	{
-		this.extensions.Add(extension);
+    public ISecurityContextInfoSetup<TSecurityContext> AddExtension(Action<IServiceCollection> extension)
+    {
+        this.extensions.Add(extension);
 
-		return this;
-	}
+        return this;
+    }
 
-	public void Register(IServiceCollection services)
-	{
-		var securityContextInfo = new SecurityContextInfo<TSecurityContext>(identity, this.name);
+    public void Register(IServiceCollection services)
+    {
+        var securityContextInfo = new SecurityContextInfo<TSecurityContext>(identity, this.name);
 
-		services.AddSingleton(securityContextInfo);
-		services.AddSingleton<SecurityContextInfo>(securityContextInfo);
+        services.AddSingleton(securityContextInfo);
+        services.AddSingleton<SecurityContextInfo>(securityContextInfo);
 
-		foreach (var extension in this.extensions)
-		{
-			extension(services);
-		}
-	}
+        foreach (var extension in this.extensions)
+        {
+            extension(services);
+        }
+    }
 }

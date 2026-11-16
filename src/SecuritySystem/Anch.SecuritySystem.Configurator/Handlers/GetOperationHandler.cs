@@ -10,15 +10,16 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the configurator request: get operation.</summary>
 public class GetOperationHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     ISecurityRoleSource roleSource,
     IRootPrincipalSourceService principalSourceService)
     : BaseReadHandler, IGetOperationHandler
 {
-    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken cancellationToken)
+    protected override async Task<object> GetDataAsync(HttpContext context, CancellationToken ct)
     {
-        if (!await securitySystem.IsSecurityAdministratorAsync(cancellationToken))
+        if (!await securitySystem.IsSecurityAdministratorAsync(ct))
         {
             return new OperationDetailsDto { BusinessRoles = [], Principals = [] };
         }
@@ -30,7 +31,7 @@ public class GetOperationHandler(
                 .Where(x => x.Information.Operations.Contains(securityOperation))
                 .ToImmutableHashSet<SecurityRole>();
 
-            var principals = await principalSourceService.GetLinkedPrincipalsAsync(securityRoles).ToArrayAsync(cancellationToken);
+            var principals = await principalSourceService.GetLinkedPrincipalsAsync(securityRoles).ToArrayAsync(ct);
 
             return new OperationDetailsDto
             {

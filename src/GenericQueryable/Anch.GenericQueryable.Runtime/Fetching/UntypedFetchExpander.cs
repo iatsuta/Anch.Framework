@@ -4,10 +4,12 @@ using Anch.Core;
 
 namespace Anch.GenericQueryable.Fetching;
 
+/// <summary>Expands a string fetch rule into typed property paths by resolving the dotted names against the entity type. Results are cached.</summary>
 public class UntypedFetchExpander : IFetchRuleExpander
 {
     private readonly ConcurrentDictionary<Type, object> cache = [];
 
+    /// <inheritdoc/>
     public PropertyFetchRule<TSource>? TryExpand<TSource>(FetchRule<TSource> fetchRule)
     {
         if (fetchRule is UntypedFetchRule<TSource> untypedFetchRule)

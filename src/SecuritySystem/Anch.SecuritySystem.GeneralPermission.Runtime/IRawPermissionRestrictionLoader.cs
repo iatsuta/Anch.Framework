@@ -1,6 +1,7 @@
 ﻿namespace Anch.SecuritySystem.GeneralPermission;
 
+/// <summary>Loads the restrictions of a permission in the raw form.</summary>
 public interface IRawPermissionRestrictionLoader<in TPermission>
 {
-    ValueTask<Dictionary<Type, Array>> LoadAsync(TPermission permission, CancellationToken cancellationToken);
+    Task<Dictionary<Type, Array>> LoadAsync(TPermission permission, CancellationToken ct);
 }

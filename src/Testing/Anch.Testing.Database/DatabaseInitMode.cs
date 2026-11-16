@@ -9,7 +9,7 @@ public enum DatabaseInitMode
     /// Forces snapshot rebuild.
     ///
     /// Existing snapshots are ignored and overwritten.
-    /// Full cycle: schema → empty snapshot → data → final snapshot.
+    /// Full cycle: schema → empty snapshot → data → final snapshot → cleanup.
     /// </summary>
     RebuildSnapshot,
 

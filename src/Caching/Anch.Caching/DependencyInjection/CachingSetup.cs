@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Anch.Caching.DependencyInjection;
 
+/// <summary>Collects the settings of caching and turns them into registrations.</summary>
 public class CachingSetup : ICachingSetup, IServiceInitializer
 {
     private Type? cacheProviderType;
@@ -19,7 +20,7 @@ public class CachingSetup : ICachingSetup, IServiceInitializer
 
     public void Initialize(IServiceCollection services)
     {
-        if (!services.AlreadyInitialized<ICacheProvider>() || this.cacheProviderType != null)
+        if (!services.AlreadyInitialized<ICacheProvider>() || this.cacheProviderType is not null)
         {
             services.TryAddSingleton(typeof(ICache<,>), typeof(CacheProxy<,>));
             services.ReplaceSingleton(typeof(ICacheProvider), this.cacheProviderType ?? typeof(CacheProvider));

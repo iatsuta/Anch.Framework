@@ -1,5 +1,6 @@
 ﻿namespace Anch.Parsing;
 
+/// <summary>LINQ query syntax support for parsers (<c>from ... select</c>).</summary>
 public static class ParserCombinatorsMonad
 {
     public static Parser<TInput, TValue> Where<TInput, TValue>(
@@ -10,7 +11,7 @@ public static class ParserCombinatorsMonad
         {
             var res = parser(input);
 
-            if (res.Value == null)
+            if (res.Value is null)
             {
                 return res;
             }

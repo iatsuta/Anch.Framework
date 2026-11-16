@@ -19,11 +19,6 @@ internal class SquashWhereQueryableVisitor : ExpressionVisitor
 
     private static readonly MethodInfo GenericBuildExceptMethod = new Func<Expression<Func<object, bool>>, Expression<Func<object, bool>>, Expression<Func<object, bool>>>(BuildExcept).Method.GetGenericMethodDefinition();
 
-    private SquashWhereQueryableVisitor()
-    {
-
-    }
-
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
         return this.TryOptimizeWhere(node)
@@ -116,8 +111,8 @@ internal class SquashWhereQueryableVisitor : ExpressionVisitor
 
     private static Expression<Func<T, bool>> BuildExcept<T>(Expression<Func<T, bool>> expr1, Expression<Func<T, bool>> expr2)
     {
-        if (expr1 == null) throw new ArgumentNullException(nameof(expr1));
-        if (expr2 == null) throw new ArgumentNullException(nameof(expr2));
+        if (expr1 is null) throw new ArgumentNullException(nameof(expr1));
+        if (expr2 is null) throw new ArgumentNullException(nameof(expr2));
 
         return from v1 in expr1
                from v2 in expr2

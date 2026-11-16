@@ -4,6 +4,7 @@ using Anch.Core;
 
 namespace Anch.GenericQueryable.Services;
 
+/// <summary>Supports only <c>GenericAsAsyncEnumerable</c>, mapping it to <c>AsyncEnumerable.ToAsyncEnumerable</c>.</summary>
 public class CastToAsyncEnumerableTargetMethodExtractor() : TargetMethodExtractor([typeof(AsyncEnumerable)])
 {
     private readonly Dictionary<string, MethodInfo> allowedMethods = new()
@@ -14,6 +15,7 @@ public class CastToAsyncEnumerableTargetMethodExtractor() : TargetMethodExtracto
         }
     };
 
+    /// <inheritdoc/>
     protected override IEnumerable<Type> GetTargetMethodParameterTypes(MethodInfo targetMethod)
     {
         var baseTypes = targetMethod.GetParameters().Select(p => p.ParameterType).ToList();
@@ -25,5 +27,6 @@ public class CastToAsyncEnumerableTargetMethodExtractor() : TargetMethodExtracto
     }
 
 
+    /// <inheritdoc/>
     protected override string? TryGetTargetMethodName(MethodInfo baseMethod) => this.allowedMethods.GetValueOrDefault(baseMethod.Name)?.Name;
 }

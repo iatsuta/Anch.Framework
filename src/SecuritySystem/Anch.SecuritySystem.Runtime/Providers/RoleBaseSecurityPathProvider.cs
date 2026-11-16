@@ -6,7 +6,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 namespace Anch.SecuritySystem.Providers;
 
 /// <summary>
-/// Контекстный провайдер доступа
+/// Security provider that restricts access by security contexts.
 /// </summary>
 /// <typeparam name="TDomainObject"></typeparam>
 public class RoleBaseSecurityPathProvider<TDomainObject>(
@@ -22,18 +22,18 @@ public class RoleBaseSecurityPathProvider<TDomainObject>(
     private AccessorsFilterInfo<TDomainObject>? accessorsFilterCache;
 
     public IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) =>
-        defaultCancellationTokenSource.RunSync(this.GetOrCreateSecurityFilterInfo).InjectFunc(queryable);
+        defaultCancellationTokenSource.RunSync(async ct => await this.GetOrCreateSecurityFilterInfo(ct)).InjectFunc(queryable);
 
-    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        var securityFilterInfo = await this.GetOrCreateSecurityFilterInfo(cancellationToken);
+        var securityFilterInfo = await this.GetOrCreateSecurityFilterInfo(ct);
 
         return securityFilterInfo.HasAccessFunc.Invoke(domainObject);
     }
 
-    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<AccessResult> GetAccessResultAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        if (await this.HasAccessAsync(domainObject, cancellationToken))
+        if (await this.HasAccessAsync(domainObject, ct))
         {
             return AccessResult.AccessGrantedResult.Default;
         }
@@ -43,16 +43,16 @@ public class RoleBaseSecurityPathProvider<TDomainObject>(
         }
     }
 
-    public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken)
+    public async ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct)
     {
-        var accessorsFilter = this.accessorsFilterCache ??= await accessorsFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
+        var accessorsFilter = this.accessorsFilterCache ??= await accessorsFilterFactory.CreateFilterAsync(securityRule, securityPath, ct);
 
-        var accessors = await accessorsFilter.GetAccessorsFunc(domainObject).ToImmutableArrayAsync(cancellationToken);
+        var accessors = await accessorsFilter.GetAccessorsFunc(domainObject).ToImmutableArrayAsync(ct);
 
         return new SecurityAccessorData.FixedSecurityAccessorData(accessors);
     }
 
-    private async ValueTask<SecurityFilterInfo<TDomainObject>> GetOrCreateSecurityFilterInfo(CancellationToken cancellationToken) =>
+    private async ValueTask<SecurityFilterInfo<TDomainObject>> GetOrCreateSecurityFilterInfo(CancellationToken ct) =>
 
-        this.securityFilterCache ??= await securityFilterFactory.CreateFilterAsync(securityRule, securityPath, cancellationToken);
+        this.securityFilterCache ??= await securityFilterFactory.CreateFilterAsync(securityRule, securityPath, ct);
 }

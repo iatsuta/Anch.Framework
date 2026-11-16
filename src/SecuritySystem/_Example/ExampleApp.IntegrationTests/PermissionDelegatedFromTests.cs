@@ -18,7 +18,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var delegatedFromPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
 
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), DelegatedFrom = delegatedFromPermission.Identity };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), DelegatedFrom = delegatedFromPermission.Identity };
 
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, ct);
 
@@ -39,7 +39,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
     {
         // Arrange
         var delegatedFromPermission = new TestPermission(SecurityRole.Administrator)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
 
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { DelegatedFrom = delegatedFromPermission.Identity };
 
@@ -65,10 +65,10 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var targetBuIdentity = await this.AuthManager.GetSecurityContextIdentityAsync<BusinessUnit, Guid>($"Test{nameof(BusinessUnit)}1", ct);
 
         var delegatedFromPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = sourceBuIdentity };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = sourceBuIdentity };
 
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = targetBuIdentity, DelegatedFrom = delegatedFromPermission.Identity };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = targetBuIdentity, DelegatedFrom = delegatedFromPermission.Identity };
 
 
         await this.AuthManager.For(sourcePrincipalName).SetRoleAsync(delegatedFromPermission, ct);
@@ -83,7 +83,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
 
         Assert.Equal(subPermission.Identity, managedPermission.Identity);
         Assert.Equal(subPermission.DelegatedFrom, managedPermission.DelegatedFrom);
-        Assert.Equivalent(subPermission.Restrictions, managedPermission.Restrictions);
+        Assert.Equivalent(subPermission.Restrictions, managedPermission.Restrictions, strict: true);
     }
 
     [AnchFact]
@@ -96,7 +96,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var invalidObjects = $"{nameof(BusinessUnit)}: Unrestricted";
 
         var delegatedFromPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = sourceBuIdentity };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = sourceBuIdentity };
 
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { DelegatedFrom = delegatedFromPermission.Identity };
 
@@ -125,7 +125,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var invalidObjects = $"{nameof(BusinessUnit)}: {targetBuIdentity.Id}";
 
         var delegatedFromPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = sourceBuIdentity };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), BusinessUnit = sourceBuIdentity };
 
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { BusinessUnit = targetBuIdentity, DelegatedFrom = delegatedFromPermission.Identity };
 
@@ -154,7 +154,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var targetRole = SecurityRole.Administrator;
 
         var delegatedFromPermission = new TestPermission(sourceRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()) };
 
         var subPermission = new TestPermission(targetRole) { DelegatedFrom = delegatedFromPermission.Identity };
 
@@ -186,7 +186,7 @@ public abstract class PermissionDelegationFromTests(IServiceProvider rootService
         var expectedErrorMessage = $"Invalid delegated permission period: the selected period \"{targetPeriod}\" is not a subset of \"{sourcePeriod}\"";
 
         var delegatedFromPermission = new TestPermission(ExampleSecurityRole.DefaultRole)
-            { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), Period = sourcePeriod };
+        { Identity = TypedSecurityIdentity.Create(Guid.NewGuid()), Period = sourcePeriod };
 
         var subPermission = new TestPermission(ExampleSecurityRole.DefaultRole) { Period = targetPeriod, DelegatedFrom = delegatedFromPermission.Identity };
 

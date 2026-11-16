@@ -5,20 +5,21 @@ using Anch.VisualIdentitySource;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Principal;
 
+/// <summary>Checks that a principal has no duplicate permissions.</summary>
 public class PrincipalUniquePermissionValidator<TPrincipal, TPermission, TPermissionRestriction>(
     IVisualIdentityInfo<TPrincipal> principalVisualIdentityInfo,
     IDisplayPermissionService<TPermission, TPermissionRestriction> displayPermissionService,
     IPermissionEqualityComparer<TPermission, TPermissionRestriction> comparer)
     : IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken ct)
     {
         var duplicates = await principalData
             .PermissionDataList
             .ToAsyncEnumerable()
             .GroupBy(permission => permission, comparer)
             .Where(g => g.Count() > 1)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         if (duplicates.Count > 0)
         {

@@ -6,21 +6,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.Principal;
 
+/// <summary>Runs all principal validators and the permission validators.</summary>
 public class PrincipalRootValidator<TPrincipal, TPermission, TPermissionRestriction>(
     [FromKeyedServices(ISecurityValidator.ElementKey)] IEnumerable<IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction>> validators,
     IPermissionValidator<TPermission, TPermissionRestriction> permissionRootValidator)
     : IPrincipalValidator<TPrincipal, TPermission, TPermissionRestriction>
 {
-    public async Task ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken cancellationToken)
+    public async ValueTask ValidateAsync(PrincipalData<TPrincipal, TPermission, TPermissionRestriction> principalData, CancellationToken ct)
     {
         foreach (var validator in validators)
         {
-            await validator.ValidateAsync(principalData, cancellationToken);
+            await validator.ValidateAsync(principalData, ct);
         }
 
         foreach (var permission in principalData.PermissionDataList)
         {
-            await permissionRootValidator.ValidateAsync(permission, cancellationToken);
+            await permissionRootValidator.ValidateAsync(permission, ct);
         }
     }
 }

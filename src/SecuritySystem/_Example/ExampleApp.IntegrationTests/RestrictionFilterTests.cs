@@ -23,8 +23,6 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
 
     protected override async ValueTask InitializeAsync(CancellationToken ct)
     {
-        await base.InitializeAsync(ct);
-
         this.defaultBu = await this.AuthManager.SaveSecurityContextAsync<BusinessUnit, Guid>(
             () => new BusinessUnit { Name = nameof(this.defaultBu) }, ct);
 
@@ -79,7 +77,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
-        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
+        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList, strict: true);
     }
 
     [AnchFact]
@@ -93,7 +91,7 @@ public abstract class RestrictionFilterTests(IServiceProvider rootServiceProvide
         var allowedBuList = await this.AuthManager.GetIdentityListAsync<BusinessUnit, Guid>(this.restrictionRule, ct);
 
         // Assert
-        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList);
+        Assert.Equivalent(new[] { this.buWithAllowedFilter }, allowedBuList, strict: true);
     }
 
     //[AnchFact]

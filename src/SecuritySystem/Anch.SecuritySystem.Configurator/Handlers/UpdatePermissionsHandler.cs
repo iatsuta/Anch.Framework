@@ -9,41 +9,23 @@ using Microsoft.AspNetCore.Http;
 
 namespace Anch.SecuritySystem.Configurator.Handlers;
 
+/// <summary>Handles the request to replace the permissions of a principal.</summary>
 public class UpdatePermissionsHandler(
     [WithoutRunAs] ISecuritySystem securitySystem,
     ISecurityRoleSource securityRoleSource,
     ISecurityContextInfoSource securityContextInfoSource,
     IDomainObjectIdentsParser domainObjectIdentsParser,
-	IPrincipalManagementService principalManagementService,
-    IConfiguratorIntegrationEvents? configuratorIntegrationEvents = null) : BaseWriteHandler, IUpdatePermissionsHandler
+    IPrincipalManagementService principalManagementService) : BaseWriteHandler, IUpdatePermissionsHandler
 {
-    public async Task Execute(HttpContext context, CancellationToken cancellationToken)
+    public async Task Execute(HttpContext context, CancellationToken ct)
     {
-        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, cancellationToken);
+        await securitySystem.CheckAccessAsync(ApplicationSecurityRule.SecurityAdministrator, ct);
 
         var permissions = await this.ParseRequestBodyAsync<List<RequestBodyDto>>(context);
 
         var managedPermissions = permissions.Select(this.ToManagedPermission).ToList();
 
-        var mergeResult = await principalManagementService.UpdatePermissionsAsync(context.ExtractSecurityIdentity(), managedPermissions, cancellationToken);
-
-        if (configuratorIntegrationEvents != null)
-        {
-            foreach (var permission in mergeResult.AddingItems)
-            {
-                await configuratorIntegrationEvents.PermissionCreatedAsync(permission, cancellationToken);
-            }
-
-            foreach (var (permission, _) in mergeResult.CombineItems)
-            {
-                await configuratorIntegrationEvents.PermissionChangedAsync(permission, cancellationToken);
-            }
-
-            foreach (var permission in mergeResult.RemovingItems)
-            {
-                await configuratorIntegrationEvents.PermissionRemovedAsync(permission, cancellationToken);
-            }
-        }
+        await principalManagementService.UpdatePermissionsAsync(context.ExtractSecurityIdentity(), managedPermissions, ct);
     }
 
     private ManagedPermission ToManagedPermission(RequestBodyDto permission)
@@ -88,6 +70,7 @@ public class UpdatePermissionsHandler(
 
         public string DelegatedFromId { get; set; } = default!;
 
+        /// <summary>A security context object shown in the configurator.</summary>
         public class ContextDto
         {
             public string Id { get; set; } = default!;

@@ -16,7 +16,7 @@ public record ValidationResult(ImmutableArray<string> Errors)
     /// </summary>
     /// <param name="errors">A sequence of error messages produced by the validation.</param>
     public ValidationResult(IEnumerable<string> errors)
-        : this([..errors])
+        : this([.. errors])
     {
     }
 

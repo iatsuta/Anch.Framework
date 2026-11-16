@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.Services;
 
+/// <summary>The base of the visitors that walk a security rule.</summary>
 public abstract class SecurityRuleVisitor
 {
     protected virtual DomainSecurityRule Visit(DomainSecurityRule.ExpandedRoleGroupSecurityRule securityRule)
@@ -49,7 +50,7 @@ public abstract class SecurityRuleVisitor
         }
         else
         {
-            return visitedLeft.Or(visitedRight);
+            return visitedLeft.Or(visitedRight).TryApply(baseSecurityRule.CustomCredential);
         }
     }
 
@@ -65,7 +66,7 @@ public abstract class SecurityRuleVisitor
         }
         else
         {
-            return visitedLeft.And(visitedRight);
+            return visitedLeft.And(visitedRight).TryApply(baseSecurityRule.CustomCredential);
         }
     }
 
@@ -79,7 +80,7 @@ public abstract class SecurityRuleVisitor
         }
         else
         {
-            return visitedInner.Negate();
+            return visitedInner.Negate().TryApply(baseSecurityRule.CustomCredential);
         }
     }
 

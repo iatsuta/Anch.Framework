@@ -8,13 +8,9 @@ namespace Anch.SecuritySystem.Builders;
 
 internal class CacheContainsCallVisitor : ExpressionVisitor
 {
-    private CacheContainsCallVisitor()
-    {
-    }
-
     public override Expression? Visit(Expression? node)
     {
-        return node == null ? base.Visit(node) : node.UpdateBase(new InternalStateVisitor());
+        return node is null ? base.Visit(node) : node.UpdateBase(new InternalStateVisitor());
     }
 
     private class InternalStateVisitor : ExpressionVisitor
@@ -63,7 +59,7 @@ internal class CacheContainsCallVisitor : ExpressionVisitor
                     node.GetConstantValue<HashSet<TIdent>>().Select(IEnumerable<TIdent> (v) => v!)
                         .Or(() => node.GetConstantValue<IQueryable<TIdent>>().Select(IEnumerable<TIdent> (v) => v!))
 
-                select this.constCache.GetValueOrCreate(enumerable, () => Expression.Constant(enumerable.ToHashSet(), typeof(HashSet<TIdent>)));
+                   select this.constCache.GetValueOrCreate(enumerable, () => Expression.Constant(enumerable.ToHashSet(), typeof(HashSet<TIdent>)));
         }
     }
 

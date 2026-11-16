@@ -2,6 +2,9 @@
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
+
+using Anch.Testing.Xunit.Engine;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,145 +15,102 @@ using Xunit.v3;
 
 namespace Anch.Testing.Xunit;
 
+/// <summary>Supplies data from a member to a theory run by the Anch test framework.</summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public class AnchMemberDataAttribute(string memberName, params object?[] arguments) : MemberDataAttributeBase(memberName, arguments)
+public class AnchMemberDataAttribute : MemberDataAttributeBase, IServiceProviderPoolContainer
 {
-    internal IServiceProviderPool? ServiceProviderPool { get; set; }
+    private IServiceProviderPool? serviceProviderPool;
 
-    private readonly ConcurrentDictionary<MethodInfo, object?> testInstanceCache = [];
+    private readonly ConcurrentDictionary<MethodInfo, Task<IReadOnlyCollection<ITheoryDataRow>>> testDataCache = [];
 
-    static readonly Lazy<string> supportedDataSignatures;
+    private static readonly Func<Lazy<string>> GetSupportedDataSignatures = PrivateMemberAccessor.GetStaticField<Lazy<string>>(typeof(MemberDataAttributeBase), "supportedDataSignatures");
 
-    static AnchMemberDataAttribute() =>
-        supportedDataSignatures = new(() =>
+
+    public AnchMemberDataAttribute(string memberName, params object?[] arguments)
+        : base(memberName, arguments)
+    {
+        this.DisableDiscoveryEnumeration = true;
+    }
+
+    private object? TryCreateTestInstance(MethodInfo testMethod, IServiceProvider? serviceProvider)
+    {
+        if (testMethod.IsStatic)
         {
-            var dataSignatures = new List<string>(18);
-
-            foreach (var enumerable in new[] { "IEnumerable<{0}>", "IAsyncEnumerable<{0}>" })
-            foreach (var dataType in new[] { "ITheoryDataRow", "object[]", "Tuple<...>" })
-            foreach (var wrapper in new[] { "- {0}", "- Task<{0}>", "- ValueTask<{0}>" })
-                dataSignatures.Add(string.Format(CultureInfo.CurrentCulture, wrapper, string.Format(CultureInfo.CurrentCulture, enumerable, dataType)));
-
-            return string.Join(Environment.NewLine, dataSignatures);
-        });
-
-    private object? GetTestInstance(MethodInfo testMethod, IServiceProvider? serviceProvider) =>
-
-        this.testInstanceCache.GetOrAdd(testMethod, _ =>
+            return null;
+        }
+        else
         {
-            if (testMethod.IsStatic)
+            var testType = testMethod.ReflectedType!;
+
+            if (serviceProvider is null)
             {
-                return null;
+                return Activator.CreateInstance(testType);
             }
             else
             {
-                var testType = testMethod.ReflectedType!;
-
-                if (serviceProvider == null)
-                {
-                    return Activator.CreateInstance(testType);
-                }
-                else
-                {
-                    return ActivatorUtilities.CreateInstance(serviceProvider, testType);
-                }
-            }
-        });
-
-    /// <inheritdoc/>
-    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(
-        MethodInfo testMethod,
-        DisposalTracker disposalTracker)
-    {
-        if (this.ServiceProviderPool == null)
-        {
-            return await base.GetData(testMethod, disposalTracker);
-        }
-
-        if (this.MemberType is null)
-            return [];
-
-        var accessor = this.GetPropertyAccessor(this.MemberType)
-                       ?? this.GetFieldAccessor(this.MemberType)
-                       ?? this.GetMethodAccessor(this.MemberType)
-                       ?? throw new ArgumentException(
-                           string.Format(
-                               CultureInfo.CurrentCulture,
-                               "Could not find public static member (property, field, or method) named '{0}' on '{1}'{2}",
-                               this.MemberName, this.MemberType.SafeName(), this.Arguments.Length > 0
-                                   ? string.Format(CultureInfo.CurrentCulture, " with parameter types: {0}",
-                                       string.Join(", ",
-                                           this.Arguments.Select(p => p?.GetType().SafeName() ?? "(null)")))
-                                   : ""
-                           )
-                       );
-
-        var testContext = TestContext.Current;
-
-        var serviceProvider = this.ServiceProviderPool == null ? null : await this.ServiceProviderPool.GetAsync(testContext.CancellationToken);
-
-        if (serviceProvider != null)
-        {
-            await serviceProvider.RunEnvironmentHooks(EnvironmentHookType.Before, testContext.CancellationToken);
-        }
-
-        try
-        {
-            var testInstance = this.GetTestInstance(testMethod, serviceProvider);
-
-            if (testInstance is IAsyncLifetime asyncInit)
-            {
-                await asyncInit.InitializeAsync();
-            }
-
-            try
-            {
-                var returnValue =
-                    accessor(testInstance)
-                    ?? throw new ArgumentException(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            "Member '{0}' on '{1}' returned null when queried for test data", this.MemberName,
-                            this.MemberType.SafeName()
-                        ));
-
-                if (returnValue is IEnumerable dataItems)
-                {
-                    var result = new List<ITheoryDataRow>();
-
-                    foreach (var dataItem in dataItems)
-                        if (dataItem is not null)
-                            result.Add(this.ConvertDataRow(dataItem));
-
-                    return result.CastOrToReadOnlyCollection();
-                }
-
-                return await this.GetDataAsync(returnValue, this.MemberType);
-            }
-            finally
-            {
-                if (testInstance is IAsyncLifetime asyncDispose)
-                {
-                    try
-                    {
-                        await asyncDispose.DisposeAsync();
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-        }
-        finally
-        {
-            if (serviceProvider != null && this.ServiceProviderPool != null)
-            {
-                await serviceProvider.RunEnvironmentHooks(EnvironmentHookType.After, testContext.CancellationToken);
-
-                this.ServiceProviderPool.Release(serviceProvider);
+                return ActivatorUtilities.CreateInstance(serviceProvider, testType);
             }
         }
     }
+
+    /// <inheritdoc/>
+    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker _) =>
+
+        await this.testDataCache.GetOrAdd(testMethod, async _ =>
+        {
+            if (this.MemberType is null)
+                return [];
+
+            var accessor = this.GetPropertyAccessor(this.MemberType)
+                           ?? this.GetFieldAccessor(this.MemberType)
+                           ?? this.GetMethodAccessor(this.MemberType)
+                           ?? throw new ArgumentException(
+                               string.Format(
+                                   CultureInfo.InvariantCulture,
+                                   "Could not find public static member (property, field, or method) named '{0}' on '{1}'{2}",
+                                   this.MemberName, this.MemberType.SafeName(), this.Arguments.Length > 0
+                                       ? string.Format(CultureInfo.InvariantCulture, " with parameter types: {0}",
+                                           string.Join(", ",
+                                               this.Arguments.Select(p => p?.GetType().SafeName() ?? "(null)")))
+                                       : ""
+                               )
+                           );
+
+            var ct = TestContext.Current.CancellationToken;
+
+            await using var serviceProviderPoolScope = await this.serviceProviderPool.TryCreateScopeAsync(ct);
+
+            if (serviceProviderPoolScope?.Exception is not null)
+            {
+                ExceptionDispatchInfo.Capture(serviceProviderPoolScope.Exception).Throw();
+            }
+
+            var testInstance = this.TryCreateTestInstance(testMethod, serviceProviderPoolScope?.ServiceProvider);
+
+            await using var __ = await (testInstance as IAsyncLifetime).TryCreateScopeAsync(ct);
+
+            var returnValue =
+                accessor(testInstance)
+                ?? throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Member '{0}' on '{1}' returned null when queried for test data", this.MemberName,
+                        this.MemberType.SafeName()
+                    ));
+
+            if (returnValue is IEnumerable dataItems)
+            {
+                var result = new List<ITheoryDataRow>();
+
+                foreach (var dataItem in dataItems)
+                    if (dataItem is not null)
+                        result.Add(this.ConvertDataRow(dataItem));
+
+                return result.CastOrToReadOnlyCollection();
+            }
+
+            return await this.GetDataAsync(returnValue, this.MemberType);
+        });
 
     async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetDataAsync(
         object? returnValue,
@@ -186,11 +146,11 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
 
         throw new ArgumentException(
             string.Format(
-                CultureInfo.CurrentCulture,
+                CultureInfo.InvariantCulture,
                 "Member '{0}' on '{1}' must return data in one of the following formats:{2}{3}", this.MemberName,
                 type.SafeName(),
                 Environment.NewLine,
-                supportedDataSignatures.Value
+                GetSupportedDataSignatures().Value
             )
         );
     }
@@ -236,7 +196,7 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
 
             throw new ArgumentException(
                 string.Format(
-                    CultureInfo.CurrentCulture,
+                    CultureInfo.InvariantCulture,
                     "The call to method '{0}.{1}' is ambigous between {2} different options for the given arguments.",
                     type!.SafeName(), this.MemberName,
                     methodInfoArray.Length
@@ -316,4 +276,10 @@ public class AnchMemberDataAttribute(string memberName, params object?[] argumen
     /// <inheritdoc/>
     public override bool SupportsDiscoveryEnumeration() =>
         !this.DisableDiscoveryEnumeration;
+
+    IServiceProviderPool? IServiceProviderPoolContainer.ServiceProviderPool
+    {
+        get => this.serviceProviderPool;
+        set => this.serviceProviderPool = value;
+    }
 }

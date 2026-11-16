@@ -5,6 +5,7 @@ using Anch.Core;
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Returns the identifiers of the roles that a rule consists of.</summary>
 public class SecurityRoleIdentsResolver(ISecurityRoleResolver securityRoleResolver) : ISecurityRoleIdentsResolver
 {
     private readonly ConcurrentDictionary<(DomainSecurityRule.RoleBaseSecurityRule, bool), FrozenDictionary<Type, Array>> cache = [];

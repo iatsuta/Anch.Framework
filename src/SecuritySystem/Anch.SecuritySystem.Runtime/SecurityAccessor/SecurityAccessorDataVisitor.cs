@@ -1,5 +1,6 @@
 ﻿namespace Anch.SecuritySystem.SecurityAccessor;
 
+/// <summary>The base of the visitors of accessor data.</summary>
 public abstract class SecurityAccessorDataVisitor
 {
     public virtual SecurityAccessorData Visit(SecurityAccessorData baseData)

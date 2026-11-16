@@ -1,31 +1,8 @@
-﻿using Anch.Core;
-using Anch.SecuritySystem.Validation;
+﻿using Anch.SecuritySystem.Validation;
 
 namespace Anch.SecuritySystem.GeneralPermission.Validation.PermissionRestriction;
 
-public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction>(
-    IServiceProxyFactory serviceProxyFactory,
-    IGeneralPermissionRestrictionBindingInfoSource restrictionBindingInfoSource) : IPermissionRestrictionValidator<TPermissionRestriction>
-{
-    private readonly Lazy<IPermissionRestrictionValidator<TPermissionRestriction>> lazyInnerService = new(() =>
-    {
-        var restrictionBindingInfo = restrictionBindingInfoSource.GetForPermissionRestriction(typeof(TPermissionRestriction));
-
-        var innerServiceType = typeof(AllowedTypePermissionRestrictionValidator<,,,>)
-            .MakeGenericType(
-                restrictionBindingInfo.PermissionRestrictionType,
-                restrictionBindingInfo.SecurityContextTypeType,
-                restrictionBindingInfo.SecurityContextObjectIdentType,
-                restrictionBindingInfo.PermissionType);
-
-        return serviceProxyFactory.Create<IPermissionRestrictionValidator<TPermissionRestriction>>(
-            innerServiceType,
-            restrictionBindingInfo);
-    });
-
-    public Task ValidateAsync(TPermissionRestriction value, CancellationToken cancellationToken) => this.lazyInnerService.Value.ValidateAsync(value, cancellationToken);
-}
-
+/// <summary>Checks that the restricted context types are allowed for the role.</summary>
 public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission>(
     GeneralPermissionRestrictionBindingInfo<TPermissionRestriction, TSecurityContextType, TSecurityContextObjectIdent, TPermission> restrictionBindingInfo,
     IPermissionSecurityRoleResolver<TPermission> permissionSecurityRoleResolver,
@@ -33,7 +10,7 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, T
     : IPermissionRestrictionValidator<TPermissionRestriction>
     where TSecurityContextObjectIdent : notnull
 {
-    public async Task ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken cancellationToken)
+    public ValueTask ValidateAsync(TPermissionRestriction permissionRestriction, CancellationToken ct)
     {
         var permission = restrictionBindingInfo.Permission.Getter(permissionRestriction);
 
@@ -43,9 +20,13 @@ public class AllowedTypePermissionRestrictionValidator<TPermissionRestriction, T
 
         var allowedSecurityContexts = securityRole.Information.Restriction.SecurityContextTypes;
 
-        var allowed = allowedSecurityContexts == null || allowedSecurityContexts.Contains(securityContextType);
+        var allowed = allowedSecurityContexts is null || allowedSecurityContexts.Contains(securityContextType);
 
-        if (!allowed)
+        if (allowed)
+        {
+            return ValueTask.CompletedTask;
+        }
+        else
         {
             throw new SecuritySystemValidationException($"Invalid SecurityContextType: {securityContextType.Name}");
         }

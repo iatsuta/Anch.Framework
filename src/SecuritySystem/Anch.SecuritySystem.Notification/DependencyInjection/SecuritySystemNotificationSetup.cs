@@ -20,6 +20,8 @@ public class SecuritySystemNotificationSetup : ISecuritySystemNotificationSetup,
                     .AddScoped(typeof(INotificationPermissionExtractor<>), typeof(NotificationPermissionExtractor<>))
                     .AddScoped(typeof(INotificationPrincipalExtractor<>), typeof(NotificationPrincipalExtractor<>))
 
+                    .AddScoped<INotificationPrincipalNameExtractor, NotificationPrincipalNameExtractor>()
+
                     .AddScoped(typeof(INotificationPermissionFilterFactory<>), typeof(NotificationGeneralPermissionFilterFactory<>));
             });
 }

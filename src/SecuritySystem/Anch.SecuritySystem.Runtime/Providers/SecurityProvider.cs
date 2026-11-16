@@ -6,6 +6,7 @@ using Anch.SecuritySystem.SecurityAccessor;
 
 namespace Anch.SecuritySystem.Providers;
 
+/// <summary>The base of the providers defined by a filter expression.</summary>
 public abstract class SecurityProvider<TDomainObject> : ISecurityProvider<TDomainObject>
 {
     private readonly Lazy<Func<TDomainObject, bool>> lazyHasAccessFunc;
@@ -27,7 +28,8 @@ public abstract class SecurityProvider<TDomainObject> : ISecurityProvider<TDomai
 
     public virtual IQueryable<TDomainObject> Inject(IQueryable<TDomainObject> queryable) => queryable.Where(this.SecurityFilter);
 
-    public virtual async ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken cancellationToken) => this.lazyHasAccessFunc.Value(domainObject);
+    public virtual ValueTask<bool> HasAccessAsync(TDomainObject domainObject, CancellationToken ct) =>
+        new(this.lazyHasAccessFunc.Value(domainObject));
 
-    public abstract ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken cancellationToken);
+    public abstract ValueTask<SecurityAccessorData> GetAccessorDataAsync(TDomainObject domainObject, CancellationToken ct);
 }

@@ -6,6 +6,7 @@ using Anch.SecuritySystem.Notification.Domain;
 
 namespace Anch.SecuritySystem.Notification;
 
+/// <summary>Converts notification filter groups of context objects into groups of identifiers.</summary>
 public class NotificationFilterGroupConverter(IIdentityInfoSource identityInfoSource) : INotificationFilterGroupConverter
 {
     private readonly ConcurrentDictionary<Type, Delegate> cache = [];

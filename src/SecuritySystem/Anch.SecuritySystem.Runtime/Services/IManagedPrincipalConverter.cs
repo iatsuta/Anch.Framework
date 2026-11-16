@@ -2,7 +2,8 @@
 
 namespace Anch.SecuritySystem.Services;
 
+/// <summary>Converts a principal entity into a managed principal.</summary>
 public interface IManagedPrincipalConverter<in TPrincipal>
 {
-	ValueTask<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken cancellationToken);
+    Task<ManagedPrincipal> ToManagedPrincipalAsync(TPrincipal dbPrincipal, CancellationToken ct);
 }
