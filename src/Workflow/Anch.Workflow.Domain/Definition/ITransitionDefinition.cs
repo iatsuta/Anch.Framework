@@ -1,7 +1,7 @@
 ﻿namespace Anch.Workflow.Domain.Definition;
 
 public interface ITransitionDefinition<TSource, TStatus> : ITransitionDefinition
-    where TSource : notnull
+    where TSource : class
     where TStatus : struct
 {
     new IStateDefinition<TSource, TStatus> To { get; }
@@ -12,7 +12,7 @@ public interface ITransitionDefinition<TSource, TStatus> : ITransitionDefinition
 }
 
 //public interface ITransitionDefinition<TSource> : ITransitionDefinition
-//    where TSource : notnull
+//    where TSource : class
 //{
 //    new IStateDefinition<TSource> To { get; }
 

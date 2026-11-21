@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\__RootSolutionItems\DatabaseInitModeHelper.cs" Link="Environment\DatabaseInitModeHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ProjectReference Include="..\..\Testing\Anch.Testing.Database.Sqlite\Anch.Testing.Database.Sqlite.csproj" />
+    <ProjectReference Include="..\..\Testing\Anch.Testing.Xunit\Anch.Testing.Xunit.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.Persistence.Inline\Anch.Workflow.Persistence.Inline.csproj" />
+    <ProjectReference Include="..\Anch.Workflow.Tests.Definitions\Anch.Workflow.Tests.Definitions.csproj" />
+    <ProjectReference Include="..\Anch.Workflow\Anch.Workflow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Anch.Testing" />
+  </ItemGroup>
+
+</Project>

@@ -1,14 +1,19 @@
 <Solution>
   <Folder Name="/Workflow/">
     <Project Path="Workflow/Anch.Workflow.Abstractions/Anch.Workflow.Abstractions.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Building/Anch.Workflow.Building.csproj" />
     <Project Path="Workflow/Anch.Workflow.Domain/Anch.Workflow.Domain.csproj" />
     <Project Path="Workflow/Anch.Workflow.Runtime/Anch.Workflow.Runtime.csproj" />
-    <Project Path="Workflow/Anch.Workflow.Serialization.Inline/Anch.Workflow.Serialization.Inline.csproj" />
-    <Project Path="Workflow/Anch.Workflow.Serialization.Memory/Anch.Workflow.Serialization.Memory.csproj" />
-    <Project Path="Workflow/Anch.Workflow.Serialization/Anch.Workflow.Serialization.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Persistence.Inline/Anch.Workflow.Persistence.Inline.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Persistence.Memory/Anch.Workflow.Persistence.Memory.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Persistence/Anch.Workflow.Persistence.csproj" />
+    <Project Path="Workflow/Anch.Workflow.States/Anch.Workflow.States.csproj" />
     <Project Path="Workflow/Anch.Workflow/Anch.Workflow.csproj" />
   </Folder>
   <Folder Name="/Workflow/Tests/">
+    <Project Path="Workflow/Anch.Workflow.IntegrationTests.EntityFramework/Anch.Workflow.IntegrationTests.EntityFramework.csproj" />
+    <Project Path="Workflow/Anch.Workflow.IntegrationTests/Anch.Workflow.IntegrationTests.csproj" />
+    <Project Path="Workflow/Anch.Workflow.Tests.Definitions/Anch.Workflow.Tests.Definitions.csproj" />
     <Project Path="Workflow/Anch.Workflow.Tests/Anch.Workflow.Tests.csproj" />
   </Folder>
 
